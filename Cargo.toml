@@ -1,0 +1,7 @@
+[package]
+name = "rekee"
+version = "0.1.0"
+authors = ["Tobias Rapp"]
+edition = "2018"
+
+[dependencies]
