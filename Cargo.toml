@@ -5,3 +5,4 @@ authors = ["Tobias Rapp"]
 edition = "2018"
 
 [dependencies]
+svg = "0.5.10"

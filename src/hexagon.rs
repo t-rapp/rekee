@@ -4,7 +4,7 @@
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
-struct Coordinate {
+pub struct Coordinate {
     q: i32,
     r: i32,
 }
@@ -100,7 +100,7 @@ impl FloatCoordinate {
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
-enum Direction {
+pub enum Direction {
     A,
     B,
     C,
@@ -139,7 +139,7 @@ impl From<Direction> for u8 {
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
-struct Orientation {
+pub struct Orientation {
     f0: f32,
     f1: f32,
     f2: f32,
@@ -177,10 +177,10 @@ impl Orientation {
 
 //----------------------------------------------------------------------------
 
-type Point = (f32, f32);
+pub type Point = (f32, f32);
 
 #[derive(Debug, Clone)]
-struct Layout {
+pub struct Layout {
     orientation: Orientation,
     size: Point,
     origin: Point,
@@ -203,7 +203,7 @@ impl Layout {
         };
         for i in 0..6 {
             let offset = corner_offset(i as u8);
-            corners[i] = (center.0 + offset.0, center.1 + offset.1);
+            corners[i] = (self.origin.0 + center.0 + offset.0, self.origin.1 + center.1 + offset.1);
         }
         corners
     }

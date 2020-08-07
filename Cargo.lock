@@ -3,3 +3,12 @@
 [[package]]
 name = "rekee"
 version = "0.1.0"
+dependencies = [
+ "svg",
+]
+
+[[package]]
+name = "svg"
+version = "0.5.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a863ec1f8e7cfd4ea449f77445cca06aac240b9a677ccf12b0f65ef020db52c7"
