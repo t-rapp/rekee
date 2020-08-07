@@ -52,6 +52,12 @@ impl Coordinate {
     }
 }
 
+impl From<(i32, i32)> for Coordinate {
+    fn from(value: (i32, i32)) -> Coordinate {
+        Coordinate { q: value.0, r: value.1 }
+    }
+}
+
 //----------------------------------------------------------------------------
 
 struct FloatCoordinate {
