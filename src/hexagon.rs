@@ -43,7 +43,7 @@ impl Coordinate {
         let o = &layout.orientation;
         let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
         let y = (o.f2 * self.q as f32 + o.f3 * self.r as f32) * layout.size.1;
-        (x, y)
+        (x + layout.origin.0, y + layout.origin.1)
     }
 
     pub fn from_pixel_rounded(layout: &Layout, p: Point) -> Self {
@@ -197,6 +197,14 @@ impl Layout {
         Layout { orientation: orientation.clone(), size, origin }
     }
 
+    pub fn size(&self) -> Point {
+        self.size
+    }
+
+    pub fn origin(&self) -> Point {
+        self.origin
+    }
+
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
         let mut corners = [Point::default(); 6];
         let center = hex.to_pixel(&self);
@@ -209,7 +217,7 @@ impl Layout {
         };
         for i in 0..6 {
             let offset = corner_offset(i as u8);
-            corners[i] = (self.origin.0 + center.0 + offset.0, self.origin.1 + center.1 + offset.1);
+            corners[i] = (center.0 + offset.0, center.1 + offset.1);
         }
         corners
     }

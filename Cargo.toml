@@ -1,9 +1,9 @@
 [package]
 name = "rekee"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Tobias Rapp"]
 edition = "2018"
 
 [dependencies]
 indoc = "1.0.2"
-svg = "0.5.10"
+svg = "0.8.0"
