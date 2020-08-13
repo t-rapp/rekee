@@ -11,6 +11,8 @@ use indoc::indoc;
 use svg::Document;
 use svg::node::element::{Definitions, Group, Image, Polygon, Style, Text, Use};
 
+mod import;
+
 mod hexagon;
 use hexagon::*;
 
@@ -62,6 +64,13 @@ fn use_tile<C>(layout: &Layout, id: &str, hex: C) -> Use
 //----------------------------------------------------------------------------
 
 fn main() -> Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+
+    let tiles = match args.get(1) {
+        Some(val) => import::import_example(val)?,
+        None => Vec::new(),
+    };
+
     let mut document = Document::new()
         .set("width", 600)
         .set("height", 600);
@@ -94,25 +103,21 @@ fn main() -> Result<()> {
         }"));
     document = document.add(style);
 
-    let layout = Layout::new(Orientation::pointy(), (50.0, 50.0), (300.0, 300.0));
+    let layout = Layout::new(Orientation::pointy(), (40.0, 40.0), (300.0, 300.0));
 
-    let defs = Definitions::new()
-        .add(define_tile(&layout, "101a"))
-        .add(define_tile(&layout, "102a"))
-        .add(define_tile(&layout, "103a-1"))
-        .add(define_tile(&layout, "104a-1"))
-        .add(define_tile(&layout, "105a-1"))
-        .add(define_tile(&layout, "106a-1"));
+    let mut defs = Definitions::new();
+    for tile in &tiles {
+        defs = defs.add(define_tile(&layout, &tile.1));
+    }
     document = document.add(defs);
 
     let mut group = Group::new();
+    for tile in &tiles {
+        group = group.add(use_tile(&layout, &tile.1, tile.0));
+    }
 
-    group = group.add(use_tile(&layout, "101a", (0, 0)));
-    group = group.add(use_tile(&layout, "102a", (0, 1)));
-    group = group.add(use_tile(&layout, "103a-1", (0, 2)));
-
-    group = group.add(draw_hexagon(&layout, (0, 0), "hex"));
-    group = group.add(draw_hexagon(&layout, (0, 1), "grid"));
+    //group = group.add(draw_hexagon(&layout, (0, 0), "hex"));
+    //group = group.add(draw_hexagon(&layout, (0, 1), "grid"));
 
     document = document.add(group);
     svg::save("test01.svg", &document)?;

@@ -3,7 +3,7 @@
 // $Id$
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Coordinate {
     q: i32,
     r: i32,
