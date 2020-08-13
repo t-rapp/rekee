@@ -33,7 +33,7 @@ fn draw_hexagon<'a, C, S>(layout: &Layout, hex: C, class: S) -> Polygon
 fn define_tile(layout: &Layout, id: &str) -> Group {
     let size = layout.size();
     let img = Image::new()
-        .set("href", format!("images/thumb-{}.png", id))
+        .set("href", format!("img/thumb-{}.png", id))
         .set("width", 2.0 * size.0)
         .set("height", 2.0 * size.1)
         .set("transform", format!("rotate(-90) translate({:.3} {:.3})", -size.0, -size.1));
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
 
     let style = Style::new(indoc!(r"
         .label {
-            font-family: sans;
+            font-family: sans-serif;
             font-size: 14px;
             font-weight: bold;
             fill: #444;
@@ -99,17 +99,17 @@ fn main() -> Result<()> {
     let defs = Definitions::new()
         .add(define_tile(&layout, "101a"))
         .add(define_tile(&layout, "102a"))
-        .add(define_tile(&layout, "103a"))
-        .add(define_tile(&layout, "104a"))
-        .add(define_tile(&layout, "105a"))
-        .add(define_tile(&layout, "106a"));
+        .add(define_tile(&layout, "103a-1"))
+        .add(define_tile(&layout, "104a-1"))
+        .add(define_tile(&layout, "105a-1"))
+        .add(define_tile(&layout, "106a-1"));
     document = document.add(defs);
 
     let mut group = Group::new();
 
     group = group.add(use_tile(&layout, "101a", (0, 0)));
     group = group.add(use_tile(&layout, "102a", (0, 1)));
-    group = group.add(use_tile(&layout, "103a", (0, 2)));
+    group = group.add(use_tile(&layout, "103a-1", (0, 2)));
 
     group = group.add(draw_hexagon(&layout, (0, 0), "hex"));
     group = group.add(draw_hexagon(&layout, (0, 1), "grid"));
