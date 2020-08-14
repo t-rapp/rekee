@@ -119,6 +119,20 @@ pub enum Direction {
     F,
 }
 
+impl Direction {
+    pub fn to_angle(&self, layout: &Layout) -> f32 {
+        let start_angle = layout.orientation.start_angle * 60.0;
+        match self {
+            Direction::A => start_angle + 0.0,
+            Direction::B => start_angle + 60.0,
+            Direction::C => start_angle + 120.0,
+            Direction::D => start_angle + 180.0,
+            Direction::E => start_angle + 240.0,
+            Direction::F => start_angle + 300.0,
+        }
+    }
+}
+
 impl From<u8> for Direction {
     fn from(value: u8) -> Direction {
         match value % 6 {
@@ -168,7 +182,7 @@ const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
 const LAYOUT_POINTY: Orientation = Orientation {
     f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
     b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
-    start_angle: 0.5,
+    start_angle: -0.5,
 };
 
 const LAYOUT_FLAT: Orientation = Orientation {

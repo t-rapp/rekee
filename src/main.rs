@@ -34,11 +34,12 @@ fn draw_hexagon<'a, C, S>(layout: &Layout, hex: C, class: S) -> Polygon
 
 fn define_tile(layout: &Layout, id: &str) -> Group {
     let size = layout.size();
+    let angle = Direction::A.to_angle(&layout) - 60.0;
     let img = Image::new()
         .set("href", format!("img/thumb-{}.png", id))
         .set("width", 2.0 * size.0)
         .set("height", 2.0 * size.1)
-        .set("transform", format!("rotate(-90) translate({:.3} {:.3})", -size.0, -size.1));
+        .set("transform", format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.0, -size.1));
     let label = Text::new()
         .set("class", "label")
         .set("x", 0)
@@ -61,6 +62,30 @@ fn use_tile<C>(layout: &Layout, id: &str, hex: C) -> Use
         .set("y", pos.1)
 }
 
+fn draw_tile<C>(layout: &Layout, id: &str, hex: C) -> Group
+    where C: Into<Coordinate>
+{
+    let size = layout.size();
+    let angle = Direction::A.to_angle(&layout) - 60.0;
+    let img = Image::new()
+        .set("href", format!("img/thumb-{}.png", id))
+        .set("width", 2.0 * size.0)
+        .set("height", 2.0 * size.1)
+        .set("transform", format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.0, -size.1));
+    let label = Text::new()
+        .set("class", "label")
+        .set("x", 0)
+        .set("y", 0)
+        .add(svg::node::Text::new(id.to_string()));
+    let pos = hex.into().to_pixel(&layout);
+    Group::new()
+        .set("id", id)
+        .set("class", "tile")
+        .set("transform", format!("translate({:.3} {:.3})", pos.0, pos.1))
+        .add(img)
+        .add(label)
+}
+
 //----------------------------------------------------------------------------
 
 fn main() -> Result<()> {
@@ -68,7 +93,11 @@ fn main() -> Result<()> {
 
     let tiles = match args.get(1) {
         Some(val) => import::import_example(val)?,
-        None => Vec::new(),
+        None => vec![
+            ((0, 0).into(), "101a".to_string()),
+            ((0, 1).into(), "102a".to_string()),
+            ((1, 0).into(), "103a-1".to_string()),
+        ],
     };
 
     let mut document = Document::new()
@@ -105,19 +134,22 @@ fn main() -> Result<()> {
 
     let layout = Layout::new(Orientation::pointy(), Point(40.0, 40.0), Point(300.0, 300.0));
 
-    let mut defs = Definitions::new();
-    for tile in &tiles {
-        defs = defs.add(define_tile(&layout, &tile.1));
-    }
+    let defs = Definitions::new();
     document = document.add(defs);
 
     let mut group = Group::new();
-    for tile in &tiles {
-        group = group.add(use_tile(&layout, &tile.1, tile.0));
+    let map_radius = 4;
+    for q in -map_radius..=map_radius {
+        let r1 = i32::max(-map_radius, -q - map_radius);
+        let r2 = i32::min(map_radius, -q + map_radius);
+        for r in r1..=r2 {
+            group = group.add(draw_hexagon(&layout, (q, r), "grid"));
+        }
     }
 
-    //group = group.add(draw_hexagon(&layout, (0, 0), "hex"));
-    //group = group.add(draw_hexagon(&layout, (0, 1), "grid"));
+    for tile in &tiles {
+        group = group.add(draw_tile(&layout, &tile.1, tile.0));
+    }
 
     document = document.add(group);
     svg::save("test01.svg", &document)?;
