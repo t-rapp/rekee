@@ -103,7 +103,7 @@ fn main() -> Result<()> {
         }"));
     document = document.add(style);
 
-    let layout = Layout::new(Orientation::pointy(), (40.0, 40.0), (300.0, 300.0));
+    let layout = Layout::new(Orientation::pointy(), Point(40.0, 40.0), Point(300.0, 300.0));
 
     let mut defs = Definitions::new();
     for tile in &tiles {

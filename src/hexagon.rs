@@ -3,6 +3,10 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+use std::ops::{Add, Sub};
+
+//----------------------------------------------------------------------------
+
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Coordinate {
     q: i32,
@@ -30,12 +34,12 @@ impl Coordinate {
         where T: Into<Direction>
     {
         match dir.into() {
-            Direction::A => Coordinate::new(self.q + 1, self.r),
+            Direction::A => Coordinate::new(self.q + 1, self.r + 0),
             Direction::B => Coordinate::new(self.q + 1, self.r - 1),
-            Direction::C => Coordinate::new(self.q, self.r - 1),
-            Direction::D => Coordinate::new(self.q - 1, self.r),
+            Direction::C => Coordinate::new(self.q + 0, self.r - 1),
+            Direction::D => Coordinate::new(self.q - 1, self.r + 0),
             Direction::E => Coordinate::new(self.q - 1, self.r + 1),
-            Direction::F => Coordinate::new(self.q, self.r + 1),
+            Direction::F => Coordinate::new(self.q + 0, self.r + 1),
         }
     }
 
@@ -43,7 +47,7 @@ impl Coordinate {
         let o = &layout.orientation;
         let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
         let y = (o.f2 * self.q as f32 + o.f3 * self.r as f32) * layout.size.1;
-        (x + layout.origin.0, y + layout.origin.1)
+        layout.origin + Point(x, y)
     }
 
     pub fn from_pixel_rounded(layout: &Layout, p: Point) -> Self {
@@ -124,7 +128,7 @@ impl From<u8> for Direction {
             3 => Direction::D,
             4 => Direction::E,
             5 => Direction::F,
-            _ => panic!(),
+            _ => unreachable!(),
         }
     }
 }
@@ -146,10 +150,12 @@ impl From<Direction> for u8 {
 
 #[derive(Debug, Clone)]
 pub struct Orientation {
+    // coefficients for forward conversion of hex coordinates into pixels
     f0: f32,
     f1: f32,
     f2: f32,
     f3: f32,
+    // coefficients for backward conversion of pixels into hex coordinates
     b0: f32,
     b1: f32,
     b2: f32,
@@ -183,7 +189,40 @@ impl Orientation {
 
 //----------------------------------------------------------------------------
 
-pub type Point = (f32, f32);
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct Point(pub f32, pub f32);
+
+impl Point {
+    fn distance(&self, other: Point) -> f32 {
+        let dx = other.0 - self.0;
+        let dy = other.1 - self.1;
+        (dx * dx + dy * dy).sqrt()
+    }
+}
+
+impl Add for Point {
+    type Output = Self;
+
+    fn add(self, other: Point) -> Point {
+        Point(self.0 + other.0, self.1 + other.1)
+    }
+}
+
+impl Sub for Point {
+    type Output = Self;
+
+    fn sub(self, other: Point) -> Point {
+        Point(self.0 - other.0, self.1 - other.1)
+    }
+}
+
+impl From<(f32, f32)> for Point {
+    fn from(value: (f32, f32)) -> Point {
+        Point(value.0, value.1)
+    }
+}
+
+//----------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
 pub struct Layout {
@@ -217,9 +256,51 @@ impl Layout {
         };
         for i in 0..6 {
             let offset = corner_offset(i as u8);
-            corners[i] = (center.0 + offset.0, center.1 + offset.1);
+            corners[i] = Point(center.0 + offset.0, center.1 + offset.1);
         }
         corners
+    }
+}
+
+//----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EPS: f32 = 0.001;
+
+    #[test]
+    fn hex_to_pixel() {
+        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let p = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(0.0, 0.0).distance(p) < EPS);
+        let p = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(8.660, 15.0).distance(p) < EPS);
+        let p = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(17.321, 0.0).distance(p) < EPS);
+        let p = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(25.981, -15.0).distance(p) < EPS);
+
+        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let p = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(0.0, 10.0).distance(p) < EPS);
+        let p = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(17.321, -20.0).distance(p) < EPS);
+        let p = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(34.641, 10.0).distance(p) < EPS);
+        let p = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(51.962, 40.0).distance(p) < EPS);
+
+        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let p = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(10.0, 0.0).distance(p) < EPS);
+        let p = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(10.0, 34.641).distance(p) < EPS);
+        let p = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(55.0, 17.321).distance(p) < EPS);
+        let p = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(100.0, 0.0).distance(p) < EPS);
     }
 }
 
