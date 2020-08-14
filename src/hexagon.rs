@@ -3,6 +3,8 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+use std::collections::BTreeMap;
+use std::fmt;
 use std::ops::{Add, Sub};
 
 //----------------------------------------------------------------------------
@@ -53,6 +55,12 @@ impl Coordinate {
     pub fn from_pixel_rounded(layout: &Layout, p: Point) -> Self {
         let tmp = FloatCoordinate::from_pixel(layout, p);
         tmp.round()
+    }
+}
+
+impl fmt::Display for Coordinate {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "({}, {})", self.q, self.r)
     }
 }
 
@@ -133,9 +141,29 @@ impl Direction {
     }
 }
 
+impl fmt::Display for Direction {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", ('A' as u8 + u8::from(*self)) as char)
+    }
+}
+
 impl From<u8> for Direction {
     fn from(value: u8) -> Direction {
         match value % 6 {
+            0 => Direction::A,
+            1 => Direction::B,
+            2 => Direction::C,
+            3 => Direction::D,
+            4 => Direction::E,
+            5 => Direction::F,
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl From<i32> for Direction {
+    fn from(value: i32) -> Direction {
+        match value.rem_euclid(6) {
             0 => Direction::A,
             1 => Direction::B,
             2 => Direction::C,
@@ -159,6 +187,16 @@ impl From<Direction> for u8 {
         }
     }
 }
+
+//----------------------------------------------------------------------------
+
+#[derive(Debug, Clone)]
+pub struct PlacedTile {
+    pub dir: Direction,
+    pub tile: String,
+}
+
+pub type Map = BTreeMap<Coordinate, PlacedTile>;
 
 //----------------------------------------------------------------------------
 

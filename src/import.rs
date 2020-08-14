@@ -9,7 +9,7 @@ use std::io::BufReader;
 use serde::Deserialize;
 use serde_json::Result;
 
-use crate::hexagon::Coordinate;
+use crate::hexagon::{Coordinate, Direction, Map, PlacedTile};
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(default)]
@@ -36,42 +36,46 @@ struct ImportTile {
     id: String,
 }
 
-pub fn import_example(filename: &str) -> Result<Vec<(Coordinate, String)>> {
+pub fn import_example(filename: &str) -> Result<Map> {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
     let data: ImportRoot = serde_json::from_reader(reader)?;
     println!("{:?}", data);
 
-    let mut tiles: Vec<_> = data.tiles.iter()
-        .map(|tile| {
-            let q = tile.x - (tile.y - (tile.y & 1)) / 2;
-            let s = tile.y;
-            println!("({}, {}) -> ({}, {}) {}", tile.x, tile.y, s, q, tile.id);
-            (Coordinate::new(s, q), tile.id.clone())
-        })
-        .collect();
+    let mut map = Map::new();
+    for tile in data.tiles {
+        // convert from offset to axial coordinates
+        let q = tile.x - (tile.y - (tile.y & 1)) / 2;
+        let s = tile.y;
+        let pos = Coordinate::new(s, q);
+        let dir = Direction::from(tile.orientation + 1);
+        println!("({}, {}), {} -> {}, {}, {}",
+            tile.x, tile.y, tile.orientation, pos, dir, tile.id);
+        map.insert(pos, PlacedTile { dir, tile: tile.id });
+    }
 
     // realign tiles around center
-    if !tiles.is_empty() {
+    if !map.is_empty() {
         let mut min = (i32::MAX, i32::MAX);
         let mut max = (i32::MIN, i32::MIN);
-        for tile in tiles.iter() {
-            min.0 = min.0.min(tile.0.q());
-            min.1 = min.1.min(tile.0.r());
-            max.0 = max.0.max(tile.0.q());
-            max.1 = max.1.max(tile.0.r());
+        for pos in map.keys() {
+            min.0 = min.0.min(pos.q());
+            min.1 = min.1.min(pos.r());
+            max.0 = max.0.max(pos.q());
+            max.1 = max.1.max(pos.r());
         }
         let center_x = min.0 + (max.0 - min.0) / 2;
         let center_y = min.1 + (max.1 - min.1) / 2;
-        for tile in tiles.iter_mut() {
-            tile.0 = Coordinate::new(tile.0.q() - center_x, tile.0.r() - center_y);
+        let mut centered_map = Map::new();
+        for (pos, tile) in map {
+            let pos = Coordinate::new(pos.q() - center_x, pos.r() - center_y);
+            centered_map.insert(pos, tile);
         }
+        map = centered_map;
     }
+    println!("{:?}", map);
 
-    tiles.sort_unstable();
-    println!("{:?}", tiles);
-
-    Ok(tiles)
+    Ok(map)
 }
 
 //----------------------------------------------------------------------------

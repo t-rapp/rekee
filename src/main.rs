@@ -52,21 +52,23 @@ fn define_tile(layout: &Layout, id: &str) -> Group {
         .add(label)
 }
 
-fn use_tile<C>(layout: &Layout, id: &str, hex: C) -> Use
-    where C: Into<Coordinate>
+fn use_tile<C, D>(layout: &Layout, pos: C, dir: D, id: &str) -> Use
+    where C: Into<Coordinate>, D: Into<Direction>
 {
-    let pos = hex.into().to_pixel(&layout);
+    let pos = pos.into().to_pixel(&layout);
+    let angle = dir.into().to_angle(&layout) - 60.0;
     Use::new()
         .set("href", format!("#{}", id))
         .set("x", pos.0)
         .set("y", pos.1)
+        .set("transform", format!("rotate({:.0} {:.3} {:.3})", angle, pos.0, pos.1))
 }
 
-fn draw_tile<C>(layout: &Layout, id: &str, hex: C) -> Group
-    where C: Into<Coordinate>
+fn draw_tile<C, D>(layout: &Layout, pos: C, dir: D, id: &str) -> Group
+    where C: Into<Coordinate>, D: Into<Direction>
 {
     let size = layout.size();
-    let angle = Direction::A.to_angle(&layout) - 60.0;
+    let angle = dir.into().to_angle(&layout) - 60.0;
     let img = Image::new()
         .set("href", format!("img/thumb-{}.png", id))
         .set("width", 2.0 * size.0)
@@ -77,7 +79,7 @@ fn draw_tile<C>(layout: &Layout, id: &str, hex: C) -> Group
         .set("x", 0)
         .set("y", 0)
         .add(svg::node::Text::new(id.to_string()));
-    let pos = hex.into().to_pixel(&layout);
+    let pos = pos.into().to_pixel(&layout);
     Group::new()
         .set("id", id)
         .set("class", "tile")
@@ -91,14 +93,16 @@ fn draw_tile<C>(layout: &Layout, id: &str, hex: C) -> Group
 fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
 
-    let tiles = match args.get(1) {
+    let mut map = match args.get(1) {
         Some(val) => import::import_example(val)?,
-        None => vec![
-            ((0, 0).into(), "101a".to_string()),
-            ((0, 1).into(), "102a".to_string()),
-            ((1, 0).into(), "103a-1".to_string()),
-        ],
+        None => Map::new(),
     };
+
+    if map.is_empty() {
+        map.insert((0, 0).into(), PlacedTile { dir: Direction::A, tile: "101a".to_string() });
+        map.insert((0, 1).into(), PlacedTile { dir: Direction::A, tile: "102a".to_string() });
+        map.insert((1, 0).into(), PlacedTile { dir: Direction::A, tile: "103a-1".to_string() });
+    }
 
     let mut document = Document::new()
         .set("width", 600)
@@ -147,8 +151,8 @@ fn main() -> Result<()> {
         }
     }
 
-    for tile in &tiles {
-        group = group.add(draw_tile(&layout, &tile.1, tile.0));
+    for (pos, tile) in map {
+        group = group.add(draw_tile(&layout, pos, tile.dir, &tile.tile));
     }
 
     document = document.add(group);
