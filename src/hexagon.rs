@@ -312,6 +312,10 @@ impl Layout {
         Layout { orientation: orientation.clone(), size, origin }
     }
 
+    pub fn orientation(&self) -> &Orientation {
+        &self.orientation
+    }
+
     pub fn size(&self) -> Point {
         self.size
     }

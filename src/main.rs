@@ -18,18 +18,26 @@ use hexagon::*;
 
 //----------------------------------------------------------------------------
 
-fn draw_hexagon<'a, C, S>(layout: &Layout, hex: C, class: S) -> Polygon
-    where C: Into<Coordinate>, S: Into<Option<&'a str>>
+fn define_grid_hex(layout: &Layout) -> Polygon
 {
-    let mut poly = Polygon::new();
-    if let Some(class) = class.into() {
-        poly = poly.set("class", class);
-    }
-    let corners = layout.hexagon_corners(hex.into());
+    let corners = layout.hexagon_corners((0, 0).into());
     let points: Vec<String> = corners.iter()
-        .map(|p| format!("{:.3},{:.3}", p.0, p.1))
+        .map(|p| *p - layout.origin())
+        .map(|p| format!("{},{}", p.x(), p.y()))
         .collect();
-    poly.set("points", points)
+    Polygon::new()
+        .set("id", "hex")
+        .set("points", points)
+}
+
+fn use_grid_hex<C>(layout: &Layout, pos: C) -> Use
+    where C: Into<Coordinate>
+{
+    let pos = pos.into().to_pixel(&layout);
+    Use::new()
+        .set("href", "#hex")
+        .set("x", pos.x())
+        .set("y", pos.y())
 }
 
 fn define_tile(layout: &Layout, id: &str) -> Group {
@@ -120,16 +128,11 @@ fn main() -> Result<()> {
             dominant-baseline: middle;
             text-anchor: middle;
         }
-        .grid {
+        #grid {
             fill: gray;
             fill-opacity: 0.02;
             stroke: gray;
             stroke-width: 0.4;
-        }
-        .hex {
-            fill: none;
-            stroke: blue;
-            stroke-width: 1.4;
         }
         #logo {
             clip-path: polygon(93.3% 75.0%, 50.0% 100.0%, 6.7% 75.0%, 6.7% 25.0%, 50.0% 0.0%, 93.3% 25.0%);
@@ -138,26 +141,30 @@ fn main() -> Result<()> {
 
     let layout = Layout::new(Orientation::pointy(), Point(40.0, 40.0), Point(300.0, 300.0));
 
-    let defs = Definitions::new();
+    let mut defs = Definitions::new();
+    defs = defs.add(define_grid_hex(&layout));
     document = document.add(defs);
 
-    let mut group = Group::new();
+    let mut group = Group::new()
+        .set("id", "grid");
     let map_radius = 4;
     for q in -map_radius..=map_radius {
         let r1 = i32::max(-map_radius, -q - map_radius);
         let r2 = i32::min(map_radius, -q + map_radius);
         for r in r1..=r2 {
-            group = group.add(draw_hexagon(&layout, (q, r), "grid"));
+            group = group.add(use_grid_hex(&layout, (q, r)));
         }
     }
+    document = document.add(group);
 
+    let mut group = Group::new()
+        .set("id", "tiles");
     for (pos, tile) in map {
         group = group.add(draw_tile(&layout, pos, tile.dir, &tile.tile));
     }
-
     document = document.add(group);
-    svg::save("test01.svg", &document)?;
 
+    svg::save("test01.svg", &document)?;
     Ok(())
 }
 
