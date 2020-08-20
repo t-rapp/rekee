@@ -9,7 +9,7 @@ use std::io::BufReader;
 use serde::Deserialize;
 use serde_json::Result;
 
-use crate::hexagon::{Coordinate, Direction, Map, PlacedTile};
+use crate::hexagon::*;
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(default)]
@@ -56,19 +56,22 @@ pub fn import_example(filename: &str) -> Result<Map> {
 
     // realign tiles around center
     if !map.is_empty() {
-        let mut min = (i32::MAX, i32::MAX);
-        let mut max = (i32::MIN, i32::MIN);
+        let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+        let mut min = (f32::MAX, f32::MAX);
+        let mut max = (f32::MIN, f32::MIN);
         for pos in map.keys() {
-            min.0 = min.0.min(pos.q());
-            min.1 = min.1.min(pos.r());
-            max.0 = max.0.max(pos.q());
-            max.1 = max.1.max(pos.r());
+            let p = pos.to_pixel(&layout);
+            min.0 = min.0.min(p.x());
+            min.1 = min.1.min(p.y());
+            max.0 = max.0.max(p.x());
+            max.1 = max.1.max(p.y());
         }
-        let center_x = min.0 + (max.0 - min.0) / 2;
-        let center_y = min.1 + (max.1 - min.1) / 2;
+        let center_x = min.0 + (max.0 - min.0) / 2.0;
+        let center_y = min.1 + (max.1 - min.1) / 2.0;
+        let center = Coordinate::from_pixel_rounded(&layout, Point(center_x, center_y));
         let mut centered_map = Map::new();
         for (pos, tile) in map {
-            let pos = Coordinate::new(pos.q() - center_x, pos.r() - center_y);
+            let pos = pos - center;
             centered_map.insert(pos, tile);
         }
         map = centered_map;

@@ -64,6 +64,22 @@ impl fmt::Display for Coordinate {
     }
 }
 
+impl Add for Coordinate {
+    type Output = Self;
+
+    fn add(self, other: Coordinate) -> Coordinate {
+        Coordinate::new(self.q + other.q, self.r + other.r)
+    }
+}
+
+impl Sub for Coordinate {
+    type Output = Self;
+
+    fn sub(self, other: Coordinate) -> Coordinate {
+        Coordinate::new(self.q - other.q, self.r - other.r)
+    }
+}
+
 impl From<(i32, i32)> for Coordinate {
     fn from(value: (i32, i32)) -> Coordinate {
         Coordinate { q: value.0, r: value.1 }
@@ -245,7 +261,15 @@ impl Orientation {
 pub struct Point(pub f32, pub f32);
 
 impl Point {
-    fn distance(&self, other: Point) -> f32 {
+    pub fn x(&self) -> f32 {
+        self.0
+    }
+
+    pub fn y(&self) -> f32 {
+        self.1
+    }
+
+    pub fn distance(&self, other: Point) -> f32 {
         let dx = other.0 - self.0;
         let dy = other.1 - self.1;
         (dx * dx + dy * dy).sqrt()
