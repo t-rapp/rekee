@@ -16,6 +16,8 @@ mod import;
 mod hexagon;
 use hexagon::*;
 
+mod tile;
+
 //----------------------------------------------------------------------------
 
 fn define_grid_hex(layout: &Layout) -> Polygon
