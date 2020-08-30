@@ -491,59 +491,42 @@ mod tests {
 
     #[test]
     fn layout_hexagon_corners() {
+        let points_to_string = |points: &[Point]| -> String {
+            let s: Vec<String> = points.iter()
+                .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
+                .collect();
+            s.join(", ")
+        };
+
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        let corners: Vec<String> = layout.hexagon_corners((0, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(8.7, -5.0), (8.7, 5.0), (-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((0, 1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(17.3, 10.0), (17.3, 20.0), (8.7, 25.0), (-0.0, 20.0), (0.0, 10.0), (8.7, 5.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((1, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(26.0, -5.0), (26.0, 5.0), (17.3, 10.0), (8.7, 5.0), (8.7, -5.0), (17.3, -10.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((2, -1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(34.6, -20.0), (34.6, -10.0), (26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0)", corners.join(", "));
+        let corners = layout.hexagon_corners((0, 0).into());
+        assert_eq!("(8.7, -5.0), (8.7, 5.0), (-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((0, 1).into());
+        assert_eq!("(17.3, 10.0), (17.3, 20.0), (8.7, 25.0), (-0.0, 20.0), (0.0, 10.0), (8.7, 5.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((1, 0).into());
+        assert_eq!("(26.0, -5.0), (26.0, 5.0), (17.3, 10.0), (8.7, 5.0), (8.7, -5.0), (17.3, -10.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((2, -1).into());
+        assert_eq!("(34.6, -20.0), (34.6, -10.0), (26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0)", points_to_string(&corners));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        let corners: Vec<String> = layout.hexagon_corners((0, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(17.3, 20.0), (17.3, 0.0), (-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((0, 1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(34.6, -10.0), (34.6, -30.0), (17.3, -40.0), (-0.0, -30.0), (0.0, -10.0), (17.3, 0.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((1, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(52.0, 20.0), (52.0, 0.0), (34.6, -10.0), (17.3, 0.0), (17.3, 20.0), (34.6, 30.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((2, -1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(69.3, 50.0), (69.3, 30.0), (52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0)", corners.join(", "));
+        let corners = layout.hexagon_corners((0, 0).into());
+        assert_eq!("(17.3, 20.0), (17.3, 0.0), (-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((0, 1).into());
+        assert_eq!("(34.6, -10.0), (34.6, -30.0), (17.3, -40.0), (-0.0, -30.0), (0.0, -10.0), (17.3, 0.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((1, 0).into());
+        assert_eq!("(52.0, 20.0), (52.0, 0.0), (34.6, -10.0), (17.3, 0.0), (17.3, 20.0), (34.6, 30.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((2, -1).into());
+        assert_eq!("(69.3, 50.0), (69.3, 30.0), (52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0)", points_to_string(&corners));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        let corners: Vec<String> = layout.hexagon_corners((0, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((0, 1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(40.0, 34.6), (25.0, 52.0), (-5.0, 52.0), (-20.0, 34.6), (-5.0, 17.3), (25.0, 17.3)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((1, 0).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(85.0, 17.3), (70.0, 34.6), (40.0, 34.6), (25.0, 17.3), (40.0, -0.0), (70.0, 0.0)", corners.join(", "));
-        let corners: Vec<String> = layout.hexagon_corners((2, -1).into()).iter()
-            .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-            .collect();
-        assert_eq!("(130.0, 0.0), (115.0, 17.3), (85.0, 17.3), (70.0, -0.0), (85.0, -17.3), (115.0, -17.3)", corners.join(", "));
+        let corners = layout.hexagon_corners((0, 0).into());
+        assert_eq!("(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((0, 1).into());
+        assert_eq!("(40.0, 34.6), (25.0, 52.0), (-5.0, 52.0), (-20.0, 34.6), (-5.0, 17.3), (25.0, 17.3)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((1, 0).into());
+        assert_eq!("(85.0, 17.3), (70.0, 34.6), (40.0, 34.6), (25.0, 17.3), (40.0, -0.0), (70.0, 0.0)", points_to_string(&corners));
+        let corners = layout.hexagon_corners((2, -1).into());
+        assert_eq!("(130.0, 0.0), (115.0, 17.3), (85.0, 17.3), (70.0, -0.0), (85.0, -17.3), (115.0, -17.3)", points_to_string(&corners));
     }
 }
 
