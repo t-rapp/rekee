@@ -3,7 +3,6 @@
 // $Id$
 //----------------------------------------------------------------------------
 
-use std::collections::BTreeMap;
 use std::fmt;
 use std::ops::{Add, Sub};
 
@@ -203,16 +202,6 @@ impl From<Direction> for u8 {
         }
     }
 }
-
-//----------------------------------------------------------------------------
-
-#[derive(Debug, Clone)]
-pub struct PlacedTile {
-    pub dir: Direction,
-    pub tile: String,
-}
-
-pub type Map = BTreeMap<Coordinate, PlacedTile>;
 
 //----------------------------------------------------------------------------
 

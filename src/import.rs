@@ -10,6 +10,9 @@ use serde::Deserialize;
 use serde_json::Result;
 
 use crate::hexagon::*;
+use crate::tile::*;
+
+//----------------------------------------------------------------------------
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(default)]
@@ -48,10 +51,12 @@ pub fn import_example(filename: &str) -> Result<Map> {
         let q = tile.x - (tile.y - (tile.y & 1)) / 2;
         let s = tile.y;
         let pos = Coordinate::new(s, q);
+        let id = tile.id.parse::<TileId>()
+            .unwrap_or_default();
         let dir = Direction::from(tile.orientation + 1);
-        println!("({}, {}), {} -> {}, {}, {}",
-            tile.x, tile.y, tile.orientation, pos, dir, tile.id);
-        map.insert(pos, PlacedTile { dir, tile: tile.id });
+        println!("({}, {}), {}, {} -> {}, {}, {}",
+            tile.x, tile.y, tile.id, tile.orientation, pos, id, dir);
+        map.insert(pos, PlacedTile { id, dir });
     }
 
     // realign tiles around center
