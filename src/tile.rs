@@ -3,12 +3,11 @@
 // $Id$
 //----------------------------------------------------------------------------
 
-use std::collections::BTreeMap;
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use crate::hexagon::{Coordinate, Direction};
+use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
 //----------------------------------------------------------------------------
 
@@ -91,13 +90,55 @@ macro_rules! tile {
 
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PlacedTile {
     pub id: TileId,
+    pub pos: Coordinate,
     pub dir: Direction,
 }
 
-pub type Map = BTreeMap<Coordinate, PlacedTile>;
+#[derive(Debug, Clone)]
+pub struct Map {
+    tiles: Vec<PlacedTile>,
+}
+
+impl Map {
+    pub fn new() -> Self {
+        let tiles = Vec::new();
+        Map { tiles }
+    }
+
+    pub fn tiles(&self) -> &[PlacedTile] {
+        &self.tiles
+    }
+
+    pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
+        self.tiles.retain(|tile| tile.pos != pos);
+        self.tiles.push(PlacedTile { id, pos, dir });
+    }
+
+    pub fn align_center(&mut self) {
+        if self.tiles.is_empty() {
+            return;
+        }
+        let layout = Layout::default();
+        let mut min = (f32::MAX, f32::MAX);
+        let mut max = (f32::MIN, f32::MIN);
+        for tile in self.tiles.iter() {
+            let p = tile.pos.to_pixel(&layout);
+            min.0 = min.0.min(p.x());
+            min.1 = min.1.min(p.y());
+            max.0 = max.0.max(p.x());
+            max.1 = max.1.max(p.y());
+        }
+        let center_x = min.0 + (max.0 - min.0) / 2.0;
+        let center_y = min.1 + (max.1 - min.1) / 2.0;
+        let center = Coordinate::from_pixel_rounded(&layout, Point(center_x, center_y));
+        for tile in self.tiles.iter_mut() {
+            tile.pos = tile.pos - center;
+        }
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -213,6 +254,41 @@ mod tests {
 
         assert!("".parse::<TileId>().is_err());
         assert!("101x".parse::<TileId>().is_err());
+    }
+
+    #[test]
+    fn map_align_center() {
+        let mut map = Map::new();
+        map.align_center();
+        let mut tiles = map.tiles().iter();
+        assert_eq!(None, tiles.next());
+
+        let mut map = Map::new();
+        map.insert(tile!(102, b, 0), (6, -1).into(), Direction::E);
+        map.insert(tile!(104, b, 1), (6,  0).into(), Direction::B);
+        map.insert(tile!(113, b, 0), (6,  1).into(), Direction::E);
+        map.insert(tile!(117, b, 1), (5,  2).into(), Direction::F);
+        map.insert(tile!(114, b, 0), (4,  2).into(), Direction::A);
+        map.insert(tile!(115, b, 1), (5,  1).into(), Direction::E);
+        map.insert(tile!(115, b, 2), (5,  0).into(), Direction::D);
+        map.insert(tile!(108, b, 0), (4,  0).into(), Direction::A);
+        map.insert(tile!(110, b, 0), (5, -1).into(), Direction::C);
+        map.insert(tile!(107, b, 1), (6, -2).into(), Direction::C);
+        map.insert(tile!(101, b, 0), (4,  1).into(), Direction::E);
+        map.align_center();
+        let mut tiles = map.tiles().iter();
+        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 1, -1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 1,  0).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: ( 1,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: ( 0,  2).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-1,  2).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: ( 0,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 0, -1).into(), dir: Direction::C }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 1, -2).into(), dir: Direction::C }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(101, b, 0), pos: (-1,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(None, tiles.next());
     }
 
     #[test]

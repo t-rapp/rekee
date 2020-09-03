@@ -56,31 +56,9 @@ pub fn import_example(filename: &str) -> Result<Map> {
         let dir = Direction::from(tile.orientation + 1);
         println!("({}, {}), {}, {} -> {}, {}, {}",
             tile.x, tile.y, tile.id, tile.orientation, pos, id, dir);
-        map.insert(pos, PlacedTile { id, dir });
+        map.insert(id, pos, dir);
     }
-
-    // realign tiles around center
-    if !map.is_empty() {
-        let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
-        let mut min = (f32::MAX, f32::MAX);
-        let mut max = (f32::MIN, f32::MIN);
-        for pos in map.keys() {
-            let p = pos.to_pixel(&layout);
-            min.0 = min.0.min(p.x());
-            min.1 = min.1.min(p.y());
-            max.0 = max.0.max(p.x());
-            max.1 = max.1.max(p.y());
-        }
-        let center_x = min.0 + (max.0 - min.0) / 2.0;
-        let center_y = min.1 + (max.1 - min.1) / 2.0;
-        let center = Coordinate::from_pixel_rounded(&layout, Point(center_x, center_y));
-        let mut centered_map = Map::new();
-        for (pos, tile) in map {
-            let pos = pos - center;
-            centered_map.insert(pos, tile);
-        }
-        map = centered_map;
-    }
+    map.align_center();
     println!("{:?}", map);
 
     Ok(map)

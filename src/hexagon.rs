@@ -331,6 +331,12 @@ impl Layout {
     }
 }
 
+impl Default for Layout {
+    fn default() -> Self {
+        Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0))
+    }
+}
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]

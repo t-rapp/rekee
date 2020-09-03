@@ -64,7 +64,7 @@ fn define_tile(layout: &Layout, id: TileId) -> Group {
         .add(label)
 }
 
-fn use_tile<C, D>(layout: &Layout, pos: C, dir: D, id: TileId) -> Use
+fn use_tile<C, D>(layout: &Layout, id: TileId, pos: C, dir: D) -> Use
     where C: Into<Coordinate>, D: Into<Direction>
 {
     let pos = pos.into().to_pixel(&layout);
@@ -76,7 +76,7 @@ fn use_tile<C, D>(layout: &Layout, pos: C, dir: D, id: TileId) -> Use
         .set("transform", format!("rotate({:.0} {:.3} {:.3})", angle, pos.0, pos.1))
 }
 
-fn draw_tile<C, D>(layout: &Layout, pos: C, dir: D, id: TileId) -> Group
+fn draw_tile<C, D>(layout: &Layout, id: TileId, pos: C, dir: D) -> Group
     where C: Into<Coordinate>, D: Into<Direction>
 {
     let size = layout.size();
@@ -105,15 +105,13 @@ fn draw_tile<C, D>(layout: &Layout, pos: C, dir: D, id: TileId) -> Group
 fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
 
-    let mut map = match args.get(1) {
-        Some(val) => import::import_example(val)?,
-        None => Map::new(),
-    };
-
-    if map.is_empty() {
-        map.insert((0, 0).into(), PlacedTile { id: tile!(101, a), dir: Direction::A  });
-        map.insert((0, 1).into(), PlacedTile { id: tile!(102, a), dir: Direction::A });
-        map.insert((1, 0).into(), PlacedTile { id: tile!(103, a, 1), dir: Direction::A });
+    let mut map = Map::new();
+    if let Some(file) = args.get(1) {
+        map = import::import_example(file)?;
+    } else {
+        map.insert(tile!(101, a), (0, 0).into(), Direction::A);
+        map.insert(tile!(102, a), (0, 1).into(), Direction::A);
+        map.insert(tile!(103, a, 1), (1, 0).into(), Direction::A);
     }
 
     let mut document = Document::new()
@@ -163,8 +161,8 @@ fn main() -> Result<()> {
 
     let mut group = Group::new()
         .set("id", "tiles");
-    for (pos, tile) in map {
-        group = group.add(draw_tile(&layout, pos, tile.dir, tile.id));
+    for tile in map.tiles() {
+        group = group.add(draw_tile(&layout, tile.id, tile.pos, tile.dir));
     }
     document = document.add(group);
 
