@@ -56,7 +56,7 @@ fn define_tile(layout: &Layout, id: TileId) -> Group {
         .set("class", "label")
         .set("x", 0)
         .set("y", 0)
-        .add(svg::node::Text::new(id.to_string()));
+        .add(svg::node::Text::new(id.base().to_string()));
     Group::new()
         .set("id", id.to_string())
         .set("class", "tile")
@@ -90,7 +90,7 @@ fn draw_tile<C, D>(layout: &Layout, pos: C, dir: D, id: TileId) -> Group
         .set("class", "label")
         .set("x", 0)
         .set("y", 0)
-        .add(svg::node::Text::new(id.to_string()));
+        .add(svg::node::Text::new(id.base().to_string()));
     let pos = pos.into().to_pixel(&layout);
     Group::new()
         .set("id", id.to_string())

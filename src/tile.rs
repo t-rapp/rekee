@@ -23,6 +23,15 @@ impl TileId {
     pub const fn new(num: u16, side: u8, var: u8) -> Self {
         TileId { num, side, var }
     }
+
+    pub fn base(&self) -> Self {
+        let side = match self.num {
+            // pitstop tile is the same on front and back
+            101 => 0,
+            _ => self.side,
+        };
+        TileId { num: self.num, side, var: 0 }
+    }
 }
 
 impl fmt::Display for TileId {
@@ -179,15 +188,23 @@ mod tests {
 
     #[test]
     fn id_to_str() {
+        assert_eq!("0", TileId::default().to_string());
         assert_eq!("101", TileId::new(101, 0, 0).to_string());
         assert_eq!("102a", TileId::new(102, 1, 0).to_string());
         assert_eq!("102b", TileId::new(102, 2, 0).to_string());
         assert_eq!("103a-1", TileId::new(103, 1, 1).to_string());
         assert_eq!("103b-3", TileId::new(103, 2, 3).to_string());
+
+        assert_eq!("101", TileId::new(101, 0, 0).base().to_string());
+        assert_eq!("101", TileId::new(101, 1, 0).base().to_string());
+        assert_eq!("102a", TileId::new(102, 1, 0).base().to_string());
+        assert_eq!("102b", TileId::new(102, 2, 0).base().to_string());
+        assert_eq!("104a", TileId::new(104, 1, 2).base().to_string());
     }
 
     #[test]
     fn id_from_str() {
+        assert_eq!(Ok(TileId::new(0, 0, 0)), "0".parse::<TileId>());
         assert_eq!(Ok(TileId::new(101, 0, 0)), "101".parse::<TileId>());
         assert_eq!(Ok(TileId::new(102, 1, 0)), "102a".parse::<TileId>());
         assert_eq!(Ok(TileId::new(102, 2, 0)), "102b".parse::<TileId>());
