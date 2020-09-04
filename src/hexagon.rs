@@ -162,6 +162,26 @@ impl fmt::Display for Direction {
     }
 }
 
+impl Add for Direction {
+    type Output = Self;
+
+    fn add(self, other: Direction) -> Direction {
+        let a = u8::from(self);
+        let b = u8::from(other);
+        (a + b).into()
+    }
+}
+
+impl Sub for Direction {
+    type Output = Self;
+
+    fn sub(self, other: Direction) -> Direction {
+        let a = u8::from(self);
+        let b = u8::from(other);
+        (6 + a - b).into()
+    }
+}
+
 impl From<u8> for Direction {
     fn from(value: u8) -> Direction {
         match value % 6 {
@@ -433,6 +453,28 @@ mod tests {
         assert_eq!(Coordinate::new(1, 0), pos);
         let pos = Coordinate::from_pixel_rounded(&layout, Point(92.4, 4.0));
         assert_eq!(Coordinate::new(2, -1), pos);
+    }
+
+    #[test]
+    fn direction_add() {
+        let dir = Direction::A;
+        assert_eq!(Direction::B, dir + 1.into());
+        assert_eq!(Direction::D, dir + 3.into());
+
+        let dir = Direction::E;
+        assert_eq!(Direction::F, dir + 1.into());
+        assert_eq!(Direction::B, dir + 3.into());
+    }
+
+    #[test]
+    fn direction_sub() {
+        let dir = Direction::A;
+        assert_eq!(Direction::F, dir - 1.into());
+        assert_eq!(Direction::D, dir - 3.into());
+
+        let dir = Direction::E;
+        assert_eq!(Direction::D, dir - 1.into());
+        assert_eq!(Direction::B, dir - 3.into());
     }
 
     #[test]
