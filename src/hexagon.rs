@@ -44,6 +44,18 @@ impl Coordinate {
         }
     }
 
+    pub fn rotated_left(&self) -> Self {
+        let q = -self.s();
+        let r = -self.q();
+        Coordinate { q, r }
+    }
+
+    pub fn rotated_right(&self) -> Self {
+        let q = -self.r();
+        let r = -self.s();
+        Coordinate { q, r }
+    }
+
     pub fn to_pixel(&self, layout: &Layout) -> Point {
         let o = &layout.orientation;
         let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
@@ -143,6 +155,14 @@ pub enum Direction {
 }
 
 impl Direction {
+    pub fn rotated_left(&self) -> Self {
+        *self - 1.into()
+    }
+
+    pub fn rotated_right(&self) -> Self {
+        *self + 1.into()
+    }
+
     pub fn to_angle(&self, layout: &Layout) -> f32 {
         let start_angle = layout.orientation.start_angle * 60.0;
         match self {

@@ -23,6 +23,18 @@ impl TileId {
         TileId { num, side, var }
     }
 
+    pub fn num(&self) -> u16 {
+        self.num
+    }
+
+    pub fn side(&self) -> u8 {
+        self.side
+    }
+
+    pub fn var(&self) -> u8 {
+        self.var
+    }
+
     pub fn base(&self) -> Self {
         let side = match self.num {
             // pitstop tile is the same on front and back
@@ -136,6 +148,20 @@ impl Map {
         let center = Coordinate::from_pixel_rounded(&layout, Point(center_x, center_y));
         for tile in self.tiles.iter_mut() {
             tile.pos = tile.pos - center;
+        }
+    }
+
+    pub fn rotate_left(&mut self) {
+        for tile in self.tiles.iter_mut() {
+            tile.pos = tile.pos.rotated_left();
+            tile.dir = tile.dir.rotated_left();
+        }
+    }
+
+    pub fn rotate_right(&mut self) {
+        for tile in self.tiles.iter_mut() {
+            tile.pos = tile.pos.rotated_right();
+            tile.dir = tile.dir.rotated_right();
         }
     }
 }
@@ -274,7 +300,7 @@ mod tests {
         map.insert(tile!(108, b, 0), (4,  0).into(), Direction::A);
         map.insert(tile!(110, b, 0), (5, -1).into(), Direction::C);
         map.insert(tile!(107, b, 1), (6, -2).into(), Direction::C);
-        map.insert(tile!(101, b, 0), (4,  1).into(), Direction::E);
+        map.insert(tile!(101, a, 0), (4,  1).into(), Direction::E);
         map.align_center();
         let mut tiles = map.tiles().iter();
         assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 1, -1).into(), dir: Direction::E }), tiles.next());
@@ -287,7 +313,67 @@ mod tests {
         assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
         assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 0, -1).into(), dir: Direction::C }), tiles.next());
         assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 1, -2).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(101, b, 0), pos: (-1,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn map_rotate_left() {
+        let mut map = Map::new();
+        map.insert(tile!(102, b, 0), ( 1, -1).into(), Direction::E);
+        map.insert(tile!(104, b, 1), ( 1,  0).into(), Direction::B);
+        map.insert(tile!(113, b, 0), ( 1,  1).into(), Direction::E);
+        map.insert(tile!(117, b, 1), ( 0,  2).into(), Direction::F);
+        map.insert(tile!(114, b, 0), (-1,  2).into(), Direction::A);
+        map.insert(tile!(115, b, 1), ( 0,  1).into(), Direction::E);
+        map.insert(tile!(115, b, 2), ( 0,  0).into(), Direction::D);
+        map.insert(tile!(108, b, 0), (-1,  0).into(), Direction::A);
+        map.insert(tile!(110, b, 0), ( 0, -1).into(), Direction::C);
+        map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
+        map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
+        map.rotate_left();
+        let mut tiles = map.tiles().iter();
+        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 0, -1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 1, -1).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: ( 2,  0).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: ( 1,  1).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: ( 1,  0).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::C }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: (-1,  1).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: (-1,  0).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: (-1, -1).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: ( 0,  1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn map_rotate_right() {
+        let mut map = Map::new();
+        map.insert(tile!(102, b, 0), ( 1, -1).into(), Direction::E);
+        map.insert(tile!(104, b, 1), ( 1,  0).into(), Direction::B);
+        map.insert(tile!(113, b, 0), ( 1,  1).into(), Direction::E);
+        map.insert(tile!(117, b, 1), ( 0,  2).into(), Direction::F);
+        map.insert(tile!(114, b, 0), (-1,  2).into(), Direction::A);
+        map.insert(tile!(115, b, 1), ( 0,  1).into(), Direction::E);
+        map.insert(tile!(115, b, 2), ( 0,  0).into(), Direction::D);
+        map.insert(tile!(108, b, 0), (-1,  0).into(), Direction::A);
+        map.insert(tile!(110, b, 0), ( 0, -1).into(), Direction::C);
+        map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
+        map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
+        map.rotate_right();
+        let mut tiles = map.tiles().iter();
+        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 1,  0).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 0,  1).into(), dir: Direction::C }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: (-1,  2).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: (-2,  2).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-2,  1).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: (-1,  1).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: ( 0, -1).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 1, -1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  0).into(), dir: Direction::F }), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
