@@ -86,6 +86,9 @@ impl FromStr for TileId {
 }
 
 macro_rules! tile {
+    ($num:literal) => {
+        crate::tile::TileId::new($num, 0, 0)
+    };
     ($num:literal, a) => {
         crate::tile::TileId::new($num, 1, 0)
     };
@@ -168,11 +171,34 @@ impl Map {
 
 //----------------------------------------------------------------------------
 
+#[derive(Debug, Clone, Copy)]
+enum Connection {
+    None,
+    Straight(i8),
+    Left(i8),
+    Right(i8),
+    JunctionLeft(i8, i8),
+    JunctionRight(i8, i8),
+}
+
+impl Default for Connection {
+    fn default() -> Self {
+        Connection::None
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct TileInfo {
     id: TileId,
+    conn: [Connection; 6],
 }
 
 impl TileInfo {
+    const fn new(id: TileId, conn: [Connection; 6]) -> Self {
+        TileInfo { id, conn }
+    }
+
     fn get(id: TileId) -> Option<&'static Self> {
         let idx = TILE_INFOS.binary_search_by_key(&id, |info| info.id);
         match idx {
@@ -190,61 +216,135 @@ impl fmt::Display for TileInfo {
 
 //----------------------------------------------------------------------------
 
-const TILE_INFOS: [TileInfo; 107] = [
-    TileInfo { id: tile!{101, a} },
-    TileInfo { id: tile!{102, a} }, TileInfo { id: tile!{102, b} },
-    TileInfo { id: tile!{103, a} }, TileInfo { id: tile!{103, b} },
-    TileInfo { id: tile!{104, a} }, TileInfo { id: tile!{104, b} },
-    TileInfo { id: tile!{105, a} }, TileInfo { id: tile!{105, b} },
-    TileInfo { id: tile!{106, a} }, TileInfo { id: tile!{106, b} },
-    TileInfo { id: tile!{107, a} }, TileInfo { id: tile!{107, b} },
-    TileInfo { id: tile!{108, a} }, TileInfo { id: tile!{108, b} },
-    TileInfo { id: tile!{109, a} }, TileInfo { id: tile!{109, b} },
-    TileInfo { id: tile!{110, a} }, TileInfo { id: tile!{110, b} },
-    TileInfo { id: tile!{111, a} }, TileInfo { id: tile!{111, b} },
-    TileInfo { id: tile!{112, a} }, TileInfo { id: tile!{112, b} },
-    TileInfo { id: tile!{113, a} }, TileInfo { id: tile!{113, b} },
-    TileInfo { id: tile!{114, a} }, TileInfo { id: tile!{114, b} },
-    TileInfo { id: tile!{115, a} }, TileInfo { id: tile!{115, b} },
-    TileInfo { id: tile!{116, a} }, TileInfo { id: tile!{116, b} },
-    TileInfo { id: tile!{117, a} }, TileInfo { id: tile!{117, b} },
-    TileInfo { id: tile!{118, a} }, TileInfo { id: tile!{118, b} },
-    TileInfo { id: tile!{119, a} }, TileInfo { id: tile!{119, b} },
-    TileInfo { id: tile!{120, a} }, TileInfo { id: tile!{120, b} },
-    TileInfo { id: tile!{121, a} }, TileInfo { id: tile!{121, b} },
-    TileInfo { id: tile!{122, a} }, TileInfo { id: tile!{122, b} },
-    TileInfo { id: tile!{123, a} }, TileInfo { id: tile!{123, b} },
-    TileInfo { id: tile!{124, a} }, TileInfo { id: tile!{124, b} },
-    TileInfo { id: tile!{125, a} }, TileInfo { id: tile!{125, b} },
-    TileInfo { id: tile!{126, a} }, TileInfo { id: tile!{126, b} },
-    TileInfo { id: tile!{127, a} }, TileInfo { id: tile!{127, b} },
-    TileInfo { id: tile!{128, a} }, TileInfo { id: tile!{128, b} },
-    TileInfo { id: tile!{129, a} }, TileInfo { id: tile!{129, b} },
-    TileInfo { id: tile!{130, a} }, TileInfo { id: tile!{130, b} },
-    TileInfo { id: tile!{131, a} }, TileInfo { id: tile!{131, b} },
-    TileInfo { id: tile!{132, a} }, TileInfo { id: tile!{132, b} },
-    TileInfo { id: tile!{133, a} }, TileInfo { id: tile!{133, b} },
-    TileInfo { id: tile!{134, a} }, TileInfo { id: tile!{134, b} },
-    TileInfo { id: tile!{135, a} }, TileInfo { id: tile!{135, b} },
-    TileInfo { id: tile!{136, a} }, TileInfo { id: tile!{136, b} },
-    TileInfo { id: tile!{137, a} }, TileInfo { id: tile!{137, b} },
-    TileInfo { id: tile!{138, a} }, TileInfo { id: tile!{138, b} },
-    TileInfo { id: tile!{139, a} }, TileInfo { id: tile!{139, b} },
-    TileInfo { id: tile!{140, a} }, TileInfo { id: tile!{140, b} },
-    TileInfo { id: tile!{141, a} }, TileInfo { id: tile!{141, b} },
-    TileInfo { id: tile!{142, a} }, TileInfo { id: tile!{142, b} },
-    TileInfo { id: tile!{143, a} }, TileInfo { id: tile!{143, b} },
-    TileInfo { id: tile!{144, a} }, TileInfo { id: tile!{144, b} },
-    TileInfo { id: tile!{145, a} }, TileInfo { id: tile!{145, b} },
-    TileInfo { id: tile!{146, a} }, TileInfo { id: tile!{146, b} },
-    TileInfo { id: tile!{147, a} }, TileInfo { id: tile!{147, b} },
-    TileInfo { id: tile!{148, a} }, TileInfo { id: tile!{148, b} },
-    TileInfo { id: tile!{149, a} }, TileInfo { id: tile!{149, b} },
-    TileInfo { id: tile!{150, a} }, TileInfo { id: tile!{150, b} },
-    TileInfo { id: tile!{151, a} }, TileInfo { id: tile!{151, b} },
-    TileInfo { id: tile!{152, a} }, TileInfo { id: tile!{152, b} },
-    TileInfo { id: tile!{153, a} }, TileInfo { id: tile!{153, b} },
-    TileInfo { id: tile!{154, a} }, TileInfo { id: tile!{154, b} },
+const N: Connection = Connection::None;
+const S0: Connection = Connection::Straight(0);
+const S1P: Connection = Connection::Straight(1);
+const S1M: Connection = Connection::Straight(-1);
+const L0: Connection = Connection::Left(0);
+const L1: Connection = Connection::Left(1);
+const L2: Connection = Connection::Left(2);
+const R0: Connection = Connection::Right(0);
+const R1: Connection = Connection::Right(1);
+const R2: Connection = Connection::Right(2);
+const JS0L1: Connection = Connection::JunctionLeft(0, 1);
+const JS0L2: Connection = Connection::JunctionLeft(0, 1);
+const JS0R1: Connection = Connection::JunctionRight(0, 1);
+const JS0R2: Connection = Connection::JunctionRight(0, 2);
+const JL1R2: Connection = Connection::JunctionLeft(1, -2);
+const JR1L2: Connection = Connection::JunctionRight(1, -2);
+#[deprecated]
+const X: Connection = Connection::None;
+
+const TILE_INFOS: [TileInfo; 109] = [
+    TileInfo::new(tile!{101},    [N, N, N, N, N, N]),
+    TileInfo::new(tile!{102, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{102, b}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{103, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{103, b}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{104, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{104, b}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{105, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{105, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{106, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{106, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{107, a}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{107, b}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{108, a}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{108, b}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{109, a}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{109, b}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{110, a}, [R0, N, N, L0, N, N]),
+    TileInfo::new(tile!{110, b}, [R0, N, N, L0, N, N]),
+    TileInfo::new(tile!{111, a}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{111, b}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{112, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{112, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{113, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{113, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{114, a}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{114, b}, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{115, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{115, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{116, a}, [R0, N, N, L0, N, N]),
+    TileInfo::new(tile!{116, b}, [R0, N, N, L0, N, N]),
+    TileInfo::new(tile!{117, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{117, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{118, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{118, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{119, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{119, b}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{120, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{120, b}, [N, N, N, L1, N, R1]),
+    TileInfo::new(tile!{121, a}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{121, b}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{122, a}, [N, N, N, N, L2, R2]),
+    TileInfo::new(tile!{122, b}, [N, N, N, N, L2, R2]),
+    TileInfo::new(tile!{123, a}, [N, L2, R2, N, N, N]),
+    TileInfo::new(tile!{123, b}, [N, L2, R2, N, N, N]),
+    TileInfo::new(tile!{124, a}, [L1, N, R1, N, N, N]),
+    TileInfo::new(tile!{124, b}, [L1, N, R1, N, N, N]),
+    TileInfo::new(tile!{125, a}, [R1, N, N, N, L1, N]),
+    TileInfo::new(tile!{125, b}, [R1, N, N, N, L1, N]),
+    TileInfo::new(tile!{126, a}, [N, N, N, L2, R2, N]),
+    TileInfo::new(tile!{126, b}, [N, N, N, L2, R2, N]),
+    TileInfo::new(tile!{127, a}, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{127, b}, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{128, a}, [N, N, N, N, L2, R2]),
+    TileInfo::new(tile!{128, b}, [N, N, N, N, L2, R2]),
+    TileInfo::new(tile!{129, a}, [N, R0, N, N, L0, N]),
+    TileInfo::new(tile!{129, b}, [N, R0, N, N, L0, N]),
+    TileInfo::new(tile!{130, a}, [N, N, R0, N, N, L0]),
+    TileInfo::new(tile!{130, b}, [N, N, R0, N, N, L0]),
+    TileInfo::new(tile!{131, a}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{131, b}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{132, a}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{132, b}, [N, N, S1M, N, S1P, N]),
+    TileInfo::new(tile!{133, a}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{133, b}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{134, a}, [N, N, R0, N, N, R0]),
+    TileInfo::new(tile!{134, b}, [N, N, R0, N, N, R0]),
+    TileInfo::new(tile!{135, a}, [N, L0, N, N, L0, N]),
+    TileInfo::new(tile!{135, b}, [N, L0, N, N, L0, N]),
+    TileInfo::new(tile!{136, a}, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{136, b}, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{137, a}, [N, N, L1, N, R1, N]),
+    TileInfo::new(tile!{137, b}, [N, N, L1, N, R1, N]),
+    TileInfo::new(tile!{138, a}, [N, N, L1, N, R1, N]),
+    TileInfo::new(tile!{138, b}, [N, N, L1, N, R1, N]),
+    TileInfo::new(tile!{139, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{139, b}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{140, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{140, b}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{141, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{141, b}, [S0, N, S0, S0, N, S0]),
+    TileInfo::new(tile!{142, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{142, b}, [S0, N, S1M, S0, S1P, N]),
+    TileInfo::new(tile!{143, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{143, b}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{144, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{144, b}, [N, S1P, S1M, N, S1P, S1M]),
+    TileInfo::new(tile!{145, a}, [S0, N, N, S0, N, N]),
+    TileInfo::new(tile!{145, b}, [S0, N, S0, S0, N, S0]),
+    TileInfo::new(tile!{146, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{146, b}, [S0, N, S1M, S0, S1P, N]),
+    TileInfo::new(tile!{147, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{147, b}, [N, S1P, N, L2, R2, S1M]),
+    TileInfo::new(tile!{148, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{148, b}, [N, S1P, L2, R2, N, S1M]),
+    TileInfo::new(tile!{149, a}, [N, L1, N, R1, N, N]),
+    TileInfo::new(tile!{149, b}, [N, S1P, L2, R2, N, S1M]),
+    TileInfo::new(tile!{150, a}, [S0, S1P, S1M, S0, S1P, S1M]),
+    TileInfo::new(tile!{150, b}, [S0, S1P, S1M, S0, S1P, S1M]),
+    TileInfo::new(tile!{151, a}, [JS0L2, JL1R2, N, JS0R1, N, N]),
+    TileInfo::new(tile!{151, b}, [JS0L2, JL1R2, N, JS0R1, N, N]),
+    TileInfo::new(tile!{152, a}, [JS0R2, N, N, JS0L1, N, JR1L2]),
+    TileInfo::new(tile!{152, b}, [JS0R2, N, N, JS0L1, N, JR1L2]),
+    TileInfo::new(tile!{153, a}, [S0, S0, N, S0, S0, N]),
+    TileInfo::new(tile!{153, b}, [S0, S0, N, S0, S0, N]),
+    TileInfo::new(tile!{154, a}, [N, S0, N, L1, S0, R1]),
+    TileInfo::new(tile!{154, b}, [N, L1, S0, R1, N, S0]),
+    TileInfo::new(tile!{901, a}, [N, N, N, N, N, N]),
+    TileInfo::new(tile!{901, b}, [N, N, N, N, N, N]),
 ];
 
 //----------------------------------------------------------------------------
@@ -379,10 +479,18 @@ mod tests {
 
     #[test]
     fn tile_info_get() {
-        assert!(TileInfo::get("101a".parse().unwrap()).is_some());
+        assert!(TileInfo::get("101".parse().unwrap()).is_some());
         assert!(TileInfo::get("101b".parse().unwrap()).is_none());
         assert!(TileInfo::get("102a".parse().unwrap()).is_some());
         assert!(TileInfo::get("103a".parse().unwrap()).is_some());
+    }
+
+    #[test]
+    fn tile_info_sorted() {
+        assert!(TILE_INFOS.iter().all(|info| info.id == info.id.base()));
+        assert!(TILE_INFOS.windows(2).all(|infos| infos[0].id <= infos[1].id));
+        // FIXME: could be replaced with is_sorted() once it's no longer unstable
+        //assert!(TILE_INFOS.is_sorted_by_key(|info| info.id));
     }
 }
 
