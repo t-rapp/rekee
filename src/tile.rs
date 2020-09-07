@@ -181,6 +181,25 @@ enum Connection {
     JunctionRight(i8, i8),
 }
 
+impl Connection {
+    fn target(&self, source: Direction) -> Option<Direction> {
+        match *self {
+            Connection::None => 
+                None,
+            Connection::Straight(val) => 
+                Some(source + (3 + val).into()),
+            Connection::Left(val) =>
+                Some(source + (3 - val).into()),
+            Connection::Right(val) =>
+                Some(source + (3 + val).into()),
+            Connection::JunctionLeft(val, _) =>
+                Some(source + (3 - val).into()),
+            Connection::JunctionRight(val, _) =>
+                Some(source + (3 + val).into()),
+        }
+    }
+}
+
 impl Default for Connection {
     fn default() -> Self {
         Connection::None
@@ -228,7 +247,7 @@ const R0: Connection = Connection::Right(0);
 const R1: Connection = Connection::Right(1);
 const R2: Connection = Connection::Right(2);
 const JS0L1: Connection = Connection::JunctionLeft(0, 1);
-const JS0L2: Connection = Connection::JunctionLeft(0, 1);
+const JS0L2: Connection = Connection::JunctionLeft(0, 2);
 const JS0R1: Connection = Connection::JunctionRight(0, 1);
 const JS0R2: Connection = Connection::JunctionRight(0, 2);
 const JL1R2: Connection = Connection::JunctionLeft(1, -2);
@@ -474,6 +493,79 @@ mod tests {
         assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
         assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  0).into(), dir: Direction::F }), tiles.next());
         assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn connection_target() {
+        let conn = Connection::None;
+        assert_eq!(None, conn.target(Direction::A));
+        assert_eq!(None, conn.target(Direction::D));
+        assert_eq!(None, conn.target(Direction::F));
+
+        let conn = Connection::Straight(0);
+        assert_eq!(Some(Direction::D), conn.target(Direction::A));
+        assert_eq!(Some(Direction::A), conn.target(Direction::D));
+        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+
+        let conn = Connection::Straight(1);
+        assert_eq!(Some(Direction::E), conn.target(Direction::A));
+        assert_eq!(Some(Direction::B), conn.target(Direction::D));
+        assert_eq!(Some(Direction::D), conn.target(Direction::F));
+
+        let conn = Connection::Straight(-1);
+        assert_eq!(Some(Direction::C), conn.target(Direction::A));
+        assert_eq!(Some(Direction::F), conn.target(Direction::D));
+        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+
+        let conn = Connection::Left(0);
+        assert_eq!(Some(Direction::D), conn.target(Direction::A));
+        assert_eq!(Some(Direction::A), conn.target(Direction::D));
+        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+
+        let conn = Connection::Left(1);
+        assert_eq!(Some(Direction::C), conn.target(Direction::A));
+        assert_eq!(Some(Direction::F), conn.target(Direction::D));
+        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+
+        let conn = Connection::Left(2);
+        assert_eq!(Some(Direction::B), conn.target(Direction::A));
+        assert_eq!(Some(Direction::E), conn.target(Direction::D));
+        assert_eq!(Some(Direction::A), conn.target(Direction::F));
+
+        let conn = Connection::Right(0);
+        assert_eq!(Some(Direction::D), conn.target(Direction::A));
+        assert_eq!(Some(Direction::A), conn.target(Direction::D));
+        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+
+        let conn = Connection::Right(1);
+        assert_eq!(Some(Direction::E), conn.target(Direction::A));
+        assert_eq!(Some(Direction::B), conn.target(Direction::D));
+        assert_eq!(Some(Direction::D), conn.target(Direction::F));
+
+        let conn = Connection::Right(2);
+        assert_eq!(Some(Direction::F), conn.target(Direction::A));
+        assert_eq!(Some(Direction::C), conn.target(Direction::D));
+        assert_eq!(Some(Direction::E), conn.target(Direction::F));
+
+        let conn = Connection::JunctionLeft(0, 1);
+        assert_eq!(Some(Direction::D), conn.target(Direction::A));
+        assert_eq!(Some(Direction::A), conn.target(Direction::D));
+        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+
+        let conn = Connection::JunctionLeft(1, -2);
+        assert_eq!(Some(Direction::C), conn.target(Direction::A));
+        assert_eq!(Some(Direction::F), conn.target(Direction::D));
+        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+
+        let conn = Connection::JunctionRight(0, 2);
+        assert_eq!(Some(Direction::D), conn.target(Direction::A));
+        assert_eq!(Some(Direction::A), conn.target(Direction::D));
+        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+
+        let conn = Connection::JunctionRight(1, -2);
+        assert_eq!(Some(Direction::E), conn.target(Direction::A));
+        assert_eq!(Some(Direction::B), conn.target(Direction::D));
+        assert_eq!(Some(Direction::D), conn.target(Direction::F));
     }
 
     #[test]

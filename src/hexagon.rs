@@ -216,6 +216,20 @@ impl From<u8> for Direction {
     }
 }
 
+impl From<i8> for Direction {
+    fn from(value: i8) -> Direction {
+        match value.rem_euclid(6) {
+            0 => Direction::A,
+            1 => Direction::B,
+            2 => Direction::C,
+            3 => Direction::D,
+            4 => Direction::E,
+            5 => Direction::F,
+            _ => unreachable!(),
+        }
+    }
+}
+
 impl From<i32> for Direction {
     fn from(value: i32) -> Direction {
         match value.rem_euclid(6) {
