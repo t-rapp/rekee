@@ -150,8 +150,6 @@ fn main() {
         .max().cloned();
     let last_flat_pos = matches.opt_positions("flat").iter()
         .max().cloned();
-    dbg!(last_pointy_pos);
-    dbg!(last_flat_pos);
     let orientation = if last_pointy_pos >= last_flat_pos {
         Orientation::pointy()
     } else {
