@@ -86,19 +86,19 @@ impl FromStr for TileId {
 }
 
 macro_rules! tile {
-    ($num:literal) => {
+    ($num:expr) => {
         crate::tile::TileId::new($num, 0, 0)
     };
-    ($num:literal, a) => {
+    ($num:expr, a) => {
         crate::tile::TileId::new($num, 1, 0)
     };
-    ($num:literal, b) => {
+    ($num:expr, b) => {
         crate::tile::TileId::new($num, 2, 0)
     };
-    ($num:literal, a, $var:literal) => {
+    ($num:expr, a, $var:expr) => {
         crate::tile::TileId::new($num, 1, $var)
     };
-    ($num:literal, b, $var:literal) => {
+    ($num:expr, b, $var:expr) => {
         crate::tile::TileId::new($num, 2, $var)
     };
 }
