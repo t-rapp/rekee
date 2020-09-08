@@ -5,8 +5,10 @@
 
 #![allow(dead_code)]
 
-use std::io::Result;
+use std::env;
+use std::path::Path;
 
+use getopts::Options;
 use indoc::indoc;
 use svg::Document;
 use svg::node::element::{Definitions, Group, Image, Polygon, Style, Text, Use};
@@ -102,16 +104,80 @@ fn draw_tile<C, D>(layout: &Layout, id: TileId, pos: C, dir: D) -> Group
 
 //----------------------------------------------------------------------------
 
-fn main() -> Result<()> {
-    let args: Vec<String> = std::env::args().collect();
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const PROGRAM: &str = env!("CARGO_PKG_NAME");
+
+fn print_usage(program: &str, opts: &Options) {
+    let brief = format!("Usage: {} [options] file.rgt", program);
+    print!("{}", opts.usage(&brief));
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let program = match Path::new(&args[0]).components().last() {
+        Some(val) => val.as_os_str().to_str().unwrap(),
+        None => PROGRAM,
+    };
+
+    let mut opts = Options::new();
+    opts.optopt("o", "output", "write SVG output to file", "FILE");
+    opts.optflag("", "pointy", "use pointy hexagon grid layout");
+    opts.optflag("", "flat", "use flat hexagon grid layout");
+    opts.optflagmulti("l", "left", "rotate map left");
+    opts.optflagmulti("r", "right", "rotate map right");
+    opts.optflag("", "version", "print version information");
+    opts.optflag("h", "help", "print this help");
+
+    let matches = match opts.parse(&args[1..]) {
+        Ok(val) => val,
+        Err(err) => {
+            eprintln!("Error: Cannot parse program options: {}", err);
+            return;
+        }
+    };
+    if matches.opt_present("version") {
+        println!("{}", VERSION);
+        return;
+    }
+    if matches.opt_present("help") {
+        print_usage(&program, &opts);
+        return;
+    }
+
+    let output = matches.opt_str("output")
+        .unwrap_or_else(|| "track.svg".to_string());
+    let last_pointy_pos = matches.opt_positions("pointy").iter()
+        .max().cloned();
+    let last_flat_pos = matches.opt_positions("flat").iter()
+        .max().cloned();
+    dbg!(last_pointy_pos);
+    dbg!(last_flat_pos);
+    let orientation = if last_pointy_pos >= last_flat_pos {
+        Orientation::pointy()
+    } else {
+        Orientation::flat()
+    };
+    let layout = Layout::new(orientation, Point(40.0, 40.0), Point(300.0, 300.0));
 
     let mut map = Map::new();
-    if let Some(file) = args.get(1) {
-        map = import::import_example(file)?;
+    if let Some(file) = matches.free.get(0) {
+        map = match import::import_example(file) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Error: Cannot import file data: {}", err);
+                return;
+            }
+        }
     } else {
         map.insert(tile!(101, a), (0, 0).into(), Direction::A);
         map.insert(tile!(102, a), (0, 1).into(), Direction::A);
         map.insert(tile!(103, a, 1), (1, 0).into(), Direction::A);
+    }
+    for _ in 0..matches.opt_count("left") {
+        map.rotate_left();
+    }
+    for _ in 0..matches.opt_count("right") {
+        map.rotate_right();
     }
 
     let mut document = Document::new()
@@ -141,8 +207,6 @@ fn main() -> Result<()> {
         }"));
     document = document.add(style);
 
-    let layout = Layout::new(Orientation::pointy(), Point(40.0, 40.0), Point(300.0, 300.0));
-
     let mut defs = Definitions::new();
     defs = defs.add(define_grid_hex(&layout));
     document = document.add(defs);
@@ -166,8 +230,13 @@ fn main() -> Result<()> {
     }
     document = document.add(group);
 
-    svg::save("test01.svg", &document)?;
-    Ok(())
+    match svg::save(&output, &document) {
+        Ok(_) => (),
+        Err(err) => {
+            eprintln!("Error: Cannot write SVG output file: {}", err);
+            return;
+        }
+    }
 }
 
 //----------------------------------------------------------------------------
