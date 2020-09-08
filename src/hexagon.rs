@@ -36,11 +36,11 @@ impl Coordinate {
     {
         match dir.into() {
             Direction::A => Coordinate::new(self.q + 1, self.r + 0),
-            Direction::B => Coordinate::new(self.q + 1, self.r - 1),
-            Direction::C => Coordinate::new(self.q + 0, self.r - 1),
+            Direction::B => Coordinate::new(self.q + 0, self.r + 1),
+            Direction::C => Coordinate::new(self.q - 1, self.r + 1),
             Direction::D => Coordinate::new(self.q - 1, self.r + 0),
-            Direction::E => Coordinate::new(self.q - 1, self.r + 1),
-            Direction::F => Coordinate::new(self.q + 0, self.r + 1),
+            Direction::E => Coordinate::new(self.q + 0, self.r - 1),
+            Direction::F => Coordinate::new(self.q + 1, self.r - 1),
         }
     }
 
