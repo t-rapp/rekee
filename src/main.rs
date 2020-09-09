@@ -46,9 +46,20 @@ fn use_grid_hex<C>(layout: &Layout, pos: C) -> Use
         .set("y", pos.y())
 }
 
+fn draw_label<C>(layout: &Layout, pos: C, text: &str) -> Text
+    where C: Into<Coordinate>
+{
+    let pos = pos.into().to_pixel(&layout);
+    Text::new()
+        .set("class", "label")
+        .set("x", pos.0)
+        .set("y", pos.1)
+        .add(svg::node::Text::new(text.to_string()))
+}
+
 fn define_tile(layout: &Layout, id: TileId) -> Group {
     let size = layout.size();
-    let angle = Direction::A.to_angle(&layout) - 60.0;
+    let angle = Direction::A.to_angle(&layout);
     let img = Image::new()
         .set("href", format!("img/thumb-{}.png", id))
         .set("width", 2.0 * size.0)
@@ -70,7 +81,7 @@ fn use_tile<C, D>(layout: &Layout, id: TileId, pos: C, dir: D) -> Use
     where C: Into<Coordinate>, D: Into<Direction>
 {
     let pos = pos.into().to_pixel(&layout);
-    let angle = dir.into().to_angle(&layout) - 60.0;
+    let angle = dir.into().to_angle(&layout);
     Use::new()
         .set("href", format!("#{}", id))
         .set("x", pos.0)
@@ -82,7 +93,7 @@ fn draw_tile<C, D>(layout: &Layout, id: TileId, pos: C, dir: D) -> Group
     where C: Into<Coordinate>, D: Into<Direction>
 {
     let size = layout.size();
-    let angle = dir.into().to_angle(&layout) - 60.0;
+    let angle = dir.into().to_angle(&layout);
     let img = Image::new()
         .set("href", format!("img/thumb-{}.png", id))
         .set("width", 2.0 * size.0)
@@ -167,9 +178,12 @@ fn main() {
             }
         }
     } else {
-        map.insert(tile!(101, a), (0, 0).into(), Direction::A);
-        map.insert(tile!(102, a), (0, 1).into(), Direction::A);
-        map.insert(tile!(103, a, 1), (1, 0).into(), Direction::A);
+        let center = Coordinate::new(0, 0);
+        map.insert(tile!(102, a), center, Direction::A);
+        for i in 0..6_u8 {
+            let pos = center.neighbor(i);
+            map.insert(tile!(101 + u16::from(i), a), pos, Direction::A);
+        }
     }
     for _ in 0..matches.opt_count("left") {
         map.rotate_left();
@@ -194,11 +208,14 @@ fn main() {
             dominant-baseline: middle;
             text-anchor: middle;
         }
-        #grid {
+        #hex {
             fill: gray;
             fill-opacity: 0.02;
             stroke: gray;
             stroke-width: 0.4;
+        }
+        #grid .label {
+            fill-opacity: 0.6;
         }
         #logo {
             clip-path: polygon(93.3% 75.0%, 50.0% 100.0%, 6.7% 75.0%, 6.7% 25.0%, 50.0% 0.0%, 93.3% 25.0%);
@@ -219,6 +236,10 @@ fn main() {
             group = group.add(use_grid_hex(&layout, (q, r)));
         }
     }
+    group = group.add(draw_label(&layout, (map_radius, 0), "+q"));
+    group = group.add(draw_label(&layout, (-map_radius, 0), "-q"));
+    group = group.add(draw_label(&layout, (0, map_radius), "+r"));
+    group = group.add(draw_label(&layout, (0, -map_radius), "-r"));
     document = document.add(group);
 
     let mut group = Group::new()
