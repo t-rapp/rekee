@@ -48,12 +48,12 @@ pub fn import_example(filename: &str) -> Result<Map> {
     let mut map = Map::new();
     for tile in data.tiles {
         // convert from offset to axial coordinates
-        let q = tile.x - (tile.y - (tile.y & 1)) / 2;
-        let s = tile.y;
-        let pos = Coordinate::new(s, q);
+        let q = -tile.x - ((tile.y & 1) + tile.y) / 2;
+        let r = tile.y;
+        let pos = Coordinate::new(q, r);
         let id = tile.id.parse::<TileId>()
             .unwrap_or_default();
-        let dir = Direction::from(tile.orientation + 1);
+        let dir = Direction::from(tile.orientation);
         println!("({}, {}), {}, {} -> {}, {}, {}",
             tile.x, tile.y, tile.id, tile.orientation, pos, id, dir);
         map.insert(id, pos, dir);
