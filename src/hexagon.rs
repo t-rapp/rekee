@@ -8,7 +8,7 @@ use std::ops::{Add, Sub};
 
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Coordinate {
     q: i32,
     r: i32,
@@ -155,6 +155,11 @@ pub enum Direction {
 }
 
 impl Direction {
+    pub fn iter() -> std::slice::Iter<'static, Self> {
+        const DIRS: [Direction; 6] = [Direction::A, Direction::B, Direction::C, Direction::D, Direction::E, Direction::F];
+        DIRS.iter()
+    }
+
     pub fn rotated_left(&self) -> Self {
         *self - 1.into()
     }

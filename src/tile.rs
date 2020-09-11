@@ -6,6 +6,7 @@
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
+use std::ops::Index;
 
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
@@ -112,15 +113,28 @@ pub struct PlacedTile {
     pub dir: Direction,
 }
 
+impl PlacedTile {
+    fn connection_target(&self, source: Direction) -> Option<Direction> {
+        let info = TileInfo::get(self.id.base())?;
+        info.connection_target(source - self.dir)
+    }
+}
+
+//----------------------------------------------------------------------------
+
 #[derive(Debug, Clone)]
 pub struct Map {
     tiles: Vec<PlacedTile>,
+    active_pos: Coordinate,
+    active_dir: Direction,
 }
 
 impl Map {
     pub fn new() -> Self {
         let tiles = Vec::new();
-        Map { tiles }
+        let active_pos = Coordinate::default();
+        let active_dir = Direction::D;
+        Map { tiles, active_pos, active_dir }
     }
 
     pub fn tiles(&self) -> &[PlacedTile] {
@@ -128,8 +142,27 @@ impl Map {
     }
 
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
+        // remove any tile at the insert position
         self.tiles.retain(|tile| tile.pos != pos);
-        self.tiles.push(PlacedTile { id, pos, dir });
+        eprintln!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
+        let tile = PlacedTile { id, pos, dir };
+        // find best position for next tile
+        if self.active_pos == pos {
+            if let Some(dir) = tile.connection_target(self.active_dir) {
+                self.active_pos = tile.pos.neighbor(dir);
+                self.active_dir = dir - 3.into();
+            }
+        } else {
+            for &dir in Direction::iter() {
+                if let Some(_) = tile.connection_target(dir) {
+                    self.active_pos = tile.pos.neighbor(dir);
+                    self.active_dir = dir - 3.into();
+                    break;
+                }
+            }
+        }
+        eprintln!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
+        self.tiles.push(tile);
     }
 
     pub fn align_center(&mut self) {
@@ -184,7 +217,7 @@ enum Connection {
 impl Connection {
     fn target(&self, source: Direction) -> Option<Direction> {
         match *self {
-            Connection::None => 
+            Connection::None =>
                 None,
             Connection::Straight(val) => 
                 Some(source + (3 + val).into()),
@@ -206,9 +239,17 @@ impl Default for Connection {
     }
 }
 
+impl Index<Direction> for [Connection; 6] {
+    type Output = Connection;
+
+    fn index(&self, index: Direction) -> &Self::Output {
+        self.get(u8::from(index) as usize).unwrap()
+    }
+}
+
 //----------------------------------------------------------------------------
 
-pub struct TileInfo {
+struct TileInfo {
     id: TileId,
     count: u8,
     conn: [Connection; 6],
@@ -225,6 +266,10 @@ impl TileInfo {
             Ok(idx) => Some(&TILE_INFOS[idx]),
             Err(_) => None
         }
+    }
+
+    fn connection_target(&self, source: Direction) -> Option<Direction> {
+        self.conn[source].target(source)
     }
 }
 
