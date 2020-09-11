@@ -6,6 +6,8 @@
 use std::fs::File;
 use std::io::BufReader;
 
+use log::{debug, trace};
+
 use serde::Deserialize;
 use serde_json::Result;
 
@@ -43,7 +45,7 @@ pub fn import_example(filename: &str) -> Result<Map> {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
     let data: ImportRoot = serde_json::from_reader(reader)?;
-    println!("{:?}", data);
+    trace!("{:?}", data);
 
     let mut map = Map::new();
     for tile in data.tiles {
@@ -54,12 +56,12 @@ pub fn import_example(filename: &str) -> Result<Map> {
         let id = tile.id.parse::<TileId>()
             .unwrap_or_default();
         let dir = Direction::from(tile.orientation);
-        println!("({}, {}), {}, {} -> {}, {}, {}",
+        debug!("import tile ({}, {}), {}, {} -> {}, {}, {}",
             tile.x, tile.y, tile.id, tile.orientation, pos, id, dir);
         map.insert(id, pos, dir);
     }
     map.align_center();
-    println!("{:?}", map);
+    trace!("{:?}", map);
 
     Ok(map)
 }

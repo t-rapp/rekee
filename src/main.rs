@@ -13,10 +13,11 @@ use indoc::indoc;
 use svg::Document;
 use svg::node::element::{Definitions, Group, Image, Polygon, Style, Text, Use};
 
-mod import;
-
 mod hexagon;
 use hexagon::*;
+
+mod import;
+mod logger;
 
 #[macro_use]
 mod tile;
@@ -124,6 +125,8 @@ fn print_usage(program: &str, opts: &Options) {
 }
 
 fn main() {
+    logger::init().unwrap();
+
     let args: Vec<String> = env::args().collect();
     let program = match Path::new(&args[0]).components().last() {
         Some(val) => val.as_os_str().to_str().unwrap(),

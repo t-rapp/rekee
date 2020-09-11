@@ -8,6 +8,8 @@ use std::num::ParseIntError;
 use std::str::FromStr;
 use std::ops::Index;
 
+use log::{debug, trace};
+
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
 //----------------------------------------------------------------------------
@@ -144,7 +146,7 @@ impl Map {
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
         // remove any tile at the insert position
         self.tiles.retain(|tile| tile.pos != pos);
-        eprintln!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
+        debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
         let tile = PlacedTile { id, pos, dir };
         // find best position for next tile
         if self.active_pos == pos {
@@ -161,7 +163,7 @@ impl Map {
                 }
             }
         }
-        eprintln!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
+        trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
         self.tiles.push(tile);
     }
 
