@@ -119,6 +119,7 @@ impl PlacedTile {
     fn connection_target(&self, source: Direction) -> Option<Direction> {
         let info = TileInfo::get(self.id)?;
         info.connection_target(source - self.dir)
+            .map(|dir| dir + self.dir)
     }
 }
 
@@ -636,6 +637,33 @@ mod tests {
         assert!(TILE_INFOS.windows(2).all(|infos| infos[0].id <= infos[1].id));
         // FIXME: could be replaced with is_sorted() once it's no longer unstable
         //assert!(TILE_INFOS.is_sorted_by_key(|info| info.id));
+    }
+
+    #[test]
+    fn placed_tile_connection_target() {
+        let tile = PlacedTile { id: tile!(102, a), pos: (0, 0).into(), dir: Direction::A };
+        assert_eq!(Some(Direction::D), tile.connection_target(Direction::A));
+        assert_eq!(None, tile.connection_target(Direction::B));
+        assert_eq!(None, tile.connection_target(Direction::C));
+        assert_eq!(Some(Direction::A), tile.connection_target(Direction::D));
+        assert_eq!(None, tile.connection_target(Direction::E));
+        assert_eq!(None, tile.connection_target(Direction::F));
+
+        let tile = PlacedTile { id: tile!(103, a), pos: (0, 0).into(), dir: Direction::B };
+        assert_eq!(None, tile.connection_target(Direction::A));
+        assert_eq!(Some(Direction::E), tile.connection_target(Direction::B));
+        assert_eq!(None, tile.connection_target(Direction::C));
+        assert_eq!(None, tile.connection_target(Direction::D));
+        assert_eq!(Some(Direction::B), tile.connection_target(Direction::E));
+        assert_eq!(None, tile.connection_target(Direction::F));
+
+        let tile = PlacedTile { id: tile!(105, a), pos: (0, 0).into(), dir: Direction::C };
+        assert_eq!(None, tile.connection_target(Direction::A));
+        assert_eq!(None, tile.connection_target(Direction::B));
+        assert_eq!(None, tile.connection_target(Direction::C));
+        assert_eq!(Some(Direction::F), tile.connection_target(Direction::D));
+        assert_eq!(None, tile.connection_target(Direction::E));
+        assert_eq!(Some(Direction::D), tile.connection_target(Direction::F));
     }
 }
 
