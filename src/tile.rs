@@ -168,6 +168,47 @@ impl Map {
         self.tiles.push(tile);
     }
 
+    pub fn append(&mut self, id: TileId, orient: Option<i8>) {
+        debug!("append tile {}, orient: {:?}", id, orient);
+        let tile_pos = self.active_pos;
+        let mut tile_dir = Direction::A;
+        if let Some(info) = TileInfo::get(id) {
+            for &dir in Direction::iter() {
+                let conn = info.conn[self.active_dir - dir];
+                dbg!(conn);
+                match orient {
+                    Some(val) if val == 0 => {
+                        if conn.is_straight() {
+                            tile_dir = dir;
+                            break;
+                        }
+                    },
+                    Some(val) if val < 0 => {
+                        if conn.is_left() {
+                            tile_dir = dir;
+                            break;
+                        }
+                    },
+                    Some(val) if val > 0 => {
+                        if conn.is_right() {
+                            tile_dir = dir;
+                            break;
+                        }
+                    },
+                    Some(_) => unreachable!(),
+                    None => {
+                        if conn.target(self.active_dir - dir).is_some() {
+                            tile_dir = dir;
+                            break;
+                        }
+                    },
+                }
+            }
+            trace!("found tile_dir = {}, active_dir = {}", tile_dir, self.active_dir);
+        }
+        self.insert(id, tile_pos, tile_dir)
+    }
+
     pub fn align_center(&mut self) {
         if self.tiles.is_empty() {
             return;
@@ -218,11 +259,44 @@ enum Connection {
 }
 
 impl Connection {
+    fn is_straight(&self) -> bool {
+        match *self {
+            Connection::None => false,
+            Connection::Straight(_) => true,
+            Connection::Left(_) => false,
+            Connection::Right(_) => false,
+            Connection::JunctionLeft(_, _) => false,
+            Connection::JunctionRight(_, _) => false,
+        }
+    }
+
+    fn is_left(&self) -> bool {
+        match *self {
+            Connection::None => false,
+            Connection::Straight(_) => false,
+            Connection::Left(_) => true,
+            Connection::Right(_) => false,
+            Connection::JunctionLeft(_, _) => true,
+            Connection::JunctionRight(_, _) => false,
+        }
+    }
+
+    fn is_right(&self) -> bool {
+        match *self {
+            Connection::None => false,
+            Connection::Straight(_) => false,
+            Connection::Left(_) => false,
+            Connection::Right(_) => true,
+            Connection::JunctionLeft(_, _) => false,
+            Connection::JunctionRight(_, _) => true,
+        }
+    }
+
     fn target(&self, source: Direction) -> Option<Direction> {
         match *self {
             Connection::None =>
                 None,
-            Connection::Straight(val) => 
+            Connection::Straight(val) =>
                 Some(source + (3 + val).into()),
             Connection::Left(val) =>
                 Some(source + (3 - val).into()),
@@ -541,6 +615,79 @@ mod tests {
         assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
         assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  0).into(), dir: Direction::F }), tiles.next());
         assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn connection_orientation() {
+        let conn = Connection::None;
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Straight(0);
+        assert_eq!(true, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Straight(1);
+        assert_eq!(true, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Straight(-1);
+        assert_eq!(true, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Left(0);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(true, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Left(1);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(true, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Left(2);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(true, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::Right(0);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(true, conn.is_right());
+
+        let conn = Connection::Right(1);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(true, conn.is_right());
+
+        let conn = Connection::Right(2);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(true, conn.is_right());
+
+        let conn = Connection::JunctionLeft(0, 1);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(true, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::JunctionLeft(1, -2);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(true, conn.is_left());
+        assert_eq!(false, conn.is_right());
+
+        let conn = Connection::JunctionRight(0, 2);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(true, conn.is_right());
+
+        let conn = Connection::JunctionRight(1, -2);
+        assert_eq!(false, conn.is_straight());
+        assert_eq!(false, conn.is_left());
+        assert_eq!(true, conn.is_right());
     }
 
     #[test]
