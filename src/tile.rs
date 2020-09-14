@@ -117,7 +117,7 @@ pub struct PlacedTile {
 
 impl PlacedTile {
     fn connection_target(&self, source: Direction) -> Option<Direction> {
-        let info = TileInfo::get(self.id.base())?;
+        let info = TileInfo::get(self.id)?;
         info.connection_target(source - self.dir)
     }
 }
@@ -263,7 +263,7 @@ impl TileInfo {
     }
 
     fn get(id: TileId) -> Option<&'static Self> {
-        let idx = TILE_INFOS.binary_search_by_key(&id, |info| info.id);
+        let idx = TILE_INFOS.binary_search_by_key(&id.base(), |info| info.id);
         match idx {
             Ok(idx) => Some(&TILE_INFOS[idx]),
             Err(_) => None
@@ -617,10 +617,12 @@ mod tests {
 
     #[test]
     fn tile_info_get() {
+        assert!(TileInfo::get("0".parse().unwrap()).is_none());
         assert!(TileInfo::get("101".parse().unwrap()).is_some());
-        assert!(TileInfo::get("101b".parse().unwrap()).is_none());
         assert!(TileInfo::get("102a".parse().unwrap()).is_some());
-        assert!(TileInfo::get("103a".parse().unwrap()).is_some());
+        assert!(TileInfo::get("102b".parse().unwrap()).is_some());
+        assert!(TileInfo::get("103a-1".parse().unwrap()).is_some());
+        assert!(TileInfo::get("103b-3".parse().unwrap()).is_some());
     }
 
     #[test]
