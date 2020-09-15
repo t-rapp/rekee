@@ -256,6 +256,50 @@ pub enum ConnectionHint {
     Right,
 }
 
+impl fmt::Display for ConnectionHint {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ConnectionHint::Straight =>
+                write!(fmt, "S")?,
+            ConnectionHint::Left =>
+                write!(fmt, "L")?,
+            ConnectionHint::Right =>
+                write!(fmt, "R")?,
+        }
+        Ok(())
+    }
+}
+
+impl FromStr for ConnectionHint {
+    type Err = ParseHintError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "S" | "s" | "" =>
+                Ok(ConnectionHint::Straight),
+            "L" | "l" =>
+                Ok(ConnectionHint::Left),
+            "R" | "r" =>
+                Ok(ConnectionHint::Right),
+            _ =>
+                Err(ParseHintError::Unknown(s.to_string())),
+        }
+    }
+}
+
+pub enum ParseHintError {
+    Unknown(String),
+}
+
+impl fmt::Display for ParseHintError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseHintError::Unknown(val) =>
+                write!(fmt, "Unknown hint token \"{}\"", val),
+        }
+    }
+}
+
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy)]
