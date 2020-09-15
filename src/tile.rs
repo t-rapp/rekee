@@ -168,34 +168,21 @@ impl Map {
         self.tiles.push(tile);
     }
 
-    pub fn append(&mut self, id: TileId, orient: Option<i8>) {
-        debug!("append tile {}, orient: {:?}", id, orient);
+    pub fn append(&mut self, id: TileId, hint: Option<ConnectionHint>) {
+        debug!("append tile {}, hint: {:?}", id, hint);
         let tile_pos = self.active_pos;
         let mut tile_dir = Direction::A;
         if let Some(info) = TileInfo::get(id) {
             for &dir in Direction::iter() {
                 let conn = info.conn[self.active_dir - dir];
                 dbg!(conn);
-                match orient {
-                    Some(val) if val == 0 => {
-                        if conn.is_straight() {
+                match hint {
+                    Some(val) => {
+                        if conn == val {
                             tile_dir = dir;
                             break;
                         }
                     },
-                    Some(val) if val < 0 => {
-                        if conn.is_left() {
-                            tile_dir = dir;
-                            break;
-                        }
-                    },
-                    Some(val) if val > 0 => {
-                        if conn.is_right() {
-                            tile_dir = dir;
-                            break;
-                        }
-                    },
-                    Some(_) => unreachable!(),
                     None => {
                         if conn.target(self.active_dir - dir).is_some() {
                             tile_dir = dir;
@@ -248,6 +235,15 @@ impl Map {
 
 //----------------------------------------------------------------------------
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ConnectionHint {
+    Straight,
+    Left,
+    Right,
+}
+
+//----------------------------------------------------------------------------
+
 #[derive(Debug, Clone, Copy)]
 enum Connection {
     None,
@@ -259,39 +255,6 @@ enum Connection {
 }
 
 impl Connection {
-    fn is_straight(&self) -> bool {
-        match *self {
-            Connection::None => false,
-            Connection::Straight(_) => true,
-            Connection::Left(_) => false,
-            Connection::Right(_) => false,
-            Connection::JunctionLeft(_, _) => false,
-            Connection::JunctionRight(_, _) => false,
-        }
-    }
-
-    fn is_left(&self) -> bool {
-        match *self {
-            Connection::None => false,
-            Connection::Straight(_) => false,
-            Connection::Left(_) => true,
-            Connection::Right(_) => false,
-            Connection::JunctionLeft(_, _) => true,
-            Connection::JunctionRight(_, _) => false,
-        }
-    }
-
-    fn is_right(&self) -> bool {
-        match *self {
-            Connection::None => false,
-            Connection::Straight(_) => false,
-            Connection::Left(_) => false,
-            Connection::Right(_) => true,
-            Connection::JunctionLeft(_, _) => false,
-            Connection::JunctionRight(_, _) => true,
-        }
-    }
-
     fn target(&self, source: Direction) -> Option<Direction> {
         match *self {
             Connection::None =>
@@ -321,6 +284,26 @@ impl Index<Direction> for [Connection; 6] {
 
     fn index(&self, index: Direction) -> &Self::Output {
         self.get(u8::from(index) as usize).unwrap()
+    }
+}
+
+impl PartialEq<ConnectionHint> for Connection {
+    fn eq(&self, other: &ConnectionHint) -> bool {
+        let hint = match *self {
+            Connection::None =>
+                return false,
+            Connection::Straight(_) =>
+                ConnectionHint::Straight,
+            Connection::Left(_) =>
+                ConnectionHint::Left,
+            Connection::Right(_) =>
+                ConnectionHint::Right,
+            Connection::JunctionLeft(_, _) =>
+                ConnectionHint::Left,
+            Connection::JunctionRight(_, _) =>
+                ConnectionHint::Right,
+        };
+        hint == *other
     }
 }
 
@@ -620,74 +603,74 @@ mod tests {
     #[test]
     fn connection_orientation() {
         let conn = Connection::None;
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Straight(0);
-        assert_eq!(true, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(true,  conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Straight(1);
-        assert_eq!(true, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(true,  conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Straight(-1);
-        assert_eq!(true, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(true,  conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Left(0);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(true, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(true,  conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Left(1);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(true, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(true,  conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Left(2);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(true, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(true,  conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::Right(0);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(true, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(true,  conn == ConnectionHint::Right);
 
         let conn = Connection::Right(1);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(true, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(true,  conn == ConnectionHint::Right);
 
         let conn = Connection::Right(2);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(true, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(true,  conn == ConnectionHint::Right);
 
         let conn = Connection::JunctionLeft(0, 1);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(true, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(true,  conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::JunctionLeft(1, -2);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(true, conn.is_left());
-        assert_eq!(false, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(true,  conn == ConnectionHint::Left);
+        assert_eq!(false, conn == ConnectionHint::Right);
 
         let conn = Connection::JunctionRight(0, 2);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(true, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(true,  conn == ConnectionHint::Right);
 
         let conn = Connection::JunctionRight(1, -2);
-        assert_eq!(false, conn.is_straight());
-        assert_eq!(false, conn.is_left());
-        assert_eq!(true, conn.is_right());
+        assert_eq!(false, conn == ConnectionHint::Straight);
+        assert_eq!(false, conn == ConnectionHint::Left);
+        assert_eq!(true,  conn == ConnectionHint::Right);
     }
 
     #[test]
