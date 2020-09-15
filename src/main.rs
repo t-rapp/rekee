@@ -169,7 +169,7 @@ fn main() {
     } else {
         Orientation::flat()
     };
-    let layout = Layout::new(orientation, Point(40.0, 40.0), Point(300.0, 300.0));
+    let layout = Layout::new(orientation, Point(40.0, 40.0), Point(320.0, 300.0));
 
     let mut map = Map::new();
     if let Some(file) = matches.free.get(0) {
@@ -182,11 +182,18 @@ fn main() {
         }
     } else {
         let center = Coordinate::new(0, 0);
-        map.insert(tile!(102, a), center, Direction::A);
-        for i in 0..6_u8 {
-            let pos = center.neighbor(i);
-            map.insert(tile!(101 + u16::from(i), a), pos, Direction::A);
-        }
+        map.insert(tile!(102, b), center, Direction::D);
+        map.append(tile!(104, b), None);
+        map.append(tile!(113, b), "R".parse().ok());
+        map.append(tile!(117, b), "r".parse().ok());
+        map.append(tile!(114, b), "R".parse().ok());
+        map.append(tile!(115, b), "L".parse().ok());
+        map.append(tile!(115, b), "l".parse().ok());
+        map.append(tile!(108, b), "r".parse().ok());
+        map.append(tile!(110, b), "L".parse().ok());
+        map.append(tile!(107, b), "R".parse().ok());
+        map.insert(tile!(101), (0, -2).into(), Direction::D);
+        map.align_center();
     }
     for _ in 0..matches.opt_count("left") {
         map.rotate_left();
@@ -196,8 +203,8 @@ fn main() {
     }
 
     let mut document = Document::new()
-        .set("width", 600)
-        .set("height", 600);
+        .set("width", 2.0 * layout.origin().0)
+        .set("height", 2.0 * layout.origin().1);
 
     let style = Style::new(indoc!(r"
         .label {

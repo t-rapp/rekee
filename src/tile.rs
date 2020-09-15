@@ -42,6 +42,7 @@ impl TileId {
         let side = match self.num {
             // pitstop tile is the same on front and back
             101 => 0,
+            // all other tiles have two different sides
             _ => self.side,
         };
         TileId { num: self.num, side, var: 0 }
@@ -147,7 +148,6 @@ impl Map {
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
         // remove any tile at the insert position
         self.tiles.retain(|tile| tile.pos != pos);
-        debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
 
         // auto-select tile id variant, if not given
         let mut id = id;
@@ -162,16 +162,18 @@ impl Map {
             }
         }
 
+        debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
         let tile = PlacedTile { id, pos, dir };
+
         // find best position for next tile
-        if self.active_pos == pos {
+        if self.active_pos == pos && !self.tiles.is_empty() {
             if let Some(dir) = tile.connection_target(self.active_dir) {
                 self.active_pos = tile.pos.neighbor(dir);
                 self.active_dir = dir - 3.into();
             }
         } else {
-            for &dir in Direction::iter() {
-                if let Some(_) = tile.connection_target(dir) {
+            for dir in Direction::iter().map(|&dir| dir + tile.dir) {
+                if tile.connection_target(dir).is_some() {
                     self.active_pos = tile.pos.neighbor(dir);
                     self.active_dir = dir - 3.into();
                     break;
@@ -189,7 +191,6 @@ impl Map {
         if let Some(info) = TileInfo::get(id) {
             for &dir in Direction::iter() {
                 let conn = info.conn[self.active_dir - dir];
-                dbg!(conn);
                 match hint {
                     Some(val) => {
                         if conn == val {
@@ -428,22 +429,22 @@ const TILE_INFOS: [TileInfo; 109] = [
     TileInfo::new(tile!{105, b}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{106, a}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{106, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{107, a}, 2, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{107, b}, 2, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{108, a}, 1, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{108, b}, 1, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{109, a}, 1, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{109, b}, 1, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{107, a}, 2, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{107, b}, 2, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{108, a}, 1, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{108, b}, 1, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{109, a}, 1, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{109, b}, 1, [N, N, L2, R2, N, N]),
     TileInfo::new(tile!{110, a}, 1, [R0, N, N, L0, N, N]),
     TileInfo::new(tile!{110, b}, 1, [R0, N, N, L0, N, N]),
-    TileInfo::new(tile!{111, a}, 2, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{111, b}, 2, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{111, a}, 2, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{111, b}, 2, [N, N, L2, R2, N, N]),
     TileInfo::new(tile!{112, a}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{112, b}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{113, a}, 1, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{113, b}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{114, a}, 1, [N, N, R2, L2, N, N]),
-    TileInfo::new(tile!{114, b}, 1, [N, N, R2, L2, N, N]),
+    TileInfo::new(tile!{114, a}, 1, [N, N, L2, R2, N, N]),
+    TileInfo::new(tile!{114, b}, 1, [N, N, L2, R2, N, N]),
     TileInfo::new(tile!{115, a}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{115, b}, 2, [N, L1, N, R1, N, N]),
     TileInfo::new(tile!{116, a}, 2, [R0, N, N, L0, N, N]),
@@ -561,6 +562,36 @@ mod tests {
 
         assert!("".parse::<TileId>().is_err());
         assert!("101x".parse::<TileId>().is_err());
+    }
+
+    #[test]
+    fn map_insert_and_append() {
+        let mut map = Map::new();
+        map.insert(tile!(102, b), (0, 0).into(), Direction::D);
+        map.append(tile!(104, b), None);
+        map.append(tile!(113, b), "R".parse().ok());
+        map.append(tile!(117, b), "r".parse().ok());
+        map.append(tile!(114, b), "R".parse().ok());
+        map.append(tile!(115, b), "L".parse().ok());
+        map.append(tile!(115, b), "l".parse().ok());
+        map.append(tile!(108, b), "r".parse().ok());
+        map.append(tile!(110, b), "L".parse().ok());
+        map.append(tile!(107, b), "R".parse().ok());
+        map.insert(tile!(101), (0, -2).into(), Direction::A);
+
+        let mut tiles = map.tiles().iter();
+        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 0,  0).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: (-2,  0).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: (-2, -1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-1, -2).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: (-1, -1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0, -1).into(), dir: Direction::C }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: ( 1, -2).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 1, -1).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 1,  0).into(), dir: Direction::B }), tiles.next());
+        assert_eq!(Some(&PlacedTile { id: tile!(101),       pos: ( 0, -2).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(None, tiles.next());
     }
 
     #[test]
