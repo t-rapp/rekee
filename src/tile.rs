@@ -148,6 +148,20 @@ impl Map {
         // remove any tile at the insert position
         self.tiles.retain(|tile| tile.pos != pos);
         debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
+
+        // auto-select tile id variant, if not given
+        let mut id = id;
+        if id.var() == 0 {
+            let count = self.tiles.iter()
+                .filter(|tile| tile.id.base() == id).count();
+            match TileInfo::get(id) {
+                Some(info) if info.count > 1 => {
+                    id.var = ((count % info.count) + 1) as u8;
+                },
+                _ => (),
+            }
+        }
+
         let tile = PlacedTile { id, pos, dir };
         // find best position for next tile
         if self.active_pos == pos {
@@ -311,12 +325,12 @@ impl PartialEq<ConnectionHint> for Connection {
 
 struct TileInfo {
     id: TileId,
-    count: u8,
+    count: usize,
     conn: [Connection; 6],
 }
 
 impl TileInfo {
-    const fn new(id: TileId, count: u8, conn: [Connection; 6]) -> Self {
+    const fn new(id: TileId, count: usize, conn: [Connection; 6]) -> Self {
         TileInfo { id, count, conn }
     }
 
