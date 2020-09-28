@@ -89,6 +89,7 @@ impl FromStr for TileId {
     }
 }
 
+#[macro_export]
 macro_rules! tile {
     ($num:expr) => {
         crate::tile::TileId::new($num, 0, 0)

@@ -6,6 +6,7 @@
 #![allow(dead_code)]
 
 use std::env;
+use std::fs;
 use std::path::Path;
 
 use getopts::Options;
@@ -19,7 +20,6 @@ use hexagon::*;
 mod import;
 mod logger;
 
-#[macro_use]
 mod tile;
 use tile::*;
 
@@ -173,10 +173,17 @@ fn main() {
 
     let mut map = Map::new();
     if let Some(file) = matches.free.get(0) {
-        map = match import::import_example(file) {
+        let data = match fs::read_to_string(file) {
             Ok(val) => val,
             Err(err) => {
-                eprintln!("Error: Cannot import file data: {}", err);
+                eprintln!("Error: Cannot read import file data: {}", err);
+                return;
+            }
+        };
+        map = match import::import_rgt(&data) {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Error: Cannot parse import file data: {}", err);
                 return;
             }
         }
