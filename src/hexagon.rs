@@ -146,7 +146,7 @@ impl FloatCoordinate {
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Direction {
-    A,
+    A = 0,
     B,
     C,
     D,
@@ -252,14 +252,19 @@ impl From<i32> for Direction {
 
 impl From<Direction> for u8 {
     fn from(value: Direction) -> u8 {
-        match value {
-            Direction::A => 0,
-            Direction::B => 1,
-            Direction::C => 2,
-            Direction::D => 3,
-            Direction::E => 4,
-            Direction::F => 5,
-        }
+        value as u8
+    }
+}
+
+impl From<Direction> for i8 {
+    fn from(value: Direction) -> i8 {
+        value as i8
+    }
+}
+
+impl From<Direction> for i32 {
+    fn from(value: Direction) -> i32 {
+        value as i32
     }
 }
 
