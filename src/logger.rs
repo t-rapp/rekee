@@ -5,6 +5,13 @@
 
 use log::{Record, Level, Metadata};
 use log::{SetLoggerError, LevelFilter};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
 
 struct SimpleLogger;
 
@@ -17,11 +24,11 @@ impl log::Log for SimpleLogger {
         if self.enabled(record.metadata()) {
             match record.level() {
                 Level::Error =>
-                    eprintln!("Error: {}", record.args()),
+                    log(&format!("Error: {}", record.args())),
                 Level::Warn =>
-                    eprintln!("Warning: {}", record.args()),
+                    log(&format!("Warning: {}", record.args())),
                 _ =>
-                    eprintln!("{}", record.args())
+                    log(&format!("{}", record.args()))
             }
         }
     }
