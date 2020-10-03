@@ -107,13 +107,17 @@ pub fn main() -> Result<()> {
     map.align_center();
 
     let document = web_sys::window().unwrap().document().unwrap();
-    let body = document.body().unwrap();
+    let parent = document.get_element_by_id("canvas").unwrap();
+
+    // remove all pre-existing child nodes
+    let range = document.create_range()?;
+    range.select_node_contents(&parent)?;
+    range.delete_contents()?;
 
     let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
-    canvas.set_id("canvas");
     canvas.set_attribute("width", &format!("{}", 2.0 * layout.origin().x()))?;
     canvas.set_attribute("height", &format!("{}", 2.0 * layout.origin().y()))?;
-    body.append_child(&canvas)?;
+    parent.append_child(&canvas)?;
 
     let defs = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "defs")?;
     defs.append_child(&define_grid_hex(&document, &layout)?.into())?;
