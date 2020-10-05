@@ -49,6 +49,8 @@ pub fn import_rgt(data: &str) -> Result<Map> {
         let r = tile.y;
         let pos = Coordinate::new(q, r);
         let id = tile.id.parse::<TileId>()
+            // special mapping for pit-stop tile
+            .map(|id| if id.num() == 101 { id.base() } else { id })
             .unwrap_or_default();
         let dir = Direction::from(tile.orientation);
         debug!("import tile ({}, {}), {}, {} -> {}, {}, {}",
