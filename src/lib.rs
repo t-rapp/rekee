@@ -5,7 +5,9 @@
 
 #![allow(dead_code)]
 
+use log::{warn, info};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
 mod hexagon;
@@ -86,6 +88,15 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
 
 //----------------------------------------------------------------------------
 
+macro_rules! check {
+    ($e:expr) => {
+        match $e {
+            None => return,
+            Some(val) => val,
+        }
+    };
+}
+
 #[wasm_bindgen]
 pub fn main() -> Result<()> {
     logger::init().unwrap();
@@ -107,7 +118,7 @@ pub fn main() -> Result<()> {
     map.align_center();
 
     let document = web_sys::window().unwrap().document().unwrap();
-    let parent = document.get_element_by_id("canvas").unwrap();
+    let parent = document.get_element_by_id("main").unwrap();
 
     // remove all pre-existing child nodes
     let range = document.create_range()?;
@@ -145,6 +156,47 @@ pub fn main() -> Result<()> {
         group.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;
     }
     canvas.append_child(&group)?;
+
+    // add event handler(s) to file input element
+    let input = document.get_element_by_id("upload").unwrap()
+        .dyn_into::<web_sys::HtmlElement>().unwrap();
+    let callback = Closure::wrap(Box::new(move |event: web_sys::Event| {
+        let target = check!(event.target());
+        let input = check!(target.dyn_into::<web_sys::HtmlInputElement>().ok());
+        let file = check!(input.files().and_then(|list| list.item(0)));
+        let reader = check!(web_sys::FileReader::new().ok());
+        let cb_reader = reader.clone();
+        let cb_layout = layout.clone();
+        let cb_tiles = group.clone();
+        let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            let result = check!(cb_reader.result().ok());
+            let value = check!(result.as_string());
+            info!("input file value: {}", &value);
+
+            let document = web_sys::window().unwrap().document().unwrap();
+            let range = check!(document.create_range().ok());
+            check!(range.select_node_contents(&cb_tiles).ok());
+            check!(range.delete_contents().ok());
+
+            let map = match import::import_rgt(&value) {
+                Ok(val) => val,
+                Err(err) => {
+                    warn!("Cannot import file data: {}", err);
+                    return;
+                },
+            };
+            for tile in map.tiles() {
+                if let Ok(el) = draw_tile(&document, &cb_layout, tile.id, tile.pos, tile.dir) {
+                    cb_tiles.append_child(&el).unwrap();
+                }
+            }
+        }) as Box<dyn FnMut(_)>);
+        reader.add_event_listener_with_callback("load", callback.as_ref().unchecked_ref()).unwrap();
+        reader.read_as_text(&file).expect("file not readable");
+        callback.forget();
+    }) as Box<dyn Fn(_)>);
+    input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
+    callback.forget();
 
     Ok(())
 }
