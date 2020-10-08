@@ -47,6 +47,32 @@ fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Eleme
     Ok(hex)
 }
 
+fn draw_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
+    where C: Into<Coordinate>
+{
+    let corners = layout.hexagon_corners((0, 0).into());
+    let points: Vec<String> = corners.iter()
+        .map(|p| *p - layout.origin())
+        .map(|p| format!("{},{}", p.x(), p.y()))
+        .collect();
+    let poly = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "polygon")?;
+    poly.set_attribute("points", &points.join(" "))?;
+
+    let pos = pos.into().to_pixel(&layout);
+    let hex = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+    hex.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    hex.append_child(&poly)?;
+    Ok(hex)
+}
+
+fn move_hex<C>(hex: &Element, layout: &Layout, pos: C) -> Result<()>
+    where C: Into<Coordinate>
+{
+    let pos = pos.into().to_pixel(&layout);
+    hex.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    Ok(())
+}
+
 fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Result<Element>
     where C: Into<Coordinate>
 {
@@ -157,16 +183,22 @@ pub fn main() -> Result<()> {
     }
     canvas.append_child(&group)?;
 
+    let selected = draw_hex(&document, &layout, (2, 2))?;
+    selected.set_id("selected");
+    selected.class_list().add_1("is-hidden")?;
+    canvas.append_child(&selected)?;
+
     // add event handler(s) to file input element
     let input = document.get_element_by_id("upload").unwrap()
         .dyn_into::<web_sys::HtmlElement>().unwrap();
+    let cb_layout = layout.clone();
     let callback = Closure::wrap(Box::new(move |event: web_sys::Event| {
         let target = check!(event.target());
         let input = check!(target.dyn_into::<web_sys::HtmlInputElement>().ok());
         let file = check!(input.files().and_then(|list| list.item(0)));
         let reader = check!(web_sys::FileReader::new().ok());
         let cb_reader = reader.clone();
-        let cb_layout = layout.clone();
+        let cb_layout = cb_layout.clone();
         let cb_tiles = group.clone();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             let result = check!(cb_reader.result().ok());
@@ -196,6 +228,21 @@ pub fn main() -> Result<()> {
         callback.forget();
     }) as Box<dyn Fn(_)>);
     input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
+    callback.forget();
+
+    // add event handler to canvas element
+    let cb_layout = layout.clone();
+    let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+        let target = check!(event.current_target());
+        let element = check!(target.dyn_into::<web_sys::Element>().ok());
+        let rect = element.get_bounding_client_rect();
+        let x = event.client_x() as f32 - rect.left() as f32;
+        let y = event.client_y() as f32 - rect.top() as f32;
+        let pos = Coordinate::from_pixel_rounded(&cb_layout, Point(x, y));
+        check!(move_hex(&selected, &cb_layout, pos).ok());
+        check!(selected.class_list().remove_1("is-hidden").ok());
+    }) as Box<dyn Fn(_)>);
+    canvas.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
     callback.forget();
 
     Ok(())

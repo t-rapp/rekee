@@ -1,6 +1,6 @@
 [package]
 name = "rekee"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Tobias Rapp"]
 edition = "2018"
 
@@ -17,6 +17,8 @@ wasm-bindgen = "0.2.67"
 version = "0.3.45"
 features = [
   'Document',
+  'DomRect',
+  'DomTokenList',
   'Element',
   'Event',
   "EventTarget",
@@ -25,6 +27,7 @@ features = [
   "FileReader",
   'HtmlElement',
   'HtmlInputElement',
+  'MouseEvent',
   'Node',
   'Range',
   'SvgElement',

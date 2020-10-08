@@ -27,12 +27,22 @@
             stroke-width: 2.0;
             dominant-baseline: middle;
             text-anchor: middle;
+            cursor: default;
         }
         #hex {
             fill: gray;
             fill-opacity: 0.02;
             stroke: gray;
             stroke-width: 0.4;
+        }
+        #hex:hover {
+            fill: #444;
+            fill-opacity: 0.06;
+        }
+        #selected {
+            fill: none;
+            stroke: blue;
+            stroke-width: 1.2;
         }
         #grid .label {
             fill-opacity: 0.6;
