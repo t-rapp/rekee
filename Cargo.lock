@@ -43,6 +43,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "nuts"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc3a9024df106526d36e587b2fccfe8154f02241a7b89c98297d9b9b2b1e7812"
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -62,9 +68,10 @@ dependencies = [
 
 [[package]]
 name = "rekee"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "log",
+ "nuts",
  "serde",
  "serde_json",
  "wasm-bindgen",
