@@ -3,6 +3,8 @@ name = "rekee"
 version = "0.3.3"
 authors = ["Tobias Rapp"]
 edition = "2018"
+description = "Track editor for the Rallyman:GT boardgame"
+license = "MPL-2.0"
 
 [lib]
 crate-type = ["cdylib"]
@@ -37,4 +39,4 @@ features = [
 
 [profile.release]
 lto = "thin"
-opt = "z"
+opt-level = "z"
