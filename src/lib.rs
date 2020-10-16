@@ -1,5 +1,6 @@
 //----------------------------------------------------------------------------
-// File: lib.rs
+//! Library providing track editor functions for the Rekee web application.
+//
 // $Id$
 //----------------------------------------------------------------------------
 
@@ -10,7 +11,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
-mod hexagon;
+pub mod hexagon;
 use hexagon::*;
 
 mod import;

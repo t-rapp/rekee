@@ -7,7 +7,7 @@ description = "Track editor for the Rallyman:GT boardgame"
 license = "MPL-2.0"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 log = { version = "0.4.8", features = ["max_level_trace", "release_max_level_info"] }

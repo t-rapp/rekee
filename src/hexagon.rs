@@ -1,5 +1,10 @@
 //----------------------------------------------------------------------------
-// File: hexagon.rs
+//! Types and methods for working with a hexagon grid.
+//!
+//! Much inspiration has been taken from the great
+//! [Hexagonal Grids](https://www.redblobgames.com/grids/hexagons/) overview by
+//! Red Blob Games.
+//
 // $Id$
 //----------------------------------------------------------------------------
 
@@ -8,6 +13,22 @@ use std::ops::{Add, Sub};
 
 //----------------------------------------------------------------------------
 
+/// Coordinate within a hexagon grid.
+///
+/// The two-dimensional hexagon grid consists of three axes `q`, `r`, and `s`,
+/// which are rotated by 60° to each other. A coordinate is stored sparse –
+/// `s` is omitted as it can be computed from `q` and `r` on demand.
+///
+/// # Examples
+///
+/// ```
+/// # use rekee::hexagon::*;
+/// let mut pos = Coordinate::new(1, 2);
+/// pos = pos + (2, 3).into();
+/// assert_eq!(pos.q(), 3);
+/// assert_eq!(pos.r(), 5);
+/// assert_eq!(pos.s(), -8);
+/// ```
 #[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Coordinate {
     q: i32,
@@ -15,22 +36,36 @@ pub struct Coordinate {
 }
 
 impl Coordinate {
+    /// Creates a new grid coordinate from positions on `q` and `r` axis.
     pub fn new(q: i32, r: i32) -> Self {
         Coordinate { q, r }
     }
 
+    /// Coordinate position on `q` axis.
     pub fn q(&self) -> i32 {
         self.q
     }
 
+    /// Coordinate position on `r` axis.
     pub fn r(&self) -> i32 {
         self.r
     }
 
+    /// Coordinate position on `s` axis.
     pub fn s(&self) -> i32 {
         -self.q - self.r
     }
 
+    /// Get adjacent grid coordinate based on the given direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let pos = Coordinate::new(1, 0);
+    /// assert_eq!(pos.neighbor(Direction::A), (2, 0).into());
+    /// assert_eq!(pos.neighbor(Direction::B), (1, 1).into());
+    /// ```
     pub fn neighbor<T>(&self, dir: T) -> Self
         where T: Into<Direction>
     {
@@ -44,18 +79,22 @@ impl Coordinate {
         }
     }
 
+    /// Get coordinate rotated left (counter-clockwise) by 60° around the grid
+    /// center.
     pub fn rotated_left(&self) -> Self {
         let q = -self.s();
         let r = -self.q();
         Coordinate { q, r }
     }
 
+    /// Get coordinate rotated right (clockwise) by 60° around the grid center.
     pub fn rotated_right(&self) -> Self {
         let q = -self.r();
         let r = -self.s();
         Coordinate { q, r }
     }
 
+    /// Convert this hexagon grid coordinate into x/y pixel positions.
     pub fn to_pixel(&self, layout: &Layout) -> Point {
         let o = &layout.orientation;
         let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
@@ -63,6 +102,7 @@ impl Coordinate {
         layout.origin + Point(x, y)
     }
 
+    /// Convert x/y pixel positions back into a hexagon grid coordinate.
     pub fn from_pixel_rounded(layout: &Layout, p: Point) -> Self {
         let tmp = FloatCoordinate::from_pixel(layout, p);
         tmp.round()
@@ -144,30 +184,104 @@ impl FloatCoordinate {
 
 //----------------------------------------------------------------------------
 
+/// Direction within a hexagon grid.
+///
+/// Used to indicate one of the six possible moving directions within the grid
+/// and to specify the rotation angle of hexagon tiles.
+///
+/// # Examples
+///
+/// ```
+/// # use rekee::hexagon::*;
+/// let dir = Direction::A;
+/// assert_eq!(dir, 0.into());
+/// assert_eq!(dir + Direction::B, Direction::B);
+/// assert_eq!(dir - Direction::B, Direction::F);
+/// ```
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Direction {
+    /// Direction of the positive `q` axis.
     A = 0,
+    /// Direction of the positive `r` axis.
     B,
+    /// Direction of the positive `s` axis.
     C,
+    /// Direction of the negative `q` axis.
     D,
+    /// Direction of the negative `r` axis.
     E,
+    /// Direction of the negative `s` axis.
     F,
 }
 
 impl Direction {
+    /// Iterator over all six directions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let mut dirs = Direction::iter();
+    /// assert_eq!(dirs.next(), Some(&Direction::A));
+    /// assert_eq!(dirs.next(), Some(&Direction::B));
+    /// let mut dirs = dirs.skip(3);
+    /// assert_eq!(dirs.next(), Some(&Direction::F));
+    /// assert_eq!(dirs.next(), None);
+    /// ```
     pub fn iter() -> std::slice::Iter<'static, Self> {
         const DIRS: [Direction; 6] = [Direction::A, Direction::B, Direction::C, Direction::D, Direction::E, Direction::F];
         DIRS.iter()
     }
 
+    /// Get direction rotated left (counter-clockwise).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let dir = Direction::B;
+    /// assert_eq!(dir.rotated_left(), Direction::A);
+    ///
+    /// let dir = Direction::A;
+    /// assert_eq!(dir.rotated_left(), Direction::F);
+    /// ```
     pub fn rotated_left(&self) -> Self {
         *self - 1.into()
     }
 
+    /// Get direction rotated right (clockwise).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let dir = Direction::A;
+    /// assert_eq!(dir.rotated_right(), Direction::B);
+    ///
+    /// let dir = Direction::F;
+    /// assert_eq!(dir.rotated_right(), Direction::A);
+    /// ```
     pub fn rotated_right(&self) -> Self {
         *self + 1.into()
     }
 
+    /// Convert this hexagon grid direction into an angle in degrees.
+    ///
+    /// Applies `start_angle` of the given layout. The retuned value is wrapped
+    /// within the range of [0 .. 360) degrees.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+    ///
+    /// let dir = Direction::A;
+    /// assert_eq!(dir.to_angle(&layout), 90.0);
+    ///
+    /// let dir = Direction::B;
+    /// assert_eq!(dir.to_angle(&layout), 150.0);
+    /// ```
     pub fn to_angle(&self, layout: &Layout) -> f32 {
         let start_angle = layout.orientation.start_angle * 60.0;
         let angle = match self {
@@ -270,6 +384,8 @@ impl From<Direction> for i32 {
 
 //----------------------------------------------------------------------------
 
+/// Coefficients for converting between hexagonal grid coordinates and x/y
+/// pixels.
 #[derive(Debug, Clone)]
 pub struct Orientation {
     // coefficients for forward conversion of hex coordinates into pixels
@@ -300,10 +416,12 @@ const LAYOUT_FLAT: Orientation = Orientation {
 };
 
 impl Orientation {
+    /// Pointy topped orientation, hexagons are aligned in horizonal rows.
     pub fn pointy() -> &'static Self {
         &LAYOUT_POINTY
     }
 
+    /// Flat topped orientation, hexagons are aligned in vertical columns.
     pub fn flat() -> &'static Self {
         &LAYOUT_FLAT
     }
@@ -311,14 +429,17 @@ impl Orientation {
 
 //----------------------------------------------------------------------------
 
+/// Position within a grid of rectangular pixels.
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Point(pub f32, pub f32);
 
 impl Point {
+    /// Position on the `x` axis.
     pub fn x(&self) -> f32 {
         self.0
     }
 
+    /// Position on the `y` axis.
     pub fn y(&self) -> f32 {
         self.1
     }
