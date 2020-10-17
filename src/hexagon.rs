@@ -81,6 +81,14 @@ impl Coordinate {
 
     /// Get coordinate rotated left (counter-clockwise) by 60° around the grid
     /// center.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let pos = Coordinate::new(1, 0);
+    /// assert_eq!(pos.rotated_left(), (1, -1).into());
+    /// ```
     pub fn rotated_left(&self) -> Self {
         let q = -self.s();
         let r = -self.q();
@@ -88,6 +96,14 @@ impl Coordinate {
     }
 
     /// Get coordinate rotated right (clockwise) by 60° around the grid center.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let pos = Coordinate::new(1, 0);
+    /// assert_eq!(pos.rotated_right(), (0, 1).into());
+    /// ```
     pub fn rotated_right(&self) -> Self {
         let q = -self.r();
         let r = -self.s();
@@ -384,52 +400,17 @@ impl From<Direction> for i32 {
 
 //----------------------------------------------------------------------------
 
-/// Coefficients for converting between hexagonal grid coordinates and x/y
-/// pixels.
-#[derive(Debug, Clone)]
-pub struct Orientation {
-    // coefficients for forward conversion of hex coordinates into pixels
-    f0: f32,
-    f1: f32,
-    f2: f32,
-    f3: f32,
-    // coefficients for backward conversion of pixels into hex coordinates
-    b0: f32,
-    b1: f32,
-    b2: f32,
-    b3: f32,
-    start_angle: f32,  // in multiples of 60°
-}
-
-const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
-
-const LAYOUT_POINTY: Orientation = Orientation {
-    f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
-    b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
-    start_angle: 1.5,
-};
-
-const LAYOUT_FLAT: Orientation = Orientation {
-    f0: 0.0, f1: 3.0 / 2.0, f2: -SQRT_3, f3: -SQRT_3 / 2.0,
-    b0: -1.0 / 3.0, b1: -SQRT_3 / 3.0, b2: 2.0 / 3.0, b3: 0.0,
-    start_angle: 0.0,
-};
-
-impl Orientation {
-    /// Pointy topped orientation, hexagons are aligned in horizonal rows.
-    pub fn pointy() -> &'static Self {
-        &LAYOUT_POINTY
-    }
-
-    /// Flat topped orientation, hexagons are aligned in vertical columns.
-    pub fn flat() -> &'static Self {
-        &LAYOUT_FLAT
-    }
-}
-
-//----------------------------------------------------------------------------
-
 /// Position within a grid of rectangular pixels.
+///
+/// # Examples
+///
+/// ```
+/// # use rekee::hexagon::*;
+/// let mut pos = Point(1.0, 2.0);
+/// pos = pos + (0.4, 1.6).into();
+/// assert_eq!(pos.x(), 1.4);
+/// assert_eq!(pos.y(), 3.6);
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Point(pub f32, pub f32);
 
@@ -475,6 +456,52 @@ impl From<(f32, f32)> for Point {
 
 //----------------------------------------------------------------------------
 
+/// Hexagon orientation coefficients.
+#[derive(Debug, Clone)]
+pub struct Orientation {
+    // coefficients for forward conversion of hex coordinates into pixels
+    f0: f32,
+    f1: f32,
+    f2: f32,
+    f3: f32,
+    // coefficients for backward conversion of pixels into hex coordinates
+    b0: f32,
+    b1: f32,
+    b2: f32,
+    b3: f32,
+    start_angle: f32,  // in multiples of 60°
+}
+
+const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
+
+const LAYOUT_POINTY: Orientation = Orientation {
+    f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
+    b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
+    start_angle: 1.5,
+};
+
+const LAYOUT_FLAT: Orientation = Orientation {
+    f0: 0.0, f1: 3.0 / 2.0, f2: -SQRT_3, f3: -SQRT_3 / 2.0,
+    b0: -1.0 / 3.0, b1: -SQRT_3 / 3.0, b2: 2.0 / 3.0, b3: 0.0,
+    start_angle: 0.0,
+};
+
+impl Orientation {
+    /// Pointy topped orientation, hexagons are aligned in horizonal rows.
+    pub fn pointy() -> &'static Self {
+        &LAYOUT_POINTY
+    }
+
+    /// Flat topped orientation, hexagons are aligned in vertical columns.
+    pub fn flat() -> &'static Self {
+        &LAYOUT_FLAT
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Coefficients for converting between hexagonal grid coordinates and x/y
+/// pixels. Used as parameter for different conversion functions.
 #[derive(Debug, Clone)]
 pub struct Layout {
     orientation: Orientation,
@@ -483,22 +510,28 @@ pub struct Layout {
 }
 
 impl Layout {
+    /// Creates a new grid layout, consisting of hexagon orientation parameters,
+    /// hexagon size in pixels, and the grid origin point.
     pub fn new(orientation: &Orientation, size: Point, origin: Point) -> Self {
         Layout { orientation: orientation.clone(), size, origin }
     }
 
+    /// Returns a reference to the grid orientation parameters.
     pub fn orientation(&self) -> &Orientation {
         &self.orientation
     }
 
+    /// Returns the hexagon size of this grid layout.
     pub fn size(&self) -> Point {
         self.size
     }
 
+    /// Returns the grid origin point.
     pub fn origin(&self) -> Point {
         self.origin
     }
 
+    /// Calculates the corners of a hexagon with the given coordinate.
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
         let mut corners = [Point::default(); 6];
         let center = hex.to_pixel(&self);
