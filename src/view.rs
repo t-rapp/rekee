@@ -107,6 +107,34 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
     Ok(tile)
 }
 
+fn draw_dragged_tile<P, D>(document: &Document, layout: &Layout, id: TileId, pos: P, dir: D) -> Result<Element>
+    where P: Into<Point>, D: Into<Direction>
+{
+    let size = layout.size();
+    let angle = dir.into().to_angle(&layout);
+    let img = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "image")?;
+    img.set_attribute("href", &format!("img/thumb-{}.png", id))?;
+    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
+    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
+    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
+
+    let pos = pos.into();
+    let tile = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+    tile.set_attribute("id", "dragged")?;
+    tile.set_attribute("class", "tile")?;
+    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    tile.append_child(&img)?;
+    Ok(tile)
+}
+
+fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
+    where P: Into<Point>
+{
+    let pos = pos.into();
+    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    Ok(())
+}
+
 fn mouse_position(event: web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
@@ -138,6 +166,7 @@ pub struct PageView {
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged: Option<Element>,
 }
 
 impl PageView {
@@ -240,7 +269,7 @@ impl PageView {
         Ok(PageView {
             layout, map, canvas, tiles: group, selected, selected_pos,
             dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb
+            dragged_mouseleave_cb, dragged: None
         })
     }
 
@@ -307,6 +336,7 @@ impl PageView {
     }
 
     pub fn drag_begin(&mut self, pos: Point) {
+        let mouse_pos = pos;
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         if self.selected_pos != Some(pos) {
             return;
@@ -314,6 +344,13 @@ impl PageView {
         if let Some(tile) = self.map.get(pos) {
             info!("drag begin: {:?}", tile);
             self.dragged_tile = Some(tile.clone());
+
+            let document = self.canvas.owner_document().unwrap();
+            let dragged = check!(draw_dragged_tile(&document, &self.layout,
+                tile.id, mouse_pos, tile.dir).ok());
+            check!(self.canvas.append_child(&dragged).ok());
+            self.dragged = Some(dragged);
+
             check!(self.canvas.class_list().add_1("is-dragged").ok());
             check!(self.selected.class_list().remove_1("is-draggable").ok());
             check!(self.canvas.add_event_listener_with_callback("mousemove",
@@ -326,8 +363,9 @@ impl PageView {
     }
 
     pub fn drag_move(&mut self, pos: Point) {
-        if let Some(ref tile) = self.dragged_tile {
-            info!("drag move: {:?} -> {:?}", tile, pos);
+        if let Some(ref dragged) = self.dragged {
+            info!("drag move: {:?}", pos);
+            check!(move_dragged_tile(dragged, pos).ok());
         }
     }
 
@@ -342,6 +380,11 @@ impl PageView {
             }
         }
         self.dragged_tile = None;
+        if let Some(ref dragged) = self.dragged {
+            check!(self.canvas.remove_child(dragged).ok());
+        }
+        self.dragged = None;
+
         check!(self.canvas.class_list().remove_1("is-dragged").ok());
         check!(self.selected.class_list().add_1("is-draggable").ok());
         check!(self.canvas.remove_event_listener_with_callback("mousemove",
@@ -357,6 +400,11 @@ impl PageView {
             info!("drag cancel: {:?}", tile);
         }
         self.dragged_tile = None;
+        if let Some(ref dragged) = self.dragged {
+            check!(self.canvas.remove_child(dragged).ok());
+        }
+        self.dragged = None;
+
         check!(self.canvas.class_list().remove_1("is-dragged").ok());
         check!(self.selected.class_list().add_1("is-draggable").ok());
         check!(self.canvas.remove_event_listener_with_callback("mousemove",
