@@ -146,9 +146,13 @@ impl Map {
         &self.tiles
     }
 
+    pub fn get(&self, pos: Coordinate) -> Option<&PlacedTile> {
+        self.tiles.iter().find(|tile| tile.pos == pos)
+    }
+
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
         // remove any tile at the insert position
-        self.tiles.retain(|tile| tile.pos != pos);
+        self.remove(pos);
 
         // auto-select tile id variant, if not given
         let mut id = id;
@@ -210,6 +214,11 @@ impl Map {
             trace!("found tile_dir = {}, active_dir = {}", tile_dir, self.active_dir);
         }
         self.insert(id, tile_pos, tile_dir)
+    }
+
+    /// Remove tile at the given position.
+    pub fn remove(&mut self, pos: Coordinate) {
+        self.tiles.retain(|tile| tile.pos != pos);
     }
 
     pub fn align_center(&mut self) {

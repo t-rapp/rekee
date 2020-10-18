@@ -107,6 +107,15 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
     Ok(tile)
 }
 
+fn mouse_position(event: web_sys::MouseEvent) -> Option<Point> {
+    let element = event.current_target()
+        .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
+    let rect = element.get_bounding_client_rect();
+    let x = event.client_x() as f32 - rect.left() as f32;
+    let y = event.client_y() as f32 - rect.top() as f32;
+    Some(Point(x, y))
+}
+
 macro_rules! check {
     ($e:expr) => {
         match $e {
@@ -121,8 +130,14 @@ macro_rules! check {
 pub struct PageView {
     layout: Layout,
     map: Map,
+    canvas: Element,
     tiles: Element,
+    selected_pos: Option<Coordinate>,
     selected: Element,
+    dragged_tile: Option<PlacedTile>,
+    dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
 }
 
 impl PageView {
@@ -167,22 +182,38 @@ impl PageView {
         }
         canvas.append_child(&group)?;
 
+        let selected_pos = None;
         let selected = draw_hex(&document, &layout, (2, 2))?;
         selected.set_id("selected");
         selected.class_list().add_1("is-hidden")?;
         canvas.append_child(&selected)?;
 
-        // add event handler to canvas element
+        let dragged_tile = None;
+
+        // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            let element = check!(event.current_target()
-                .and_then(|trg| trg.dyn_into::<web_sys::Element>().ok()));
-            let rect = element.get_bounding_client_rect();
-            let x = event.client_x() as f32 - rect.left() as f32;
-            let y = event.client_y() as f32 - rect.top() as f32;
-            nuts::publish(UpdateSelectedEvent { pos: Point(x, y) });
+            let pos = check!(mouse_position(event));
+            nuts::publish(UpdateSelectedEvent { pos });
+            nuts::publish(DragBeginEvent { pos });
         }) as Box<dyn Fn(_)>);
-        canvas.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        canvas.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
+
+        let dragged_mousemove_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            event.prevent_default();
+            let pos = check!(mouse_position(event));
+            nuts::publish(DragMoveEvent { pos });
+        }) as Box<dyn Fn(_)>);
+
+        let dragged_mouseup_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            let pos = check!(mouse_position(event));
+            nuts::publish(DragEndEvent { pos });
+            nuts::publish(UpdateSelectedEvent { pos });
+        }) as Box<dyn Fn(_)>);
+
+        let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
+            nuts::publish(DragCancelEvent);
+        }) as Box<dyn Fn(_)>);
 
         // add event handler(s) to file input element
         let input = document.get_element_by_id("upload").unwrap()
@@ -206,7 +237,11 @@ impl PageView {
         input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        Ok(PageView { layout, map, tiles: group, selected })
+        Ok(PageView {
+            layout, map, canvas, tiles: group, selected, selected_pos,
+            dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb
+        })
     }
 
     pub fn import_file(&mut self, data: &str) {
@@ -252,8 +287,95 @@ impl PageView {
 
     pub fn update_selected(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
-        check!(move_hex(&self.selected, &self.layout, pos).ok());
-        check!(self.selected.class_list().remove_1("is-hidden").ok());
+        info!("update selected: {:?}", pos);
+        let tile = self.map.get(pos);
+        if self.selected_pos != Some(pos) {
+            check!(move_hex(&self.selected, &self.layout, pos).ok());
+        }
+        if self.selected_pos != Some(pos) || tile.is_some() {
+            self.selected_pos = Some(pos);
+            check!(self.selected.class_list().remove_1("is-hidden").ok());
+        } else {
+            self.selected_pos = None;
+            check!(self.selected.class_list().add_1("is-hidden").ok());
+        }
+        if tile.is_some() {
+            check!(self.selected.class_list().add_1("is-draggable").ok());
+        } else {
+            check!(self.selected.class_list().remove_1("is-draggable").ok());
+        }
+    }
+
+    pub fn drag_begin(&mut self, pos: Point) {
+        let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+        if self.selected_pos != Some(pos) {
+            return;
+        }
+        if let Some(tile) = self.map.get(pos) {
+            info!("drag begin: {:?}", tile);
+            self.dragged_tile = Some(tile.clone());
+            check!(self.canvas.class_list().add_1("is-dragged").ok());
+            check!(self.selected.class_list().remove_1("is-draggable").ok());
+            check!(self.canvas.add_event_listener_with_callback("mousemove",
+                self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+            check!(self.canvas.add_event_listener_with_callback("mouseup",
+                self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+            check!(self.canvas.add_event_listener_with_callback("mouseleave",
+                self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+        }
+    }
+
+    pub fn drag_move(&mut self, pos: Point) {
+        if let Some(ref tile) = self.dragged_tile {
+            info!("drag move: {:?} -> {:?}", tile, pos);
+        }
+    }
+
+    pub fn drag_end(&mut self, pos: Point) {
+        if let Some(ref tile) = self.dragged_tile {
+            let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+            info!("drag end: {:?} -> {:?}", tile, pos);
+            if pos != tile.pos {
+                self.map.remove(tile.pos);
+                self.map.insert(tile.id, pos, tile.dir);
+                self.update_map();
+            }
+        }
+        self.dragged_tile = None;
+        check!(self.canvas.class_list().remove_1("is-dragged").ok());
+        check!(self.selected.class_list().add_1("is-draggable").ok());
+        check!(self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+    }
+
+    pub fn drag_cancel(&mut self) {
+        if let Some(ref tile) = self.dragged_tile {
+            info!("drag cancel: {:?}", tile);
+        }
+        self.dragged_tile = None;
+        check!(self.canvas.class_list().remove_1("is-dragged").ok());
+        check!(self.selected.class_list().add_1("is-draggable").ok());
+        check!(self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+    }
+}
+
+impl Drop for PageView {
+    fn drop(&mut self) {
+        self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).unwrap();
+        self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).unwrap();
+        self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).unwrap();
     }
 }
 

@@ -31,6 +31,20 @@ pub struct UpdateSelectedEvent {
     pub pos: Point,
 }
 
+pub struct DragBeginEvent {
+    pub pos: Point,
+}
+
+pub struct DragMoveEvent {
+    pub pos: Point,
+}
+
+pub struct DragEndEvent {
+    pub pos: Point,
+}
+
+pub struct DragCancelEvent;
+
 //----------------------------------------------------------------------------
 
 struct PageController {
@@ -61,6 +75,22 @@ impl PageController {
     fn update_selected(&mut self, event: &UpdateSelectedEvent) {
         self.view.update_selected(event.pos);
     }
+
+    fn drag_begin(&mut self, event: &DragBeginEvent) {
+        self.view.drag_begin(event.pos);
+    }
+
+    fn drag_move(&mut self, event: &DragMoveEvent) {
+        self.view.drag_move(event.pos);
+    }
+
+    fn drag_end(&mut self, event: &DragEndEvent) {
+        self.view.drag_end(event.pos);
+    }
+
+    fn drag_cancel(&mut self, _event: &DragCancelEvent) {
+        self.view.drag_cancel();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -74,6 +104,10 @@ pub fn init(view: PageView) {
     page.subscribe(PageController::align_center);
     page.subscribe(PageController::update_map);
     page.subscribe(PageController::update_selected);
+    page.subscribe(PageController::drag_begin);
+    page.subscribe(PageController::drag_move);
+    page.subscribe(PageController::drag_end);
+    page.subscribe(PageController::drag_cancel);
 }
 
 //----------------------------------------------------------------------------
