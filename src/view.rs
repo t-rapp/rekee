@@ -336,7 +336,6 @@ impl PageView {
     }
 
     pub fn drag_begin(&mut self, pos: Point) {
-        let mouse_pos = pos;
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         if self.selected_pos != Some(pos) {
             return;
@@ -344,12 +343,7 @@ impl PageView {
         if let Some(tile) = self.map.get(pos) {
             info!("drag begin: {:?}", tile);
             self.dragged_tile = Some(tile.clone());
-
-            let document = self.canvas.owner_document().unwrap();
-            let dragged = check!(draw_dragged_tile(&document, &self.layout,
-                tile.id, mouse_pos, tile.dir).ok());
-            check!(self.canvas.append_child(&dragged).ok());
-            self.dragged = Some(dragged);
+            // dragged element will be created later on mouse move to avoid flicker
 
             check!(self.canvas.class_list().add_1("is-dragged").ok());
             check!(self.selected.class_list().remove_1("is-draggable").ok());
@@ -366,6 +360,13 @@ impl PageView {
         if let Some(ref dragged) = self.dragged {
             info!("drag move: {:?}", pos);
             check!(move_dragged_tile(dragged, pos).ok());
+        } else if let Some(ref tile) = self.dragged_tile {
+            // create missing dragged element on first mouse move
+            let document = self.canvas.owner_document().unwrap();
+            let dragged = check!(draw_dragged_tile(&document, &self.layout,
+                tile.id, pos, tile.dir).ok());
+            check!(self.canvas.append_child(&dragged).ok());
+            self.dragged = Some(dragged);
         }
     }
 
