@@ -46,6 +46,9 @@
             stroke: blue;
             stroke-width: 1.2;
         }
+        #selected-menu .button {
+            font-size: .55rem;
+        }
         #dragged {
             opacity: 0.6;
         }
@@ -98,8 +101,34 @@
         </div>
       </div>
     </nav>
+
     <div id="main" class="container">
       <!-- canvas content added here by WASM -->
     </div>
+
+    <div id="selected-menu" class="buttons are-small has-addons is-centered">
+      <button id="rotate-selected-left-button" class="button">
+	<span class="icon">
+	  <svg class="bi" width="16" height="16" fill="currentColor">
+	    <use xlink:href="./pkg/bootstrap-icons.svg#arrow-counterclockwise"/>
+	  </svg>
+	</span>
+      </button>
+      <button id="rotate-selected-right-button" class="button">
+	<span class="icon">
+	  <svg class="bi" width="16" height="16" fill="currentColor">
+	    <use xlink:href="./pkg/bootstrap-icons.svg#arrow-clockwise"/>
+	  </svg>
+	</span>
+      </button>
+      <button id="remove-selected-button" class="button is-danger">
+	<span class="icon">
+	  <svg class="bi" width="16" height="16" fill="currentColor">
+	    <use xlink:href="./pkg/bootstrap-icons.svg#trash"/>
+	  </svg>
+	</span>
+      </button>
+     </div>
+
   </body>
 </html>

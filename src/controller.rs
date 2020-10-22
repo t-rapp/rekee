@@ -31,6 +31,12 @@ pub struct UpdateSelectedEvent {
     pub pos: Point,
 }
 
+pub struct RotateSelectedLeftEvent;
+
+pub struct RotateSelectedRightEvent;
+
+pub struct RemoveSelectedEvent;
+
 pub struct DragBeginEvent {
     pub pos: Point,
 }
@@ -76,6 +82,18 @@ impl PageController {
         self.view.update_selected(event.pos);
     }
 
+    fn rotate_selected_left(&mut self, _event: &RotateSelectedLeftEvent) {
+        self.view.rotate_selected_left();
+    }
+
+    fn rotate_selected_right(&mut self, _event: &RotateSelectedRightEvent) {
+        self.view.rotate_selected_right();
+    }
+
+    fn remove_selected(&mut self, _event: &RemoveSelectedEvent) {
+        self.view.remove_selected();
+    }
+
     fn drag_begin(&mut self, event: &DragBeginEvent) {
         self.view.drag_begin(event.pos);
     }
@@ -104,6 +122,9 @@ pub fn init(view: PageView) {
     page.subscribe(PageController::align_center);
     page.subscribe(PageController::update_map);
     page.subscribe(PageController::update_selected);
+    page.subscribe(PageController::rotate_selected_left);
+    page.subscribe(PageController::rotate_selected_right);
+    page.subscribe(PageController::remove_selected);
     page.subscribe(PageController::drag_begin);
     page.subscribe(PageController::drag_move);
     page.subscribe(PageController::drag_end);
