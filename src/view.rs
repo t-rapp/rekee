@@ -262,12 +262,12 @@ impl PageView {
         group.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
         canvas.append_child(&group)?;
 
-        let group = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
-        group.set_id("tiles");
+        let tiles = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+        tiles.set_id("tiles");
         for tile in map.tiles() {
-            group.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;
+            tiles.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;
         }
-        canvas.append_child(&group)?;
+        canvas.append_child(&tiles)?;
 
         let selected_pos = None;
         let selected = draw_hex(&document, &layout, (2, 2))?;
@@ -329,9 +329,9 @@ impl PageView {
         callback.forget();
 
         Ok(PageView {
-            layout, map, canvas, tiles: group, selected, selected_pos,
-            selected_menu, dragged_tile, dragged_mousemove_cb,
-            dragged_mouseup_cb, dragged_mouseleave_cb, dragged: None
+            layout, map, canvas, tiles, selected, selected_pos, selected_menu,
+            dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb, dragged: None
         })
     }
 
