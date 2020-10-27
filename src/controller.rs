@@ -25,6 +25,8 @@ pub struct AppendTileEvent {
 
 pub struct AlignCenterEvent;
 
+pub struct ClearMapEvent;
+
 pub struct UpdateMapEvent;
 
 pub struct UpdateSelectedEvent {
@@ -78,6 +80,7 @@ impl PageController {
         page.subscribe(PageController::insert_tile);
         page.subscribe(PageController::append_tile);
         page.subscribe(PageController::align_center);
+        page.subscribe(PageController::clear_map);
         page.subscribe(PageController::update_map);
         page.subscribe(PageController::update_selected);
         page.subscribe(PageController::rotate_selected_left);
@@ -103,6 +106,10 @@ impl PageController {
 
     fn align_center(&mut self, _event: &AlignCenterEvent) {
         self.view.align_center();
+    }
+
+    fn clear_map(&mut self, _event: &ClearMapEvent) {
+        self.view.clear_map();
     }
 
     fn update_map(&mut self, _event: &UpdateMapEvent) {

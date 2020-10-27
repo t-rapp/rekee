@@ -412,6 +412,11 @@ impl PageView {
         self.update_map();
     }
 
+    pub fn clear_map(&mut self) {
+        self.map = Map::new();
+        self.update_map();
+    }
+
     pub fn update_map(&mut self) {
         let document = self.tiles.owner_document().unwrap();
         // remove all existing tiles
