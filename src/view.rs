@@ -356,6 +356,14 @@ impl PageView {
             nuts::publish(DragCancelEvent);
         }) as Box<dyn Fn(_)>);
 
+        let control = document.get_element_by_id("clear-map-button").unwrap()
+            .dyn_into::<web_sys::HtmlElement>().unwrap();
+        let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(ClearMapEvent);
+        }) as Box<dyn Fn(_)>);
+        control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        callback.forget();
+
         // add event handler(s) to file input element
         let input = document.get_element_by_id("upload").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
