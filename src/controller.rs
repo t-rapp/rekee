@@ -6,7 +6,7 @@
 
 use crate::hexagon::*;
 use crate::tile::*;
-use crate::view::PageView;
+use crate::view::{CatalogView, PageView};
 
 pub struct ImportFileEvent {
     pub data: String,
@@ -53,11 +53,42 @@ pub struct DragCancelEvent;
 
 //----------------------------------------------------------------------------
 
-struct PageController {
+pub struct CatalogController {
+    view: CatalogView,
+}
+
+impl CatalogController {
+    pub fn init(view: CatalogView) {
+        let controller = CatalogController { view };
+        let _catalog = nuts::new_activity(controller);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+pub struct PageController {
     view: PageView,
 }
 
 impl PageController {
+    pub fn init(view: PageView) {
+        let controller = PageController { view };
+        let page = nuts::new_activity(controller);
+        page.subscribe(PageController::import_file);
+        page.subscribe(PageController::insert_tile);
+        page.subscribe(PageController::append_tile);
+        page.subscribe(PageController::align_center);
+        page.subscribe(PageController::update_map);
+        page.subscribe(PageController::update_selected);
+        page.subscribe(PageController::rotate_selected_left);
+        page.subscribe(PageController::rotate_selected_right);
+        page.subscribe(PageController::remove_selected);
+        page.subscribe(PageController::drag_begin);
+        page.subscribe(PageController::drag_move);
+        page.subscribe(PageController::drag_end);
+        page.subscribe(PageController::drag_cancel);
+    }
+
     fn import_file(&mut self, event: &ImportFileEvent) {
         self.view.import_file(&event.data);
     }
@@ -109,26 +140,6 @@ impl PageController {
     fn drag_cancel(&mut self, _event: &DragCancelEvent) {
         self.view.drag_cancel();
     }
-}
-
-//----------------------------------------------------------------------------
-
-pub fn init(view: PageView) {
-    let controller = PageController { view };
-    let page = nuts::new_activity(controller);
-    page.subscribe(PageController::import_file);
-    page.subscribe(PageController::insert_tile);
-    page.subscribe(PageController::append_tile);
-    page.subscribe(PageController::align_center);
-    page.subscribe(PageController::update_map);
-    page.subscribe(PageController::update_selected);
-    page.subscribe(PageController::rotate_selected_left);
-    page.subscribe(PageController::rotate_selected_right);
-    page.subscribe(PageController::remove_selected);
-    page.subscribe(PageController::drag_begin);
-    page.subscribe(PageController::drag_move);
-    page.subscribe(PageController::drag_end);
-    page.subscribe(PageController::drag_cancel);
 }
 
 //----------------------------------------------------------------------------

@@ -28,11 +28,15 @@ pub fn main() -> Result<(), JsValue> {
     logger::init().unwrap();
 
     let document = web_sys::window().unwrap().document().unwrap();
-    let parent = document.get_element_by_id("main").
-        ok_or_else(|| "Cannot find '#main' parent element for page")?;
+    let layout = Layout::new(Orientation::pointy(), Point(50.0, 50.0), Point(450.0, 400.0));
 
-    let layout = Layout::new(Orientation::pointy(), Point(40.0, 40.0), Point(320.0, 300.0));
-    controller::init(PageView::new(parent, layout)?);
+    let parent = document.get_element_by_id("catalog-container")
+        .ok_or_else(|| "Cannot find '#catalog-container' parent element for catalog component")?;
+    CatalogController::init(CatalogView::new(parent, &layout)?);
+
+    let parent = document.get_element_by_id("map-container")
+        .ok_or_else(|| "Cannot find '#map-container' parent element for map component")?;
+    PageController::init(PageView::new(parent, layout)?);
 
     nuts::publish(InsertTileEvent { id: tile!(102, b), pos: (0, 0).into(), dir: Direction::D });
     nuts::publish(AppendTileEvent { id: tile!(104, b), hint: None });

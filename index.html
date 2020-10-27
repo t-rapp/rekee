@@ -14,9 +14,18 @@
         }
         .navbar-brand > .navbar-item {
             font-family: 'Edo Regular';
-            font-size: 1.4rem;
         }
 
+        #catalog {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            align-items: flex-start;
+        }
+        .is-pointy img {
+            transform: rotate(90deg);
+        }
         .label {
             font-family: sans-serif;
             font-size: 14px;
@@ -75,7 +84,7 @@
   <body>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <div class="navbar-item">
+        <div class="navbar-item is-size-4">
           Rallyman Rekee
         </div>
       </div>
@@ -102,33 +111,46 @@
       </div>
     </nav>
 
-    <div id="main" class="container">
-      <!-- canvas content added here by WASM -->
-    </div>
+    <main>
+      <div class="columns is-variable is-2">
+        <div class="column is-one-third">
+          <div id="catalog-container" class="box">
+            <!-- catalog elements added here by WASM -->
+          </div>
+        </div>
+        <div class="column">
+          <div id="map-container" class="px-4">
+            <!-- map elements added here by WASM -->
+          </div>
+        </div>
+      </div>
+    </main>
 
-    <div id="selected-menu" class="buttons are-small has-addons is-centered">
-      <button id="rotate-selected-left-button" class="button">
-	<span class="icon">
-	  <svg class="bi" width="16" height="16" fill="currentColor">
-	    <use xlink:href="./pkg/bootstrap-icons.svg#arrow-counterclockwise"/>
-	  </svg>
-	</span>
-      </button>
-      <button id="rotate-selected-right-button" class="button">
-	<span class="icon">
-	  <svg class="bi" width="16" height="16" fill="currentColor">
-	    <use xlink:href="./pkg/bootstrap-icons.svg#arrow-clockwise"/>
-	  </svg>
-	</span>
-      </button>
-      <button id="remove-selected-button" class="button is-danger">
-	<span class="icon">
-	  <svg class="bi" width="16" height="16" fill="currentColor">
-	    <use xlink:href="./pkg/bootstrap-icons.svg#trash"/>
-	  </svg>
-	</span>
-      </button>
-     </div>
+    <div id="menus" class="is-hidden">
+      <div id="selected-menu" class="buttons are-small has-addons is-centered">
+        <button id="rotate-selected-left-button" class="button" title="Rotate tile left">
+          <span class="icon">
+            <svg class="bi" width="16" height="16" fill="currentColor">
+              <use xlink:href="./pkg/bootstrap-icons.svg#arrow-counterclockwise"/>
+            </svg>
+          </span>
+        </button>
+        <button id="rotate-selected-right-button" class="button" title="Rotate tile right">
+          <span class="icon">
+            <svg class="bi" width="16" height="16" fill="currentColor">
+              <use xlink:href="./pkg/bootstrap-icons.svg#arrow-clockwise"/>
+            </svg>
+          </span>
+        </button>
+        <button id="remove-selected-button" class="button is-danger" title="Remove tile">
+          <span class="icon">
+            <svg class="bi" width="16" height="16" fill="currentColor">
+              <use xlink:href="./pkg/bootstrap-icons.svg#trash"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
 
   </body>
 </html>

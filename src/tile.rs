@@ -378,7 +378,7 @@ impl PartialEq<ConnectionHint> for Connection {
 
 //----------------------------------------------------------------------------
 
-struct TileInfo {
+pub struct TileInfo {
     id: TileId,
     count: usize,
     conn: [Connection; 6],
@@ -387,6 +387,21 @@ struct TileInfo {
 impl TileInfo {
     const fn new(id: TileId, count: usize, conn: [Connection; 6]) -> Self {
         TileInfo { id, count, conn }
+    }
+
+    pub fn base_id(&self) -> TileId {
+        self.id
+    }
+
+    pub fn full_id(&self) -> TileId {
+        match self.count {
+            1 => TileId::new(self.id.num, self.id.side, 0),
+            _ => TileId::new(self.id.num, self.id.side, 1),
+        }
+    }
+
+    pub fn iter() -> std::slice::Iter<'static, Self> {
+        TILE_INFOS.iter()
     }
 
     fn get(id: TileId) -> Option<&'static Self> {

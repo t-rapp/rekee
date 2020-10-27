@@ -192,6 +192,19 @@ fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
     Ok(())
 }
 
+fn draw_catalog_tile(document: &Document, size: Point, id: TileId) -> Result<Element>
+{
+    let img = document.create_element("img")?;
+    img.set_attribute("src", &format!("img/thumb-{}.png", id))?;
+    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
+    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
+    img.set_attribute("alt", &id.to_string())?;
+
+    let tile = document.create_element("li")?;
+    tile.append_child(&img)?;
+    Ok(tile)
+}
+
 fn mouse_position(event: web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
@@ -208,6 +221,42 @@ macro_rules! check {
             Some(val) => val,
         }
     };
+}
+
+//----------------------------------------------------------------------------
+
+pub struct CatalogView;
+
+impl CatalogView {
+    pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
+        let document = parent.owner_document().unwrap();
+
+        // remove all pre-existing child nodes
+        let range = document.create_range()?;
+        range.select_node_contents(&parent)?;
+        range.delete_contents()?;
+
+        let tiles = document.create_element("ul")?;
+        tiles.set_id("catalog");
+        if layout.is_pointy() {
+            tiles.set_attribute("class", "is-pointy")?;
+        }
+
+        for info in TileInfo::iter() {
+            let tile = draw_catalog_tile(&document, layout.size(), info.full_id())?;
+
+            let callback = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
+                nuts::publish(AppendTileEvent { id: info.full_id(), hint: None });
+            }) as Box<dyn Fn(_)>);
+            tile.add_event_listener_with_callback("dblclick", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+
+            tiles.append_child(&tile)?;
+        }
+        parent.append_child(&tiles)?;
+
+        Ok(CatalogView {})
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -238,6 +287,7 @@ impl PageView {
         range.delete_contents()?;
 
         let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
+        canvas.set_id("map");
         canvas.set_attribute("width", &format!("{}", 2.0 * layout.origin().x()))?;
         canvas.set_attribute("height", &format!("{}", 2.0 * layout.origin().y()))?;
         parent.append_child(&canvas)?;

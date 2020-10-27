@@ -531,6 +531,16 @@ impl Layout {
         self.origin
     }
 
+    /// Returns whether the hexagon orientation is "pointy top" or not.
+    pub fn is_pointy(&self) -> bool {
+        (self.orientation.start_angle - 1.5).abs() <= 0.1
+    }
+
+    /// Returns whether the hexagon orientation is "flat top" or not.
+    pub fn is_flat(&self) -> bool {
+        self.orientation.start_angle.abs() <= 0.1
+    }
+
     /// Calculates the corners of a hexagon with the given coordinate.
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
         let mut corners = [Point::default(); 6];
@@ -735,6 +745,8 @@ mod tests {
         };
 
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        assert_eq!(true, layout.is_pointy());
+        assert_eq!(false, layout.is_flat());
         let corners = layout.hexagon_corners((0, 0).into());
         assert_eq!("(-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0), (8.7, -5.0), (8.7, 5.0)", points_to_string(&corners));
         let corners = layout.hexagon_corners((0, 1).into());
@@ -745,6 +757,8 @@ mod tests {
         assert_eq!("(26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0), (34.6, -20.0), (34.6, -10.0)", points_to_string(&corners));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        assert_eq!(true, layout.is_pointy());
+        assert_eq!(false, layout.is_flat());
         let corners = layout.hexagon_corners((0, 0).into());
         assert_eq!("(-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0), (17.3, 20.0), (17.3, -0.0)", points_to_string(&corners));
         let corners = layout.hexagon_corners((0, 1).into());
@@ -755,6 +769,8 @@ mod tests {
         assert_eq!("(52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0), (69.3, 50.0), (69.3, 30.0)", points_to_string(&corners));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        assert_eq!(false, layout.is_pointy());
+        assert_eq!(true, layout.is_flat());
         let corners = layout.hexagon_corners((0, 0).into());
         assert_eq!("(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)", points_to_string(&corners));
         let corners = layout.hexagon_corners((0, 1).into());
