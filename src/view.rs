@@ -4,7 +4,7 @@
 // $Id$
 //----------------------------------------------------------------------------
 
-use log::{warn, info};
+use log::{warn, info, debug};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -201,11 +201,25 @@ fn draw_catalog_tile(document: &Document, size: Point, id: TileId) -> Result<Ele
     img.set_attribute("alt", &id.to_string())?;
 
     let tile = document.create_element("li")?;
+    tile.set_attribute("draggable", "true")?;
     tile.append_child(&img)?;
+
+    let callback = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
+        if let Some(trans) = event.data_transfer() {
+            let data = id.base().to_string();
+            trans.set_data("application/rekee", &data).unwrap();
+            trans.set_data("text/plain", &data).unwrap();
+            trans.set_effect_allowed("copy");
+        }
+        nuts::publish(DragCatalogBeginEvent { tile: id.base() });
+    }) as Box<dyn Fn(_)>);
+    tile.add_event_listener_with_callback("dragstart", callback.as_ref().unchecked_ref()).unwrap();
+    callback.forget();
+
     Ok(tile)
 }
 
-fn mouse_position(event: web_sys::MouseEvent) -> Option<Point> {
+fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
     let rect = element.get_bounding_client_rect();
@@ -225,7 +239,12 @@ macro_rules! check {
 
 //----------------------------------------------------------------------------
 
-pub struct CatalogView;
+pub struct CatalogView {
+    tiles: Element,
+    canvas: Option<Element>,
+    dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
+    dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
+}
 
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
@@ -244,18 +263,46 @@ impl CatalogView {
 
         for info in TileInfo::iter() {
             let tile = draw_catalog_tile(&document, layout.size(), info.full_id())?;
-
-            let callback = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
-                nuts::publish(AppendTileEvent { id: info.full_id(), hint: None });
-            }) as Box<dyn Fn(_)>);
-            tile.add_event_listener_with_callback("dblclick", callback.as_ref().unchecked_ref()).unwrap();
-            callback.forget();
-
             tiles.append_child(&tile)?;
         }
         parent.append_child(&tiles)?;
 
-        Ok(CatalogView {})
+        let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
+            let data = event.data_transfer()
+                .and_then(|trans| trans.get_data("application/rekee").ok());
+            if data.is_some() {
+                event.prevent_default();
+            }
+        }) as Box<dyn Fn(_)>);
+
+        let dragdrop_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
+            let pos = check!(mouse_position(&event));
+            let tile: Option<TileId> = event.data_transfer()
+                .and_then(|trans| trans.get_data("application/rekee").ok())
+                .and_then(|data| data.parse().ok());
+            if let Some(tile) = tile {
+                event.prevent_default();
+                nuts::publish(DragCatalogEndEvent { pos, tile });
+                nuts::publish(UpdateSelectedEvent { pos });
+            }
+        }) as Box<dyn Fn(_)>);
+
+        Ok(CatalogView { tiles, canvas: None, dragover_cb, dragdrop_cb })
+    }
+
+    pub fn drag_begin(&mut self, tile: TileId) {
+        info!("drag begin: {:?}", tile);
+        if self.canvas.is_none() {
+            // lookup canvas element and initialize drag-n-drop event handlers
+            let document = self.tiles.owner_document().unwrap();
+            if let Some(canvas) = document.get_element_by_id("map") {
+                check!(canvas.add_event_listener_with_callback("dragover",
+                    self.dragover_cb.as_ref().unchecked_ref()).ok());
+                check!(canvas.add_event_listener_with_callback("drop",
+                    self.dragdrop_cb.as_ref().unchecked_ref()).ok());
+                self.canvas = Some(canvas);
+            }
+        }
     }
 }
 
@@ -333,27 +380,27 @@ impl PageView {
 
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            let pos = check!(mouse_position(event));
+            let pos = check!(mouse_position(&event));
             nuts::publish(UpdateSelectedEvent { pos });
-            nuts::publish(DragBeginEvent { pos });
+            nuts::publish(DragMapBeginEvent { pos });
         }) as Box<dyn Fn(_)>);
         canvas.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
         let dragged_mousemove_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
-            let pos = check!(mouse_position(event));
-            nuts::publish(DragMoveEvent { pos });
+            let pos = check!(mouse_position(&event));
+            nuts::publish(DragMapMoveEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseup_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            let pos = check!(mouse_position(event));
-            nuts::publish(DragEndEvent { pos });
+            let pos = check!(mouse_position(&event));
+            nuts::publish(DragMapEndEvent { pos });
             nuts::publish(UpdateSelectedEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
-            nuts::publish(DragCancelEvent);
+            nuts::publish(DragMapCancelEvent);
         }) as Box<dyn Fn(_)>);
 
         let control = document.get_element_by_id("clear-map-button").unwrap()
@@ -513,7 +560,7 @@ impl PageView {
 
     pub fn drag_move(&mut self, pos: Point) {
         if let Some(ref dragged) = self.dragged {
-            info!("drag move: {:?}", pos);
+            debug!("drag move: {:?}", pos);
             check!(move_dragged_tile(dragged, pos).ok());
         } else if let Some(ref tile) = self.dragged_tile {
             // hide menu during drag operation
@@ -527,7 +574,7 @@ impl PageView {
         }
     }
 
-    pub fn drag_end(&mut self, pos: Point) {
+    pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
         if let Some(ref tile) = self.dragged_tile {
             let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
             info!("drag end: {:?} -> {:?}", tile, pos);
@@ -536,6 +583,12 @@ impl PageView {
                 self.map.insert(tile.id, pos, tile.dir);
                 self.update_map();
             }
+        }
+        if let Some(tile) = added_tile {
+            let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+            info!("drag end: {:?} -> {:?}", tile, pos);
+            self.map.insert(tile, pos, Direction::A);
+            self.update_map();
         }
         self.dragged_tile = None;
         if let Some(ref dragged) = self.dragged {
