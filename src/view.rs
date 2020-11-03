@@ -441,13 +441,14 @@ impl PageView {
     }
 
     pub fn import_file(&mut self, data: &str) {
-        let map = match import::import_rgt(data) {
+        let mut map = match import::import_rgt(data) {
             Ok(val) => val,
             Err(err) => {
                 warn!("Cannot import file data: {}", err);
                 return;
             },
         };
+        map.align_center();
         self.map = map;
         self.update_map();
     }

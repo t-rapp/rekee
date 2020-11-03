@@ -37,7 +37,7 @@ pub struct Coordinate {
 
 impl Coordinate {
     /// Creates a new grid coordinate from positions on `q` and `r` axis.
-    pub fn new(q: i32, r: i32) -> Self {
+    pub const fn new(q: i32, r: i32) -> Self {
         Coordinate { q, r }
     }
 
