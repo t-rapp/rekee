@@ -15,7 +15,9 @@
         .navbar-brand > .navbar-item {
             font-family: 'Edo Regular';
         }
-
+        #catalog-container {
+            overflow-y: auto;
+        }
         #catalog {
             display: flex;
             flex-direction: row;
@@ -23,10 +25,10 @@
             align-content: flex-start;
             align-items: flex-start;
         }
-        .is-pointy img {
+        #catalog.is-pointy img {
             transform: rotate(90deg);
         }
-        .label {
+        #map .label {
             font-family: sans-serif;
             font-size: 14px;
             font-weight: bold;
@@ -124,7 +126,7 @@
     <main>
       <div class="columns is-variable is-2">
         <div class="column is-one-third">
-          <div id="catalog-container" class="box">
+          <div id="catalog-container" class="box has-background-light">
             <!-- catalog elements added here by WASM -->
           </div>
         </div>
