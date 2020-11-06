@@ -449,6 +449,7 @@ impl PageView {
             },
         };
         map.align_center();
+        self.clear_selected();
         self.map = map;
         self.update_map();
     }
@@ -464,11 +465,13 @@ impl PageView {
     }
 
     pub fn align_center(&mut self) {
+        self.clear_selected();
         self.map.align_center();
         self.update_map();
     }
 
     pub fn clear_map(&mut self) {
+        self.clear_selected();
         self.map = Map::new();
         self.update_map();
     }
@@ -485,6 +488,13 @@ impl PageView {
                 self.tiles.append_child(&el).unwrap();
             }
         }
+    }
+
+    pub fn clear_selected(&mut self) {
+        self.selected_pos = None;
+        check!(self.selected.class_list().add_1("is-hidden").ok());
+        check!(self.selected.class_list().remove_1("is-draggable").ok());
+        check!(self.selected_menu.class_list().add_1("is-hidden").ok());
     }
 
     pub fn update_selected(&mut self, pos: Point) {
