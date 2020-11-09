@@ -297,16 +297,18 @@ impl CatalogView {
                 .and_then(|trans| trans.get_data("application/rekee").ok());
             if data.is_some() {
                 event.prevent_default();
+                let pos = check!(mouse_position(&event));
+                nuts::publish(DragMapMoveEvent { pos });
             }
         }) as Box<dyn Fn(_)>);
 
         let dragdrop_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-            let pos = check!(mouse_position(&event));
             let tile: Option<TileId> = event.data_transfer()
                 .and_then(|trans| trans.get_data("application/rekee").ok())
                 .and_then(|data| data.parse().ok());
             if let Some(tile) = tile {
                 event.prevent_default();
+                let pos = check!(mouse_position(&event));
                 nuts::publish(DragCatalogEndEvent { pos, tile });
                 nuts::publish(UpdateSelectedEvent { pos });
             }
@@ -603,8 +605,6 @@ impl PageView {
             debug!("drag move: {:?}", pos);
             check!(move_dragged_tile(dragged, pos).ok());
         } else if let Some(ref tile) = self.dragged_tile {
-            // hide menu during drag operation
-            check!(self.selected_menu.class_list().add_1("is-hidden").ok());
             // create missing dragged element on first mouse move
             let document = self.canvas.owner_document().unwrap();
             let dragged = check!(draw_dragged_tile(&document, &self.layout,
@@ -612,6 +612,8 @@ impl PageView {
             check!(self.canvas.append_child(&dragged).ok());
             self.dragged = Some(dragged);
         }
+        // hide menu during drag operation
+        check!(self.selected_menu.class_list().add_1("is-hidden").ok());
     }
 
     pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
