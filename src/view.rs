@@ -4,6 +4,7 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+use indoc::indoc;
 use log::{warn, info, debug};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -17,6 +18,21 @@ use crate::tile::*;
 //----------------------------------------------------------------------------
 
 type Result<T> = std::result::Result<T, JsValue>;
+
+const TILE_STYLE: &str = indoc!(r#"
+    .label {
+        font-family: sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        fill: #444;
+        paint-order: stroke;
+        stroke: white;
+        stroke-width: 2.0;
+        dominant-baseline: middle;
+        text-anchor: middle;
+        user-select: none;
+        pointer-events: none;
+    }"#);
 
 fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
 {
@@ -192,24 +208,33 @@ fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
     Ok(())
 }
 
-fn draw_catalog_tile(document: &Document, size: Point, id: TileId) -> Result<Element>
+fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result<Element>
 {
-    let img = document.create_element("img")?;
-    img.set_attribute("src", &format!("img/thumb-{}.png", id))?;
-    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
-    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
-    img.set_attribute("alt", &id.to_string())?;
+    // create layout instance without map offset
+    let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
 
-    let tile = document.create_element("li")?;
+    let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
+    canvas.set_attribute("width", &format!("{}", 2.0 * layout.size().x()))?;
+    canvas.set_attribute("height", &format!("{}", 2.0 * layout.size().y()))?;
+
+    let style = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "style")?;
+    style.append_child(&document.create_text_node(TILE_STYLE))?;
+    canvas.append_child(&style)?;
+    canvas.append_child(&draw_tile(&document, &layout, id, (0, 0), Direction::A)?.into())?;
+
+    let tile = document.create_element("div")?;
+    tile.set_attribute("class", "tile")?;
     tile.set_attribute("draggable", "true")?;
-    tile.append_child(&img)?;
+    tile.append_child(&canvas)?;
 
+    let drag_img = canvas.clone();
     let callback = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
         if let Some(trans) = event.data_transfer() {
             let data = id.base().to_string();
             trans.set_data("application/rekee", &data).unwrap();
             trans.set_data("text/plain", &data).unwrap();
             trans.set_effect_allowed("copy");
+            trans.set_drag_image(&drag_img, 50, 50);
         }
         nuts::publish(DragCatalogBeginEvent { tile: id.base() });
     }) as Box<dyn Fn(_)>);
@@ -257,13 +282,13 @@ impl CatalogView {
 
         let tiles = document.create_element("ul")?;
         tiles.set_id("catalog");
-        if layout.is_pointy() {
-            tiles.set_attribute("class", "is-pointy")?;
-        }
+        tiles.set_attribute("class", "mt-2")?;
 
         for info in TileInfo::iter() {
-            let tile = draw_catalog_tile(&document, layout.size(), info.full_id())?;
-            tiles.append_child(&tile)?;
+            let tile = draw_catalog_tile(&document, &layout, info.full_id())?;
+            let item = document.create_element("li")?;
+            item.append_child(&tile)?;
+            tiles.append_child(&item)?;
         }
         parent.append_child(&tiles)?;
 
@@ -342,6 +367,10 @@ impl PageView {
         let defs = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "defs")?;
         defs.append_child(&define_grid_hex(&document, &layout)?.into())?;
         canvas.append_child(&defs)?;
+
+        let style = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "style")?;
+        style.append_child(&document.create_text_node(TILE_STYLE))?;
+        canvas.append_child(&style)?;
 
         let group = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
         group.set_id("grid");
