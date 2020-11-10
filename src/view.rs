@@ -214,8 +214,11 @@ fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result
     let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
 
     let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
-    canvas.set_attribute("width", &format!("{}", 2.0 * layout.size().x()))?;
-    canvas.set_attribute("height", &format!("{}", 2.0 * layout.size().y()))?;
+    let width = (2.0 * layout.size().x()).round() as i32;
+    canvas.set_attribute("width", &format!("{}px", width))?;
+    let height = (2.0 * layout.size().y()).round() as i32;
+    canvas.set_attribute("height", &format!("{}px", height))?;
+    canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
 
     let style = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "style")?;
     style.append_child(&document.create_text_node(TILE_STYLE))?;
@@ -362,8 +365,11 @@ impl PageView {
 
         let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
         canvas.set_id("map");
-        canvas.set_attribute("width", &format!("{}", 2.0 * layout.origin().x()))?;
-        canvas.set_attribute("height", &format!("{}", 2.0 * layout.origin().y()))?;
+        let width = (2.0 * layout.origin().x()).round() as i32;
+        canvas.set_attribute("width", &format!("{}px", width))?;
+        let height = (2.0 * layout.origin().y()).round() as i32;
+        canvas.set_attribute("height", &format!("{}px", height))?;
+        canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
         parent.append_child(&canvas)?;
 
         let defs = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "defs")?;
