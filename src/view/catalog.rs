@@ -18,9 +18,6 @@ use super::*;
 
 fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result<Element>
 {
-    // create layout instance without map offset
-    let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
-
     let canvas = document.create_element_ns(SVG_NS, "svg")?;
     let width = (2.0 * layout.size().x()).round() as i32;
     canvas.set_attribute("width", &format!("{}px", width))?;
@@ -58,6 +55,7 @@ fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result
 //----------------------------------------------------------------------------
 
 pub struct CatalogView {
+    layout: Layout,
     tiles: Element,
     canvas: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -66,6 +64,9 @@ pub struct CatalogView {
 
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
+        // create layout instance without map offset
+        let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
+
         let document = parent.owner_document().unwrap();
 
         // remove all pre-existing child nodes
@@ -107,7 +108,7 @@ impl CatalogView {
             }
         }) as Box<dyn Fn(_)>);
 
-        Ok(CatalogView { tiles, canvas: None, dragover_cb, dragdrop_cb })
+        Ok(CatalogView { layout, tiles, canvas: None, dragover_cb, dragdrop_cb })
     }
 
     pub fn drag_begin(&mut self, tile: TileId) {
