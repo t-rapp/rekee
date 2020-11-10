@@ -23,7 +23,7 @@ fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
         .map(|p| *p - layout.origin())
         .map(|p| format!("{},{}", p.x(), p.y()))
         .collect();
-    let hex = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "polygon")?;
+    let hex = document.create_element_ns(SVG_NS, "polygon")?;
     hex.set_id("hex");
     hex.set_attribute("points", &points.join(" "))?;
     Ok(hex)
@@ -33,7 +33,7 @@ fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Eleme
     where C: Into<Coordinate>
 {
     let pos = pos.into().to_pixel(&layout);
-    let hex = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "use")?;
+    let hex = document.create_element_ns(SVG_NS, "use")?;
     hex.set_attribute("href", "#hex")?;
     hex.set_attribute("x", &pos.x().to_string())?;
     hex.set_attribute("y", &pos.y().to_string())?;
@@ -48,11 +48,11 @@ fn draw_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
         .map(|p| *p - layout.origin())
         .map(|p| format!("{},{}", p.x(), p.y()))
         .collect();
-    let poly = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "polygon")?;
+    let poly = document.create_element_ns(SVG_NS, "polygon")?;
     poly.set_attribute("points", &points.join(" "))?;
 
     let pos = pos.into().to_pixel(&layout);
-    let hex = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+    let hex = document.create_element_ns(SVG_NS, "g")?;
     hex.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
     hex.append_child(&poly)?;
     Ok(hex)
@@ -70,7 +70,7 @@ fn draw_selected_menu<C>(document: &Document, layout: &Layout, pos: C) -> Result
     where C: Into<Coordinate>
 {
     let pos = pos.into().to_pixel(&layout);
-    let menu = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "foreignObject")?;
+    let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
     menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
     menu.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string())?;
     menu.set_attribute("width", "120")?;
@@ -127,7 +127,7 @@ fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Re
     where C: Into<Coordinate>
 {
     let pos = pos.into().to_pixel(&layout);
-    let label = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "text")?;
+    let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
     label.set_attribute("x", &pos.x().to_string())?;
     label.set_attribute("y", &pos.y().to_string())?;
@@ -140,14 +140,14 @@ fn draw_dragged_tile<P, D>(document: &Document, layout: &Layout, id: TileId, pos
 {
     let size = layout.size();
     let angle = dir.into().to_angle(&layout);
-    let img = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "image")?;
+    let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("img/thumb-{}.png", id))?;
     img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
     img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
     img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
 
     let pos = pos.into();
-    let tile = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+    let tile = document.create_element_ns(SVG_NS, "g")?;
     tile.set_attribute("id", "dragged")?;
     tile.set_attribute("class", "tile")?;
     tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
@@ -190,7 +190,7 @@ impl MapView {
         range.select_node_contents(&parent)?;
         range.delete_contents()?;
 
-        let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
+        let canvas = document.create_element_ns(SVG_NS, "svg")?;
         canvas.set_id("map");
         let width = (2.0 * layout.origin().x()).round() as i32;
         canvas.set_attribute("width", &format!("{}px", width))?;
@@ -199,15 +199,15 @@ impl MapView {
         canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
         parent.append_child(&canvas)?;
 
-        let defs = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "defs")?;
+        let defs = document.create_element_ns(SVG_NS, "defs")?;
         defs.append_child(&define_grid_hex(&document, &layout)?.into())?;
         canvas.append_child(&defs)?;
 
-        let style = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "style")?;
+        let style = document.create_element_ns(SVG_NS, "style")?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
 
-        let group = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+        let group = document.create_element_ns(SVG_NS, "g")?;
         group.set_id("grid");
         let map_radius = 4;
         for q in -map_radius..=map_radius {
@@ -223,7 +223,7 @@ impl MapView {
         group.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
         canvas.append_child(&group)?;
 
-        let tiles = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+        let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
         for tile in map.tiles() {
             tiles.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;

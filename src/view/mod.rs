@@ -25,6 +25,8 @@ type Result<T> = std::result::Result<T, JsValue>;
 
 //----------------------------------------------------------------------------
 
+const SVG_NS: Option<&str> = Some("http://www.w3.org/2000/svg");
+
 const TILE_STYLE: &str = indoc!(r#"
     .label {
         font-family: sans-serif;
@@ -47,20 +49,20 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
 {
     let size = layout.size();
     let angle = dir.into().to_angle(&layout);
-    let img = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "image")?;
+    let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("img/thumb-{}.png", id))?;
     img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
     img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
     img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
 
-    let label = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "text")?;
+    let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
     label.set_attribute("x", "0")?;
     label.set_attribute("y", "0")?;
     label.set_inner_html(&id.base().to_string());
 
     let pos = pos.into().to_pixel(&layout);
-    let tile = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
+    let tile = document.create_element_ns(SVG_NS, "g")?;
     tile.set_attribute("id", &id.to_string())?;
     tile.set_attribute("class", "tile")?;
     tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
