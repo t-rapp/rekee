@@ -6,7 +6,7 @@
 
 use crate::hexagon::*;
 use crate::tile::*;
-use crate::view::{CatalogView, PageView};
+use crate::view::*;
 
 pub struct ImportFileEvent {
     pub data: String,
@@ -82,29 +82,29 @@ impl CatalogController {
 
 //----------------------------------------------------------------------------
 
-pub struct PageController {
-    view: PageView,
+pub struct MapController {
+    view: MapView,
 }
 
-impl PageController {
-    pub fn init(view: PageView) {
-        let controller = PageController { view };
+impl MapController {
+    pub fn init(view: MapView) {
+        let controller = MapController { view };
         let page = nuts::new_activity(controller);
-        page.subscribe(PageController::import_file);
-        page.subscribe(PageController::insert_tile);
-        page.subscribe(PageController::append_tile);
-        page.subscribe(PageController::align_center);
-        page.subscribe(PageController::clear_map);
-        page.subscribe(PageController::update_map);
-        page.subscribe(PageController::update_selected);
-        page.subscribe(PageController::rotate_selected_left);
-        page.subscribe(PageController::rotate_selected_right);
-        page.subscribe(PageController::remove_selected);
-        page.subscribe(PageController::drag_catalog_end);
-        page.subscribe(PageController::drag_map_begin);
-        page.subscribe(PageController::drag_map_move);
-        page.subscribe(PageController::drag_map_end);
-        page.subscribe(PageController::drag_map_cancel);
+        page.subscribe(MapController::import_file);
+        page.subscribe(MapController::insert_tile);
+        page.subscribe(MapController::append_tile);
+        page.subscribe(MapController::align_center);
+        page.subscribe(MapController::clear_map);
+        page.subscribe(MapController::update_map);
+        page.subscribe(MapController::update_selected);
+        page.subscribe(MapController::rotate_selected_left);
+        page.subscribe(MapController::rotate_selected_right);
+        page.subscribe(MapController::remove_selected);
+        page.subscribe(MapController::drag_catalog_end);
+        page.subscribe(MapController::drag_map_begin);
+        page.subscribe(MapController::drag_map_move);
+        page.subscribe(MapController::drag_map_end);
+        page.subscribe(MapController::drag_map_cancel);
     }
 
     fn import_file(&mut self, event: &ImportFileEvent) {

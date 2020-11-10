@@ -18,6 +18,7 @@ mod import;
 mod logger;
 mod tile;
 
+#[macro_use]
 mod view;
 use view::*;
 
@@ -36,7 +37,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let parent = document.get_element_by_id("map-container")
         .ok_or_else(|| "Cannot find '#map-container' parent element for map component")?;
-    PageController::init(PageView::new(parent, layout)?);
+    MapController::init(MapView::new(parent, layout)?);
 
     nuts::publish(InsertTileEvent { id: tile!(102, b), pos: (0, 0).into(), dir: Direction::D });
     nuts::publish(AppendTileEvent { id: tile!(104, b), hint: None });

@@ -1,38 +1,20 @@
 //----------------------------------------------------------------------------
-//! Rendering of map objects and event handlers.
+//! Rendering of the map and according event handlers.
 //
 // $Id$
 //----------------------------------------------------------------------------
 
-use indoc::indoc;
 use log::{warn, info, debug};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
+use crate::check;
 use crate::controller::*;
-use crate::hexagon::*;
 use crate::import;
-use crate::tile::*;
+use super::*;
 
 //----------------------------------------------------------------------------
-
-type Result<T> = std::result::Result<T, JsValue>;
-
-const TILE_STYLE: &str = indoc!(r#"
-    .label {
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: bold;
-        fill: #444;
-        paint-order: stroke;
-        stroke: white;
-        stroke-width: 2.0;
-        dominant-baseline: middle;
-        text-anchor: middle;
-        user-select: none;
-        pointer-events: none;
-    }"#);
 
 fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
 {
@@ -153,33 +135,6 @@ fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Re
     Ok(label)
 }
 
-fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir: D) -> Result<Element>
-    where C: Into<Coordinate>, D: Into<Direction>
-{
-    let size = layout.size();
-    let angle = dir.into().to_angle(&layout);
-    let img = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "image")?;
-    img.set_attribute("href", &format!("img/thumb-{}.png", id))?;
-    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
-    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
-    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
-
-    let label = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "text")?;
-    label.set_attribute("class", "label")?;
-    label.set_attribute("x", "0")?;
-    label.set_attribute("y", "0")?;
-    label.set_inner_html(&id.base().to_string());
-
-    let pos = pos.into().to_pixel(&layout);
-    let tile = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "g")?;
-    tile.set_attribute("id", &id.to_string())?;
-    tile.set_attribute("class", "tile")?;
-    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    tile.append_child(&img)?;
-    tile.append_child(&label)?;
-    Ok(tile)
-}
-
 fn draw_dragged_tile<P, D>(document: &Document, layout: &Layout, id: TileId, pos: P, dir: D) -> Result<Element>
     where P: Into<Point>, D: Into<Direction>
 {
@@ -208,137 +163,9 @@ fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
     Ok(())
 }
 
-fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result<Element>
-{
-    // create layout instance without map offset
-    let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
-
-    let canvas = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "svg")?;
-    let width = (2.0 * layout.size().x()).round() as i32;
-    canvas.set_attribute("width", &format!("{}px", width))?;
-    let height = (2.0 * layout.size().y()).round() as i32;
-    canvas.set_attribute("height", &format!("{}px", height))?;
-    canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
-
-    let style = document.create_element_ns(Some("http://www.w3.org/2000/svg"), "style")?;
-    style.append_child(&document.create_text_node(TILE_STYLE))?;
-    canvas.append_child(&style)?;
-    canvas.append_child(&draw_tile(&document, &layout, id, (0, 0), Direction::A)?.into())?;
-
-    let tile = document.create_element("div")?;
-    tile.set_attribute("class", "tile")?;
-    tile.set_attribute("draggable", "true")?;
-    tile.append_child(&canvas)?;
-
-    let drag_img = canvas.clone();
-    let callback = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-        if let Some(trans) = event.data_transfer() {
-            let data = id.base().to_string();
-            trans.set_data("application/rekee", &data).unwrap();
-            trans.set_data("text/plain", &data).unwrap();
-            trans.set_effect_allowed("copy");
-            trans.set_drag_image(&drag_img, 50, 50);
-        }
-        nuts::publish(DragCatalogBeginEvent { tile: id.base() });
-    }) as Box<dyn Fn(_)>);
-    tile.add_event_listener_with_callback("dragstart", callback.as_ref().unchecked_ref()).unwrap();
-    callback.forget();
-
-    Ok(tile)
-}
-
-fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
-    let element = event.current_target()
-        .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
-    let rect = element.get_bounding_client_rect();
-    let x = event.client_x() as f32 - rect.left() as f32;
-    let y = event.client_y() as f32 - rect.top() as f32;
-    Some(Point(x, y))
-}
-
-macro_rules! check {
-    ($e:expr) => {
-        match $e {
-            None => return,
-            Some(val) => val,
-        }
-    };
-}
-
 //----------------------------------------------------------------------------
 
-pub struct CatalogView {
-    tiles: Element,
-    canvas: Option<Element>,
-    dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
-    dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
-}
-
-impl CatalogView {
-    pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        let document = parent.owner_document().unwrap();
-
-        // remove all pre-existing child nodes
-        let range = document.create_range()?;
-        range.select_node_contents(&parent)?;
-        range.delete_contents()?;
-
-        let tiles = document.create_element("ul")?;
-        tiles.set_id("catalog");
-        tiles.set_attribute("class", "mt-2")?;
-
-        for info in TileInfo::iter() {
-            let tile = draw_catalog_tile(&document, &layout, info.full_id())?;
-            let item = document.create_element("li")?;
-            item.append_child(&tile)?;
-            tiles.append_child(&item)?;
-        }
-        parent.append_child(&tiles)?;
-
-        let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-            let data = event.data_transfer()
-                .and_then(|trans| trans.get_data("application/rekee").ok());
-            if data.is_some() {
-                event.prevent_default();
-                let pos = check!(mouse_position(&event));
-                nuts::publish(DragMapMoveEvent { pos });
-            }
-        }) as Box<dyn Fn(_)>);
-
-        let dragdrop_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-            let tile: Option<TileId> = event.data_transfer()
-                .and_then(|trans| trans.get_data("application/rekee").ok())
-                .and_then(|data| data.parse().ok());
-            if let Some(tile) = tile {
-                event.prevent_default();
-                let pos = check!(mouse_position(&event));
-                nuts::publish(DragCatalogEndEvent { pos, tile });
-                nuts::publish(UpdateSelectedEvent { pos });
-            }
-        }) as Box<dyn Fn(_)>);
-
-        Ok(CatalogView { tiles, canvas: None, dragover_cb, dragdrop_cb })
-    }
-
-    pub fn drag_begin(&mut self, tile: TileId) {
-        info!("drag begin: {:?}", tile);
-        if self.canvas.is_none() {
-            // lookup canvas element and initialize drag-n-drop event handlers
-            let document = self.tiles.owner_document().unwrap();
-            if let Some(canvas) = document.get_element_by_id("map") {
-                check!(canvas.add_event_listener_with_callback("dragover",
-                    self.dragover_cb.as_ref().unchecked_ref()).ok());
-                check!(canvas.add_event_listener_with_callback("drop",
-                    self.dragdrop_cb.as_ref().unchecked_ref()).ok());
-                self.canvas = Some(canvas);
-            }
-        }
-    }
-}
-
-//----------------------------------------------------------------------------
-
-pub struct PageView {
+pub struct MapView {
     layout: Layout,
     map: Map,
     canvas: Element,
@@ -353,7 +180,7 @@ pub struct PageView {
     dragged: Option<Element>,
 }
 
-impl PageView {
+impl MapView {
     pub fn new(parent: Element, layout: Layout) -> Result<Self> {
         let map = Map::new();
         let document = parent.owner_document().unwrap();
@@ -470,7 +297,7 @@ impl PageView {
         input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        Ok(PageView {
+        Ok(MapView {
             layout, map, canvas, tiles, selected, selected_pos, selected_menu,
             dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, dragged: None
@@ -675,7 +502,7 @@ impl PageView {
     }
 }
 
-impl Drop for PageView {
+impl Drop for MapView {
     fn drop(&mut self) {
         self.canvas.remove_event_listener_with_callback("mousemove",
             self.dragged_mousemove_cb.as_ref().unchecked_ref()).unwrap();
