@@ -16,48 +16,68 @@ use super::*;
 
 //----------------------------------------------------------------------------
 
-fn draw_catalog_tile(document: &Document, layout: &Layout, id: TileId) -> Result<Element>
-{
-    let canvas = document.create_element_ns(SVG_NS, "svg")?;
-    let width = (2.0 * layout.size().x()).round() as i32;
-    canvas.set_attribute("width", &format!("{}px", width))?;
-    let height = (2.0 * layout.size().y()).round() as i32;
-    canvas.set_attribute("height", &format!("{}px", height))?;
-    canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
+struct CatalogTile {
+    inner: Element,
+    id: TileId,
+    dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
+}
 
-    let style = document.create_element_ns(SVG_NS, "style")?;
-    style.append_child(&document.create_text_node(TILE_STYLE))?;
-    canvas.append_child(&style)?;
-    canvas.append_child(&draw_tile(&document, &layout, id, (0, 0), Direction::A)?.into())?;
+impl CatalogTile {
+    fn new(document: &Document, layout: &Layout, id: TileId) -> Result<Self> {
+        let canvas = document.create_element_ns(SVG_NS, "svg")?;
+        let width = (2.0 * layout.size().x()).round() as i32;
+        let height = (2.0 * layout.size().y()).round() as i32;
+        canvas.set_attribute("width", &format!("{}px", width))?;
+        canvas.set_attribute("height", &format!("{}px", height))?;
+        canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
 
-    let tile = document.create_element("div")?;
-    tile.set_attribute("class", "tile")?;
-    tile.set_attribute("draggable", "true")?;
-    tile.append_child(&canvas)?;
+        let style = document.create_element_ns(SVG_NS, "style")?;
+        style.append_child(&document.create_text_node(TILE_STYLE))?;
+        canvas.append_child(&style)?;
+        canvas.append_child(&draw_tile(&document, &layout, id, (0, 0), Direction::A)?.into())?;
 
-    let drag_img = canvas.clone();
-    let callback = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-        if let Some(trans) = event.data_transfer() {
-            let data = id.base().to_string();
-            trans.set_data("application/rekee", &data).unwrap();
-            trans.set_data("text/plain", &data).unwrap();
-            trans.set_effect_allowed("copy");
-            trans.set_drag_image(&drag_img, 50, 50);
-        }
-        nuts::publish(DragCatalogBeginEvent { tile: id.base() });
-    }) as Box<dyn Fn(_)>);
-    tile.add_event_listener_with_callback("dragstart", callback.as_ref().unchecked_ref()).unwrap();
-    callback.forget();
+        let tile = document.create_element("div")?;
+        tile.set_attribute("class", "tile")?;
+        tile.set_attribute("draggable", "true")?;
+        tile.append_child(&canvas)?;
 
-    Ok(tile)
+        let drag_img = canvas.clone();
+        let dragstart_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
+            if let Some(trans) = event.data_transfer() {
+                let data = id.base().to_string();
+                trans.set_data("application/rekee", &data).unwrap();
+                trans.set_data("text/plain", &data).unwrap();
+                trans.set_effect_allowed("copy");
+                trans.set_drag_image(&drag_img, 50, 50);
+            }
+            nuts::publish(DragCatalogBeginEvent { tile: id.base() });
+        }) as Box<dyn Fn(_)>);
+        tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref()).unwrap();
+
+        Ok(CatalogTile { inner: tile, id, dragstart_cb })
+    }
+}
+
+impl AsRef<Element> for CatalogTile {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for CatalogTile {
+    fn drop(&mut self) {
+        self.inner.remove_event_listener_with_callback("dragstart",
+            self.dragstart_cb.as_ref().unchecked_ref()).unwrap();
+    }
 }
 
 //----------------------------------------------------------------------------
 
 pub struct CatalogView {
     layout: Layout,
-    tiles: Element,
-    canvas: Option<Element>,
+    tiles: Vec<CatalogTile>,
+    catalog: Element,
+    map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
 }
@@ -74,17 +94,20 @@ impl CatalogView {
         range.select_node_contents(&parent)?;
         range.delete_contents()?;
 
-        let tiles = document.create_element("ul")?;
-        tiles.set_id("catalog");
-        tiles.set_attribute("class", "mt-2")?;
+        let catalog = document.create_element("ul")?;
+        catalog.set_id("catalog");
+        catalog.set_attribute("class", "mt-2")?;
+
+        let mut tiles = Vec::with_capacity(TileInfo::iter().count());
 
         for info in TileInfo::iter() {
-            let tile = draw_catalog_tile(&document, &layout, info.full_id())?;
+            let tile = CatalogTile::new(&document, &layout, info.full_id())?;
             let item = document.create_element("li")?;
-            item.append_child(&tile)?;
-            tiles.append_child(&item)?;
+            item.append_child(tile.as_ref())?;
+            catalog.append_child(&item)?;
+            tiles.push(tile);
         }
-        parent.append_child(&tiles)?;
+        parent.append_child(&catalog)?;
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -108,20 +131,20 @@ impl CatalogView {
             }
         }) as Box<dyn Fn(_)>);
 
-        Ok(CatalogView { layout, tiles, canvas: None, dragover_cb, dragdrop_cb })
+        Ok(CatalogView { layout, tiles, catalog, map: None, dragover_cb, dragdrop_cb })
     }
 
     pub fn drag_begin(&mut self, tile: TileId) {
         info!("drag begin: {:?}", tile);
-        if self.canvas.is_none() {
-            // lookup canvas element and initialize drag-n-drop event handlers
-            let document = self.tiles.owner_document().unwrap();
-            if let Some(canvas) = document.get_element_by_id("map") {
-                check!(canvas.add_event_listener_with_callback("dragover",
+        if self.map.is_none() {
+            // lookup map element and initialize drag-n-drop event handlers
+            let document = self.catalog.owner_document().unwrap();
+            if let Some(map) = document.get_element_by_id("map") {
+                check!(map.add_event_listener_with_callback("dragover",
                     self.dragover_cb.as_ref().unchecked_ref()).ok());
-                check!(canvas.add_event_listener_with_callback("drop",
+                check!(map.add_event_listener_with_callback("drop",
                     self.dragdrop_cb.as_ref().unchecked_ref()).ok());
-                self.canvas = Some(canvas);
+                self.map = Some(map);
             }
         }
     }
