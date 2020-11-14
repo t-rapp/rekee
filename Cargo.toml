@@ -1,6 +1,6 @@
 [package]
 name = "rekee"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Tobias Rapp"]
 edition = "2018"
 description = "Track editor for the Rallyman:GT boardgame"
@@ -35,6 +35,7 @@ features = [
   'HtmlInputElement',
   'MouseEvent',
   'Node',
+  'NodeList',
   'Range',
   'SvgElement',
   'Text',

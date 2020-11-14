@@ -39,6 +39,10 @@ pub struct RotateSelectedRightEvent;
 
 pub struct RemoveSelectedEvent;
 
+pub struct UpdateFilterEvent {
+    pub side: Option<u8>,
+}
+
 pub struct DragCatalogBeginEvent {
     pub tile: TileId,
 }
@@ -72,7 +76,12 @@ impl CatalogController {
     pub fn init(view: CatalogView) {
         let controller = CatalogController { view };
         let catalog = nuts::new_activity(controller);
+        catalog.subscribe(CatalogController::update_filter);
         catalog.subscribe(CatalogController::drag_catalog_begin);
+    }
+
+    fn update_filter(&mut self, event: &UpdateFilterEvent) {
+        self.view.update_filter(event.side);
     }
 
     fn drag_catalog_begin(&mut self, event: &DragCatalogBeginEvent) {

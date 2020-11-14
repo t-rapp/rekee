@@ -52,9 +52,17 @@ impl CatalogTile {
             }
             nuts::publish(DragCatalogBeginEvent { tile: id.base() });
         }) as Box<dyn Fn(_)>);
-        tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref()).unwrap();
+        tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
         Ok(CatalogTile { inner: tile, id, dragstart_cb })
+    }
+
+    fn set_hidden(&self, value: bool) {
+        if value {
+            check!(self.inner.class_list().add_1("is-hidden").ok());
+        } else {
+            check!(self.inner.class_list().remove_1("is-hidden").ok());
+        }
     }
 }
 
@@ -73,10 +81,64 @@ impl Drop for CatalogTile {
 
 //----------------------------------------------------------------------------
 
+struct FilterItem {
+    inner: Element,
+    value: Option<u8>,
+    anchor: Element,
+    click_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl FilterItem {
+    fn new(inner: Element) -> Result<Self> {
+        let value = inner.get_attribute("data-value")
+            .map(|val| val.parse().ok())
+            .flatten();
+
+        let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(UpdateFilterEvent { side: value });
+        }) as Box<dyn Fn(_)>);
+
+        let anchor = inner.query_selector("a")?
+            .ok_or_else(|| "Cannot find anchor element of filter item")?;
+        anchor.add_event_listener_with_callback("click",
+            click_cb.as_ref().unchecked_ref())?;
+
+        Ok(FilterItem { inner, value, anchor, click_cb })
+    }
+
+    fn value(&self) -> Option<u8> {
+        self.value
+    }
+
+    fn set_active(&self, value: bool) {
+        if value {
+            check!(self.inner.class_list().add_1("is-active").ok());
+        } else {
+            check!(self.inner.class_list().remove_1("is-active").ok());
+        }
+    }
+}
+
+impl AsRef<Element> for FilterItem {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for FilterItem {
+    fn drop(&mut self) {
+        self.anchor.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref()).unwrap();
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct CatalogView {
     layout: Layout,
-    tiles: Vec<CatalogTile>,
     catalog: Element,
+    tiles: Vec<CatalogTile>,
+    filter_items: Vec<FilterItem>,
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -89,17 +151,11 @@ impl CatalogView {
 
         let document = parent.owner_document().unwrap();
 
-        // remove all pre-existing child nodes
-        let range = document.create_range()?;
-        range.select_node_contents(&parent)?;
-        range.delete_contents()?;
-
         let catalog = document.create_element("ul")?;
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
 
         let mut tiles = Vec::with_capacity(TileInfo::iter().count());
-
         for info in TileInfo::iter() {
             let tile = CatalogTile::new(&document, &layout, info.full_id())?;
             let item = document.create_element("li")?;
@@ -108,6 +164,14 @@ impl CatalogView {
             tiles.push(tile);
         }
         parent.append_child(&catalog)?;
+
+        let mut filter_items = Vec::with_capacity(4);
+        let node_list = parent.query_selector_all("#catalog-filter li")?;
+        for i in 0..node_list.length() {
+            let element = node_list.get(i).unwrap()
+                .dyn_into::<web_sys::Element>().unwrap();
+            filter_items.push(FilterItem::new(element)?);
+        }
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -131,7 +195,24 @@ impl CatalogView {
             }
         }) as Box<dyn Fn(_)>);
 
-        Ok(CatalogView { layout, tiles, catalog, map: None, dragover_cb, dragdrop_cb })
+        Ok(CatalogView {
+            layout, catalog, tiles, filter_items, map: None, dragover_cb, dragdrop_cb
+        })
+    }
+
+    pub fn update_filter(&mut self, side: Option<u8>) {
+        info!("update filter side: {:?}", side);
+        for tile in &self.tiles {
+            let hidden = match side {
+                Some(val) => val != tile.id.side() && 0 != tile.id.side(),
+                None => false,
+            };
+            tile.set_hidden(hidden);
+        }
+        for item in &self.filter_items {
+            let active = side == item.value();
+            item.set_active(active);
+        }
     }
 
     pub fn drag_begin(&mut self, tile: TileId) {
