@@ -12,6 +12,8 @@ pub struct ImportFileEvent {
     pub data: String,
 }
 
+pub struct ExportFileEvent;
+
 pub struct InsertTileEvent {
     pub id: TileId,
     pub pos: Coordinate,
@@ -100,6 +102,7 @@ impl MapController {
         let controller = MapController { view };
         let page = nuts::new_activity(controller);
         page.subscribe(MapController::import_file);
+        page.subscribe(MapController::export_file);
         page.subscribe(MapController::insert_tile);
         page.subscribe(MapController::append_tile);
         page.subscribe(MapController::align_center);
@@ -118,6 +121,10 @@ impl MapController {
 
     fn import_file(&mut self, event: &ImportFileEvent) {
         self.view.import_file(&event.data);
+    }
+
+    fn export_file(&mut self, _event: &ExportFileEvent) {
+        self.view.export_file();
     }
 
     fn insert_tile(&mut self, event: &InsertTileEvent) {

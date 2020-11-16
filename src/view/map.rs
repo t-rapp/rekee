@@ -5,6 +5,7 @@
 //----------------------------------------------------------------------------
 
 use log::{warn, info, debug};
+use js_sys::{self, JsString};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -297,6 +298,14 @@ impl MapView {
         input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
+        let control = document.get_element_by_id("download-map-button").unwrap()
+            .dyn_into::<web_sys::HtmlElement>().unwrap();
+        let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(ExportFileEvent);
+        }) as Box<dyn Fn(_)>);
+        control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        callback.forget();
+
         Ok(MapView {
             layout, map, canvas, tiles, selected, selected_pos, selected_menu,
             dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
@@ -316,6 +325,29 @@ impl MapView {
         self.clear_selected();
         self.map = map;
         self.update_map();
+    }
+
+    pub fn export_file(&mut self) {
+        let data = match import::export_rgt(&self.map, "My Track") {
+            Ok(val) => val,
+            Err(err) => {
+                warn!("Cannot emport file data: {}", err);
+                return;
+            },
+        };
+        let mut url = JsString::from("data:text/json;charset=utf-8,");
+        url = url.concat(&js_sys::encode_uri_component(&data));
+        let url: String = url.into();
+
+        let document = self.canvas.owner_document().unwrap();
+        let anchor = check!(document.create_element("a").ok()
+            .and_then(|elm| elm.dyn_into::<web_sys::HtmlElement>().ok()));
+        check!(anchor.set_attribute("class", "is-hidden").ok());
+        check!(anchor.set_attribute("href", &url).ok());
+        check!(anchor.set_attribute("download", "MyTrack.rgt").ok());
+        check!(document.body().unwrap().append_child(&anchor).ok());
+        anchor.click();
+        check!(document.body().unwrap().remove_child(&anchor).ok());
     }
 
     pub fn insert_tile(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
