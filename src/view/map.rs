@@ -167,7 +167,7 @@ impl SelectedHex {
         self.pos
     }
 
-    fn set_pos(&self, layout: &Layout, pos: Option<Coordinate>) {
+    fn set_pos(&mut self, layout: &Layout, pos: Option<Coordinate>) {
         if pos.is_some() && pos != self.pos {
             let pos = pos.unwrap().to_pixel(&layout);
             let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
@@ -178,6 +178,7 @@ impl SelectedHex {
         } else {
             check!(self.inner.class_list().add_1("is-hidden").ok());
         }
+        self.pos = pos;
     }
 
     fn set_draggable(&self, value: bool) {
