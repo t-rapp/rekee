@@ -41,32 +41,6 @@ fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Eleme
     Ok(hex)
 }
 
-fn draw_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
-    where C: Into<Coordinate>
-{
-    let corners = layout.hexagon_corners((0, 0).into());
-    let points: Vec<String> = corners.iter()
-        .map(|p| *p - layout.origin())
-        .map(|p| format!("{},{}", p.x(), p.y()))
-        .collect();
-    let poly = document.create_element_ns(SVG_NS, "polygon")?;
-    poly.set_attribute("points", &points.join(" "))?;
-
-    let pos = pos.into().to_pixel(&layout);
-    let hex = document.create_element_ns(SVG_NS, "g")?;
-    hex.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    hex.append_child(&poly)?;
-    Ok(hex)
-}
-
-fn move_hex<C>(hex: &Element, layout: &Layout, pos: C) -> Result<()>
-    where C: Into<Coordinate>
-{
-    let pos = pos.into().to_pixel(&layout);
-    hex.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    Ok(())
-}
-
 fn draw_selected_menu<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
     where C: Into<Coordinate>
 {
@@ -166,13 +140,69 @@ fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
 
 //----------------------------------------------------------------------------
 
+struct SelectedHex {
+    inner: Element,
+    pos: Option<Coordinate>,
+}
+
+impl SelectedHex {
+    fn new(document: &Document, layout: &Layout) -> Result<Self> {
+        let corners = layout.hexagon_corners((0, 0).into());
+        let points: Vec<String> = corners.iter()
+            .map(|p| *p - layout.origin())
+            .map(|p| format!("{},{}", p.x(), p.y()))
+            .collect();
+        let poly = document.create_element_ns(SVG_NS, "polygon")?;
+        poly.set_attribute("points", &points.join(" "))?;
+
+        let hex = document.create_element_ns(SVG_NS, "g")?;
+        hex.set_id("selected");
+        hex.class_list().add_1("is-hidden")?;
+        hex.append_child(&poly)?;
+
+        Ok(SelectedHex { inner: hex, pos: None })
+    }
+
+    fn pos(&self) -> Option<Coordinate> {
+        self.pos
+    }
+
+    fn set_pos(&self, layout: &Layout, pos: Option<Coordinate>) {
+        if pos.is_some() && pos != self.pos {
+            let pos = pos.unwrap().to_pixel(&layout);
+            let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
+            check!(self.inner.set_attribute("transform", &transform).ok());
+        }
+        if pos.is_some() {
+            check!(self.inner.class_list().remove_1("is-hidden").ok());
+        } else {
+            check!(self.inner.class_list().add_1("is-hidden").ok());
+        }
+    }
+
+    fn set_draggable(&self, value: bool) {
+        if value {
+            check!(self.inner.class_list().add_1("is-draggable").ok());
+        } else {
+            check!(self.inner.class_list().remove_1("is-draggable").ok());
+        }
+    }
+}
+
+impl AsRef<Element> for SelectedHex {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapView {
     layout: Layout,
     map: Map,
     canvas: Element,
     tiles: Element,
-    selected_pos: Option<Coordinate>,
-    selected: Element,
+    selected: SelectedHex,
     selected_menu: Element,
     dragged_tile: Option<PlacedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -231,11 +261,8 @@ impl MapView {
         }
         canvas.append_child(&tiles)?;
 
-        let selected_pos = None;
-        let selected = draw_hex(&document, &layout, (2, 2))?;
-        selected.set_id("selected");
-        selected.class_list().add_1("is-hidden")?;
-        canvas.append_child(&selected)?;
+        let selected = SelectedHex::new(&document, &layout)?;
+        canvas.append_child(selected.as_ref())?;
 
         let selected_menu = draw_selected_menu(&document, &layout, (2, 2))?;
         selected_menu.class_list().add_1("is-hidden")?;
@@ -307,7 +334,7 @@ impl MapView {
         callback.forget();
 
         Ok(MapView {
-            layout, map, canvas, tiles, selected, selected_pos, selected_menu,
+            layout, map, canvas, tiles, selected, selected_menu,
             dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, dragged: None
         })
@@ -386,9 +413,8 @@ impl MapView {
     }
 
     pub fn clear_selected(&mut self) {
-        self.selected_pos = None;
-        check!(self.selected.class_list().add_1("is-hidden").ok());
-        check!(self.selected.class_list().remove_1("is-draggable").ok());
+        self.selected.set_pos(&self.layout, None);
+        self.selected.set_draggable(false);
         check!(self.selected_menu.class_list().add_1("is-hidden").ok());
     }
 
@@ -396,28 +422,24 @@ impl MapView {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         info!("update selected: {:?}", pos);
         let tile = self.map.get(pos);
-        if self.selected_pos != Some(pos) {
-            check!(move_hex(&self.selected, &self.layout, pos).ok());
+        if self.selected.pos() != Some(pos) {
             check!(move_selected_menu(&self.selected_menu, &self.layout, pos).ok());
         }
-        if self.selected_pos != Some(pos) || tile.is_some() {
-            self.selected_pos = Some(pos);
-            check!(self.selected.class_list().remove_1("is-hidden").ok());
+        if self.selected.pos() != Some(pos) || tile.is_some() {
+            self.selected.set_pos(&self.layout, Some(pos));
         } else {
-            self.selected_pos = None;
-            check!(self.selected.class_list().add_1("is-hidden").ok());
+            self.selected.set_pos(&self.layout, None);
         }
+        self.selected.set_draggable(tile.is_some());
         if tile.is_some() {
-            check!(self.selected.class_list().add_1("is-draggable").ok());
             check!(self.selected_menu.class_list().remove_1("is-hidden").ok());
         } else {
-            check!(self.selected.class_list().remove_1("is-draggable").ok());
             check!(self.selected_menu.class_list().add_1("is-hidden").ok());
         }
     }
 
     pub fn rotate_selected_left(&mut self) {
-        let tile = self.selected_pos
+        let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
             self.map.insert(tile.id, tile.pos, tile.dir.rotated_left());
@@ -426,7 +448,7 @@ impl MapView {
     }
 
     pub fn rotate_selected_right(&mut self) {
-        let tile = self.selected_pos
+        let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
             self.map.insert(tile.id, tile.pos, tile.dir.rotated_right());
@@ -435,17 +457,17 @@ impl MapView {
     }
 
     pub fn remove_selected(&mut self) {
-        if let Some(pos) = self.selected_pos {
+        if let Some(pos) = self.selected.pos() {
             self.map.remove(pos);
             self.update_map();
         }
-        check!(self.selected.class_list().remove_1("is-draggable").ok());
+        self.selected.set_draggable(false);
         check!(self.selected_menu.class_list().add_1("is-hidden").ok());
     }
 
     pub fn drag_begin(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
-        if self.selected_pos != Some(pos) {
+        if self.selected.pos() != Some(pos) {
             return;
         }
         if let Some(tile) = self.map.get(pos) {
@@ -454,7 +476,7 @@ impl MapView {
             // dragged element will be created later on mouse move to avoid flicker
 
             check!(self.canvas.class_list().add_1("is-dragged").ok());
-            check!(self.selected.class_list().remove_1("is-draggable").ok());
+            self.selected.set_draggable(false);
             check!(self.canvas.add_event_listener_with_callback("mousemove",
                 self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
             check!(self.canvas.add_event_listener_with_callback("mouseup",
@@ -503,7 +525,7 @@ impl MapView {
         self.dragged = None;
 
         check!(self.canvas.class_list().remove_1("is-dragged").ok());
-        check!(self.selected.class_list().add_1("is-draggable").ok());
+        self.selected.set_draggable(true);
         check!(self.canvas.remove_event_listener_with_callback("mousemove",
             self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseup",
@@ -523,7 +545,7 @@ impl MapView {
         self.dragged = None;
 
         check!(self.canvas.class_list().remove_1("is-dragged").ok());
-        check!(self.selected.class_list().add_1("is-draggable").ok());
+        self.selected.set_draggable(true);
         check!(self.canvas.remove_event_listener_with_callback("mousemove",
             self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseup",
