@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------
 
 use log::{warn, info, debug};
-use js_sys::{self, JsString};
+use js_sys;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -335,9 +335,8 @@ impl MapView {
                 return;
             },
         };
-        let mut url = JsString::from("data:text/json;charset=utf-8,");
-        url = url.concat(&js_sys::encode_uri_component(&data));
-        let url: String = url.into();
+        let mut url = String::from("data:text/json;charset=utf-8,");
+        url.push_str(&String::from(js_sys::encode_uri_component(&data)));
 
         let document = self.canvas.owner_document().unwrap();
         let anchor = check!(document.create_element("a").ok()
