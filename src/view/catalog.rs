@@ -56,14 +56,6 @@ impl CatalogTile {
 
         Ok(CatalogTile { inner: tile, id, dragstart_cb })
     }
-
-    fn set_hidden(&self, value: bool) {
-        if value {
-            check!(self.inner.class_list().add_1("is-hidden").ok());
-        } else {
-            check!(self.inner.class_list().remove_1("is-hidden").ok());
-        }
-    }
 }
 
 impl AsRef<Element> for CatalogTile {

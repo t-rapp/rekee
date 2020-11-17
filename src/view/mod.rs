@@ -91,3 +91,20 @@ macro_rules! check {
 }
 
 //----------------------------------------------------------------------------
+
+trait ElementHidden {
+    fn set_hidden(&self, value: bool);
+}
+
+impl<T: AsRef<Element>> ElementHidden for T {
+    fn set_hidden(&self, value: bool) {
+        let elm = self.as_ref();
+        if value {
+            check!(elm.class_list().add_1("is-hidden").ok());
+        } else {
+            check!(elm.class_list().remove_1("is-hidden").ok());
+        }
+    }
+}
+
+//----------------------------------------------------------------------------

@@ -157,7 +157,7 @@ impl SelectedHex {
 
         let hex = document.create_element_ns(SVG_NS, "g")?;
         hex.set_id("selected");
-        hex.class_list().add_1("is-hidden")?;
+        hex.set_hidden(true);
         hex.append_child(&poly)?;
 
         Ok(SelectedHex { inner: hex, pos: None })
@@ -173,11 +173,7 @@ impl SelectedHex {
             let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
-        if pos.is_some() {
-            check!(self.inner.class_list().remove_1("is-hidden").ok());
-        } else {
-            check!(self.inner.class_list().add_1("is-hidden").ok());
-        }
+        self.set_hidden(!pos.is_some());
         self.pos = pos;
     }
 
@@ -266,7 +262,7 @@ impl MapView {
         canvas.append_child(selected.as_ref())?;
 
         let selected_menu = draw_selected_menu(&document, &layout, (2, 2))?;
-        selected_menu.class_list().add_1("is-hidden")?;
+        selected_menu.set_hidden(true);
         canvas.append_child(&selected_menu)?;
 
         let dragged_tile = None;
@@ -369,7 +365,7 @@ impl MapView {
         let document = self.canvas.owner_document().unwrap();
         let anchor = check!(document.create_element("a").ok()
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlElement>().ok()));
-        check!(anchor.set_attribute("class", "is-hidden").ok());
+        anchor.set_hidden(true);
         check!(anchor.set_attribute("href", &url).ok());
         check!(anchor.set_attribute("download", "MyTrack.rgt").ok());
         check!(document.body().unwrap().append_child(&anchor).ok());
@@ -416,7 +412,7 @@ impl MapView {
     pub fn clear_selected(&mut self) {
         self.selected.set_pos(&self.layout, None);
         self.selected.set_draggable(false);
-        check!(self.selected_menu.class_list().add_1("is-hidden").ok());
+        self.selected_menu.set_hidden(true);
     }
 
     pub fn update_selected(&mut self, pos: Point) {
@@ -432,11 +428,7 @@ impl MapView {
             self.selected.set_pos(&self.layout, None);
         }
         self.selected.set_draggable(tile.is_some());
-        if tile.is_some() {
-            check!(self.selected_menu.class_list().remove_1("is-hidden").ok());
-        } else {
-            check!(self.selected_menu.class_list().add_1("is-hidden").ok());
-        }
+        self.selected_menu.set_hidden(!tile.is_some());
     }
 
     pub fn rotate_selected_left(&mut self) {
@@ -463,7 +455,7 @@ impl MapView {
             self.update_map();
         }
         self.selected.set_draggable(false);
-        check!(self.selected_menu.class_list().add_1("is-hidden").ok());
+        self.selected_menu.set_hidden(true);
     }
 
     pub fn drag_begin(&mut self, pos: Point) {
@@ -500,7 +492,7 @@ impl MapView {
             self.dragged = Some(dragged);
         }
         // hide menu during drag operation
-        check!(self.selected_menu.class_list().add_1("is-hidden").ok());
+        self.selected_menu.set_hidden(true);
     }
 
     pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
