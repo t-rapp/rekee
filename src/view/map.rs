@@ -53,34 +53,6 @@ fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Re
     Ok(label)
 }
 
-fn draw_dragged_tile<P, D>(document: &Document, layout: &Layout, id: TileId, pos: P, dir: D) -> Result<Element>
-    where P: Into<Point>, D: Into<Direction>
-{
-    let size = layout.size();
-    let angle = dir.into().to_angle(&layout);
-    let img = document.create_element_ns(SVG_NS, "image")?;
-    img.set_attribute("href", &format!("img/thumb-{}.png", id))?;
-    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
-    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
-    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
-
-    let pos = pos.into();
-    let tile = document.create_element_ns(SVG_NS, "g")?;
-    tile.set_attribute("id", "dragged")?;
-    tile.set_attribute("class", "tile")?;
-    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    tile.append_child(&img)?;
-    Ok(tile)
-}
-
-fn move_dragged_tile<P>(tile: &Element, pos: P) -> Result<()>
-    where P: Into<Point>
-{
-    let pos = pos.into();
-    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    Ok(())
-}
-
 //----------------------------------------------------------------------------
 
 struct SelectedHex {
@@ -204,6 +176,49 @@ impl AsRef<Element> for SelectedMenu {
 
 //----------------------------------------------------------------------------
 
+struct DraggedTile {
+    inner: Element,
+    tile: PlacedTile,
+}
+
+impl DraggedTile {
+    fn new(document: &Document, layout: &Layout, tile: PlacedTile) -> Result<Self> {
+        let size = layout.size();
+        let angle = tile.dir.to_angle(&layout);
+        let img = document.create_element_ns(SVG_NS, "image")?;
+        img.set_attribute("href", &format!("img/thumb-{}.png", tile.id))?;
+        img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
+        img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
+        img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
+
+        let pos = tile.pos.to_pixel(&layout);
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_id("dragged");
+        inner.set_attribute("class", "tile")?;
+        inner.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+        inner.append_child(&img)?;
+
+        Ok(DraggedTile{ inner, tile })
+    }
+
+    fn tile(&self) -> &PlacedTile {
+        &self.tile
+    }
+
+    fn set_pos(&self, pos: Point) {
+        check!(self.inner.set_attribute("transform",
+            &format!("translate({:.3} {:.3})", pos.x(), pos.y())).ok());
+    }
+}
+
+impl AsRef<Element> for DraggedTile {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapView {
     layout: Layout,
     map: Map,
@@ -211,11 +226,10 @@ pub struct MapView {
     tiles: Element,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
-    dragged_tile: Option<PlacedTile>,
+    dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
-    dragged: Option<Element>,
 }
 
 impl MapView {
@@ -275,7 +289,7 @@ impl MapView {
         selected_menu.set_hidden(true);
         canvas.append_child(selected_menu.as_ref())?;
 
-        let dragged_tile = None;
+        let dragged = None;
 
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
@@ -341,9 +355,8 @@ impl MapView {
         callback.forget();
 
         Ok(MapView {
-            layout, map, canvas, tiles, selected, selected_menu,
-            dragged_tile, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb, dragged: None
+            layout, map, canvas, tiles, selected, selected_menu, dragged,
+            dragged_mousemove_cb, dragged_mouseup_cb, dragged_mouseleave_cb
         })
     }
 
@@ -473,8 +486,12 @@ impl MapView {
         }
         if let Some(tile) = self.map.get(pos) {
             info!("drag begin: {:?}", tile);
-            self.dragged_tile = Some(tile.clone());
-            // dragged element will be created later on mouse move to avoid flicker
+            let document = check!(self.canvas.owner_document());
+            let dragged = check!(DraggedTile::new(&document, &self.layout, tile.clone()).ok());
+            // dragged element will be made visible later on mouse move to avoid flicker
+            dragged.set_hidden(true);
+            check!(self.canvas.append_child(dragged.as_ref()).ok());
+            self.dragged = Some(dragged);
 
             check!(self.canvas.class_list().add_1("is-dragged").ok());
             self.selected.set_draggable(false);
@@ -490,40 +507,34 @@ impl MapView {
     pub fn drag_move(&mut self, pos: Point) {
         if let Some(ref dragged) = self.dragged {
             debug!("drag move: {:?}", pos);
-            check!(move_dragged_tile(dragged, pos).ok());
-        } else if let Some(ref tile) = self.dragged_tile {
-            // create missing dragged element on first mouse move
-            let document = self.canvas.owner_document().unwrap();
-            let dragged = check!(draw_dragged_tile(&document, &self.layout,
-                tile.id, pos, tile.dir).ok());
-            check!(self.canvas.append_child(&dragged).ok());
-            self.dragged = Some(dragged);
+            dragged.set_pos(pos);
+            // make dragged element visible on first mouse move
+            dragged.set_hidden(false);
         }
         // hide menu during drag operation
         self.selected_menu.set_hidden(true);
     }
 
     pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
-        if let Some(ref tile) = self.dragged_tile {
+        if let Some(ref dragged) = self.dragged {
             let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+            let tile = dragged.tile();
             info!("drag end: {:?} -> {:?}", tile, pos);
+            check!(self.canvas.remove_child(dragged.as_ref()).ok());
             if pos != tile.pos {
                 self.map.remove(tile.pos);
                 self.map.insert(tile.id, pos, tile.dir);
                 self.update_map();
             }
         }
+        self.dragged = None;
+
         if let Some(tile) = added_tile {
             let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
             info!("drag end: {:?} -> {:?}", tile, pos);
             self.map.insert(tile, pos, Direction::A);
             self.update_map();
         }
-        self.dragged_tile = None;
-        if let Some(ref dragged) = self.dragged {
-            check!(self.canvas.remove_child(dragged).ok());
-        }
-        self.dragged = None;
 
         check!(self.canvas.class_list().remove_1("is-dragged").ok());
         self.selected.set_draggable(true);
@@ -536,12 +547,10 @@ impl MapView {
     }
 
     pub fn drag_cancel(&mut self) {
-        if let Some(ref tile) = self.dragged_tile {
-            info!("drag cancel: {:?}", tile);
-        }
-        self.dragged_tile = None;
         if let Some(ref dragged) = self.dragged {
-            check!(self.canvas.remove_child(dragged).ok());
+            let tile = dragged.tile();
+            info!("drag cancel: {:?}", tile);
+            check!(self.canvas.remove_child(dragged.as_ref()).ok());
         }
         self.dragged = None;
 
