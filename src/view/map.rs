@@ -139,15 +139,14 @@ impl AsRef<Element> for SelectedHex {
 
 struct SelectedMenu {
     inner: Element,
-    pos: Coordinate,
 }
 
 impl SelectedMenu {
     fn new(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Self> {
-        let menu_pos = pos.to_pixel(&layout);
+        let pos = pos.to_pixel(&layout);
         let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
-        menu.set_attribute("x", &(menu_pos.x() - 60.0).to_string())?;
-        menu.set_attribute("y", &(menu_pos.y() + layout.size().y() - 8.0).to_string())?;
+        menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
+        menu.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string())?;
         menu.set_attribute("width", "120")?;
         menu.set_attribute("height", "40")?;
 
@@ -187,14 +186,13 @@ impl SelectedMenu {
             .ok_or_else(|| "Cannot find '#selected-menu' element within page")?;
         menu.append_child(&inner)?;
 
-        Ok(SelectedMenu { inner: menu, pos })
+        Ok(SelectedMenu { inner: menu })
     }
 
-    fn set_pos(&mut self, layout: &Layout, pos: Coordinate) {
-        let menu_pos = pos.to_pixel(&layout);
-        check!(self.inner.set_attribute("x", &(menu_pos.x() - 60.0).to_string()).ok());
-        check!(self.inner.set_attribute("y", &(menu_pos.y() + layout.size().y() - 8.0).to_string()).ok());
-        self.pos = pos;
+    fn set_pos(&self, layout: &Layout, pos: Coordinate) {
+        let pos = pos.to_pixel(&layout);
+        check!(self.inner.set_attribute("x", &(pos.x() - 60.0).to_string()).ok());
+        check!(self.inner.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string()).ok());
     }
 }
 
