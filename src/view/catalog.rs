@@ -30,6 +30,7 @@ impl CatalogTile {
         canvas.set_attribute("width", &format!("{}px", width))?;
         canvas.set_attribute("height", &format!("{}px", height))?;
         canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
+        canvas.set_attribute("xmlns", SVG_NS_STR)?;
 
         let style = document.create_element_ns(SVG_NS, "style")?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;

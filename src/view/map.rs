@@ -249,6 +249,7 @@ impl MapView {
         let height = (2.0 * layout.origin().y()).round() as i32;
         canvas.set_attribute("height", &format!("{}px", height))?;
         canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
+        canvas.set_attribute("xmlns", SVG_NS_STR)?;
         parent.append_child(&canvas)?;
 
         let defs = document.create_element_ns(SVG_NS, "defs")?;

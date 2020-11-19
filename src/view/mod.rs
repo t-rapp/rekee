@@ -25,7 +25,8 @@ type Result<T> = std::result::Result<T, JsValue>;
 
 //----------------------------------------------------------------------------
 
-const SVG_NS: Option<&str> = Some("http://www.w3.org/2000/svg");
+const SVG_NS: Option<&str> = Some(SVG_NS_STR);
+const SVG_NS_STR: &str = "http://www.w3.org/2000/svg";
 
 const TILE_STYLE: &str = indoc!(r#"
     .label {
