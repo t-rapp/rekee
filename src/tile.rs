@@ -146,6 +146,14 @@ impl Map {
         &self.tiles
     }
 
+    pub fn active_pos(&self) -> Coordinate {
+        self.active_pos
+    }
+
+    pub fn active_dir(&self) -> Direction {
+        self.active_dir
+    }
+
     pub fn get(&self, pos: Coordinate) -> Option<&PlacedTile> {
         self.tiles.iter().find(|tile| tile.pos == pos)
     }

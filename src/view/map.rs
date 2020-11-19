@@ -176,6 +176,55 @@ impl AsRef<Element> for SelectedMenu {
 
 //----------------------------------------------------------------------------
 
+struct ActiveHex {
+    inner: Element,
+    pos: Coordinate,
+    dir: Direction,
+}
+
+impl ActiveHex {
+    fn new(document: &Document, layout: &Layout) -> Result<Self> {
+        let pos = Coordinate::new(0, 0);
+        let dir = Direction::A;
+
+        let img = document.create_element_ns(SVG_NS, "image")?;
+        img.set_attribute("href", "./pkg/arrow-down-circle.svg")?;
+        let size = Point(16.0, 16.0);
+        img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
+        img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
+        img.set_attribute("transform", &format!("translate({:.3} {:.3})", -size.x(), -size.y()))?;
+
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_id("active");
+        let inner_pos = pos.to_pixel(&layout);
+        let angle = dir.to_angle(&layout);
+        let transform = format!("translate({:.3} {:.3}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
+        inner.set_attribute("transform", &transform)?;
+        inner.append_child(&img)?;
+
+        Ok(ActiveHex { inner, pos, dir })
+    }
+
+    fn update(&mut self, layout: &Layout, pos: Coordinate, dir: Direction) {
+        if pos != self.pos || dir != self.dir {
+            let pos = pos.to_pixel(&layout);
+            let angle = dir.to_angle(&layout);
+            let transform = format!("translate({:.3} {:.3}) rotate({:.0})", pos.x(), pos.y(), angle);
+            check!(self.inner.set_attribute("transform", &transform).ok());
+        }
+        self.pos = pos;
+        self.dir = dir;
+    }
+}
+
+impl AsRef<Element> for ActiveHex {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
 struct DraggedTile {
     inner: Element,
     tile: PlacedTile,
@@ -226,6 +275,7 @@ pub struct MapView {
     tiles: Element,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
+    active: ActiveHex,
     dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -289,6 +339,9 @@ impl MapView {
         let selected_menu = SelectedMenu::new(&document, &layout, (2, 2).into())?;
         selected_menu.set_hidden(true);
         canvas.append_child(selected_menu.as_ref())?;
+
+        let active = ActiveHex::new(&document, &layout)?;
+        canvas.append_child(active.as_ref())?;
 
         let dragged = None;
 
@@ -356,8 +409,9 @@ impl MapView {
         callback.forget();
 
         Ok(MapView {
-            layout, map, canvas, tiles, selected, selected_menu, dragged,
-            dragged_mousemove_cb, dragged_mouseup_cb, dragged_mouseleave_cb
+            layout, map, canvas, tiles, selected, selected_menu, active,
+            dragged, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb
         })
     }
 
@@ -431,6 +485,7 @@ impl MapView {
                 self.tiles.append_child(&el).unwrap();
             }
         }
+        self.active.update(&self.layout, self.map.active_pos(), self.map.active_dir());
     }
 
     pub fn clear_selected(&mut self) {
