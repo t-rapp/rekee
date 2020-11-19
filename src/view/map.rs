@@ -41,63 +41,6 @@ fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Eleme
     Ok(hex)
 }
 
-fn draw_selected_menu<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
-    where C: Into<Coordinate>
-{
-    let pos = pos.into().to_pixel(&layout);
-    let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
-    menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
-    menu.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string())?;
-    menu.set_attribute("width", "120")?;
-    menu.set_attribute("height", "40")?;
-
-    if let Some(btn) = document.get_element_by_id("rotate-selected-left-button") {
-        let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            event.prevent_default();
-            event.stop_propagation();
-            nuts::publish(RotateSelectedLeftEvent);
-        }) as Box<dyn Fn(_)>);
-        btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
-        callback.forget();
-    }
-
-    if let Some(btn) = document.get_element_by_id("rotate-selected-right-button") {
-        let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            event.prevent_default();
-            event.stop_propagation();
-            nuts::publish(RotateSelectedRightEvent);
-        }) as Box<dyn Fn(_)>);
-        btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
-        callback.forget();
-    }
-
-    if let Some(btn) = document.get_element_by_id("remove-selected-button") {
-        let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            event.prevent_default();
-            event.stop_propagation();
-            nuts::publish(RemoveSelectedEvent);
-        }) as Box<dyn Fn(_)>);
-        btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
-        callback.forget();
-    }
-
-    // extract menu element from document after all buttons have been assigned,
-    // otherwise get_element_by_id() would not have been able to find the buttons
-    let inner = document.get_element_by_id("selected-menu")
-        .ok_or_else(|| "Cannot find '#selected-menu' element within page")?;
-    menu.append_child(&inner)?;
-    Ok(menu)
-}
-
-fn move_selected_menu<C>(menu: &Element, layout: &Layout, pos: C) -> Result<()>
-    where C: Into<Coordinate>
-{
-    let pos = pos.into().to_pixel(&layout);
-    menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
-    menu.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string())?;
-    Ok(())
-}
-
 fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Result<Element>
     where C: Into<Coordinate>
 {
@@ -194,13 +137,82 @@ impl AsRef<Element> for SelectedHex {
 
 //----------------------------------------------------------------------------
 
+struct SelectedMenu {
+    inner: Element,
+    pos: Coordinate,
+}
+
+impl SelectedMenu {
+    fn new(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Self> {
+        let menu_pos = pos.to_pixel(&layout);
+        let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
+        menu.set_attribute("x", &(menu_pos.x() - 60.0).to_string())?;
+        menu.set_attribute("y", &(menu_pos.y() + layout.size().y() - 8.0).to_string())?;
+        menu.set_attribute("width", "120")?;
+        menu.set_attribute("height", "40")?;
+
+        if let Some(btn) = document.get_element_by_id("rotate-selected-left-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(RotateSelectedLeftEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
+        if let Some(btn) = document.get_element_by_id("rotate-selected-right-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(RotateSelectedRightEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
+        if let Some(btn) = document.get_element_by_id("remove-selected-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(RemoveSelectedEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
+        // extract menu element from document after all buttons have been assigned,
+        // otherwise get_element_by_id() would not have been able to find the buttons
+        let inner = document.get_element_by_id("selected-menu")
+            .ok_or_else(|| "Cannot find '#selected-menu' element within page")?;
+        menu.append_child(&inner)?;
+
+        Ok(SelectedMenu { inner: menu, pos })
+    }
+
+    fn set_pos(&mut self, layout: &Layout, pos: Coordinate) {
+        let menu_pos = pos.to_pixel(&layout);
+        check!(self.inner.set_attribute("x", &(menu_pos.x() - 60.0).to_string()).ok());
+        check!(self.inner.set_attribute("y", &(menu_pos.y() + layout.size().y() - 8.0).to_string()).ok());
+        self.pos = pos;
+    }
+}
+
+impl AsRef<Element> for SelectedMenu {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapView {
     layout: Layout,
     map: Map,
     canvas: Element,
     tiles: Element,
     selected: SelectedHex,
-    selected_menu: Element,
+    selected_menu: SelectedMenu,
     dragged_tile: Option<PlacedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -261,9 +273,9 @@ impl MapView {
         let selected = SelectedHex::new(&document, &layout)?;
         canvas.append_child(selected.as_ref())?;
 
-        let selected_menu = draw_selected_menu(&document, &layout, (2, 2))?;
+        let selected_menu = SelectedMenu::new(&document, &layout, (2, 2).into())?;
         selected_menu.set_hidden(true);
-        canvas.append_child(&selected_menu)?;
+        canvas.append_child(selected_menu.as_ref())?;
 
         let dragged_tile = None;
 
@@ -419,15 +431,13 @@ impl MapView {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         info!("update selected: {:?}", pos);
         let tile = self.map.get(pos);
-        if self.selected.pos() != Some(pos) {
-            check!(move_selected_menu(&self.selected_menu, &self.layout, pos).ok());
-        }
         if self.selected.pos() != Some(pos) || tile.is_some() {
             self.selected.set_pos(&self.layout, Some(pos));
         } else {
             self.selected.set_pos(&self.layout, None);
         }
         self.selected.set_draggable(tile.is_some());
+        self.selected_menu.set_pos(&self.layout, pos);
         self.selected_menu.set_hidden(!tile.is_some());
     }
 
