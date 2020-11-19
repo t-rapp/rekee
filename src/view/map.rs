@@ -49,7 +49,7 @@ fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Re
     label.set_attribute("class", "label")?;
     label.set_attribute("x", &pos.x().to_string())?;
     label.set_attribute("y", &pos.y().to_string())?;
-    label.set_inner_html(text);
+    label.append_child(&document.create_text_node(text))?;
     Ok(label)
 }
 

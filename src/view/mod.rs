@@ -60,7 +60,8 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
     label.set_attribute("class", "label")?;
     label.set_attribute("x", "0")?;
     label.set_attribute("y", "0")?;
-    label.set_inner_html(&id.base().to_string());
+    let text = id.base().to_string();
+    label.append_child(&document.create_text_node(&text))?;
 
     let pos = pos.into().to_pixel(&layout);
     let tile = document.create_element_ns(SVG_NS, "g")?;
