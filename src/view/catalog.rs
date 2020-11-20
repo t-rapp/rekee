@@ -19,6 +19,7 @@ use super::*;
 struct CatalogTile {
     inner: Element,
     id: TileId,
+    dblclick_cb: Closure<dyn Fn(web_sys::Event)>,
     dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
 }
 
@@ -42,6 +43,11 @@ impl CatalogTile {
         tile.set_attribute("draggable", "true")?;
         tile.append_child(&canvas)?;
 
+        let dblclick_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(AppendTileEvent { id: id.base(), hint: None });
+        }) as Box<dyn Fn(_)>);
+        tile.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
+
         let drag_img = canvas.clone();
         let dragstart_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             if let Some(trans) = event.data_transfer() {
@@ -55,7 +61,7 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogTile { inner: tile, id, dragstart_cb })
+        Ok(CatalogTile { inner: tile, id, dblclick_cb, dragstart_cb })
     }
 }
 
@@ -67,8 +73,10 @@ impl AsRef<Element> for CatalogTile {
 
 impl Drop for CatalogTile {
     fn drop(&mut self) {
-        self.inner.remove_event_listener_with_callback("dragstart",
-            self.dragstart_cb.as_ref().unchecked_ref()).unwrap();
+        let _ = self.inner.remove_event_listener_with_callback("dblclick",
+            self.dblclick_cb.as_ref().unchecked_ref());
+        let _ = self.inner.remove_event_listener_with_callback("dragstart",
+            self.dragstart_cb.as_ref().unchecked_ref());
     }
 }
 
