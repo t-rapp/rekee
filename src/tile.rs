@@ -391,15 +391,51 @@ impl PartialEq<ConnectionHint> for Connection {
 
 //----------------------------------------------------------------------------
 
+#[derive(Debug, Clone, Copy)]
+enum Edge {
+    None,
+    Straight(u8),
+    SkewLeft(u8),
+    SkewRight(u8),
+}
+
+impl Edge {
+    fn lanes(&self) -> u8 {
+        match *self {
+            Edge::None => 0,
+            Edge::Straight(val) => val,
+            Edge::SkewLeft(val) => val,
+            Edge::SkewRight(val) => val,
+        }
+    }
+}
+
+impl Default for Edge {
+    fn default() -> Self {
+        Edge::None
+    }
+}
+
+impl Index<Direction> for [Edge; 6] {
+    type Output = Edge;
+
+    fn index(&self, index: Direction) -> &Self::Output {
+        self.get(u8::from(index) as usize).unwrap()
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct TileInfo {
     id: TileId,
     count: usize,
     conn: [Connection; 6],
+    edges: [Edge; 6],
 }
 
 impl TileInfo {
-    const fn new(id: TileId, count: usize, conn: [Connection; 6]) -> Self {
-        TileInfo { id, count, conn }
+    const fn new(id: TileId, count: usize, conn: [Connection; 6], edges: [Edge; 6]) -> Self {
+        TileInfo { id, count, conn, edges }
     }
 
     pub fn base_id(&self) -> TileId {
@@ -455,116 +491,125 @@ const JS0R2: Connection = Connection::JunctionRight(0, 2);
 const JL1R2: Connection = Connection::JunctionLeft(1, -2);
 const JR1L2: Connection = Connection::JunctionRight(1, -2);
 
+const EN: Edge = Edge::None;
+const ES2: Edge = Edge::Straight(2);
+const ES3: Edge = Edge::Straight(3);
+const ES4: Edge = Edge::Straight(4);
+const EL2: Edge = Edge::SkewLeft(2);
+const EL3: Edge = Edge::SkewLeft(3);
+const ER2: Edge = Edge::SkewRight(2);
+const ER3: Edge = Edge::SkewRight(3);
+
 const TILE_INFOS: [TileInfo; 109] = [
-    TileInfo::new(tile!{101},    1, [N, N, N, N, N, N]),
-    TileInfo::new(tile!{102, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{102, b}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{103, a}, 3, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{103, b}, 3, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{104, a}, 3, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{104, b}, 3, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{105, a}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{105, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{106, a}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{106, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{107, a}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{107, b}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{108, a}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{108, b}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{109, a}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{109, b}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{110, a}, 1, [R0, N, N, L0, N, N]),
-    TileInfo::new(tile!{110, b}, 1, [R0, N, N, L0, N, N]),
-    TileInfo::new(tile!{111, a}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{111, b}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{112, a}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{112, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{113, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{113, b}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{114, a}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{114, b}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{115, a}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{115, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{116, a}, 2, [R0, N, N, L0, N, N]),
-    TileInfo::new(tile!{116, b}, 2, [R0, N, N, L0, N, N]),
-    TileInfo::new(tile!{117, a}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{117, b}, 2, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{118, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{118, b}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{119, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{119, b}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{120, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{120, b}, 1, [N, N, N, L1, N, R1]),
-    TileInfo::new(tile!{121, a}, 2, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{121, b}, 2, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{122, a}, 2, [N, N, N, N, L2, R2]),
-    TileInfo::new(tile!{122, b}, 2, [N, N, N, N, L2, R2]),
-    TileInfo::new(tile!{123, a}, 1, [N, L2, R2, N, N, N]),
-    TileInfo::new(tile!{123, b}, 1, [N, L2, R2, N, N, N]),
-    TileInfo::new(tile!{124, a}, 2, [L1, N, R1, N, N, N]),
-    TileInfo::new(tile!{124, b}, 2, [L1, N, R1, N, N, N]),
-    TileInfo::new(tile!{125, a}, 2, [R1, N, N, N, L1, N]),
-    TileInfo::new(tile!{125, b}, 2, [R1, N, N, N, L1, N]),
-    TileInfo::new(tile!{126, a}, 1, [N, N, N, L2, R2, N]),
-    TileInfo::new(tile!{126, b}, 1, [N, N, N, L2, R2, N]),
-    TileInfo::new(tile!{127, a}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{127, b}, 2, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{128, a}, 1, [N, N, N, N, L2, R2]),
-    TileInfo::new(tile!{128, b}, 1, [N, N, N, N, L2, R2]),
-    TileInfo::new(tile!{129, a}, 1, [N, R0, N, N, L0, N]),
-    TileInfo::new(tile!{129, b}, 1, [N, R0, N, N, L0, N]),
-    TileInfo::new(tile!{130, a}, 1, [N, N, R0, N, N, L0]),
-    TileInfo::new(tile!{130, b}, 1, [N, N, R0, N, N, L0]),
-    TileInfo::new(tile!{131, a}, 1, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{131, b}, 1, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{132, a}, 1, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{132, b}, 1, [N, N, S1M, N, S1P, N]),
-    TileInfo::new(tile!{133, a}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{133, b}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{134, a}, 1, [N, N, R0, N, N, R0]),
-    TileInfo::new(tile!{134, b}, 1, [N, N, R0, N, N, R0]),
-    TileInfo::new(tile!{135, a}, 1, [N, L0, N, N, L0, N]),
-    TileInfo::new(tile!{135, b}, 1, [N, L0, N, N, L0, N]),
-    TileInfo::new(tile!{136, a}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{136, b}, 1, [N, N, L2, R2, N, N]),
-    TileInfo::new(tile!{137, a}, 1, [N, N, L1, N, R1, N]),
-    TileInfo::new(tile!{137, b}, 1, [N, N, L1, N, R1, N]),
-    TileInfo::new(tile!{138, a}, 2, [N, N, L1, N, R1, N]),
-    TileInfo::new(tile!{138, b}, 2, [N, N, L1, N, R1, N]),
-    TileInfo::new(tile!{139, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{139, b}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{140, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{140, b}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{141, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{141, b}, 1, [S0, N, S0, S0, N, S0]),
-    TileInfo::new(tile!{142, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{142, b}, 1, [S0, N, S1M, S0, S1P, N]),
-    TileInfo::new(tile!{143, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{143, b}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{144, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{144, b}, 1, [N, S1P, S1M, N, S1P, S1M]),
-    TileInfo::new(tile!{145, a}, 1, [S0, N, N, S0, N, N]),
-    TileInfo::new(tile!{145, b}, 1, [S0, N, S0, S0, N, S0]),
-    TileInfo::new(tile!{146, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{146, b}, 1, [S0, N, S1M, S0, S1P, N]),
-    TileInfo::new(tile!{147, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{147, b}, 1, [N, S1P, N, L2, R2, S1M]),
-    TileInfo::new(tile!{148, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{148, b}, 1, [N, S1P, L2, R2, N, S1M]),
-    TileInfo::new(tile!{149, a}, 1, [N, L1, N, R1, N, N]),
-    TileInfo::new(tile!{149, b}, 1, [N, S1P, L2, R2, N, S1M]),
-    TileInfo::new(tile!{150, a}, 1, [S0, S1P, S1M, S0, S1P, S1M]),
-    TileInfo::new(tile!{150, b}, 1, [S0, S1P, S1M, S0, S1P, S1M]),
-    TileInfo::new(tile!{151, a}, 1, [JS0L2, JL1R2, N, JS0R1, N, N]),
-    TileInfo::new(tile!{151, b}, 1, [JS0L2, JL1R2, N, JS0R1, N, N]),
-    TileInfo::new(tile!{152, a}, 1, [JS0R2, N, N, JS0L1, N, JR1L2]),
-    TileInfo::new(tile!{152, b}, 1, [JS0R2, N, N, JS0L1, N, JR1L2]),
-    TileInfo::new(tile!{153, a}, 1, [S0, S0, N, S0, S0, N]),
-    TileInfo::new(tile!{153, b}, 1, [S0, S0, N, S0, S0, N]),
-    TileInfo::new(tile!{154, a}, 1, [N, S0, N, L1, S0, R1]),
-    TileInfo::new(tile!{154, b}, 1, [N, L1, S0, R1, N, S0]),
-    TileInfo::new(tile!{901, a}, 1, [N, N, N, N, N, N]),
-    TileInfo::new(tile!{901, b}, 1, [N, N, N, N, N, N]),
+    TileInfo::new(tile!{101}, 1, [N; 6], [EN; 6]),
+    TileInfo::new(tile!{102, a}, 1, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{102, b}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{103, a}, 3, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{103, b}, 3, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{104, a}, 3, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{104, b}, 3, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{105, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{105, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{106, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{106, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{107, a}, 2, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{107, b}, 2, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{108, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{108, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{109, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{109, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{110, a}, 1, [R0, N, N, L0, N, N], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{110, b}, 1, [R0, N, N, L0, N, N], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{111, a}, 2, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{111, b}, 2, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{112, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{112, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{113, a}, 1, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{113, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{114, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{114, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{115, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{115, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{116, a}, 2, [R0, N, N, L0, N, N], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{116, b}, 2, [R0, N, N, L0, N, N], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{117, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{117, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{118, a}, 1, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{118, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{119, a}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{119, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{120, a}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{120, b}, 1, [N, N, N, L1, N, R1], [EN, EN, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!{121, a}, 2, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{121, b}, 2, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{122, a}, 2, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER3, ES3]),
+    TileInfo::new(tile!{122, b}, 2, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER2, ES2]),
+    TileInfo::new(tile!{123, a}, 1, [N, L2, R2, N, N, N], [EN, ES3, EL3, EN, EN, EN]),
+    TileInfo::new(tile!{123, b}, 1, [N, L2, R2, N, N, N], [EN, ES2, EL2, EN, EN, EN]),
+    TileInfo::new(tile!{124, a}, 2, [L1, N, R1, N, N, N], [ES3, EN, EL3, EN, EN, EN]),
+    TileInfo::new(tile!{124, b}, 2, [L1, N, R1, N, N, N], [ES2, EN, EL2, EN, EN, EN]),
+    TileInfo::new(tile!{125, a}, 2, [R1, N, N, N, L1, N], [ES3, EN, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{125, b}, 2, [R1, N, N, N, L1, N], [ES2, EN, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{126, a}, 1, [N, N, N, L2, R2, N], [EN, EN, EN, ES3, ER3, EN]),
+    TileInfo::new(tile!{126, b}, 1, [N, N, N, L2, R2, N], [EN, EN, EN, ES2, ER2, EN]),
+    TileInfo::new(tile!{127, a}, 2, [N, N, L2, R2, N, N], [EN, EN, EL3, ES3, EN, EN]),
+    TileInfo::new(tile!{127, b}, 2, [N, N, L2, R2, N, N], [EN, EN, EL2, ES2, EN, EN]),
+    TileInfo::new(tile!{128, a}, 1, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER3, EL3]),
+    TileInfo::new(tile!{128, b}, 1, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER2, EL2]),
+    TileInfo::new(tile!{129, a}, 1, [N, R0, N, N, L0, N], [EN, ES3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{129, b}, 1, [N, R0, N, N, L0, N], [EN, ES2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{130, a}, 1, [N, N, R0, N, N, L0], [EN, EN, EL3, EN, EN, ES3]),
+    TileInfo::new(tile!{130, b}, 1, [N, N, R0, N, N, L0], [EN, EN, EL2, EN, EN, ES2]),
+    TileInfo::new(tile!{131, a}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{131, b}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{132, a}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{132, b}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{133, a}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{133, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{134, a}, 1, [N, N, R0, N, N, R0], [EN, EN, EL3, EN, EN, EL3]),
+    TileInfo::new(tile!{134, b}, 1, [N, N, R0, N, N, R0], [EN, EN, EL2, EN, EN, EL2]),
+    TileInfo::new(tile!{135, a}, 1, [N, L0, N, N, L0, N], [EN, ER3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{135, b}, 1, [N, L0, N, N, L0, N], [EN, ER2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{136, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{136, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{137, a}, 1, [N, N, L1, N, R1, N], [EN, EN, ES3, EN, ER3, EN]),
+    TileInfo::new(tile!{137, b}, 1, [N, N, L1, N, R1, N], [EN, EN, ES2, EN, ER2, EN]),
+    TileInfo::new(tile!{138, a}, 2, [N, N, L1, N, R1, N], [EN, EN, EL3, EN, ES3, EN]),
+    TileInfo::new(tile!{138, b}, 2, [N, N, L1, N, R1, N], [EN, EN, EL2, EN, ES2, EN]),
+    TileInfo::new(tile!{139, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{139, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{140, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{140, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{141, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{141, b}, 1, [S0, N, S0, S0, N, S0], [ES3, EN, ES3, ES3, EN, ES3]),
+    TileInfo::new(tile!{142, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{142, b}, 1, [S0, N, S1M, S0, S1P, N], [ES3, EN, EL3, ES3, ER3, EN]),
+    TileInfo::new(tile!{143, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{143, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{144, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{144, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{145, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{145, b}, 1, [S0, N, S0, S0, N, S0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{146, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{146, b}, 1, [S0, N, S1M, S0, S1P, N], [ES2, EN, EL2, ES2, ER2, EN]),
+    TileInfo::new(tile!{147, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{147, b}, 1, [N, S1P, N, L2, R2, S1M], [EN, ER3, EN, ES3, ER3, EL3]),
+    TileInfo::new(tile!{148, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{148, b}, 1, [N, S1P, L2, R2, N, S1M], [EN, ER3, EL3, ES3, EN, EL3]),
+    TileInfo::new(tile!{149, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{149, b}, 1, [N, S1P, L2, R2, N, S1M], [EN, ER3, ES3, ES3, EN, EL3]),
+    TileInfo::new(tile!{150, a}, 1, [S0, S1P, S1M, S0, S1P, S1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
+    TileInfo::new(tile!{150, b}, 1, [S0, S1P, S1M, S0, S1P, S1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
+    TileInfo::new(tile!{151, a}, 1, [JS0L2, JL1R2, N, JS0R1, N, N], [ES3, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{151, b}, 1, [JS0L2, JL1R2, N, JS0R1, N, N], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{152, a}, 1, [JS0R2, N, N, JS0L1, N, JR1L2], [ES3, EN, EN, ES3, EN, ES3]),
+    TileInfo::new(tile!{152, b}, 1, [JS0R2, N, N, JS0L1, N, JR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!{153, a}, 1, [S0, S0, N, S0, S0, N], [ES3, ES2, EN, ES3, ES2, EN]),
+    TileInfo::new(tile!{153, b}, 1, [S0, N, S0, S0, N, S0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{154, a}, 1, [N, S0, N, L1, S0, R1], [EN, ES2, EN, ES3, ES2, ES3]),
+    TileInfo::new(tile!{154, b}, 1, [N, L1, S0, R1, N, S0], [EN, ES2, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{901, a}, 1, [N; 6], [EN; 6]),
+    TileInfo::new(tile!{901, b}, 1, [N; 6], [EN; 6]),
 ];
 
 //----------------------------------------------------------------------------
@@ -894,6 +939,33 @@ mod tests {
         assert!(TILE_INFOS.windows(2).all(|infos| infos[0].id <= infos[1].id));
         // FIXME: could be replaced with is_sorted() once it's no longer unstable
         //assert!(TILE_INFOS.is_sorted_by_key(|info| info.id));
+    }
+
+    #[test]
+    fn tile_info_connection_edge() {
+        for tile in TILE_INFOS.iter() {
+            for dir in Direction::iter() {
+                let has_connection = match tile.conn[*dir] {
+                    Connection::None => false,
+                    _ => true,
+                };
+                let has_edge = match tile.edges[*dir] {
+                    Edge::None => false,
+                    _ => true,
+                };
+                // each connection must have an according edge
+                assert_eq!(has_connection, has_edge);
+
+                let lanes = tile.edges[*dir].lanes();
+                if has_connection {
+                    // sides with connection must have a non-zero number of lanes
+                    assert!(lanes > 0);
+                } else {
+                    // sides without connection cannot have lanes
+                    assert_eq!(0, lanes);
+                }
+            }
+        }
     }
 
     #[test]
