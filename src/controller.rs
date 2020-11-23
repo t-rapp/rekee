@@ -46,7 +46,7 @@ pub struct RotateSelectedRightEvent;
 pub struct RemoveSelectedEvent;
 
 pub struct UpdateFilterEvent {
-    pub side: Option<u8>,
+    pub lanes: Option<u8>,
 }
 
 pub struct DragCatalogBeginEvent {
@@ -87,7 +87,7 @@ impl CatalogController {
     }
 
     fn update_filter(&mut self, event: &UpdateFilterEvent) {
-        self.view.update_filter(event.side);
+        self.view.update_filter(event.lanes);
     }
 
     fn drag_catalog_begin(&mut self, event: &DragCatalogBeginEvent) {

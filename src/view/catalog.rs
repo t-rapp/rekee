@@ -8,6 +8,8 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+use std::collections::BTreeSet;
+
 use log::{info};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -89,6 +91,7 @@ impl Drop for CatalogTile {
 struct FilterItem {
     inner: Element,
     value: Option<u8>,
+    tiles: BTreeSet<TileId>,
     anchor: Element,
     click_cb: Closure<dyn Fn(web_sys::Event)>,
 }
@@ -99,8 +102,17 @@ impl FilterItem {
             .map(|val| val.parse().ok())
             .flatten();
 
+        let tiles: BTreeSet<_> = TileInfo::iter()
+            .filter(|info| {
+                Direction::iter()
+                    .map(|dir| info.edge(*dir).lanes())
+                    .any(|val| Some(val) == value)
+            })
+            .map(|info| info.base_id())
+            .collect();
+
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::publish(UpdateFilterEvent { side: value });
+            nuts::publish(UpdateFilterEvent { lanes: value });
         }) as Box<dyn Fn(_)>);
 
         let anchor = inner.query_selector("a")?
@@ -108,11 +120,18 @@ impl FilterItem {
         anchor.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 
-        Ok(FilterItem { inner, value, anchor, click_cb })
+        Ok(FilterItem { inner, value, tiles, anchor, click_cb })
     }
 
     fn value(&self) -> Option<u8> {
         self.value
+    }
+
+    fn contains(&self, tile: TileId) -> bool {
+        match self.value {
+            Some(_) => self.tiles.contains(&tile.base()),
+            None => true,
+        }
     }
 
     fn set_active(&self, value: bool) {
@@ -205,18 +224,22 @@ impl CatalogView {
         })
     }
 
-    pub fn update_filter(&mut self, side: Option<u8>) {
-        info!("update filter side: {:?}", side);
+    pub fn update_filter(&mut self, lanes: Option<u8>) {
+        info!("update filter lanes: {:?}", lanes);
+        let mut filter = None;
+        for item in &self.filter_items {
+            let active = lanes == item.value();
+            item.set_active(active);
+            if active {
+                filter = Some(item);
+            }
+        }
         for tile in &self.tiles {
-            let hidden = match side {
-                Some(val) => val != tile.id.side() && 0 != tile.id.side(),
+            let hidden = match filter {
+                Some(filter) => !filter.contains(tile.id),
                 None => false,
             };
             tile.set_hidden(hidden);
-        }
-        for item in &self.filter_items {
-            let active = side == item.value();
-            item.set_active(active);
         }
     }
 

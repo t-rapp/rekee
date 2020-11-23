@@ -392,7 +392,7 @@ impl PartialEq<ConnectionHint> for Connection {
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy)]
-enum Edge {
+pub enum Edge {
     None,
     Straight(u8),
     SkewLeft(u8),
@@ -400,7 +400,7 @@ enum Edge {
 }
 
 impl Edge {
-    fn lanes(&self) -> u8 {
+    pub fn lanes(&self) -> u8 {
         match *self {
             Edge::None => 0,
             Edge::Straight(val) => val,
@@ -463,6 +463,10 @@ impl TileInfo {
 
     fn connection_target(&self, source: Direction) -> Option<Direction> {
         self.conn[source].target(source)
+    }
+
+    pub fn edge(&self, dir: Direction) -> Edge {
+        self.edges[dir]
     }
 }
 
