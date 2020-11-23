@@ -627,12 +627,12 @@ impl MapView {
 
 impl Drop for MapView {
     fn drop(&mut self) {
-        self.canvas.remove_event_listener_with_callback("mousemove",
-            self.dragged_mousemove_cb.as_ref().unchecked_ref()).unwrap();
-        self.canvas.remove_event_listener_with_callback("mouseup",
-            self.dragged_mouseup_cb.as_ref().unchecked_ref()).unwrap();
-        self.canvas.remove_event_listener_with_callback("mouseleave",
-            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).unwrap();
+        let _ = self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref());
+        let _ = self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref());
+        let _ = self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref());
     }
 }
 

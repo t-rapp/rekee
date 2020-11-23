@@ -151,8 +151,8 @@ impl AsRef<Element> for FilterItem {
 
 impl Drop for FilterItem {
     fn drop(&mut self) {
-        self.anchor.remove_event_listener_with_callback("click",
-            self.click_cb.as_ref().unchecked_ref()).unwrap();
+        let _ = self.anchor.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref());
     }
 }
 
