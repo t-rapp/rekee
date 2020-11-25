@@ -25,7 +25,7 @@ use super::*;
 struct CatalogTile {
     inner: Element,
     id: TileId,
-    dblclick_cb: Closure<dyn Fn(web_sys::Event)>,
+    dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
 }
 
@@ -49,8 +49,14 @@ impl CatalogTile {
         tile.set_attribute("draggable", "true")?;
         tile.append_child(&canvas)?;
 
-        let dblclick_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::publish(AppendTileEvent { id: id.base(), hint: None });
+        let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            let hint = match (event.shift_key(), event.ctrl_key()) {
+                (true, true) => Some(ConnectionHint::Straight),
+                (true, false) => Some(ConnectionHint::Left),
+                (false, true) => Some(ConnectionHint::Right),
+                (false, false) => None,
+            };
+            nuts::publish(AppendTileEvent { id: id.base(), hint });
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 
