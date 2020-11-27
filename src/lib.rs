@@ -20,7 +20,9 @@ use hexagon::*;
 
 mod import;
 mod logger;
-mod tile;
+
+#[macro_use]
+pub mod tile;
 
 #[macro_use]
 mod view;

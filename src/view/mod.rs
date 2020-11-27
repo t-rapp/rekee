@@ -86,6 +86,8 @@ fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     Some(Point(x, y))
 }
 
+// Helper macro that checks an option result and aborts the current function in case of an error.
+#[doc(hidden)]
 #[macro_export]
 macro_rules! check {
     ($e:expr) => {

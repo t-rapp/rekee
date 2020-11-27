@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------
-//! Tile identifier and characterisics, map of tiles within a hexagon grid.
+//! Tile identifier and characteristics, map of tiles within a hexagon grid.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,25 @@ use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
 //----------------------------------------------------------------------------
 
+/// Identifier of a game tile.
+///
+/// Each tile identifier consists of three parts:
+/// * a three digit catalog number `num` (101 .. 999)
+/// * a number `side` for the tile front (a) or back (b) (1 => a, 2 => b)
+/// * a tile variant `var`, if there are multiple graphical variants of a tile
+///
+/// # Examples
+///
+/// ```
+/// # use rekee::tile::*;
+/// let tile: TileId = "102a".parse().unwrap();
+/// assert_eq!(tile.num(), 102);
+/// assert_eq!(tile.side(), 1);
+/// assert_eq!(tile.var(), 0);
+///
+/// let tile = TileId::new(103, 1, 2);
+/// assert_eq!(tile.to_string(), "103a-2");
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TileId {
     num: u16,
@@ -27,22 +46,36 @@ pub struct TileId {
 }
 
 impl TileId {
+    /// Creates a new tile identifier from catalog number, tile side, and variant.
     pub const fn new(num: u16, side: u8, var: u8) -> Self {
         TileId { num, side, var }
     }
 
+    /// Tile catalog number.
     pub fn num(&self) -> u16 {
         self.num
     }
 
+    /// Tile side (1 => front / a, 2 => back / b).
+    ///
+    /// Side can be zero if tile front and back are the same.
     pub fn side(&self) -> u8 {
         self.side
     }
 
+    /// Graphical tile variant.
+    ///
+    /// Variant number can be zero if there is only a single variant existing.
     pub fn var(&self) -> u8 {
         self.var
     }
 
+    /// Returns the "base" identifier of a game tile. This is the identifier
+    /// that describes all the tile characteristics with graphical variant `var`
+    /// stripped off, and also `side` if the tile has the same printing on front
+    /// and back.
+    ///
+    /// The base identifier is used for track setup tile lists, for example.
     pub fn base(&self) -> Self {
         let side = match self.num {
             // pitstop tile is the same on front and back
@@ -94,22 +127,41 @@ impl FromStr for TileId {
     }
 }
 
+/// Creates a new tile identifier.
+///
+/// The `tile!` macro adds convenience on directly calling `TileId::new()` as it
+/// allows to skip `side` or `var` parameters, if unused. Also the value for
+/// parameter `side` is restricted to `a` and `b` to avoid invalid tile
+/// identifiers.
+///
+/// Examples:
+///
+/// ```
+/// # #[macro_use] extern crate rekee;
+/// # use rekee::tile::TileId;
+/// # fn main() {
+/// let tile: TileId = tile!(102, a);
+/// assert_eq!(tile.num(), 102);
+/// assert_eq!(tile.side(), 1);
+/// assert_eq!(tile.var(), 0);
+/// # }
+/// ```
 #[macro_export]
 macro_rules! tile {
     ($num:expr) => {
-        crate::tile::TileId::new($num, 0, 0)
+        $crate::tile::TileId::new($num, 0, 0)
     };
     ($num:expr, a) => {
-        crate::tile::TileId::new($num, 1, 0)
+        $crate::tile::TileId::new($num, 1, 0)
     };
     ($num:expr, b) => {
-        crate::tile::TileId::new($num, 2, 0)
+        $crate::tile::TileId::new($num, 2, 0)
     };
     ($num:expr, a, $var:expr) => {
-        crate::tile::TileId::new($num, 1, $var)
+        $crate::tile::TileId::new($num, 1, $var)
     };
     ($num:expr, b, $var:expr) => {
-        crate::tile::TileId::new($num, 2, $var)
+        $crate::tile::TileId::new($num, 2, $var)
     };
 }
 
