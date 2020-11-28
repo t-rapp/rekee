@@ -17,7 +17,6 @@ use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::*;
-use crate::tile::*;
 use super::*;
 
 //----------------------------------------------------------------------------

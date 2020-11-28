@@ -501,15 +501,15 @@ impl MapView {
     pub fn update_selected(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         info!("update selected: {:?}", pos);
-        let tile = self.map.get(pos);
-        if self.selected.pos() != Some(pos) || tile.is_some() {
+        let is_tile = self.map.get(pos).is_some();
+        if self.selected.pos() != Some(pos) || is_tile {
             self.selected.set_pos(&self.layout, Some(pos));
         } else {
             self.selected.set_pos(&self.layout, None);
         }
-        self.selected.set_draggable(tile.is_some());
+        self.selected.set_draggable(is_tile);
         self.selected_menu.set_pos(&self.layout, pos);
-        self.selected_menu.set_hidden(!tile.is_some());
+        self.selected_menu.set_hidden(!is_tile);
     }
 
     pub fn rotate_selected_left(&mut self) {

@@ -175,6 +175,10 @@ pub struct PlacedTile {
 }
 
 impl PlacedTile {
+    pub fn new(id: TileId, pos: Coordinate, dir: Direction) -> Self {
+        PlacedTile { id, pos, dir }
+    }
+
     fn connection_target(&self, source: Direction) -> Option<Direction> {
         let info = TileInfo::get(self.id)?;
         info.connection_target(source - self.dir)
@@ -233,7 +237,7 @@ impl Map {
         }
 
         debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
-        let tile = PlacedTile { id, pos, dir };
+        let tile = PlacedTile::new(id, pos, dir);
 
         // find best position for next tile
         if self.active_pos == pos && !self.tiles.is_empty() {
@@ -478,6 +482,7 @@ impl Index<Direction> for [Edge; 6] {
 
 //----------------------------------------------------------------------------
 
+#[derive(Debug, Default)]
 pub struct TileInfo {
     id: TileId,
     count: usize,
@@ -530,22 +535,22 @@ impl fmt::Display for TileInfo {
 
 //----------------------------------------------------------------------------
 
-const N: Connection = Connection::None;
-const S0: Connection = Connection::Straight(0);
-const S1P: Connection = Connection::Straight(1);
-const S1M: Connection = Connection::Straight(-1);
-const L0: Connection = Connection::Left(0);
-const L1: Connection = Connection::Left(1);
-const L2: Connection = Connection::Left(2);
-const R0: Connection = Connection::Right(0);
-const R1: Connection = Connection::Right(1);
-const R2: Connection = Connection::Right(2);
-const JS0L1: Connection = Connection::JunctionLeft(0, 1);
-const JS0L2: Connection = Connection::JunctionLeft(0, 2);
-const JS0R1: Connection = Connection::JunctionRight(0, 1);
-const JS0R2: Connection = Connection::JunctionRight(0, 2);
-const JL1R2: Connection = Connection::JunctionLeft(1, -2);
-const JR1L2: Connection = Connection::JunctionRight(1, -2);
+const CN: Connection = Connection::None;
+const CS0: Connection = Connection::Straight(0);
+const CS1P: Connection = Connection::Straight(1);
+const CS1M: Connection = Connection::Straight(-1);
+const CL0: Connection = Connection::Left(0);
+const CL1: Connection = Connection::Left(1);
+const CL2: Connection = Connection::Left(2);
+const CR0: Connection = Connection::Right(0);
+const CR1: Connection = Connection::Right(1);
+const CR2: Connection = Connection::Right(2);
+const CJS0L1: Connection = Connection::JunctionLeft(0, 1);
+const CJS0L2: Connection = Connection::JunctionLeft(0, 2);
+const CJS0R1: Connection = Connection::JunctionRight(0, 1);
+const CJS0R2: Connection = Connection::JunctionRight(0, 2);
+const CJL1R2: Connection = Connection::JunctionLeft(1, -2);
+const CJR1L2: Connection = Connection::JunctionRight(1, -2);
 
 const EN: Edge = Edge::None;
 const ES2: Edge = Edge::Straight(2);
@@ -557,115 +562,115 @@ const ER2: Edge = Edge::SkewRight(2);
 const ER3: Edge = Edge::SkewRight(3);
 
 const TILE_INFOS: [TileInfo; 109] = [
-    TileInfo::new(tile!{101}, 1, [N; 6], [EN; 6]),
-    TileInfo::new(tile!{102, a}, 1, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{102, b}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{103, a}, 3, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{103, b}, 3, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{104, a}, 3, [S0, N, N, S0, N, N], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{104, b}, 3, [S0, N, N, S0, N, N], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{105, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{105, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{106, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{106, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{107, a}, 2, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{107, b}, 2, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{108, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{108, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{109, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{109, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{110, a}, 1, [R0, N, N, L0, N, N], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{110, b}, 1, [R0, N, N, L0, N, N], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{111, a}, 2, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{111, b}, 2, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{112, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{112, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{113, a}, 1, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{113, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{114, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{114, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{115, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{115, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{116, a}, 2, [R0, N, N, L0, N, N], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{116, b}, 2, [R0, N, N, L0, N, N], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{117, a}, 2, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{117, b}, 2, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{118, a}, 1, [N, L1, N, R1, N, N], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{118, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{119, a}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{119, b}, 1, [N, L1, N, R1, N, N], [EN, ES2, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{120, a}, 1, [S0, N, N, S0, N, N], [ES2, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{120, b}, 1, [N, N, N, L1, N, R1], [EN, EN, EN, ES3, EN, ES2]),
-    TileInfo::new(tile!{121, a}, 2, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!{121, b}, 2, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!{122, a}, 2, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER3, ES3]),
-    TileInfo::new(tile!{122, b}, 2, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER2, ES2]),
-    TileInfo::new(tile!{123, a}, 1, [N, L2, R2, N, N, N], [EN, ES3, EL3, EN, EN, EN]),
-    TileInfo::new(tile!{123, b}, 1, [N, L2, R2, N, N, N], [EN, ES2, EL2, EN, EN, EN]),
-    TileInfo::new(tile!{124, a}, 2, [L1, N, R1, N, N, N], [ES3, EN, EL3, EN, EN, EN]),
-    TileInfo::new(tile!{124, b}, 2, [L1, N, R1, N, N, N], [ES2, EN, EL2, EN, EN, EN]),
-    TileInfo::new(tile!{125, a}, 2, [R1, N, N, N, L1, N], [ES3, EN, EN, EN, ER3, EN]),
-    TileInfo::new(tile!{125, b}, 2, [R1, N, N, N, L1, N], [ES2, EN, EN, EN, ER2, EN]),
-    TileInfo::new(tile!{126, a}, 1, [N, N, N, L2, R2, N], [EN, EN, EN, ES3, ER3, EN]),
-    TileInfo::new(tile!{126, b}, 1, [N, N, N, L2, R2, N], [EN, EN, EN, ES2, ER2, EN]),
-    TileInfo::new(tile!{127, a}, 2, [N, N, L2, R2, N, N], [EN, EN, EL3, ES3, EN, EN]),
-    TileInfo::new(tile!{127, b}, 2, [N, N, L2, R2, N, N], [EN, EN, EL2, ES2, EN, EN]),
-    TileInfo::new(tile!{128, a}, 1, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER3, EL3]),
-    TileInfo::new(tile!{128, b}, 1, [N, N, N, N, L2, R2], [EN, EN, EN, EN, ER2, EL2]),
-    TileInfo::new(tile!{129, a}, 1, [N, R0, N, N, L0, N], [EN, ES3, EN, EN, ER3, EN]),
-    TileInfo::new(tile!{129, b}, 1, [N, R0, N, N, L0, N], [EN, ES2, EN, EN, ER2, EN]),
-    TileInfo::new(tile!{130, a}, 1, [N, N, R0, N, N, L0], [EN, EN, EL3, EN, EN, ES3]),
-    TileInfo::new(tile!{130, b}, 1, [N, N, R0, N, N, L0], [EN, EN, EL2, EN, EN, ES2]),
-    TileInfo::new(tile!{131, a}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!{131, b}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!{132, a}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!{132, b}, 1, [N, N, S1M, N, S1P, N], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!{133, a}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!{133, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!{134, a}, 1, [N, N, R0, N, N, R0], [EN, EN, EL3, EN, EN, EL3]),
-    TileInfo::new(tile!{134, b}, 1, [N, N, R0, N, N, R0], [EN, EN, EL2, EN, EN, EL2]),
-    TileInfo::new(tile!{135, a}, 1, [N, L0, N, N, L0, N], [EN, ER3, EN, EN, ER3, EN]),
-    TileInfo::new(tile!{135, b}, 1, [N, L0, N, N, L0, N], [EN, ER2, EN, EN, ER2, EN]),
-    TileInfo::new(tile!{136, a}, 1, [N, N, L2, R2, N, N], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!{136, b}, 1, [N, N, L2, R2, N, N], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!{137, a}, 1, [N, N, L1, N, R1, N], [EN, EN, ES3, EN, ER3, EN]),
-    TileInfo::new(tile!{137, b}, 1, [N, N, L1, N, R1, N], [EN, EN, ES2, EN, ER2, EN]),
-    TileInfo::new(tile!{138, a}, 2, [N, N, L1, N, R1, N], [EN, EN, EL3, EN, ES3, EN]),
-    TileInfo::new(tile!{138, b}, 2, [N, N, L1, N, R1, N], [EN, EN, EL2, EN, ES2, EN]),
-    TileInfo::new(tile!{139, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{139, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!{140, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{140, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!{141, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{141, b}, 1, [S0, N, S0, S0, N, S0], [ES3, EN, ES3, ES3, EN, ES3]),
-    TileInfo::new(tile!{142, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{142, b}, 1, [S0, N, S1M, S0, S1P, N], [ES3, EN, EL3, ES3, ER3, EN]),
-    TileInfo::new(tile!{143, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{143, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!{144, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{144, b}, 1, [N, S1P, S1M, N, S1P, S1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!{145, a}, 1, [S0, N, N, S0, N, N], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{145, b}, 1, [S0, N, S0, S0, N, S0], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!{146, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{146, b}, 1, [S0, N, S1M, S0, S1P, N], [ES2, EN, EL2, ES2, ER2, EN]),
-    TileInfo::new(tile!{147, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{147, b}, 1, [N, S1P, N, L2, R2, S1M], [EN, ER3, EN, ES3, ER3, EL3]),
-    TileInfo::new(tile!{148, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{148, b}, 1, [N, S1P, L2, R2, N, S1M], [EN, ER3, EL3, ES3, EN, EL3]),
-    TileInfo::new(tile!{149, a}, 1, [N, L1, N, R1, N, N], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!{149, b}, 1, [N, S1P, L2, R2, N, S1M], [EN, ER3, ES3, ES3, EN, EL3]),
-    TileInfo::new(tile!{150, a}, 1, [S0, S1P, S1M, S0, S1P, S1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
-    TileInfo::new(tile!{150, b}, 1, [S0, S1P, S1M, S0, S1P, S1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
-    TileInfo::new(tile!{151, a}, 1, [JS0L2, JL1R2, N, JS0R1, N, N], [ES3, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!{151, b}, 1, [JS0L2, JL1R2, N, JS0R1, N, N], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!{152, a}, 1, [JS0R2, N, N, JS0L1, N, JR1L2], [ES3, EN, EN, ES3, EN, ES3]),
-    TileInfo::new(tile!{152, b}, 1, [JS0R2, N, N, JS0L1, N, JR1L2], [ES2, EN, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!{153, a}, 1, [S0, S0, N, S0, S0, N], [ES3, ES2, EN, ES3, ES2, EN]),
-    TileInfo::new(tile!{153, b}, 1, [S0, N, S0, S0, N, S0], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!{154, a}, 1, [N, S0, N, L1, S0, R1], [EN, ES2, EN, ES3, ES2, ES3]),
-    TileInfo::new(tile!{154, b}, 1, [N, L1, S0, R1, N, S0], [EN, ES2, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!{901, a}, 1, [N; 6], [EN; 6]),
-    TileInfo::new(tile!{901, b}, 1, [N; 6], [EN; 6]),
+    TileInfo::new(tile!{101}, 1, [CN; 6], [EN; 6]),
+    TileInfo::new(tile!{102, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{102, b}, 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{103, a}, 3, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{103, b}, 3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{104, a}, 3, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{104, b}, 3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{105, a}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{105, b}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{106, a}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{106, b}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{107, a}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{107, b}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{108, a}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{108, b}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{109, a}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{109, b}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{110, a}, 1, [CR0, CN, CN, CL0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{110, b}, 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{111, a}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{111, b}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{112, a}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{112, b}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{113, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{113, b}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{114, a}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{114, b}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{115, a}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{115, b}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{116, a}, 2, [CR0, CN, CN, CL0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{116, b}, 2, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{117, a}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{117, b}, 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{118, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{118, b}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{119, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{119, b}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{120, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{120, b}, 1, [CN, CN, CN, CL1, CN, CR1], [EN, EN, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!{121, a}, 2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{121, b}, 2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{122, a}, 2, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, ES3]),
+    TileInfo::new(tile!{122, b}, 2, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, ES2]),
+    TileInfo::new(tile!{123, a}, 1, [CN, CL2, CR2, CN, CN, CN], [EN, ES3, EL3, EN, EN, EN]),
+    TileInfo::new(tile!{123, b}, 1, [CN, CL2, CR2, CN, CN, CN], [EN, ES2, EL2, EN, EN, EN]),
+    TileInfo::new(tile!{124, a}, 2, [CL1, CN, CR1, CN, CN, CN], [ES3, EN, EL3, EN, EN, EN]),
+    TileInfo::new(tile!{124, b}, 2, [CL1, CN, CR1, CN, CN, CN], [ES2, EN, EL2, EN, EN, EN]),
+    TileInfo::new(tile!{125, a}, 2, [CR1, CN, CN, CN, CL1, CN], [ES3, EN, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{125, b}, 2, [CR1, CN, CN, CN, CL1, CN], [ES2, EN, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{126, a}, 1, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES3, ER3, EN]),
+    TileInfo::new(tile!{126, b}, 1, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES2, ER2, EN]),
+    TileInfo::new(tile!{127, a}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL3, ES3, EN, EN]),
+    TileInfo::new(tile!{127, b}, 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL2, ES2, EN, EN]),
+    TileInfo::new(tile!{128, a}, 1, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, EL3]),
+    TileInfo::new(tile!{128, b}, 1, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, EL2]),
+    TileInfo::new(tile!{129, a}, 1, [CN, CR0, CN, CN, CL0, CN], [EN, ES3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{129, b}, 1, [CN, CR0, CN, CN, CL0, CN], [EN, ES2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{130, a}, 1, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL3, EN, EN, ES3]),
+    TileInfo::new(tile!{130, b}, 1, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL2, EN, EN, ES2]),
+    TileInfo::new(tile!{131, a}, 1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{131, b}, 1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{132, a}, 1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!{132, b}, 1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!{133, a}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{133, b}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{134, a}, 1, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL3, EN, EN, EL3]),
+    TileInfo::new(tile!{134, b}, 1, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL2, EN, EN, EL2]),
+    TileInfo::new(tile!{135, a}, 1, [CN, CL0, CN, CN, CL0, CN], [EN, ER3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!{135, b}, 1, [CN, CL0, CN, CN, CL0, CN], [EN, ER2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!{136, a}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!{136, b}, 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!{137, a}, 1, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES3, EN, ER3, EN]),
+    TileInfo::new(tile!{137, b}, 1, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES2, EN, ER2, EN]),
+    TileInfo::new(tile!{138, a}, 2, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL3, EN, ES3, EN]),
+    TileInfo::new(tile!{138, b}, 2, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL2, EN, ES2, EN]),
+    TileInfo::new(tile!{139, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{139, b}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{140, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{140, b}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!{141, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{141, b}, 1, [CS0, CN, CS0, CS0, CN, CS0], [ES3, EN, ES3, ES3, EN, ES3]),
+    TileInfo::new(tile!{142, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{142, b}, 1, [CS0, CN, CS1M, CS0, CS1P, CN], [ES3, EN, EL3, ES3, ER3, EN]),
+    TileInfo::new(tile!{143, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{143, b}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{144, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{144, b}, 1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!{145, a}, 1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{145, b}, 1, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{146, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{146, b}, 1, [CS0, CN, CS1M, CS0, CS1P, CN], [ES2, EN, EL2, ES2, ER2, EN]),
+    TileInfo::new(tile!{147, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{147, b}, 1, [CN, CS1P, CN, CL2, CR2, CS1M], [EN, ER3, EN, ES3, ER3, EL3]),
+    TileInfo::new(tile!{148, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{148, b}, 1, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, EL3, ES3, EN, EL3]),
+    TileInfo::new(tile!{149, a}, 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!{149, b}, 1, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, ES3, ES3, EN, EL3]),
+    TileInfo::new(tile!{150, a}, 1, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
+    TileInfo::new(tile!{150, b}, 1, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
+    TileInfo::new(tile!{151, a}, 1, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!{151, b}, 1, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!{152, a}, 1, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES3]),
+    TileInfo::new(tile!{152, b}, 1, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!{153, a}, 1, [CS0, CS0, CN, CS0, CS0, CN], [ES3, ES2, EN, ES3, ES2, EN]),
+    TileInfo::new(tile!{153, b}, 1, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{154, a}, 1, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES3, ES2, ES3]),
+    TileInfo::new(tile!{154, b}, 1, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!{901, a}, 1, [CN; 6], [EN; 6]),
+    TileInfo::new(tile!{901, b}, 1, [CN; 6], [EN; 6]),
 ];
 
 //----------------------------------------------------------------------------
@@ -719,17 +724,17 @@ mod tests {
         map.insert(tile!(101), (0, -2).into(), Direction::A);
 
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 0,  0).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: (-2,  0).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: (-2, -1).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-1, -2).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: (-1, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0, -1).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: ( 1, -2).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 1, -1).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 1,  0).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(101),       pos: ( 0, -2).into(), dir: Direction::A }), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), (-2,  0).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), (-2, -1).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-1, -2).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), (-1, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0, -1).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), ( 1, -2).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
@@ -754,17 +759,17 @@ mod tests {
         map.insert(tile!(101, a, 0), (4,  1).into(), Direction::E);
         map.align_center();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 1, -1).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 1,  0).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: ( 1,  1).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: ( 0,  2).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-1,  2).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: ( 0,  1).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 0, -1).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 1, -2).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  1).into(), dir: Direction::E }), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
@@ -784,17 +789,17 @@ mod tests {
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_left();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 0, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 1, -1).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: ( 2,  0).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: ( 1,  1).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: ( 1,  0).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: (-1,  1).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: (-1,  0).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: (-1, -1).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: ( 0,  1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 0, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 1, -1).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), ( 2, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), ( 2,  0).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), ( 1,  1).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), ( 1,  0).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), (-1,  1).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), (-1,  0).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), (-1, -1).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), ( 0,  1).into(), Direction::D)), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
@@ -814,17 +819,17 @@ mod tests {
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_right();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile { id: tile!(102, b, 0), pos: ( 1,  0).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(104, b, 1), pos: ( 0,  1).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(113, b, 0), pos: (-1,  2).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(117, b, 1), pos: (-2,  2).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(114, b, 0), pos: (-2,  1).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 1), pos: (-1,  1).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(115, b, 2), pos: ( 0,  0).into(), dir: Direction::E }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(108, b, 0), pos: ( 0, -1).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(110, b, 0), pos: ( 1, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(107, b, 1), pos: ( 2, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: tile!(101, a, 0), pos: (-1,  0).into(), dir: Direction::F }), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 1,  0).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 0,  1).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), (-1,  2).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), (-2,  2).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-2,  1).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), (-1,  1).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::E)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), ( 0, -1).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F)), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
@@ -1026,7 +1031,7 @@ mod tests {
 
     #[test]
     fn placed_tile_connection_target() {
-        let tile = PlacedTile { id: tile!(102, a), pos: (0, 0).into(), dir: Direction::A };
+        let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
         assert_eq!(Some(Direction::D), tile.connection_target(Direction::A));
         assert_eq!(None, tile.connection_target(Direction::B));
         assert_eq!(None, tile.connection_target(Direction::C));
@@ -1034,7 +1039,7 @@ mod tests {
         assert_eq!(None, tile.connection_target(Direction::E));
         assert_eq!(None, tile.connection_target(Direction::F));
 
-        let tile = PlacedTile { id: tile!(103, a), pos: (0, 0).into(), dir: Direction::B };
+        let tile = PlacedTile::new(tile!(103, a), (0, 0).into(), Direction::B);
         assert_eq!(None, tile.connection_target(Direction::A));
         assert_eq!(Some(Direction::E), tile.connection_target(Direction::B));
         assert_eq!(None, tile.connection_target(Direction::C));
@@ -1042,7 +1047,7 @@ mod tests {
         assert_eq!(Some(Direction::B), tile.connection_target(Direction::E));
         assert_eq!(None, tile.connection_target(Direction::F));
 
-        let tile = PlacedTile { id: tile!(105, a), pos: (0, 0).into(), dir: Direction::C };
+        let tile = PlacedTile::new(tile!(105, a), (0, 0).into(), Direction::C);
         assert_eq!(None, tile.connection_target(Direction::A));
         assert_eq!(None, tile.connection_target(Direction::B));
         assert_eq!(None, tile.connection_target(Direction::C));

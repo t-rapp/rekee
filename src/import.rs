@@ -107,17 +107,17 @@ mod tests {
         let map = import_rgt(&data)
             .expect("Cannot parse import file data");
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile { id: TileId::new(102, 2, 0), pos: ( 0,  1).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(106, 2, 2), pos: ( 1,  1).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(116, 2, 2), pos: ( 0,  0).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(117, 2, 2), pos: ( 1,  0).into(), dir: Direction::C }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(111, 2, 2), pos: ( 2, -1).into(), dir: Direction::F }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(125, 2, 1), pos: (-1,  0).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(112, 2, 1), pos: ( 2,  0).into(), dir: Direction::B }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(128, 2, 0), pos: (-1, -1).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(138, 2, 1), pos: (-2,  0).into(), dir: Direction::D }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(104, 2, 2), pos: (-1,  1).into(), dir: Direction::A }), tiles.next());
-        assert_eq!(Some(&PlacedTile { id: TileId::new(105, 2, 1), pos: (-2,  1).into(), dir: Direction::D }), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A)), tiles.next());
+        assert_eq!(Some(&PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D)), tiles.next());
         assert_eq!(None, tiles.next());
     }
 
