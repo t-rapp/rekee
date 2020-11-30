@@ -434,7 +434,7 @@ impl MapView {
     }
 
     pub fn export_file(&mut self) {
-        let data = match import::export_rgt(&self.map, "My Track") {
+        let data = match import::export_rgt(&self.map) {
             Ok(val) => val,
             Err(err) => {
                 warn!("Cannot emport file data: {}", err);
@@ -449,7 +449,9 @@ impl MapView {
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlElement>().ok()));
         anchor.set_hidden(true);
         check!(anchor.set_attribute("href", &url).ok());
-        check!(anchor.set_attribute("download", "MyTrack.rgt").ok());
+        let mut file_name = import::build_file_name(self.map.title());
+        file_name.push_str(".rgt");
+        check!(anchor.set_attribute("download", &file_name).ok());
         check!(document.body().unwrap().append_child(&anchor).ok());
         anchor.click();
         check!(document.body().unwrap().remove_child(&anchor).ok());

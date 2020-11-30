@@ -191,6 +191,7 @@ impl PlacedTile {
 #[derive(Debug, Clone)]
 pub struct Map {
     tiles: Vec<PlacedTile>,
+    title: String,
     active_pos: Coordinate,
     active_dir: Direction,
 }
@@ -198,13 +199,22 @@ pub struct Map {
 impl Map {
     pub fn new() -> Self {
         let tiles = Vec::new();
+        let title = "My Track".to_string();
         let active_pos = Coordinate::default();
         let active_dir = Direction::D;
-        Map { tiles, active_pos, active_dir }
+        Map { tiles, title, active_pos, active_dir }
     }
 
     pub fn tiles(&self) -> &[PlacedTile] {
         &self.tiles
+    }
+
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
+    pub fn set_title(&mut self, title: &str) {
+        self.title = title.to_string();
     }
 
     pub fn active_pos(&self) -> Coordinate {
@@ -711,6 +721,7 @@ mod tests {
     #[test]
     fn map_insert_and_append() {
         let mut map = Map::new();
+        map.set_title("Short Track 2"); 
         map.insert(tile!(102, b), (0, 0).into(), Direction::D);
         map.append(tile!(104, b), None);
         map.append(tile!(113, b), "R".parse().ok());
@@ -723,6 +734,7 @@ mod tests {
         map.append(tile!(107, b), "R".parse().ok());
         map.insert(tile!(101), (0, -2).into(), Direction::A);
 
+        assert_eq!("Short Track 2", map.title());
         let mut tiles = map.tiles().iter();
         assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D)), tiles.next());
         assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A)), tiles.next());
