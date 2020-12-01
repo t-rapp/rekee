@@ -46,15 +46,15 @@ pub fn main() -> Result<(), JsValue> {
     MapController::init(MapView::new(parent, layout)?);
 
     nuts::publish(InsertTileEvent { id: tile!(102, b), pos: (0, 0).into(), dir: Direction::D });
-    nuts::publish(AppendTileEvent { id: tile!(104, b), hint: None });
-    nuts::publish(AppendTileEvent { id: tile!(113, b), hint: "R".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(117, b), hint: "r".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(114, b), hint: "R".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(115, b), hint: "L".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(115, b), hint: "l".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(108, b), hint: "r".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(110, b), hint: "L".parse().ok() });
-    nuts::publish(AppendTileEvent { id: tile!(107, b), hint: "R".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(104, b), pos: None, hint: None });
+    nuts::publish(AppendTileEvent { id: tile!(113, b), pos: None, hint: "R".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(117, b), pos: None, hint: "r".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(114, b), pos: None, hint: "R".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(115, b), pos: None, hint: "L".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(115, b), pos: None, hint: "l".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(108, b), pos: None, hint: "r".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(110, b), pos: None, hint: "L".parse().ok() });
+    nuts::publish(AppendTileEvent { id: tile!(107, b), pos: None, hint: "R".parse().ok() });
     nuts::publish(InsertTileEvent { id: tile!(101), pos: (0, -2).into(), dir: Direction::D});
     nuts::publish(AlignCenterEvent);
 

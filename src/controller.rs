@@ -26,6 +26,7 @@ pub struct InsertTileEvent {
 
 pub struct AppendTileEvent {
     pub id: TileId,
+    pub pos: Option<Coordinate>,
     pub hint: Option<ConnectionHint>,
 }
 
@@ -136,7 +137,7 @@ impl MapController {
     }
 
     fn append_tile(&mut self, event: &AppendTileEvent) {
-        self.view.append_tile(event.id, event.hint);
+        self.view.append_tile(event.id, event.pos, event.hint);
     }
 
     fn align_center(&mut self, _event: &AlignCenterEvent) {

@@ -55,7 +55,7 @@ impl CatalogTile {
                 (false, true) => Some(ConnectionHint::Right),
                 (false, false) => None,
             };
-            nuts::publish(AppendTileEvent { id: id.base(), hint });
+            nuts::publish(AppendTileEvent { id: id.base(), pos: None, hint });
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 

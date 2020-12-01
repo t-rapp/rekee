@@ -239,7 +239,7 @@ impl DraggedTile {
         let size = layout.size();
         let angle = tile.dir.to_angle(&layout);
         let img = document.create_element_ns(SVG_NS, "image")?;
-        img.set_attribute("href", &format!("img/thumb-{}.png", tile.id))?;
+        img.set_attribute("href", &format!("img/thumb-{}.png", tile.id()))?;
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
         img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
         img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
@@ -334,7 +334,7 @@ impl MapView {
         let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
         for tile in map.tiles() {
-            tiles.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;
+            tiles.append_child(&draw_tile(&document, &layout, tile.id(), tile.pos, tile.dir)?.into())?;
         }
         canvas.append_child(&tiles)?;
 
@@ -465,8 +465,8 @@ impl MapView {
         self.update_map();
     }
 
-    pub fn append_tile(&mut self, id: TileId, hint: Option<ConnectionHint>) {
-        self.map.append(id, hint);
+    pub fn append_tile(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) {
+        self.map.append(id, pos, hint);
         self.update_map();
     }
 
@@ -490,7 +490,7 @@ impl MapView {
         check!(range.delete_contents().ok());
         // then add updated tiles
         for tile in self.map.tiles() {
-            if let Ok(el) = draw_tile(&document, &self.layout, tile.id, tile.pos, tile.dir) {
+            if let Ok(el) = draw_tile(&document, &self.layout, tile.id(), tile.pos, tile.dir) {
                 self.tiles.append_child(&el).unwrap();
             }
         }
@@ -528,7 +528,7 @@ impl MapView {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
-            self.map.insert(tile.id, tile.pos, tile.dir.rotated_left());
+            self.map.insert(tile.id(), tile.pos, tile.dir.rotated_left());
             self.update_map();
         }
     }
@@ -537,7 +537,7 @@ impl MapView {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
-            self.map.insert(tile.id, tile.pos, tile.dir.rotated_right());
+            self.map.insert(tile.id(), tile.pos, tile.dir.rotated_right());
             self.update_map();
         }
     }
@@ -595,7 +595,7 @@ impl MapView {
             check!(self.canvas.remove_child(dragged.as_ref()).ok());
             if pos != tile.pos {
                 self.map.remove(tile.pos);
-                self.map.insert(tile.id, pos, tile.dir);
+                self.map.insert(tile.id(), pos, tile.dir);
                 self.update_map();
             }
         }
@@ -604,7 +604,7 @@ impl MapView {
         if let Some(tile) = added_tile {
             let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
             info!("drag end: {:?} -> {:?}", tile, pos);
-            self.map.insert(tile, pos, Direction::A);
+            self.map.append(tile, Some(pos), None);
             self.update_map();
         }
 

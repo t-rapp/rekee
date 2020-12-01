@@ -11,7 +11,7 @@
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 
 use log::{debug, trace};
 
@@ -167,22 +167,57 @@ macro_rules! tile {
 
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone)]
 pub struct PlacedTile {
-    pub id: TileId,
+    id: TileId,
     pub pos: Coordinate,
     pub dir: Direction,
+    info: Option<&'static TileInfo>,
 }
 
 impl PlacedTile {
     pub fn new(id: TileId, pos: Coordinate, dir: Direction) -> Self {
-        PlacedTile { id, pos, dir }
+        let info = TileInfo::get(id);
+        PlacedTile { id, pos, dir, info }
+    }
+
+    pub fn id(&self) -> TileId {
+        self.id
     }
 
     fn connection_target(&self, source: Direction) -> Option<Direction> {
-        let info = TileInfo::get(self.id)?;
-        info.connection_target(source - self.dir)
-            .map(|dir| dir + self.dir)
+        if let Some(info) = self.info {
+            info.connection_target(source - self.dir)
+                .map(|dir| dir + self.dir)
+        } else {
+            None
+        }
+    }
+
+    fn edge(&self, dir: Direction) -> Edge {
+        if let Some(info) = self.info {
+            info.edge(dir - self.dir)
+        } else {
+            Edge::None
+        }
+    }
+}
+
+impl fmt::Debug for PlacedTile {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.debug_struct("PlacedTile")
+            .field("id", &self.id)
+            .field("pos", &self.pos)
+            .field("dir", &self.dir)
+            // skip printing cached tile info
+            .finish()
+    }
+}
+
+impl PartialEq<PlacedTile> for PlacedTile {
+    fn eq(&self, other: &PlacedTile) -> bool {
+        // skip comparing cached tile info reference
+        self.id == other.id && self.pos == other.pos && self.dir == other.dir
     }
 }
 
@@ -268,29 +303,73 @@ impl Map {
         self.tiles.push(tile);
     }
 
-    pub fn append(&mut self, id: TileId, hint: Option<ConnectionHint>) {
-        debug!("append tile {}, hint: {:?}", id, hint);
-        let tile_pos = self.active_pos;
+    pub fn append(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) {
+        debug!("append tile {}, pos: {:?}, hint: {:?}", id, pos, hint);
+        let tile_pos = pos.unwrap_or(self.active_pos);
         let mut tile_dir = Direction::A;
-        if let Some(info) = TileInfo::get(id) {
-            for &dir in Direction::iter() {
-                let conn = info.conn[self.active_dir - dir];
-                match hint {
-                    Some(val) => {
-                        if conn == val {
-                            tile_dir = dir;
-                            break;
-                        }
-                    },
-                    None => {
-                        if conn.target(self.active_dir - dir).is_some() {
-                            tile_dir = dir;
-                            break;
-                        }
-                    },
+
+        let mut neighbor_conns = 0;
+        let mut neighbor_dir = Direction::A;
+        let mut neighbor_edges = [Edge::None; 6];
+        for &dir in Direction::iter() {
+            let pos = tile_pos.neighbor(dir);
+            if let Some(tile) = self.get(pos) {
+                let edge = tile.edge(dir + Direction::D);
+                if edge.lanes() > 0 {
+                    neighbor_conns += 1;
+                    neighbor_dir = dir;
                 }
+                neighbor_edges[dir] = edge;
             }
-            trace!("found tile_dir = {}, active_dir = {}", tile_dir, self.active_dir);
+        }
+        trace!("neighbor connections: {}, dir: {}, edges: {:?}",
+            neighbor_conns, neighbor_dir, neighbor_edges);
+
+        if hint.is_some() && tile_pos != self.active_pos && neighbor_conns == 1 {
+            // apply hint relative to the single neighbor connection
+            self.active_pos = tile_pos;
+            self.active_dir = neighbor_dir;
+        }
+
+        if let Some(info) = TileInfo::get(id) {
+            if hint.is_some() && tile_pos == self.active_pos {
+                let hint = hint.unwrap();
+                // find first inner tile connection that matches the hint
+                for &dir in Direction::iter() {
+                    let conn = info.conn[self.active_dir - dir];
+                    if conn == hint {
+                        tile_dir = dir;
+                        break;
+                    }
+                }
+                debug!("found tile_dir: {}, hint: {}, active_dir = {}", tile_dir, hint, self.active_dir);
+            } else {
+                // find best tile direction based on edges to neighbor tiles
+                let mut max_score = 0;
+                for &dir in Direction::iter() {
+                    let mut score = 0;
+                    for &neighbor_dir in Direction::iter() {
+                        let tile_edge = info.edge(neighbor_dir - dir);
+                        let neighbor_edge = neighbor_edges[neighbor_dir];
+                        match (tile_edge, neighbor_edge) {
+                            (Edge::None, Edge::None) => score += 1,
+                            (Edge::SkewLeft(a), Edge::SkewLeft(b)) if a == b => score += 2,
+                            (Edge::SkewLeft(_), Edge::SkewLeft(_)) => score += 1,
+                            (Edge::SkewRight(a), Edge::SkewRight(b)) if a == b => score += 2,
+                            (Edge::SkewRight(_), Edge::SkewRight(_)) => score += 1,
+                            (Edge::Straight(a), Edge::Straight(b)) if a == b => score += 2,
+                            (Edge::Straight(_), Edge::Straight(_)) => score += 1,
+                            _ => (),
+                        }
+                    }
+                    trace!("dir: {}, score: {}", dir, score);
+                    if score > max_score {
+                        max_score = score;
+                        tile_dir = dir;
+                    }
+                }
+                debug!("found tile_dir: {}, score: {}", tile_dir, max_score);
+            }
         }
         self.insert(id, tile_pos, tile_dir)
     }
@@ -457,7 +536,7 @@ impl PartialEq<ConnectionHint> for Connection {
 
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Edge {
     None,
     Straight(u8),
@@ -487,6 +566,12 @@ impl Index<Direction> for [Edge; 6] {
 
     fn index(&self, index: Direction) -> &Self::Output {
         self.get(u8::from(index) as usize).unwrap()
+    }
+}
+
+impl IndexMut<Direction> for [Edge; 6] {
+    fn index_mut(&mut self, index: Direction) -> &mut Self::Output {
+        self.get_mut(u8::from(index) as usize).unwrap()
     }
 }
 
@@ -723,15 +808,15 @@ mod tests {
         let mut map = Map::new();
         map.set_title("Short Track 2"); 
         map.insert(tile!(102, b), (0, 0).into(), Direction::D);
-        map.append(tile!(104, b), None);
-        map.append(tile!(113, b), "R".parse().ok());
-        map.append(tile!(117, b), "r".parse().ok());
-        map.append(tile!(114, b), "R".parse().ok());
-        map.append(tile!(115, b), "L".parse().ok());
-        map.append(tile!(115, b), "l".parse().ok());
-        map.append(tile!(108, b), "r".parse().ok());
-        map.append(tile!(110, b), "L".parse().ok());
-        map.append(tile!(107, b), "R".parse().ok());
+        map.append(tile!(104, b), None, None);
+        map.append(tile!(113, b), None, "R".parse().ok());
+        map.append(tile!(117, b), None, "r".parse().ok());
+        map.append(tile!(114, b), None, "R".parse().ok());
+        map.append(tile!(115, b), None, "L".parse().ok());
+        map.append(tile!(115, b), None, "l".parse().ok());
+        map.append(tile!(108, b), None, "r".parse().ok());
+        map.append(tile!(110, b), None, "L".parse().ok());
+        map.append(tile!(107, b), None, "R".parse().ok());
         map.insert(tile!(101), (0, -2).into(), Direction::A);
 
         assert_eq!("Short Track 2", map.title());
@@ -1043,6 +1128,14 @@ mod tests {
 
     #[test]
     fn placed_tile_connection_target() {
+        let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
+        assert_eq!(None, tile.connection_target(Direction::A));
+        assert_eq!(None, tile.connection_target(Direction::B));
+        assert_eq!(None, tile.connection_target(Direction::C));
+        assert_eq!(None, tile.connection_target(Direction::D));
+        assert_eq!(None, tile.connection_target(Direction::E));
+        assert_eq!(None, tile.connection_target(Direction::F));
+
         let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
         assert_eq!(Some(Direction::D), tile.connection_target(Direction::A));
         assert_eq!(None, tile.connection_target(Direction::B));
@@ -1066,6 +1159,42 @@ mod tests {
         assert_eq!(Some(Direction::F), tile.connection_target(Direction::D));
         assert_eq!(None, tile.connection_target(Direction::E));
         assert_eq!(Some(Direction::D), tile.connection_target(Direction::F));
+    }
+
+
+    #[test]
+    fn placed_tile_edge() {
+        let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
+        assert_eq!(Edge::None, tile.edge(Direction::A));
+        assert_eq!(Edge::None, tile.edge(Direction::B));
+        assert_eq!(Edge::None, tile.edge(Direction::C));
+        assert_eq!(Edge::None, tile.edge(Direction::D));
+        assert_eq!(Edge::None, tile.edge(Direction::E));
+        assert_eq!(Edge::None, tile.edge(Direction::F));
+
+        let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
+        assert_eq!(Edge::Straight(3), tile.edge(Direction::A));
+        assert_eq!(Edge::None, tile.edge(Direction::B));
+        assert_eq!(Edge::None, tile.edge(Direction::C));
+        assert_eq!(Edge::Straight(3), tile.edge(Direction::D));
+        assert_eq!(Edge::None, tile.edge(Direction::E));
+        assert_eq!(Edge::None, tile.edge(Direction::F));
+
+        let tile = PlacedTile::new(tile!(103, b), (0, 0).into(), Direction::B);
+        assert_eq!(Edge::None, tile.edge(Direction::A));
+        assert_eq!(Edge::Straight(2), tile.edge(Direction::B));
+        assert_eq!(Edge::None, tile.edge(Direction::C));
+        assert_eq!(Edge::None, tile.edge(Direction::D));
+        assert_eq!(Edge::Straight(2), tile.edge(Direction::E));
+        assert_eq!(Edge::None, tile.edge(Direction::F));
+
+        let tile = PlacedTile::new(tile!(124, a), (0, 0).into(), Direction::C);
+        assert_eq!(Edge::None, tile.edge(Direction::A));
+        assert_eq!(Edge::None, tile.edge(Direction::B));
+        assert_eq!(Edge::Straight(3), tile.edge(Direction::C));
+        assert_eq!(Edge::None, tile.edge(Direction::D));
+        assert_eq!(Edge::SkewLeft(3), tile.edge(Direction::E));
+        assert_eq!(Edge::None, tile.edge(Direction::F));
     }
 }
 

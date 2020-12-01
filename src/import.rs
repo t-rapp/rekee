@@ -85,13 +85,13 @@ pub fn export_rgt(map: &Map) -> Result<String> {
         let x = -pos.q() - ((pos.r() & 1) + pos.r()) / 2;
         let y = pos.r();
         let orientation: i32 = tile.dir.into();
-        let id = match tile.id.num() {
+        let id = match tile.id().num() {
             // special mapping for pit-stop tile
             101 => "101a".to_string(),
-            _ => tile.id.to_string(),
+            _ => tile.id().to_string(),
         };
         debug!("export tile {}, {}, {} -> ({}, {}), {}, {}",
-            tile.pos, tile.id, tile.dir, x, y, id, orientation);
+            tile.pos, tile.id(), tile.dir, x, y, id, orientation);
         data.tiles.push(ImportTile { x, y, orientation, id });
     }
 
@@ -107,7 +107,7 @@ pub fn build_file_name(name: &str) -> String {
         // replace path separators
         .map(|chr| if chr != '/' && chr != '\\' { chr } else { '_' })
         // remove special characters on Microsoft Windows
-        .filter(|chr| *chr != '<' && *chr != '>' && *chr != ':' && 
+        .filter(|chr| *chr != '<' && *chr != '>' && *chr != ':' &&
                       *chr != '"' && *chr != '|' && *chr != '?' && *chr != '*')
         .collect();
     result
