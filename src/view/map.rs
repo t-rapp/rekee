@@ -277,6 +277,7 @@ pub struct MapView {
     map: Map,
     canvas: Element,
     tiles: Element,
+    title: String,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
@@ -336,6 +337,8 @@ impl MapView {
             tiles.append_child(&draw_tile(&document, &layout, tile.id, tile.pos, tile.dir)?.into())?;
         }
         canvas.append_child(&tiles)?;
+
+        let title = document.title();
 
         let selected = SelectedHex::new(&document, &layout)?;
         canvas.append_child(selected.as_ref())?;
@@ -413,7 +416,7 @@ impl MapView {
         callback.forget();
 
         Ok(MapView {
-            layout, map, canvas, tiles, selected, selected_menu, active,
+            layout, map, canvas, tiles, title, selected, selected_menu, active,
             dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb
         })
@@ -491,6 +494,13 @@ impl MapView {
                 self.tiles.append_child(&el).unwrap();
             }
         }
+        let mut title = String::with_capacity(100);
+        title.push_str(self.map.title());
+        if !title.is_empty() {
+            title.push_str(" - ");
+        }
+        title.push_str(&self.title);
+        document.set_title(&title);
         self.active.update(&self.layout, self.map.active_pos(), self.map.active_dir());
     }
 
