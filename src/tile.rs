@@ -335,6 +335,31 @@ impl Map {
         }
 
         if let Some(info) = TileInfo::get(id) {
+            // find best tile direction based on edges to neighbor tiles
+            let mut max_score = 0;
+            for &dir in Direction::iter() {
+                let mut score = 0;
+                for &neighbor_dir in Direction::iter() {
+                    let tile_edge = info.edge(neighbor_dir - dir);
+                    let neighbor_edge = neighbor_edges[neighbor_dir];
+                    match (tile_edge, neighbor_edge) {
+                        (Edge::None, Edge::None) => score += 1,
+                        (Edge::SkewLeft(a), Edge::SkewLeft(b)) if a == b => score += 2,
+                        (Edge::SkewLeft(_), Edge::SkewLeft(_)) => score += 1,
+                        (Edge::SkewRight(a), Edge::SkewRight(b)) if a == b => score += 2,
+                        (Edge::SkewRight(_), Edge::SkewRight(_)) => score += 1,
+                        (Edge::Straight(a), Edge::Straight(b)) if a == b => score += 2,
+                        (Edge::Straight(_), Edge::Straight(_)) => score += 1,
+                        _ => (),
+                    }
+                }
+                if score > max_score {
+                    max_score = score;
+                    tile_dir = dir;
+                }
+            }
+            debug!("found tile_dir '{}' based on neighbor edges (score: {})", tile_dir, max_score);
+
             if hint.is_some() && tile_pos == self.active_pos {
                 let hint = hint.unwrap();
                 // find first inner tile connection that matches the hint
@@ -343,37 +368,9 @@ impl Map {
                     if conn == hint {
                         tile_dir = dir;
                         break;
-                    } else if conn != Connection::None {
-                        tile_dir = dir;
                     }
                 }
-                debug!("found tile_dir: {}, hint: {}, active_dir = {}", tile_dir, hint, self.active_dir);
-            } else {
-                // find best tile direction based on edges to neighbor tiles
-                let mut max_score = 0;
-                for &dir in Direction::iter() {
-                    let mut score = 0;
-                    for &neighbor_dir in Direction::iter() {
-                        let tile_edge = info.edge(neighbor_dir - dir);
-                        let neighbor_edge = neighbor_edges[neighbor_dir];
-                        match (tile_edge, neighbor_edge) {
-                            (Edge::None, Edge::None) => score += 1,
-                            (Edge::SkewLeft(a), Edge::SkewLeft(b)) if a == b => score += 2,
-                            (Edge::SkewLeft(_), Edge::SkewLeft(_)) => score += 1,
-                            (Edge::SkewRight(a), Edge::SkewRight(b)) if a == b => score += 2,
-                            (Edge::SkewRight(_), Edge::SkewRight(_)) => score += 1,
-                            (Edge::Straight(a), Edge::Straight(b)) if a == b => score += 2,
-                            (Edge::Straight(_), Edge::Straight(_)) => score += 1,
-                            _ => (),
-                        }
-                    }
-                    trace!("dir: {}, score: {}", dir, score);
-                    if score > max_score {
-                        max_score = score;
-                        tile_dir = dir;
-                    }
-                }
-                debug!("found tile_dir: {}, score: {}", tile_dir, max_score);
+                debug!("found tile dir '{}' based on hint '{}', (active dir: {})", tile_dir, hint, self.active_dir);
             }
         }
         self.insert(id, tile_pos, tile_dir)
