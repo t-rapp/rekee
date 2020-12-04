@@ -501,7 +501,12 @@ impl MapView {
         }
         title.push_str(&self.title);
         document.set_title(&title);
-        self.active.update(&self.layout, self.map.active_pos(), self.map.active_dir());
+        if let Some(active_pos) = self.map.active_pos() {
+            self.active.update(&self.layout, active_pos, self.map.active_dir());
+            self.active.set_hidden(false);
+        } else {
+            self.active.set_hidden(true);
+        }
     }
 
     pub fn clear_selected(&mut self) {

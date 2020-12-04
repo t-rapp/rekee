@@ -13,7 +13,7 @@ use std::num::ParseIntError;
 use std::str::FromStr;
 use std::ops::{Index, IndexMut};
 
-use log::{debug, trace};
+use log::{info, debug, trace};
 
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
@@ -252,8 +252,12 @@ impl Map {
         self.title = title.to_string();
     }
 
-    pub fn active_pos(&self) -> Coordinate {
-        self.active_pos
+    pub fn active_pos(&self) -> Option<Coordinate> {
+        if self.get(self.active_pos).is_none() {
+            Some(self.active_pos)
+        } else {
+            None
+        }
     }
 
     pub fn active_dir(&self) -> Direction {
@@ -306,9 +310,16 @@ impl Map {
         self.tiles.push(tile);
     }
 
-    pub fn append(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) {
+    pub fn append(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) -> bool {
         debug!("append tile {}, pos: {:?}, hint: {:?}", id, pos, hint);
-        let tile_pos = pos.unwrap_or(self.active_pos);
+
+        let tile_pos = match pos.or_else(|| self.active_pos()) {
+            Some(val) => val,
+            None => {
+                info!("skipped append of tile '{}' as there is no active insert position", id);
+                return false;
+            }
+        };
         let mut tile_dir = Direction::A;
 
         let mut neighbor_conns = 0;
@@ -373,7 +384,8 @@ impl Map {
                 debug!("found tile dir '{}' based on hint '{}', (active dir: {})", tile_dir, hint, self.active_dir);
             }
         }
-        self.insert(id, tile_pos, tile_dir)
+        self.insert(id, tile_pos, tile_dir);
+        true
     }
 
     /// Remove tile at the given position.
