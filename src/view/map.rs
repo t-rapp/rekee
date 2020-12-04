@@ -189,7 +189,7 @@ struct ActiveHex {
 impl ActiveHex {
     fn new(document: &Document, layout: &Layout) -> Result<Self> {
         let pos = Coordinate::new(0, 0);
-        let dir = Direction::A;
+        let dir = Direction::D;
 
         let img = document.create_element_ns(SVG_NS, "image")?;
         img.set_attribute("href", "./pkg/arrow-down-circle.svg")?;
