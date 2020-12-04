@@ -325,10 +325,13 @@ impl MapView {
                 group.append_child(&use_grid_hex(&document, &layout, (q, r))?.into())?;
             }
         }
-        group.append_child(&draw_label(&document, &layout, (map_radius, 0), "+q")?.into())?;
-        group.append_child(&draw_label(&document, &layout, (-map_radius, 0), "-q")?.into())?;
-        group.append_child(&draw_label(&document, &layout, (0, map_radius), "+r")?.into())?;
-        group.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
+        // add some hexagon grid axis labels when compiling in development mode
+        if cfg!(debug_assertions) {
+            group.append_child(&draw_label(&document, &layout, (map_radius, 0), "+q")?.into())?;
+            group.append_child(&draw_label(&document, &layout, (-map_radius, 0), "-q")?.into())?;
+            group.append_child(&draw_label(&document, &layout, (0, map_radius), "+r")?.into())?;
+            group.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
+        }
         canvas.append_child(&group)?;
 
         let tiles = document.create_element_ns(SVG_NS, "g")?;
