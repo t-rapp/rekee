@@ -343,6 +343,8 @@ impl Map {
                     if conn == hint {
                         tile_dir = dir;
                         break;
+                    } else if conn != Connection::None {
+                        tile_dir = dir;
                     }
                 }
                 debug!("found tile_dir: {}, hint: {}, active_dir = {}", tile_dir, hint, self.active_dir);
@@ -474,7 +476,7 @@ impl fmt::Display for ParseHintError {
 
 //----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Connection {
     None,
     Straight(i8),
