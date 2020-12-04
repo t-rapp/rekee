@@ -293,9 +293,12 @@ impl Map {
         } else {
             for dir in Direction::iter().map(|&dir| dir + tile.dir) {
                 if tile.connection_target(dir).is_some() {
-                    self.active_pos = tile.pos.neighbor(dir);
-                    self.active_dir = dir - 3.into();
-                    break;
+                    let neighbor_pos = tile.pos.neighbor(dir);
+                    if self.get(neighbor_pos).is_none() {
+                        self.active_pos = neighbor_pos;
+                        self.active_dir = dir - 3.into();
+                        break;
+                    }
                 }
             }
         }
