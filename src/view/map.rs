@@ -59,6 +59,53 @@ fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Re
 
 //----------------------------------------------------------------------------
 
+struct TitleInput {
+    inner: web_sys::HtmlInputElement,
+    change_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl TitleInput {
+    fn new(document: &Document) -> Result<Self> {
+        let inner = document.query_selector("#map-title .input")?
+            .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
+            .ok_or_else(|| "Cannot find map title input element")?;
+
+        let change_cb = Closure::wrap(Box::new(move |event: web_sys::Event| {
+            let input = check!(event.target()
+                .and_then(|target| target.dyn_into::<web_sys::HtmlInputElement>().ok()));
+            let title = input.value();
+            debug!("map title changed: {}", title);
+            nuts::publish(UpdateTitleEvent { title });
+        }) as Box<dyn Fn(_)>);
+        inner.add_event_listener_with_callback("change", change_cb.as_ref().unchecked_ref()).unwrap();
+
+        Ok(TitleInput { inner, change_cb })
+    }
+
+    fn value(&self) -> String {
+        self.inner.value()
+    }
+
+    fn set_value(&self, value: &str) {
+        self.inner.set_value(value)
+    }
+}
+
+impl AsRef<Element> for TitleInput {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for TitleInput {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("change",
+            self.change_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
 struct SelectedHex {
     inner: Element,
     pos: Option<Coordinate>,
@@ -277,7 +324,7 @@ pub struct MapView {
     map: Map,
     canvas: Element,
     tiles: Element,
-    title: String,
+    title: TitleInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
@@ -285,6 +332,7 @@ pub struct MapView {
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    document_title: String,
 }
 
 impl MapView {
@@ -341,7 +389,8 @@ impl MapView {
         }
         canvas.append_child(&tiles)?;
 
-        let title = document.title();
+        let title = TitleInput::new(&document)?;
+        title.set_value(map.title());
 
         let selected = SelectedHex::new(&document, &layout)?;
         canvas.append_child(selected.as_ref())?;
@@ -379,6 +428,9 @@ impl MapView {
         let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
             nuts::publish(DragMapCancelEvent);
         }) as Box<dyn Fn(_)>);
+
+        // remember original HTML document title (application name)
+        let document_title = document.title();
 
         let control = document.get_element_by_id("clear-map-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
@@ -421,7 +473,7 @@ impl MapView {
         Ok(MapView {
             layout, map, canvas, tiles, title, selected, selected_menu, active,
             dragged, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb
+            dragged_mouseleave_cb, document_title
         })
     }
 
@@ -497,18 +549,28 @@ impl MapView {
                 self.tiles.append_child(&el).unwrap();
             }
         }
-        let mut title = String::with_capacity(100);
-        title.push_str(self.map.title());
-        if !title.is_empty() {
-            title.push_str(" - ");
-        }
-        title.push_str(&self.title);
-        document.set_title(&title);
+        self.title.set_value(self.map.title());
         if let Some(active_pos) = self.map.active_pos() {
             self.active.update(&self.layout, active_pos, self.map.active_dir());
             self.active.set_hidden(false);
         } else {
             self.active.set_hidden(true);
+        }
+
+        // update HTML document title, use original title (application name) as a suffix
+        let mut document_title = String::with_capacity(100);
+        document_title.push_str(self.map.title());
+        if !document_title.is_empty() {
+            document_title.push_str(" - ");
+        }
+        document_title.push_str(&self.document_title);
+        document.set_title(&document_title);
+     }
+
+    pub fn update_title(&mut self, title: &str) {
+        if title != self.map.title() {
+            self.map.set_title(title);
+            self.update_map();
         }
     }
 

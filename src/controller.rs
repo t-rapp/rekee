@@ -36,6 +36,10 @@ pub struct ClearMapEvent;
 
 pub struct UpdateMapEvent;
 
+pub struct UpdateTitleEvent {
+    pub title: String,
+}
+
 pub struct UpdateSelectedEvent {
     pub pos: Point,
 }
@@ -113,6 +117,7 @@ impl MapController {
         page.subscribe(MapController::align_center);
         page.subscribe(MapController::clear_map);
         page.subscribe(MapController::update_map);
+        page.subscribe(MapController::update_title);
         page.subscribe(MapController::update_selected);
         page.subscribe(MapController::rotate_selected_left);
         page.subscribe(MapController::rotate_selected_right);
@@ -150,6 +155,10 @@ impl MapController {
 
     fn update_map(&mut self, _event: &UpdateMapEvent) {
         self.view.update_map();
+    }
+
+    fn update_title(&mut self, event: &UpdateTitleEvent) {
+        self.view.update_title(&event.title);
     }
 
     fn update_selected(&mut self, event: &UpdateSelectedEvent) {

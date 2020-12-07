@@ -28,6 +28,14 @@
         #catalog.is-pointy img {
             transform: rotate(90deg);
         }
+        #map-title .input {
+            width: 50%;
+        }
+        #map-title .input:not(:hover):not(:focus) {
+            background-color: transparent;
+            border-color: transparent;
+            box-shadow: none;
+        }
         #hex {
             fill: gray;
             fill-opacity: 0.02;
@@ -149,6 +157,9 @@
           </div>
         </div>
         <div class="column">
+          <div id="map-title" class="control px-4 py-4">
+            <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
+          </div>
           <div id="map-container" class="px-4">
             <!-- map elements added here by WASM -->
           </div>
