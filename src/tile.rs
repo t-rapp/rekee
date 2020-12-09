@@ -277,8 +277,8 @@ impl Map {
     }
 
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
-        // remove any tile at the insert position
-        self.remove(pos);
+        // remove existing tile at insert position
+        self.tiles.retain(|tile| tile.pos != pos);
 
         // auto-select tile id variant, if not given
         let mut id = id;
@@ -296,13 +296,16 @@ impl Map {
         debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
         let tile = PlacedTile::new(id, pos, dir);
 
-        // find best position for next tile
+        // update position for next tile append
+        let mut found = false;
         if self.active_pos == pos && !self.tiles.is_empty() {
             if let Some(dir) = tile.connection_target(self.active_dir) {
                 self.active_pos = tile.pos.neighbor(dir);
                 self.active_dir = dir - 3.into();
+                found = true;
             }
-        } else {
+        } 
+        if !found {
             for dir in Direction::iter().map(|&dir| dir + tile.dir) {
                 if tile.connection_target(dir).is_some() {
                     let neighbor_pos = tile.pos.neighbor(dir);
@@ -315,6 +318,7 @@ impl Map {
             }
         }
         trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
+
         self.tiles.push(tile);
     }
 
@@ -398,22 +402,27 @@ impl Map {
 
     /// Remove tile at the given position.
     pub fn remove(&mut self, pos: Coordinate) {
+        debug!("remove tile at pos: {}", pos);
+
+        let count = self.tiles.len();
         self.tiles.retain(|tile| tile.pos != pos);
 
-        // find best direction for next tile append
-        self.active_pos = pos;
-        self.active_dir = Direction::D;
-        for &dir in Direction::iter() {
-            let neighbor_pos = pos.neighbor(dir);
-            if let Some(tile) = self.get(neighbor_pos) {
-                let conn = tile.connection(dir - 3.into());
-                if conn != Connection::None {
-                    self.active_dir = dir;
-                    break;
+        if self.tiles.len() != count {
+            // update position for next tile append
+            self.active_pos = pos;
+            self.active_dir = Direction::D;
+            for &dir in Direction::iter() {
+                let neighbor_pos = pos.neighbor(dir);
+                if let Some(tile) = self.get(neighbor_pos) {
+                    let conn = tile.connection(dir - 3.into());
+                    if conn != Connection::None {
+                        self.active_dir = dir;
+                        break;
+                    }
                 }
             }
+            trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
         }
-        trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
     }
 
     pub fn align_center(&mut self) {
