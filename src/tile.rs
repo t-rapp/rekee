@@ -185,6 +185,14 @@ impl PlacedTile {
         self.id
     }
 
+    fn connection(&self, dir: Direction) -> Connection {
+        if let Some(info) = self.info {
+            info.connection(dir - self.dir)
+        } else {
+            Connection::None
+        }
+    }
+
     fn connection_target(&self, source: Direction) -> Option<Direction> {
         if let Some(info) = self.info {
             info.connection_target(source - self.dir)
@@ -391,6 +399,21 @@ impl Map {
     /// Remove tile at the given position.
     pub fn remove(&mut self, pos: Coordinate) {
         self.tiles.retain(|tile| tile.pos != pos);
+
+        // find best direction for next tile append
+        self.active_pos = pos;
+        self.active_dir = Direction::D;
+        for &dir in Direction::iter() {
+            let neighbor_pos = pos.neighbor(dir);
+            if let Some(tile) = self.get(neighbor_pos) {
+                let conn = tile.connection(dir - 3.into());
+                if conn != Connection::None {
+                    self.active_dir = dir;
+                    break;
+                }
+            }
+        }
+        trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
     }
 
     pub fn align_center(&mut self) {
@@ -625,6 +648,10 @@ impl TileInfo {
             Ok(idx) => Some(&TILE_INFOS[idx]),
             Err(_) => None
         }
+    }
+
+    fn connection(&self, dir: Direction) -> Connection {
+        self.conn[dir]
     }
 
     fn connection_target(&self, source: Direction) -> Option<Direction> {
@@ -1139,6 +1166,42 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn placed_tile_connection() {
+        let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
+        assert_eq!(Connection::None, tile.connection(Direction::A));
+        assert_eq!(Connection::None, tile.connection(Direction::B));
+        assert_eq!(Connection::None, tile.connection(Direction::C));
+        assert_eq!(Connection::None, tile.connection(Direction::D));
+        assert_eq!(Connection::None, tile.connection(Direction::E));
+        assert_eq!(Connection::None, tile.connection(Direction::F));
+
+        let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
+        assert_eq!(Connection::Straight(0), tile.connection(Direction::A));
+        assert_eq!(Connection::None, tile.connection(Direction::B));
+        assert_eq!(Connection::None, tile.connection(Direction::C));
+        assert_eq!(Connection::Straight(0), tile.connection(Direction::D));
+        assert_eq!(Connection::None, tile.connection(Direction::E));
+        assert_eq!(Connection::None, tile.connection(Direction::F));
+
+        let tile = PlacedTile::new(tile!(103, a), (0, 0).into(), Direction::B);
+        assert_eq!(Connection::None, tile.connection(Direction::A));
+        assert_eq!(Connection::Straight(0), tile.connection(Direction::B));
+        assert_eq!(Connection::None, tile.connection(Direction::C));
+        assert_eq!(Connection::None, tile.connection(Direction::D));
+        assert_eq!(Connection::Straight(0), tile.connection(Direction::E));
+        assert_eq!(Connection::None, tile.connection(Direction::F));
+
+        let tile = PlacedTile::new(tile!(105, a), (0, 0).into(), Direction::C);
+        assert_eq!(Connection::None, tile.connection(Direction::A));
+        assert_eq!(Connection::None, tile.connection(Direction::B));
+        assert_eq!(Connection::None, tile.connection(Direction::C));
+        assert_eq!(Connection::Left(1), tile.connection(Direction::D));
+        assert_eq!(Connection::None, tile.connection(Direction::E));
+        assert_eq!(Connection::Right(1), tile.connection(Direction::F));
+    }
+
 
     #[test]
     fn placed_tile_connection_target() {
