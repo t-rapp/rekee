@@ -436,6 +436,7 @@ impl Map {
         for tile in self.tiles.iter_mut() {
             tile.pos = tile.pos - center;
         }
+        self.active_pos = self.active_pos - center;
     }
 
     pub fn rotate_left(&mut self) {
@@ -443,6 +444,8 @@ impl Map {
             tile.pos = tile.pos.rotated_left();
             tile.dir = tile.dir.rotated_left();
         }
+        self.active_pos = self.active_pos.rotated_left();
+        self.active_dir = self.active_dir.rotated_left();
     }
 
     pub fn rotate_right(&mut self) {
@@ -450,6 +453,8 @@ impl Map {
             tile.pos = tile.pos.rotated_right();
             tile.dir = tile.dir.rotated_right();
         }
+        self.active_pos = self.active_pos.rotated_right();
+        self.active_dir = self.active_dir.rotated_right();
     }
 }
 
