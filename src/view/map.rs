@@ -138,7 +138,7 @@ impl SelectedHex {
             let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
-        self.set_hidden(!pos.is_some());
+        self.set_hidden(pos.is_none());
         self.pos = pos;
     }
 
