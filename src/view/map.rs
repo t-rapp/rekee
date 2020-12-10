@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------
 
 use log::{warn, info, debug};
-use js_sys;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
