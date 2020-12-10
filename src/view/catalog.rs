@@ -121,7 +121,7 @@ impl FilterItem {
         }) as Box<dyn Fn(_)>);
 
         let anchor = inner.query_selector("a")?
-            .ok_or_else(|| "Cannot find anchor element of filter item")?;
+            .ok_or("Cannot find anchor element of filter item")?;
         anchor.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 

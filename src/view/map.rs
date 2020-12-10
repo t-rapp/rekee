@@ -67,7 +67,7 @@ impl TitleInput {
     fn new(document: &Document) -> Result<Self> {
         let inner = document.query_selector("#map-title .input")?
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
-            .ok_or_else(|| "Cannot find map title input element")?;
+            .ok_or("Cannot find map title input element")?;
 
         let change_cb = Closure::wrap(Box::new(move |event: web_sys::Event| {
             let input = check!(event.target()
@@ -205,7 +205,7 @@ impl SelectedMenu {
         // extract menu element from document after all buttons have been assigned,
         // otherwise get_element_by_id() would not have been able to find the buttons
         let inner = document.get_element_by_id("selected-menu")
-            .ok_or_else(|| "Cannot find '#selected-menu' element within page")?;
+            .ok_or("Cannot find '#selected-menu' element within page")?;
         menu.append_child(&inner)?;
 
         Ok(SelectedMenu { inner: menu })

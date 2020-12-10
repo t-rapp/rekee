@@ -38,11 +38,11 @@ pub fn main() -> Result<(), JsValue> {
     let layout = Layout::new(Orientation::pointy(), Point(50.0, 50.0), Point(450.0, 400.0));
 
     let parent = document.get_element_by_id("catalog-container")
-        .ok_or_else(|| "Cannot find '#catalog-container' parent element for catalog component")?;
+        .ok_or("Cannot find '#catalog-container' parent element for catalog component")?;
     CatalogController::init(CatalogView::new(parent, &layout)?);
 
     let parent = document.get_element_by_id("map-container")
-        .ok_or_else(|| "Cannot find '#map-container' parent element for map component")?;
+        .ok_or("Cannot find '#map-container' parent element for map component")?;
     MapController::init(MapView::new(parent, layout)?);
 
     // build some example track when compiling in development mode
