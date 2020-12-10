@@ -565,18 +565,14 @@ impl Layout {
 
     /// Calculates the corners of a hexagon with the given coordinate.
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
-        let mut corners = [Point::default(); 6];
         let center = hex.to_pixel(&self);
-        let corner_offset = |corner: u8| {
+        let mut corners = [Point::default(); 6];
+        for (i, corner) in corners.iter_mut().enumerate() {
             use std::f32::consts::PI;
-            let angle = 2.0 * PI * (self.orientation.start_angle + f32::from(corner)) / 6.0;
-            let x = self.size.0 * angle.cos();
-            let y = self.size.1 * angle.sin();
-            (x, y)
-        };
-        for i in 0..6 {
-            let offset = corner_offset(i as u8);
-            corners[i] = Point(center.0 + offset.0, center.1 + offset.1);
+            let angle = 2.0 * PI * (self.orientation.start_angle + f32::from(i as u8)) / 6.0;
+            let offset_x = self.size.0 * angle.cos();
+            let offset_y = self.size.1 * angle.sin();
+            *corner = center + Point(offset_x, offset_y);
         }
         corners
     }
