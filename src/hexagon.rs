@@ -335,7 +335,7 @@ impl Direction {
 
 impl fmt::Display for Direction {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", ('A' as u8 + u8::from(*self)) as char)
+        write!(fmt, "{}", (b'A' + u8::from(*self)) as char)
     }
 }
 
