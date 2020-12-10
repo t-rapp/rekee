@@ -59,7 +59,7 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 
-        let drag_img = canvas.clone();
+        let drag_img = canvas;
         let dragstart_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             if let Some(trans) = event.data_transfer() {
                 let data = id.base().to_string();
