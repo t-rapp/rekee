@@ -8,6 +8,8 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+#![allow(clippy::needless_return)]
+
 use indoc::indoc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;

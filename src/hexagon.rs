@@ -70,6 +70,7 @@ impl Coordinate {
     /// assert_eq!(pos.neighbor(Direction::A), (2, 0).into());
     /// assert_eq!(pos.neighbor(Direction::B), (1, 1).into());
     /// ```
+    #[allow(clippy::identity_op)]
     pub fn neighbor<T>(&self, dir: T) -> Self
         where T: Into<Direction>
     {
@@ -492,6 +493,7 @@ pub struct Orientation {
     start_angle: f32,  // in multiples of 60°
 }
 
+#[allow(clippy::excessive_precision)]
 const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
 
 const LAYOUT_POINTY: Orientation = Orientation {
