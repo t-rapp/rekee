@@ -301,7 +301,7 @@ impl Map {
         if self.active_pos == pos && !self.tiles.is_empty() {
             if let Some(dir) = tile.connection_target(self.active_dir) {
                 self.active_pos = tile.pos.neighbor(dir);
-                self.active_dir = dir - 3.into();
+                self.active_dir = dir.opposite();
                 found = true;
             }
         } 
@@ -311,7 +311,7 @@ impl Map {
                     let neighbor_pos = tile.pos.neighbor(dir);
                     if self.get(neighbor_pos).is_none() {
                         self.active_pos = neighbor_pos;
-                        self.active_dir = dir - 3.into();
+                        self.active_dir = dir.opposite();
                         break;
                     }
                 }
@@ -340,7 +340,7 @@ impl Map {
         for &dir in Direction::iter() {
             let pos = tile_pos.neighbor(dir);
             if let Some(tile) = self.get(pos) {
-                let edge = tile.edge(dir + Direction::D);
+                let edge = tile.edge(dir.opposite());
                 if edge.lanes() > 0 {
                     neighbor_conns += 1;
                     neighbor_dir = dir;
@@ -414,7 +414,7 @@ impl Map {
             for &dir in Direction::iter() {
                 let neighbor_pos = pos.neighbor(dir);
                 if let Some(tile) = self.get(neighbor_pos) {
-                    let conn = tile.connection(dir - 3.into());
+                    let conn = tile.connection(dir.opposite());
                     if conn != Connection::None {
                         self.active_dir = dir;
                         break;

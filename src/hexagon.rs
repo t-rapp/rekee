@@ -253,6 +253,22 @@ impl Direction {
         DIRS.iter()
     }
 
+    /// Get opposite direction (point reflection).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let dir = Direction::A;
+    /// assert_eq!(dir.opposite(), Direction::D);
+    ///
+    /// let dir = Direction::F;
+    /// assert_eq!(dir.opposite(), Direction::C);
+    /// ```
+    pub fn opposite(&self) -> Self {
+        *self + 3.into()
+    }
+
     /// Get direction rotated left (counter-clockwise).
     ///
     /// # Examples
@@ -688,6 +704,15 @@ mod tests {
         let dir = Direction::E;
         assert_eq!(Direction::D, dir - 1.into());
         assert_eq!(Direction::B, dir - 3.into());
+    }
+
+    #[test]
+    fn direction_opposite() {
+        let dir = Direction::B;
+        assert_eq!(Direction::E, dir.opposite());
+
+        let dir = Direction::F;
+        assert_eq!(Direction::C, dir.opposite());
     }
 
     #[test]
