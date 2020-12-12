@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------
 
 use std::fmt;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Sub, Index, IndexMut};
 
 //----------------------------------------------------------------------------
 
@@ -356,6 +356,20 @@ impl Sub for Direction {
         let a = u8::from(self);
         let b = u8::from(other);
         (6 + a - b).into()
+    }
+}
+
+impl<T> Index<Direction> for [T; 6] {
+    type Output = T;
+
+    fn index(&self, index: Direction) -> &Self::Output {
+        self.get(u8::from(index) as usize).unwrap()
+    }
+}
+
+impl<T> IndexMut<Direction> for [T; 6] {
+    fn index_mut(&mut self, index: Direction) -> &mut Self::Output {
+        self.get_mut(u8::from(index) as usize).unwrap()
     }
 }
 

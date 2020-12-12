@@ -11,7 +11,6 @@
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use std::ops::{Index, IndexMut};
 
 use log::{info, debug, trace};
 
@@ -356,7 +355,7 @@ impl Map {
 
         let mut neighbor_conns = 0;
         let mut neighbor_dir = Direction::A;
-        let mut neighbor_edges = [Edge::None; 6];
+        let mut neighbor_edges = [None; 6];
         for &dir in Direction::iter() {
             let pos = tile_pos.neighbor(dir);
             if let Some(tile) = self.get(pos) {
@@ -365,7 +364,7 @@ impl Map {
                     neighbor_conns += 1;
                     neighbor_dir = dir;
                 }
-                neighbor_edges[dir] = edge;
+                neighbor_edges[dir] = Some(edge);
             }
         }
         trace!("neighbor connections: {}, dir: {}, edges: {:?}",
@@ -384,16 +383,21 @@ impl Map {
                 let mut score = 0;
                 for &neighbor_dir in Direction::iter() {
                     let tile_edge = info.edge(neighbor_dir - dir);
-                    let neighbor_edge = neighbor_edges[neighbor_dir];
-                    match (tile_edge, neighbor_edge) {
-                        (Edge::None, Edge::None) => score += 1,
-                        (Edge::SkewLeft(a), Edge::SkewLeft(b)) if a == b => score += 2,
-                        (Edge::SkewLeft(_), Edge::SkewLeft(_)) => score += 1,
-                        (Edge::SkewRight(a), Edge::SkewRight(b)) if a == b => score += 2,
-                        (Edge::SkewRight(_), Edge::SkewRight(_)) => score += 1,
-                        (Edge::Straight(a), Edge::Straight(b)) if a == b => score += 2,
-                        (Edge::Straight(_), Edge::Straight(_)) => score += 1,
-                        _ => (),
+                    if let Some(neighbor_edge) = neighbor_edges[neighbor_dir] {
+                        // tile has some neighbor in that direction
+                        match (tile_edge, neighbor_edge) {
+                            (Edge::None, Edge::None) => score += 1,
+                            (Edge::SkewLeft(a), Edge::SkewLeft(b)) if a == b => score += 2,
+                            (Edge::SkewLeft(_), Edge::SkewLeft(_)) => score += 1,
+                            (Edge::SkewRight(a), Edge::SkewRight(b)) if a == b => score += 2,
+                            (Edge::SkewRight(_), Edge::SkewRight(_)) => score += 1,
+                            (Edge::Straight(a), Edge::Straight(b)) if a == b => score += 2,
+                            (Edge::Straight(_), Edge::Straight(_)) => score += 1,
+                            _ => (),
+                        }
+                    } else {
+                        // tile has no neighbor in that direction
+                        score += 1;
                     }
                 }
                 if score > max_score {
@@ -580,14 +584,6 @@ impl Default for Connection {
     }
 }
 
-impl Index<Direction> for [Connection; 6] {
-    type Output = Connection;
-
-    fn index(&self, index: Direction) -> &Self::Output {
-        self.get(u8::from(index) as usize).unwrap()
-    }
-}
-
 impl PartialEq<ConnectionHint> for Connection {
     fn eq(&self, other: &ConnectionHint) -> bool {
         let hint = match *self {
@@ -632,20 +628,6 @@ impl Edge {
 impl Default for Edge {
     fn default() -> Self {
         Edge::None
-    }
-}
-
-impl Index<Direction> for [Edge; 6] {
-    type Output = Edge;
-
-    fn index(&self, index: Direction) -> &Self::Output {
-        self.get(u8::from(index) as usize).unwrap()
-    }
-}
-
-impl IndexMut<Direction> for [Edge; 6] {
-    fn index_mut(&mut self, index: Direction) -> &mut Self::Output {
-        self.get_mut(u8::from(index) as usize).unwrap()
     }
 }
 
@@ -911,6 +893,38 @@ mod tests {
         assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
         assert_eq!(Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)), tiles.next());
         assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn map_append_rotate1() {
+        let mut map = Map::new();
+        map.insert(tile!(103, b), (-1,  0).into(), Direction::F);
+        map.insert(tile!(105, b), ( 0, -1).into(), Direction::F);
+        map.insert(tile!(102, b), ( 1, -1).into(), Direction::A);
+        map.insert(tile!(108, b), ( 2, -1).into(), Direction::A);
+        map.insert(tile!(105, b), ( 1,  0).into(), Direction::C);
+        // append should choose direction such that track does not end on any
+        // surrounding tile edge
+        map.append(tile!(107, b), None, None);
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(107, b, 1));
+        assert_eq!(tile.dir, Direction::E);
+    }
+
+    #[test]
+    fn map_append_rotate2() {
+        let mut map = Map::new();
+        map.insert(tile!(103, a), ( 1,  0).into(), Direction::B);
+        map.insert(tile!(105, a), ( 1, -1).into(), Direction::B);
+        map.insert(tile!(102, a), ( 0, -1).into(), Direction::D);
+        map.insert(tile!(108, a), (-1, -1).into(), Direction::E);
+        map.insert(tile!(105, a), (-1,  0).into(), Direction::D);
+        // append should choose direction such that track does not end on any
+        // surrounding tile edge
+        map.append(tile!(107, a), None, None);
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(107, a, 1));
+        assert_eq!(tile.dir, Direction::A);
     }
 
     #[test]
