@@ -167,6 +167,11 @@ macro_rules! tile {
 
 //----------------------------------------------------------------------------
 
+/// Single tile that is part of the map. A placed tile consists of tile
+/// identifier, grid coordinates, and rotation direction.
+///
+/// Contains some private map helper functions that apply tile information
+/// to the placed tile.
 #[derive(Clone)]
 pub struct PlacedTile {
     id: TileId,
@@ -176,11 +181,13 @@ pub struct PlacedTile {
 }
 
 impl PlacedTile {
+    /// Creates a new tile with identifier, coordinates, and rotation.
     pub fn new(id: TileId, pos: Coordinate, dir: Direction) -> Self {
         let info = TileInfo::get(id);
         PlacedTile { id, pos, dir, info }
     }
 
+    /// Tile identifier.
     pub fn id(&self) -> TileId {
         self.id
     }
@@ -231,6 +238,7 @@ impl PartialEq<PlacedTile> for PlacedTile {
 
 //----------------------------------------------------------------------------
 
+/// Map for storing track tiles.
 #[derive(Debug, Clone)]
 pub struct Map {
     tiles: Vec<PlacedTile>,
@@ -240,6 +248,7 @@ pub struct Map {
 }
 
 impl Map {
+    /// Creates a new and empty map.
     pub fn new() -> Self {
         let tiles = Vec::new();
         let title = "My Track".to_string();
@@ -248,18 +257,23 @@ impl Map {
         Map { tiles, title, active_pos, active_dir }
     }
 
+    /// List of all tiles placed on the map.
     pub fn tiles(&self) -> &[PlacedTile] {
         &self.tiles
     }
 
+    /// Map title.
     pub fn title(&self) -> &str {
         &self.title
     }
 
+    /// Updates the map title.
     pub fn set_title(&mut self, title: &str) {
         self.title = title.to_string();
     }
 
+    /// Active position for the next tile `append` action.
+    /// Returns `None` if there currently is no active position.
     pub fn active_pos(&self) -> Option<Coordinate> {
         if self.get(self.active_pos).is_none() {
             Some(self.active_pos)
@@ -268,14 +282,17 @@ impl Map {
         }
     }
 
+    /// Active direction for the next tile `append` action.
     pub fn active_dir(&self) -> Direction {
         self.active_dir
     }
 
+    /// Returns tile at the given map position, if existing.
     pub fn get(&self, pos: Coordinate) -> Option<&PlacedTile> {
         self.tiles.iter().find(|tile| tile.pos == pos)
     }
 
+    /// Insert a new tile using the specified position and direction.
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
         // remove existing tile at insert position
         self.tiles.retain(|tile| tile.pos != pos);
@@ -322,6 +339,9 @@ impl Map {
         self.tiles.push(tile);
     }
 
+    /// Append a new tile to the map using the active position. In contrast
+    /// to `insert()` this function allows auto-detection of tile position and
+    /// direction.
     pub fn append(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) -> bool {
         debug!("append tile {}, pos: {:?}, hint: {:?}", id, pos, hint);
 
@@ -425,6 +445,7 @@ impl Map {
         }
     }
 
+    /// Re-align all tiles around the map center.
     pub fn align_center(&mut self) {
         if self.tiles.is_empty() {
             return;
@@ -448,6 +469,7 @@ impl Map {
         self.active_pos = self.active_pos - center;
     }
 
+    /// Rotate all tile positions to the left (counter-clockwise).
     pub fn rotate_left(&mut self) {
         for tile in self.tiles.iter_mut() {
             tile.pos = tile.pos.rotated_left();
@@ -457,6 +479,7 @@ impl Map {
         self.active_dir = self.active_dir.rotated_left();
     }
 
+    /// Rotate all tile positions to the right (clockwise).
     pub fn rotate_right(&mut self) {
         for tile in self.tiles.iter_mut() {
             tile.pos = tile.pos.rotated_right();
