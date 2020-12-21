@@ -157,10 +157,33 @@
           </div>
         </div>
         <div class="column">
-          <div id="map-title" class="control px-4 py-4">
+          <article id="welcome" class="message mx-4 my-4 is-info">
+            <div class="message-header">
+              <p>Welcome!</p>
+              <button class="delete" aria-label="delete"></button>
+            </div>
+            <div class="message-body">
+              <div class="content">
+                <p>
+                  Rekee is an editor to build racing tracks for the
+                  <a href="https://holygrail.games/en/games/rallyman-gt/">Rallyman: GT</a>
+                  board game. Use the mouse to drag tiles from the catalog (left side)
+                  and drop them on the map (right side).
+                </p>
+                <p>
+                  Additionally the editor supports a "quick building" mode:
+                  double-click on catalog tiles will auto-append the tile at the
+                  map position highlighted by an arrow icon. When pressing
+                  <code>Shift</code> or <code>Ctrl</code> during double-click
+                  the tile will be appended either as a left or right curve.
+                </p>
+              </div>
+            </div>
+          </article>
+          <div id="map-title" class="control mx-4 my-4">
             <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
           </div>
-          <div id="map-container" class="px-4">
+          <div id="map-container" class="mx-4">
             <!-- map elements added here by WASM -->
           </div>
         </div>

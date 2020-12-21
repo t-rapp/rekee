@@ -20,12 +20,15 @@ use crate::tile::*;
 
 mod catalog;
 mod map;
+mod welcome;
 
 //----------------------------------------------------------------------------
 
 pub type CatalogView = catalog::CatalogView;
 
 pub type MapView = map::MapView;
+
+pub type WelcomeView = welcome::WelcomeView;
 
 type Result<T> = std::result::Result<T, JsValue>;
 

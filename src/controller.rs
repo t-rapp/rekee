@@ -77,6 +77,8 @@ pub struct DragMapEndEvent {
 
 pub struct DragMapCancelEvent;
 
+pub struct HideWelcomeEvent;
+
 //----------------------------------------------------------------------------
 
 pub struct CatalogController {
@@ -195,6 +197,49 @@ impl MapController {
 
     fn drag_map_cancel(&mut self, _event: &DragMapCancelEvent) {
         self.view.drag_cancel();
+    }
+}
+
+//----------------------------------------------------------------------------
+
+pub struct WelcomeController {
+    view: WelcomeView,
+}
+
+impl WelcomeController {
+    pub fn init(view: WelcomeView) {
+        let controller = WelcomeController { view };
+        let activity = nuts::new_activity(controller);
+        activity.subscribe(WelcomeController::import_file);
+        activity.subscribe(WelcomeController::insert_tile);
+        activity.subscribe(WelcomeController::append_tile);
+        activity.subscribe(WelcomeController::drag_catalog_end);
+        activity.subscribe(WelcomeController::drag_map_end);
+        activity.subscribe(WelcomeController::hide_welcome);
+    }
+
+    fn import_file(&mut self, _event: &ImportFileEvent) {
+        self.view.hide_welcome();
+    }
+
+    fn insert_tile(&mut self, _event: &InsertTileEvent) {
+        self.view.hide_welcome();
+    }
+
+    fn append_tile(&mut self, _event: &AppendTileEvent) {
+        self.view.hide_welcome();
+    }
+
+    fn drag_catalog_end(&mut self, _event: &DragCatalogEndEvent) {
+        self.view.hide_welcome();
+    }
+
+    fn drag_map_end(&mut self, _event: &DragMapEndEvent) {
+        self.view.hide_welcome();
+    }
+
+    fn hide_welcome(&mut self, _event: &HideWelcomeEvent) {
+        self.view.hide_welcome();
     }
 }
 
