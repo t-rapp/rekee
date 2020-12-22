@@ -54,6 +54,10 @@ pub struct UpdateFilterEvent {
     pub lanes: Option<u8>,
 }
 
+pub struct UpdateConnectionHintEvent {
+    pub hint: Option<ConnectionHint>,
+}
+
 pub struct DragCatalogBeginEvent {
     pub tile: TileId,
 }
@@ -129,6 +133,7 @@ impl MapController {
         page.subscribe(MapController::drag_map_move);
         page.subscribe(MapController::drag_map_end);
         page.subscribe(MapController::drag_map_cancel);
+        page.subscribe(MapController::update_connection_hint);
     }
 
     fn import_file(&mut self, event: &ImportFileEvent) {
@@ -197,6 +202,10 @@ impl MapController {
 
     fn drag_map_cancel(&mut self, _event: &DragMapCancelEvent) {
         self.view.drag_cancel();
+    }
+
+    fn update_connection_hint(&mut self, event: &UpdateConnectionHintEvent) {
+        self.view.update_connection_hint(event.hint);
     }
 }
 

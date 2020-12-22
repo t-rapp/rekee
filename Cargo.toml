@@ -34,6 +34,7 @@ features = [
   "FileReader",
   'HtmlElement',
   'HtmlInputElement',
+  'KeyboardEvent',
   'MouseEvent',
   'Node',
   'NodeList',

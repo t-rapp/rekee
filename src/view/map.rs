@@ -228,6 +228,7 @@ impl AsRef<Element> for SelectedMenu {
 
 struct ActiveHex {
     inner: Element,
+    img: Element,
     pos: Coordinate,
     dir: Direction,
 }
@@ -252,7 +253,7 @@ impl ActiveHex {
         inner.set_attribute("transform", &transform)?;
         inner.append_child(&img)?;
 
-        Ok(ActiveHex { inner, pos, dir })
+        Ok(ActiveHex { inner, img, pos, dir })
     }
 
     fn update(&mut self, layout: &Layout, pos: Coordinate, dir: Direction) {
@@ -264,6 +265,18 @@ impl ActiveHex {
         }
         self.pos = pos;
         self.dir = dir;
+    }
+
+    fn set_hint(&mut self, hint: Option<ConnectionHint>) {
+        let href = match hint {
+            Some(ConnectionHint::Left) => 
+                "./pkg/arrow-return-left-circle.svg",
+            Some(ConnectionHint::Right) => 
+                "./pkg/arrow-return-right-circle.svg",
+            _ =>
+                "./pkg/arrow-down-circle.svg",
+        };
+        check!(self.img.set_attribute("href", href).ok());
     }
 }
 
@@ -703,6 +716,10 @@ impl MapView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+    }
+
+    pub fn update_connection_hint(&mut self, hint: Option<ConnectionHint>) {
+        self.active.set_hint(hint);
     }
 }
 

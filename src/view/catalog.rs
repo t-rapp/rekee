@@ -171,6 +171,7 @@ pub struct CatalogView {
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
+    keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
 }
 
 impl CatalogView {
@@ -224,8 +225,26 @@ impl CatalogView {
             }
         }) as Box<dyn Fn(_)>);
 
+        let keychange_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.repeat() {
+                return;
+            }
+            let hint = match (event.shift_key(), event.ctrl_key()) {
+                (true, true) => Some(ConnectionHint::Straight),
+                (true, false) => Some(ConnectionHint::Left),
+                (false, true) => Some(ConnectionHint::Right),
+                (false, false) => None,
+            };
+            nuts::publish(UpdateConnectionHintEvent { hint });
+        }) as Box<dyn Fn(_)>);
+        document.add_event_listener_with_callback("keydown",
+            keychange_cb.as_ref().unchecked_ref())?;
+        document.add_event_listener_with_callback("keyup",
+            keychange_cb.as_ref().unchecked_ref())?;
+
         Ok(CatalogView {
-            layout, catalog, tiles, filter_items, map: None, dragover_cb, dragdrop_cb
+            layout, catalog, tiles, filter_items, map: None, dragover_cb, dragdrop_cb,
+            keychange_cb
         })
     }
 
@@ -261,6 +280,16 @@ impl CatalogView {
                 self.map = Some(map);
             }
         }
+    }
+}
+
+impl Drop for CatalogView {
+    fn drop(&mut self) {
+        let document = self.catalog.owner_document().unwrap();
+        let _ = document.remove_event_listener_with_callback("keydown",
+            self.keychange_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("keyup",
+            self.keychange_cb.as_ref().unchecked_ref());
     }
 }
 
