@@ -50,7 +50,7 @@ pub fn main() -> Result<(), JsValue> {
     // build some example track when compiling in development mode
     if cfg!(debug_assertions) {
         nuts::publish(InsertTileEvent { id: tile!(102, b), pos: (0, 0).into(), dir: Direction::D });
-        nuts::publish(AppendTileEvent { id: tile!(104, b), pos: None, hint: None });
+        nuts::publish(AppendTileEvent { id: tile!(104, b), pos: Some((-1, 0).into()), hint: None });
         nuts::publish(AppendTileEvent { id: tile!(113, b), pos: None, hint: "R".parse().ok() });
         nuts::publish(AppendTileEvent { id: tile!(117, b), pos: None, hint: "r".parse().ok() });
         nuts::publish(AppendTileEvent { id: tile!(114, b), pos: None, hint: "R".parse().ok() });

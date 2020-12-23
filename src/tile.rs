@@ -314,7 +314,7 @@ impl Map {
 
         // update position for next tile append
         let mut found = false;
-        if self.active_pos == pos && !self.tiles.is_empty() {
+        if self.active_pos == pos {
             if let Some(dir) = tile.connection_target(self.active_dir) {
                 self.active_pos = tile.pos.neighbor(dir);
                 self.active_dir = dir.opposite();
@@ -866,9 +866,12 @@ mod tests {
     #[test]
     fn map_insert_and_append() {
         let mut map = Map::new();
-        map.set_title("Short Track 2"); 
+        map.set_title("Short Track 2");
+
         map.insert(tile!(102, b), (0, 0).into(), Direction::D);
-        map.append(tile!(104, b), None, None);
+        assert_eq!(map.active_pos(), Some(Coordinate::new(1, 0)));
+        assert_eq!(map.active_dir(), Direction::D);
+        map.append(tile!(104, b), Some(Coordinate::new(-1, 0)), None);
         map.append(tile!(113, b), None, "R".parse().ok());
         map.append(tile!(117, b), None, "r".parse().ok());
         map.append(tile!(114, b), None, "R".parse().ok());
@@ -877,6 +880,7 @@ mod tests {
         map.append(tile!(108, b), None, "r".parse().ok());
         map.append(tile!(110, b), None, "L".parse().ok());
         map.append(tile!(107, b), None, None);
+        assert_eq!(map.active_pos(), None);
         map.insert(tile!(101), (0, -2).into(), Direction::A);
 
         assert_eq!("Short Track 2", map.title());
@@ -893,6 +897,62 @@ mod tests {
         assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
         assert_eq!(Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)), tiles.next());
         assert_eq!(None, tiles.next());
+    }
+
+    #[test]
+    fn map_append_dir_none() {
+        let mut map = Map::new();
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 0)));
+        assert_eq!(map.active_dir(), Direction::D);
+
+        map.append(tile!(105, b), None, None);
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(105, b, 1));
+        assert_eq!(tile.dir, Direction::A);
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 1)));
+        assert_eq!(map.active_dir(), Direction::E);
+    }
+
+    #[test]
+    fn map_append_dir_left() {
+        let mut map = Map::new();
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 0)));
+        assert_eq!(map.active_dir(), Direction::D);
+
+        map.append(tile!(105, b), None, Some(ConnectionHint::Left));
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(105, b, 1));
+        assert_eq!(tile.dir, Direction::C);
+        assert_eq!(map.active_pos(), Some(Coordinate::new(1, -1)));
+        assert_eq!(map.active_dir(), Direction::C);
+    }
+
+    #[test]
+    fn map_append_dir_right() {
+        let mut map = Map::new();
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 0)));
+        assert_eq!(map.active_dir(), Direction::D);
+
+        map.append(tile!(105, b), None, Some(ConnectionHint::Right));
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(105, b, 1));
+        assert_eq!(tile.dir, Direction::A);
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 1)));
+        assert_eq!(map.active_dir(), Direction::E);
+    }
+
+    #[test]
+    fn map_append_dir_straight() {
+        let mut map = Map::new();
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 0)));
+        assert_eq!(map.active_dir(), Direction::D);
+
+        map.append(tile!(105, b), None, Some(ConnectionHint::Straight));
+        let tile = map.get((0, 0).into()).unwrap();
+        assert_eq!(tile.id(), tile!(105, b, 1));
+        assert_eq!(tile.dir, Direction::A);
+        assert_eq!(map.active_pos(), Some(Coordinate::new(0, 1)));
+        assert_eq!(map.active_dir(), Direction::E);
     }
 
     #[test]
