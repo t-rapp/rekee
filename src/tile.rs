@@ -872,11 +872,11 @@ mod tests {
         map.append(tile!(113, b), None, "R".parse().ok());
         map.append(tile!(117, b), None, "r".parse().ok());
         map.append(tile!(114, b), None, "R".parse().ok());
-        map.append(tile!(115, b), None, "L".parse().ok());
+        map.append(tile!(115, b), None, None);
         map.append(tile!(115, b), None, "l".parse().ok());
         map.append(tile!(108, b), None, "r".parse().ok());
         map.append(tile!(110, b), None, "L".parse().ok());
-        map.append(tile!(107, b), None, "R".parse().ok());
+        map.append(tile!(107, b), None, None);
         map.insert(tile!(101), (0, -2).into(), Direction::A);
 
         assert_eq!("Short Track 2", map.title());
