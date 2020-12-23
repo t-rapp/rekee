@@ -245,10 +245,10 @@ impl CatalogView {
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
 
-        // restore selected filter item
+        // restore previous selected filter item
         let mut lanes = None;
         if let Some(ref storage) = storage {
-            lanes = storage.get("filter")?
+            lanes = storage.get_item("filter")?
                 .map(|val| val.parse::<u8>().ok())
                 .unwrap_or(lanes);
         }
@@ -287,7 +287,7 @@ impl CatalogView {
                 Some(val) => val.to_string(),
                 None => "all".to_string(),
             };
-            let _ = storage.set("filter", &value);
+            let _ = storage.set_item("filter", &value);
         }
     }
 

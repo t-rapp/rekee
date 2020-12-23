@@ -10,7 +10,7 @@
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element};
+use web_sys::{self, Document, Element, Storage};
 
 use crate::controller::*;
 use super::*;
@@ -19,6 +19,7 @@ use super::*;
 
 pub struct WelcomeView {
     inner: Element,
+    storage: Option<Storage>,
     click_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
@@ -26,7 +27,18 @@ impl WelcomeView {
     pub fn new(document: &Document) -> Result<Self> {
         let inner = document.get_element_by_id("welcome")
             .ok_or("Cannot find '#welcome' element")?;
-        inner.set_hidden(false);
+
+        let storage = web_sys::window()
+            .and_then(|wnd| wnd.session_storage().ok().flatten());
+
+        // restore previous visibility state
+        let mut hidden = false;
+        if let Some(ref storage) = storage {
+            hidden = storage.get_item("welcome")?
+                .and_then(|val| val.parse::<bool>().ok())
+                .unwrap_or(hidden);
+        }
+        inner.set_hidden(hidden);
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::publish(HideWelcomeEvent);
@@ -35,11 +47,16 @@ impl WelcomeView {
         inner.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 
-        Ok(WelcomeView { inner, click_cb })
+        Ok(WelcomeView { inner, storage, click_cb })
     }
 
     pub fn hide_welcome(&self) {
         self.inner.set_hidden(true);
+
+        // remember visibility state
+        if let Some(ref storage) = self.storage {
+            let _ = storage.set_item("welcome", &true.to_string());
+        }
     }
 }
 
