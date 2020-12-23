@@ -13,7 +13,7 @@ use std::collections::BTreeSet;
 use log::{info};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element};
+use web_sys::{self, Document, Element, Storage};
 
 use crate::check;
 use crate::controller::*;
@@ -169,6 +169,7 @@ pub struct CatalogView {
     tiles: Vec<CatalogTile>,
     filter_items: Vec<FilterItem>,
     map: Option<Element>,
+    storage: Option<Storage>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
@@ -180,6 +181,8 @@ impl CatalogView {
         let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
 
         let document = parent.owner_document().unwrap();
+        let storage = web_sys::window()
+            .and_then(|wnd| wnd.local_storage().ok().flatten());
 
         let catalog = document.create_element("ul")?;
         catalog.set_id("catalog");
@@ -242,14 +245,26 @@ impl CatalogView {
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogView {
-            layout, catalog, tiles, filter_items, map: None, dragover_cb, dragdrop_cb,
-            keychange_cb
-        })
+        // restore selected filter item
+        let mut lanes = None;
+        if let Some(ref storage) = storage {
+            lanes = storage.get("filter")?
+                .map(|val| val.parse::<u8>().ok())
+                .unwrap_or(lanes);
+        }
+
+        let mut view = CatalogView {
+            layout, catalog, tiles, filter_items, map: None, storage,
+            dragover_cb, dragdrop_cb, keychange_cb
+        };
+        view.update_filter(lanes);
+
+        Ok(view)
     }
 
     pub fn update_filter(&mut self, lanes: Option<u8>) {
         info!("update filter lanes: {:?}", lanes);
+
         let mut filter = None;
         for item in &self.filter_items {
             let active = lanes == item.value();
@@ -264,6 +279,15 @@ impl CatalogView {
                 None => false,
             };
             tile.set_hidden(hidden);
+        }
+
+        // remember selected filter item
+        if let Some(ref storage) = self.storage {
+            let value = match lanes {
+                Some(val) => val.to_string(),
+                None => "all".to_string(),
+            };
+            let _ = storage.set("filter", &value);
         }
     }
 

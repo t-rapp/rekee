@@ -39,6 +39,7 @@ features = [
   'Node',
   'NodeList',
   'Range',
+  'Storage',
   'SvgElement',
   'Text',
   'Window',
