@@ -8,6 +8,7 @@
 // $Id$
 //----------------------------------------------------------------------------
 
+use log::debug;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element, Storage};
@@ -38,6 +39,7 @@ impl WelcomeView {
                 .and_then(|val| val.parse::<bool>().ok())
                 .unwrap_or(hidden);
         }
+        debug!("create welcome hidden: {}", hidden);
         inner.set_hidden(hidden);
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
@@ -50,12 +52,13 @@ impl WelcomeView {
         Ok(WelcomeView { inner, storage, click_cb })
     }
 
-    pub fn hide_welcome(&self) {
-        self.inner.set_hidden(true);
+    pub fn set_hidden(&self, value: bool) {
+        debug!("update welcome hidden: {}", value);
+        self.inner.set_hidden(value);
 
         // remember visibility state
         if let Some(ref storage) = self.storage {
-            let _ = storage.set_item("welcome", &true.to_string());
+            let _ = storage.set_item("welcome", &value.to_string());
         }
     }
 }

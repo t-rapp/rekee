@@ -45,8 +45,6 @@ pub fn main() -> Result<(), JsValue> {
         .ok_or("Cannot find '#map-container' parent element for map component")?;
     MapController::init(MapView::new(parent, layout)?);
 
-    WelcomeController::init(WelcomeView::new(&document)?);
-
     // build some example track when compiling in development mode
     if cfg!(debug_assertions) {
         nuts::publish(InsertTileEvent { id: tile!(102, b), pos: (0, 0).into(), dir: Direction::D });
@@ -62,6 +60,9 @@ pub fn main() -> Result<(), JsValue> {
         nuts::publish(InsertTileEvent { id: tile!(101), pos: (0, -2).into(), dir: Direction::D});
         nuts::publish(AlignCenterEvent);
     }
+
+    // initialize after all other controllers are completed to ignore events during setup
+    WelcomeController::init(WelcomeView::new(&document)?);
 
     Ok(())
 }
