@@ -20,6 +20,7 @@ use crate::tile::*;
 
 mod catalog;
 mod map;
+mod version;
 mod welcome;
 
 //----------------------------------------------------------------------------
@@ -27,6 +28,8 @@ mod welcome;
 pub type CatalogView = catalog::CatalogView;
 
 pub type MapView = map::MapView;
+
+pub type VersionView = version::VersionView;
 
 pub type WelcomeView = welcome::WelcomeView;
 
