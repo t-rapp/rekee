@@ -239,7 +239,7 @@ impl ActiveHex {
         let dir = Direction::D;
 
         let img = document.create_element_ns(SVG_NS, "image")?;
-        img.set_attribute("href", "./pkg/arrow-down-circle.svg")?;
+        img.set_attribute("href", "arrow-down-circle.svg")?;
         let size = Point(16.0, 16.0);
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
         img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
@@ -270,11 +270,11 @@ impl ActiveHex {
     fn set_hint(&mut self, hint: Option<ConnectionHint>) {
         let href = match hint {
             Some(ConnectionHint::Left) => 
-                "./pkg/arrow-return-left-circle.svg",
+                "arrow-return-left-circle.svg",
             Some(ConnectionHint::Right) => 
-                "./pkg/arrow-return-right-circle.svg",
+                "arrow-return-right-circle.svg",
             _ =>
-                "./pkg/arrow-down-circle.svg",
+                "arrow-down-circle.svg",
         };
         check!(self.img.set_attribute("href", href).ok());
     }
@@ -298,7 +298,7 @@ impl DraggedTile {
         let size = layout.size();
         let angle = tile.dir.to_angle(&layout);
         let img = document.create_element_ns(SVG_NS, "image")?;
-        img.set_attribute("href", &format!("img/thumb-{}.png", tile.id()))?;
+        img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
         img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
         img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
