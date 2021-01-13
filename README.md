@@ -11,6 +11,29 @@ which is Windows-only.
 [Rallyman: DIRT]: https://holygrail.games/en/games/rallyman-dirt/
 [track editor]: https://boardgamegeek.com/thread/2399829/upload-new-track-editor-v15-9th-may-2020
 
+## Development
+
+The editor is implemented as a WebAssembly module, loaded into the main HTML
+page using a tiny JavaScript code for bootstrap.
+
+Building requires installation of:
+ * [Rust](https://www.rust-lang.org/tools/install)
+   with the `wasm32-unknown-unknown` target
+ * [Wasm-Pack](https://rustwasm.github.io/wasm-pack/installer/)
+
+Command for building the WebAssembly module:
+```
+wasm-pack build --target web --release --out-dir www/pkg
+```
+
+(Replace the `--release` flag with `--dev` to include more verbose debug
+information within the generated module).
+
+Command for running a local instance of the web application:
+```
+(cd www/ && python3 -m http.server 8000)
+```
+
 ## License
 
 Source code for Rekee is distributed under the terms of the Mozilla Public
