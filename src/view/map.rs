@@ -458,12 +458,14 @@ impl MapView {
                 .and_then(|target| target.dyn_into::<web_sys::HtmlInputElement>().ok()));
             let file = check!(input.files().and_then(|list| list.item(0)));
             let reader = check!(web_sys::FileReader::new().ok());
-            let cb_reader = reader.clone();
-            let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-                let result = check!(cb_reader.result().ok());
-                let data = check!(result.as_string());
-                info!("input file data: {}", &data);
-                nuts::publish(ImportFileEvent { data });
+            let callback = Closure::wrap(Box::new({
+                let reader = reader.clone();
+                move |_event: web_sys::Event| {
+                    let result = check!(reader.result().ok());
+                    let data = check!(result.as_string());
+                    info!("input file data: {}", &data);
+                    nuts::publish(ImportFileEvent { data });
+                }
             }) as Box<dyn FnMut(_)>);
             reader.add_event_listener_with_callback("load", callback.as_ref().unchecked_ref()).unwrap();
             reader.read_as_text(&file).expect("file not readable");
