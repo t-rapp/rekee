@@ -17,6 +17,7 @@ pub mod hexagon;
 use hexagon::*;
 
 mod import;
+pub mod edition;
 mod logger;
 
 #[macro_use]

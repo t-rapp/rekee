@@ -659,12 +659,16 @@ impl TileInfo {
         TILE_INFOS.iter()
     }
 
-    fn get(id: TileId) -> Option<&'static Self> {
+    pub fn get(id: TileId) -> Option<&'static Self> {
         let idx = TILE_INFOS.binary_search_by_key(&id.base(), |info| info.id);
         match idx {
             Ok(idx) => Some(&TILE_INFOS[idx]),
             Err(_) => None
         }
+    }
+
+    pub fn count(&self) -> usize {
+        self.count
     }
 
     fn connection(&self, dir: Direction) -> Connection {
