@@ -18,6 +18,8 @@ pub struct ImportFileEvent {
 
 pub struct ExportFileEvent;
 
+pub struct ExportImageEvent;
+
 pub struct InsertTileEvent {
     pub id: TileId,
     pub pos: Coordinate,
@@ -129,6 +131,7 @@ impl MapController {
         let activity = nuts::new_activity(controller);
         activity.subscribe(MapController::import_file);
         activity.subscribe(MapController::export_file);
+        activity.subscribe(MapController::export_image);
         activity.subscribe(MapController::insert_tile);
         activity.subscribe(MapController::append_tile);
         activity.subscribe(MapController::align_center);
@@ -153,6 +156,10 @@ impl MapController {
 
     fn export_file(&mut self, _event: &ExportFileEvent) {
         self.view.export_file();
+    }
+
+    fn export_image(&mut self, _event: &ExportImageEvent) {
+        self.view.export_image();
     }
 
     fn insert_tile(&mut self, event: &InsertTileEvent) {
@@ -217,6 +224,37 @@ impl MapController {
 
     fn update_connection_hint(&mut self, event: &UpdateConnectionHintEvent) {
         self.view.update_connection_hint(event.hint);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+pub struct DrawExportImageEvent {
+    pub map: Map,
+}
+
+pub struct DrawExportTileDoneEvent {
+    pub tile: PlacedTile,
+}
+
+pub struct ExportController {
+    view: ExportView,
+}
+
+impl ExportController {
+    pub fn init(view: ExportView) {
+        let controller = ExportController { view };
+        let activity = nuts::new_activity(controller);
+        activity.subscribe(ExportController::draw_export_image);
+        activity.subscribe(ExportController::draw_export_tile_done);
+    }
+
+    fn draw_export_image(&mut self, event: &DrawExportImageEvent) {
+        self.view.draw_export_image(&event.map);
+    }
+
+    fn draw_export_tile_done(&mut self, event: &DrawExportTileDoneEvent) {
+        self.view.draw_export_tile_done(&event.tile);
     }
 }
 

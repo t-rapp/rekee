@@ -40,7 +40,11 @@ pub fn main() -> Result<(), JsValue> {
 
     let parent = document.get_element_by_id("map-container")
         .ok_or("Cannot find '#map-container' parent element for map component")?;
-    MapController::init(MapView::new(parent, layout)?);
+    MapController::init(MapView::new(parent, &layout)?);
+
+    let parent = document.get_element_by_id("export-container")
+        .ok_or("Cannot find '#export-container' parent element for export component")?;
+    ExportController::init(ExportView::new(parent, &layout)?);
 
     VersionView::new(&document)?;
 

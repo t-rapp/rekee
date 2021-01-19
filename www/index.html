@@ -134,6 +134,16 @@
               <span>Download…</span>
             </button>
           </div>
+          <div class="control">
+            <button id="export-image-button" class="button is-light" title="Export track as an image">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#image"/>
+                </svg>
+              </span>
+              <span>Export PNG</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="navbar-menu">
@@ -212,6 +222,9 @@
       </div>
     </main>
 
+    <div id="export-container" class="is-hidden">
+      <!-- export elements added here by WASM -->
+    </div>
     <div id="menus" class="is-hidden">
       <div id="selected-menu" class="buttons are-small has-addons is-centered">
         <button id="rotate-selected-right-button" class="button" title="Rotate tile right">

@@ -347,8 +347,9 @@ pub struct MapView {
 }
 
 impl MapView {
-    pub fn new(parent: Element, layout: Layout) -> Result<Self> {
+    pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
         let map = Map::new();
+        let layout = layout.clone();
         let document = parent.owner_document().unwrap();
 
         // remove all pre-existing child nodes
@@ -485,6 +486,14 @@ impl MapView {
         control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
+        let control = document.get_element_by_id("export-image-button").unwrap()
+            .dyn_into::<web_sys::HtmlElement>().unwrap();
+        let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(ExportImageEvent);
+        }) as Box<dyn Fn(_)>);
+        control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        callback.forget();
+
         Ok(MapView {
             layout, map, canvas, tiles, title, selected, selected_menu, active,
             dragged, dragged_mousemove_cb, dragged_mouseup_cb,
@@ -528,6 +537,12 @@ impl MapView {
         check!(document.body().unwrap().append_child(&anchor).ok());
         anchor.click();
         check!(document.body().unwrap().remove_child(&anchor).ok());
+    }
+
+    pub fn export_image(&mut self) {
+        // forward the request together with current map data to the export view
+        let map = self.map.clone();
+        nuts::publish(DrawExportImageEvent { map });
     }
 
     pub fn insert_tile(&mut self, id: TileId, pos: Coordinate, dir: Direction) {

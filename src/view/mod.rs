@@ -16,6 +16,7 @@ use crate::hexagon::*;
 use crate::tile::*;
 
 mod catalog;
+mod export;
 mod map;
 mod version;
 mod welcome;
@@ -23,6 +24,8 @@ mod welcome;
 //----------------------------------------------------------------------------
 
 pub type CatalogView = catalog::CatalogView;
+
+pub type ExportView = export::ExportView;
 
 pub type MapView = map::MapView;
 
