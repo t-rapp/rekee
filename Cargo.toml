@@ -12,7 +12,6 @@ license = "MPL-2.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-indoc = "1.0"
 js-sys = "0.3.45"
 log = { version = "0.4.8", features = ["max_level_trace", "release_max_level_info"] }
 nuts = "0.1.1"

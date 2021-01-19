@@ -8,7 +8,6 @@
 
 #![allow(clippy::needless_return)]
 
-use indoc::indoc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -38,20 +37,7 @@ type Result<T> = std::result::Result<T, JsValue>;
 const SVG_NS: Option<&str> = Some(SVG_NS_STR);
 const SVG_NS_STR: &str = "http://www.w3.org/2000/svg";
 
-const TILE_STYLE: &str = indoc!(r#"
-    .label {
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: bold;
-        fill: #444;
-        paint-order: stroke;
-        stroke: white;
-        stroke-width: 2.0;
-        dominant-baseline: middle;
-        text-anchor: middle;
-        user-select: none;
-        pointer-events: none;
-    }"#);
+const TILE_STYLE: &str = include_str!("tile.css");
 
 //----------------------------------------------------------------------------
 
