@@ -577,6 +577,12 @@ impl MapView {
         }
         document_title.push_str(&self.document_title);
         document.set_title(&document_title);
+
+        // update catalog tile usage counters
+        let tiles: Vec<TileId> = self.map.tiles().iter()
+            .map(|tile| tile.id())
+            .collect();
+        nuts::publish(UpdateTileUsageEvent { tiles });
      }
 
     pub fn update_title(&mut self, title: &str) {

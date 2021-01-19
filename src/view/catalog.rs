@@ -6,7 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 use log::{info};
 use wasm_bindgen::prelude::*;
@@ -15,6 +15,7 @@ use web_sys::{self, Document, Element, Storage};
 
 use crate::check;
 use crate::controller::*;
+use crate::edition::Edition;
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -22,12 +23,14 @@ use super::*;
 struct CatalogTile {
     inner: Element,
     id: TileId,
+    count: usize,
+    counter: Element,
     dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
 }
 
 impl CatalogTile {
-    fn new(document: &Document, layout: &Layout, id: TileId) -> Result<Self> {
+    fn new(document: &Document, layout: &Layout, id: TileId, count: usize) -> Result<Self> {
         let canvas = document.create_element_ns(SVG_NS, "svg")?;
         let width = (2.0 * layout.size().x()).round() as i32;
         let height = (2.0 * layout.size().y()).round() as i32;
@@ -45,6 +48,12 @@ impl CatalogTile {
         tile.set_attribute("class", "tile")?;
         tile.set_attribute("draggable", "true")?;
         tile.append_child(&canvas)?;
+
+        let counter = document.create_element("div")?;
+        counter.set_attribute("class", "counter tag is-rounded is-light")?;
+        let text = count.to_string();
+        counter.append_child(&document.create_text_node(&text))?;
+        tile.append_child(&counter)?;
 
         let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             let hint = match (event.shift_key(), event.ctrl_key()) {
@@ -70,7 +79,31 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogTile { inner: tile, id, dblclick_cb, dragstart_cb })
+        Ok(CatalogTile { inner: tile, id, count, counter, dblclick_cb, dragstart_cb })
+    }
+
+    fn set_usage(&self, value: usize) {
+        let count = self.count as i32 - value as i32;
+        let text = count.to_string();
+        self.counter.set_inner_html(&text);
+        if count <= 0 {
+            check!(self.inner.class_list().add_1("is-disabled").ok());
+        } else {
+            check!(self.inner.class_list().remove_1("is-disabled").ok());
+        }
+        if count < 0 {
+            check!(self.counter.class_list().remove_1("is-light").ok());
+            check!(self.counter.class_list().remove_1("is-white").ok());
+            check!(self.counter.class_list().add_1("is-warning").ok());
+        } else if count == 0 {
+            check!(self.counter.class_list().remove_1("is-light").ok());
+            check!(self.counter.class_list().add_1("is-white").ok());
+            check!(self.counter.class_list().remove_1("is-warning").ok());
+        } else {
+            check!(self.counter.class_list().add_1("is-light").ok());
+            check!(self.counter.class_list().remove_1("is-white").ok());
+            check!(self.counter.class_list().remove_1("is-warning").ok());
+        }
     }
 }
 
@@ -186,9 +219,21 @@ impl CatalogView {
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
 
-        let mut tiles = Vec::with_capacity(TileInfo::iter().count());
-        for info in TileInfo::iter() {
-            let tile = CatalogTile::new(&document, &layout, info.full_id())?;
+        let tile_ids = Edition::all_tiles();
+        let mut tile_counts = HashMap::<TileId, usize>::new();
+        for full_id in &tile_ids {
+            let count = tile_counts.entry(full_id.base()).or_insert(0);
+            *count += 1;
+        }
+
+        let mut tiles = Vec::with_capacity(tile_ids.len());
+        for full_id in &tile_ids {
+            /* create only a single tile for each base identifier, ignore more variants */
+            let count = match tile_counts.remove(&full_id.base()) {
+                Some(val) => val,
+                None => continue,
+            };
+            let tile = CatalogTile::new(&document, &layout, *full_id, count)?;
             let item = document.create_element("li")?;
             item.append_child(tile.as_ref())?;
             catalog.append_child(&item)?;
@@ -286,6 +331,21 @@ impl CatalogView {
                 None => "all".to_string(),
             };
             let _ = storage.set_item("filter", &value);
+        }
+    }
+
+    pub fn update_tile_usage(&mut self, tiles: &[TileId]) {
+        info!("update tile usage");
+
+        /* when a tile is used, count both sides as used */
+        let mut tile_counts = HashMap::<u16, usize>::new();
+        for full_id in tiles {
+            let count = tile_counts.entry(full_id.num()).or_insert(0);
+            *count += 1;
+        }
+        for tile in &self.tiles {
+            let count = tile_counts.get(&tile.id.num()).unwrap_or(&0);
+            tile.set_usage(*count);
         }
     }
 

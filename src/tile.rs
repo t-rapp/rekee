@@ -35,7 +35,7 @@ use crate::hexagon::{Coordinate, Direction, Layout, Point};
 /// let tile = TileId::new(103, 1, 2);
 /// assert_eq!(tile.to_string(), "103a-2");
 /// ```
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TileId {
     num: u16,
     side: u8,

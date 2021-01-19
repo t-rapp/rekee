@@ -52,6 +52,10 @@ pub struct UpdateFilterEvent {
     pub lanes: Option<u8>,
 }
 
+pub struct UpdateTileUsageEvent {
+    pub tiles: Vec<TileId>,
+}
+
 pub struct UpdateConnectionHintEvent {
     pub hint: Option<ConnectionHint>,
 }
@@ -94,11 +98,16 @@ impl CatalogController {
         let controller = CatalogController { view };
         let catalog = nuts::new_activity(controller);
         catalog.subscribe(CatalogController::update_filter);
+        catalog.subscribe(CatalogController::update_tile_usage);
         catalog.subscribe(CatalogController::drag_catalog_begin);
     }
 
     fn update_filter(&mut self, event: &UpdateFilterEvent) {
         self.view.update_filter(event.lanes);
+    }
+
+    fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
+        self.view.update_tile_usage(&event.tiles);
     }
 
     fn drag_catalog_begin(&mut self, event: &DragCatalogBeginEvent) {
