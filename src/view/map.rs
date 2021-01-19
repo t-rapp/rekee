@@ -18,6 +18,8 @@ use super::*;
 
 //----------------------------------------------------------------------------
 
+const MAP_STYLE: &str = include_str!("map.css");
+
 fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
 {
     let corners = layout.hexagon_corners((0, 0).into());
@@ -369,6 +371,7 @@ impl MapView {
         canvas.append_child(&defs)?;
 
         let style = document.create_element_ns(SVG_NS, "style")?;
+        style.append_child(&document.create_text_node(MAP_STYLE))?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
 
