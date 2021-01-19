@@ -507,7 +507,7 @@ impl MapView {
         let data = match import::export_rgt(&self.map) {
             Ok(val) => val,
             Err(err) => {
-                warn!("Cannot emport file data: {}", err);
+                warn!("Cannot export file data: {}", err);
                 return;
             },
         };
