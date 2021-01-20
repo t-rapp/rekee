@@ -31,14 +31,17 @@
         #catalog .tile {
             position: relative;
         }
+        #catalog .tile svg {
+            z-index: 1;
+        }
+        #catalog .tile.is-disabled svg {
+            opacity: 0.6;
+        }
         #catalog .counter {
             font-weight: 600;
             position: absolute;
             bottom: 0%;
             right: 0%;
-        }
-        #catalog .is-disabled svg {
-            opacity: 0.6;
         }
         #map-title .input {
             width: 50%;
