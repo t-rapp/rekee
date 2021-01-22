@@ -79,10 +79,6 @@ impl TitleInput {
         Ok(TitleInput { inner, change_cb })
     }
 
-    fn value(&self) -> String {
-        self.inner.value()
-    }
-
     fn set_value(&self, value: &str) {
         self.inner.set_value(value)
     }

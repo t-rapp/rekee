@@ -6,8 +6,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-#![allow(dead_code)]
-
 use wasm_bindgen::prelude::*;
 
 mod controller;

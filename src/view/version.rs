@@ -39,4 +39,10 @@ impl VersionView {
     }
 }
 
+impl AsRef<Element> for VersionView {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
 //----------------------------------------------------------------------------

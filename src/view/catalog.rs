@@ -195,7 +195,6 @@ impl Drop for FilterItem {
 //----------------------------------------------------------------------------
 
 pub struct CatalogView {
-    layout: Layout,
     catalog: Element,
     tiles: Vec<CatalogTile>,
     filter_items: Vec<FilterItem>,
@@ -297,7 +296,7 @@ impl CatalogView {
         }
 
         let mut view = CatalogView {
-            layout, catalog, tiles, filter_items, map: None, storage,
+            catalog, tiles, filter_items, map: None, storage,
             dragover_cb, dragdrop_cb, keychange_cb
         };
         view.update_filter(lanes);

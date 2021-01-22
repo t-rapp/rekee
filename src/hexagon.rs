@@ -458,6 +458,7 @@ impl Point {
         self.1
     }
 
+    #[cfg(test)]
     fn distance(&self, other: Point) -> f32 {
         let dx = other.0 - self.0;
         let dy = other.1 - self.1;
