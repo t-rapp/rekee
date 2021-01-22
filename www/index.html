@@ -12,6 +12,14 @@
             font-weight: normal;
             font-style: normal;
         }
+        @media print {
+            header, footer, nav {
+                display: none !important;
+            }
+            .is-print-hidden {
+                display: none !important;
+            }
+        }
         .navbar-brand > .navbar-item {
             font-family: 'Edo Regular';
         }
@@ -163,7 +171,7 @@
 
     <main>
       <div class="columns is-variable is-2">
-        <div class="column is-one-third">
+        <div class="column is-one-third is-print-hidden">
           <div id="catalog-container" class="box has-background-light">
             <div id="catalog-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth">
               <ul>
@@ -185,7 +193,7 @@
           </div>
         </div>
         <div class="column">
-          <article id="welcome" class="message mx-4 my-4 is-info is-hidden">
+          <article id="welcome" class="message mx-4 my-4 is-info is-hidden is-print-hidden">
             <div class="message-header">
               <p>Welcome!</p>
               <button class="delete" aria-label="delete"></button>

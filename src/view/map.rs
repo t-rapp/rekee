@@ -120,6 +120,7 @@ impl SelectedHex {
 
         let hex = document.create_element_ns(SVG_NS, "g")?;
         hex.set_id("selected");
+        hex.set_attribute("class", "is-print-hidden")?;
         hex.set_hidden(true);
         hex.append_child(&poly)?;
 
@@ -165,6 +166,7 @@ impl SelectedMenu {
     fn new(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Self> {
         let pos = pos.to_pixel(&layout);
         let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
+        menu.set_attribute("class", "is-print-hidden")?;
         menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
         menu.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string())?;
         menu.set_attribute("width", "120")?;
@@ -245,6 +247,7 @@ impl ActiveHex {
 
         let inner = document.create_element_ns(SVG_NS, "g")?;
         inner.set_id("active");
+        inner.set_attribute("class", "is-print-hidden")?;
         let inner_pos = pos.to_pixel(&layout);
         let angle = dir.to_angle(&layout);
         let transform = format!("translate({:.3} {:.3}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
@@ -375,6 +378,7 @@ impl MapView {
 
         let group = document.create_element_ns(SVG_NS, "g")?;
         group.set_id("grid");
+        group.set_attribute("class", "is-print-hidden")?;
         let map_radius = 4;
         for q in -map_radius..=map_radius {
             let r1 = i32::max(-map_radius, -q - map_radius);
