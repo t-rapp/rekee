@@ -1,11 +1,11 @@
 Rekee
 =====
 
-Rekee is an editor that allows designing of custom tracks for the boardgames
-[Rallyman: GT] and [Rallyman: DIRT] published by Holy Grail Games. This software
-is a personal project with the goal to build a cross-platform web application as
-an alternative to the currently existing [Rallyman Track Editor][track editor],
-which is Windows-only.
+Rekee is an editor that allows to design custom tracks for the [Rallyman: GT]
+board game published by Holy Grail Games. Support for the upcoming edition of
+[Rallyman: DIRT] is planned. This software is a project with the goal to build
+a cross-platform web application as an alternative to the currently existing
+[Rallyman Track Editor][track editor], which is Windows-only.
 
 [Rallyman: GT]: https://holygrail.games/en/games/rallyman-gt/
 [Rallyman: DIRT]: https://holygrail.games/en/games/rallyman-dirt/
