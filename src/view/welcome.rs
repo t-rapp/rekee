@@ -18,6 +18,7 @@ use super::*;
 
 pub struct WelcomeView {
     inner: Element,
+    header: Element,
     storage: Option<Storage>,
     click_cb: Closure<dyn Fn(web_sys::Event)>,
 }
@@ -40,14 +41,17 @@ impl WelcomeView {
         debug!("create welcome hidden: {}", hidden);
         inner.set_hidden(hidden);
 
+        let header = inner.query_selector(".message-header")?
+            .ok_or("Cannot find header of welcome message element")?;
+
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::publish(HideWelcomeEvent);
         }) as Box<dyn Fn(_)>);
 
-        inner.add_event_listener_with_callback("click",
+        header.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 
-        Ok(WelcomeView { inner, storage, click_cb })
+        Ok(WelcomeView { inner, header, storage, click_cb })
     }
 
     pub fn set_hidden(&self, value: bool) {
@@ -63,7 +67,7 @@ impl WelcomeView {
 
 impl Drop for WelcomeView {
     fn drop(&mut self) {
-        let _ = self.inner.remove_event_listener_with_callback("click",
+        let _ = self.header.remove_event_listener_with_callback("click",
             self.click_cb.as_ref().unchecked_ref());
     }
 }
