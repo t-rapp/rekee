@@ -56,7 +56,7 @@ impl CatalogTile {
         tile.append_child(&counter)?;
 
         let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            let hint = match (event.shift_key(), event.ctrl_key()) {
+            let hint = match (event.shift_key(), event.ctrl_key() || event.meta_key()) {
                 (true, true) => Some(ConnectionHint::Straight),
                 (true, false) => Some(ConnectionHint::Left),
                 (false, true) => Some(ConnectionHint::Right),
@@ -274,7 +274,7 @@ impl CatalogView {
             if event.repeat() {
                 return;
             }
-            let hint = match (event.shift_key(), event.ctrl_key()) {
+            let hint = match (event.shift_key(), event.ctrl_key() || event.meta_key()) {
                 (true, true) => Some(ConnectionHint::Straight),
                 (true, false) => Some(ConnectionHint::Left),
                 (false, true) => Some(ConnectionHint::Right),
