@@ -54,7 +54,7 @@ pub fn main() -> Result<(), JsValue> {
         nuts::publish(AppendTileEvent { id: tile!(115, b), pos: None, hint: None });
         nuts::publish(AppendTileEvent { id: tile!(115, b), pos: None, hint: None });
         nuts::publish(AppendTileEvent { id: tile!(108, b), pos: None, hint: "r".parse().ok() });
-        nuts::publish(AppendTileEvent { id: tile!(110, b), pos: None, hint: "L".parse().ok() });
+        nuts::publish(AppendTileEvent { id: tile!(110, b), pos: None, hint: "R".parse().ok() });
         nuts::publish(AppendTileEvent { id: tile!(107, b), pos: None, hint: None });
         nuts::publish(InsertTileEvent { id: tile!(101), pos: (0, -2).into(), dir: Direction::D});
         nuts::publish(AlignCenterEvent);

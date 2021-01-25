@@ -736,8 +736,8 @@ const TILE_INFOS: [TileInfo; 109] = [
     TileInfo::new(tile!(108, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(109, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
     TileInfo::new(tile!(109, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(110, a), 1, [CR0, CN, CN, CL0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(110, b), 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(110, a), 1, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(110, b), 1, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
     TileInfo::new(tile!(111, a), 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
     TileInfo::new(tile!(111, b), 2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(112, a), 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
@@ -748,8 +748,8 @@ const TILE_INFOS: [TileInfo; 109] = [
     TileInfo::new(tile!(114, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(115, a), 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
     TileInfo::new(tile!(115, b), 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(116, a), 2, [CR0, CN, CN, CL0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(116, b), 2, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(116, a), 2, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(116, b), 2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
     TileInfo::new(tile!(117, a), 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
     TileInfo::new(tile!(117, b), 2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(118, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
@@ -880,7 +880,7 @@ mod tests {
         map.append(tile!(115, b), None, None);
         map.append(tile!(115, b), None, "l".parse().ok());
         map.append(tile!(108, b), None, "r".parse().ok());
-        map.append(tile!(110, b), None, "L".parse().ok());
+        map.append(tile!(110, b), None, "R".parse().ok());
         map.append(tile!(107, b), None, None);
         assert_eq!(map.active_pos(), None);
         map.insert(tile!(101), (0, -2).into(), Direction::A);
