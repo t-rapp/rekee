@@ -77,7 +77,7 @@ dependencies = [
 
 [[package]]
 name = "rekee"
-version = "0.4.8"
+version = "0.4.9"
 dependencies = [
  "indoc",
  "js-sys",
