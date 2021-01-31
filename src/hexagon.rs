@@ -490,6 +490,119 @@ impl From<(f32, f32)> for Point {
 
 //----------------------------------------------------------------------------
 
+/// Rectangle area within a grid of rectangular pixels. It consists of the four
+/// values: top, left, width, and height. Both axes of the grid are aligned like
+/// the coordinate system of a web page: `x` runs from left to right, `y` runs
+/// from top to bottom.
+///
+/// # Examples
+///
+/// ```
+/// # use rekee::hexagon::*;
+/// let rect = Rect::new(1.0, 2.0, 4.0, 3.0);
+/// assert_eq!(rect.left, 1.0);
+/// assert_eq!(rect.top, 2.0);
+/// assert_eq!(rect.right(), 5.0);
+/// assert_eq!(rect.bottom(), 5.0);
+/// ```
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct Rect {
+    pub left: f32,
+    pub top: f32,
+    pub width: f32,
+    pub height: f32,
+}
+
+impl Rect {
+    /// Creates a new rectangle from the `left`, `top`, `width` and `height`
+    /// values. Values for `width` or `height` are allowed to be negative, the
+    /// rectangle will be normalized in that case.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let rect = Rect::new(1.0, 2.0, 3.0, -4.0);
+    /// assert_eq!(rect.left, 1.0);
+    /// assert_eq!(rect.top, -2.0);
+    /// assert_eq!(rect.right(), 4.0);
+    /// assert_eq!(rect.bottom(), 2.0);
+    /// ```
+    pub fn new(left: f32, top: f32, width: f32, height: f32) -> Self {
+        Rect { left, top, width, height }.normalized()
+    }
+
+    /// Right position of the rectangle.
+    pub fn right(&self) -> f32 {
+        self.left + self.width
+    }
+
+    /// Bottom position of the rectangle.
+    pub fn bottom(&self) -> f32 {
+        self.top + self.height
+    }
+
+    /// Center point of the rectangle.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let rect = Rect::new(0.0, 1.0, 3.0, 4.0);
+    /// assert_eq!(rect.center(), Point(1.5, 3.0));
+    /// ```
+    pub fn center(&self) -> Point {
+        let x = self.left + self.width / 2.0;
+        let y = self.top + self.height / 2.0;
+        Point(x, y)
+    }
+
+    /// Calculates the union of two rectangles, the smallest rectangle that
+    /// fully contains both source rectangles.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let a = Rect::new(1.0, 2.0, 3.0, 4.0);
+    /// let b = Rect::new(-3.0, -4.0, 2.0, 1.0);
+    /// let rect = a.union(&b);
+    /// assert_eq!(rect.left, -3.0);
+    /// assert_eq!(rect.top, -4.0);
+    /// assert_eq!(rect.width, 7.0);
+    /// assert_eq!(rect.height, 10.0);
+    /// ```
+    pub fn union(&self, other: &Rect) -> Rect {
+        let a = self.normalized();
+        let b = other.normalized();
+        let left = a.left.min(b.left);
+        let top = a.top.min(b.top);
+        let width = a.right().max(b.right()) - left;
+        let height = a.bottom().max(b.bottom()) - top;
+        Rect { left, top, width, height }
+    }
+
+    fn normalized(&self) -> Rect {
+        let mut left = self.left;
+        let mut top = self.top;
+        let width = if self.width >= 0.0 {
+            self.width
+        } else {
+            left += self.width;
+            -self.width
+        };
+        let height = if self.height >= 0.0 {
+            self.height
+        } else {
+            top += self.height;
+            -self.height
+        };
+        Rect { left, top, width, height }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Hexagon orientation coefficients.
 #[derive(Debug, Clone)]
 pub struct Orientation {
@@ -588,6 +701,21 @@ impl Layout {
             *corner = center + Point(offset_x, offset_y);
         }
         corners
+    }
+
+    /// Calculates the rectangular box of a hexagon with the given coordinate.
+    pub fn hexagon_rect(&self, hex: Coordinate) -> Rect {
+        let mut x_min = f32::NAN;
+        let mut x_max = f32::NAN;
+        let mut y_min = f32::NAN;
+        let mut y_max = f32::NAN;
+        for point in self.hexagon_corners(hex).iter() {
+            x_min = x_min.min(point.x());
+            x_max = x_max.max(point.x());
+            y_min = y_min.min(point.y());
+            y_max = y_max.max(point.y());
+        }
+        Rect { left: x_min, top: y_min, width: x_max - x_min, height: y_max - y_min }
     }
 }
 
@@ -819,6 +947,58 @@ mod tests {
         assert_eq!("(40.0, -34.6), (25.0, -17.3), (-5.0, -17.3), (-20.0, -34.6), (-5.0, -52.0), (25.0, -52.0)", points_to_string(&corners));
         let corners = layout.hexagon_corners((2, -1).into());
         assert_eq!("(-5.0, -52.0), (-20.0, -34.6), (-50.0, -34.6), (-65.0, -52.0), (-50.0, -69.3), (-20.0, -69.3)", points_to_string(&corners));
+    }
+
+    #[test]
+    fn layout_hexagon_rect() {
+        let rect_to_string = |rect: &Rect| -> String {
+            format!("({:.1}, {:.1}) {:.1}x{:.1}", rect.left, rect.top, rect.width, rect.height)
+        };
+
+        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let rect = layout.hexagon_rect((0, 0).into());
+        assert_eq!("(-8.7, -10.0) 17.3x20.0", rect_to_string(&rect));
+        let mut total = rect;
+        let rect = layout.hexagon_rect((0, 1).into());
+        assert_eq!("(-0.0, 5.0) 17.3x20.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((1, 0).into());
+        assert_eq!("(8.7, -10.0) 17.3x20.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((2, -1).into());
+        assert_eq!("(17.3, -25.0) 17.3x20.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        assert_eq!("(-8.7, -25.0) 43.3x50.0", rect_to_string(&total));
+
+        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let rect = layout.hexagon_rect((0, 0).into());
+        assert_eq!("(-17.3, -10.0) 34.6x40.0", rect_to_string(&rect));
+        let mut total = rect;
+        let rect = layout.hexagon_rect((0, 1).into());
+        assert_eq!("(-0.0, -40.0) 34.6x40.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((1, 0).into());
+        assert_eq!("(17.3, -10.0) 34.6x40.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((2, -1).into());
+        assert_eq!("(34.6, 20.0) 34.6x40.0", rect_to_string(&rect));
+        total = total.union(&rect);
+        assert_eq!("(-17.3, -40.0) 86.6x100.0", rect_to_string(&total));
+
+        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let rect = layout.hexagon_rect((0, 0).into());
+        assert_eq!("(-20.0, -17.3) 60.0x34.6", rect_to_string(&rect));
+        let mut total = rect;
+        let rect = layout.hexagon_rect((0, 1).into());
+        assert_eq!("(25.0, -34.6) 60.0x34.6", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((1, 0).into());
+        assert_eq!("(-20.0, -52.0) 60.0x34.6", rect_to_string(&rect));
+        total = total.union(&rect);
+        let rect = layout.hexagon_rect((2, -1).into());
+        assert_eq!("(-65.0, -69.3) 60.0x34.6", rect_to_string(&rect));
+        total = total.union(&rect);
+        assert_eq!("(-65.0, -69.3) 150.0x86.6", rect_to_string(&total));
     }
 }
 
