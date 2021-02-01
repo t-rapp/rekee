@@ -10,7 +10,7 @@ use crate::tile::TileId;
 
 //----------------------------------------------------------------------------
 
-/// Rallyman game edition (core gox or one of the expansions).
+/// Rallyman game edition (core box or one of the expansions).
 pub enum Edition {
     /// Rallyman: GT Core Box
     GtCoreBox,
