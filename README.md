@@ -34,6 +34,18 @@ Command for running a local instance of the web application:
 (cd www/ && python3 -m http.server 8000)
 ```
 
+### Unit Tests
+
+The source files contain a set of unit tests. Before committing any code
+changes it is recommended to run these tests with:
+```
+cargo test
+```
+
+(Note that this will compile and run test code using the default native Rust
+target, which is not exactly the same as running the WASM target output inside
+its virtual environment. It should make no practical difference, though.)
+
 ## License
 
 Source code for Rekee is distributed under the terms of the Mozilla Public
