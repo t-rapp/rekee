@@ -24,6 +24,7 @@ use super::*;
 //----------------------------------------------------------------------------
 
 const PADDING: f32 = 2.0;
+const TITLE_HEIGHT: f32 = 24.0;
 
 struct TileImage {
     image: HtmlImageElement,
@@ -144,18 +145,27 @@ impl ExportView {
         trace!("map area: {:?}, layout origin: {:?}", map_area, self.layout.origin());
 
         let width = (map_area.width + 2.0 * PADDING) as i32;
-        let height = (map_area.height + 2.0 * PADDING) as i32;
+        let height = (map_area.height + TITLE_HEIGHT + 3.0 * PADDING) as i32;
         check!(self.canvas.set_attribute("width", &width.to_string()).ok());
         check!(self.canvas.set_attribute("height", &height.to_string()).ok());
 
-        let origin = self.layout.origin() - Point(map_area.left, map_area.top) + Point(PADDING, PADDING);
+        let origin = self.layout.origin() - Point(map_area.left, map_area.top) +
+            Point(PADDING, TITLE_HEIGHT + 2.0 * PADDING);
         let layout = Layout::new(self.layout.orientation(), self.layout.size(), origin);
         let context = check!(self.canvas.get_context("2d").ok().flatten()
             .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
 
+        context.save();
         // draw background color
         context.set_fill_style(&JsValue::from_str("#FFF"));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
+        // draw map title
+        context.set_font("normal 24px sans-serif");
+        context.set_text_align("left");
+        context.set_text_baseline("top");
+        context.set_fill_style(&JsValue::from_str("#222"));
+        check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
+        context.restore();
 
         // draw each tile image asynchronously
         for tile in map.tiles() {
