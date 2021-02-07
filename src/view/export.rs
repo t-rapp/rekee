@@ -168,6 +168,7 @@ impl ExportView {
         context.restore();
 
         // draw each tile image asynchronously
+        self.images.clear();
         for tile in map.tiles() {
             let image = check!(TileImage::new(&context, &layout, tile.clone()).ok());
             self.images.push(image);
