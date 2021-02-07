@@ -26,23 +26,75 @@ use super::*;
 const PADDING: f32 = 2.0;
 const TITLE_HEIGHT: f32 = 24.0;
 
+fn draw_tile_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlImageElement,
+    pos: Point, size: Point, angle: f32) -> Result<()>
+{
+    let pos_x = f64::from(pos.x());
+    let pos_y = f64::from(pos.y());
+    let size_x = 2.0 * f64::from(size.x());
+    let size_y = 2.0 * f64::from(size.y());
+    let angle = f64::from(angle * std::f32::consts::PI / 180.0);
+    let scale = f64::min(
+        size_x / image.natural_width() as f64,
+        size_y / image.natural_height() as f64
+    );
+    let width = scale * image.natural_width() as f64;
+    let height = scale * image.natural_height() as f64;
+
+    context.translate(pos_x, pos_y)?;
+    context.rotate(angle)?;
+    context.translate(-pos_x, -pos_y)?;
+    context.draw_image_with_html_image_element_and_dw_and_dh(&image,
+        pos_x - width / 2.0, pos_y - height / 2.0, width, height)?;
+    context.set_transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)?;
+
+    Ok(())
+}
+
+fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, pos: Point, size: Point) -> Result<()> {
+    let pos_x = f64::from(pos.x());
+    let pos_y = f64::from(pos.y());
+    let height = 1.6 * size.y();
+
+    context.set_font(&format!("bold {:.0}px sans-serif", height));
+    context.set_text_align("center");
+    context.set_text_baseline("middle");
+    context.set_fill_style(&JsValue::from_str("#EEE"));
+    context.fill_text("?", pos_x, pos_y)?;
+
+    Ok(())
+}
+
+fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, text: &str, pos: Point) -> Result<()> {
+    let pos_x = f64::from(pos.x());
+    let pos_y = f64::from(pos.y());
+
+    context.set_font("bold 14px sans-serif");
+    context.set_text_align("center");
+    context.set_text_baseline("middle");
+    context.set_line_width(2.0);
+    context.set_stroke_style(&JsValue::from_str("#FFF"));
+    context.stroke_text(text, pos_x, pos_y)?;
+    context.set_fill_style(&JsValue::from_str("#444"));
+    context.fill_text(text, pos_x, pos_y)?;
+
+    Ok(())
+}
+
+//----------------------------------------------------------------------------
+
 struct TileImage {
     image: HtmlImageElement,
     tile: PlacedTile,
     load_cb: Closure<dyn Fn(web_sys::Event)>,
+    error_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
 impl TileImage {
     fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile) -> Result<Self> {
-        use std::f32::consts::PI;
         let pos = tile.pos.to_pixel(layout);
-        let pos_x = f64::from(pos.x());
-        let pos_y = f64::from(pos.y());
         let size = layout.size();
-        let size_x = 2.0 * f64::from(size.x());
-        let size_y = 2.0 * f64::from(size.y());
         let angle = tile.dir.to_angle(layout);
-        let angle = f64::from(angle * PI / 180.0);
         let image = HtmlImageElement::new()?;
 
         let load_cb = Closure::wrap(Box::new({
@@ -50,44 +102,35 @@ impl TileImage {
             let image = image.clone();
             let context = context.clone();
             move |_event: web_sys::Event| {
-                debug!("draw tile image {:?}", tile);
-                let scale = f64::min(
-                    size_x / image.natural_width() as f64,
-                    size_y / image.natural_height() as f64
-                );
-                let width = scale * image.natural_width() as f64;
-                let height = scale * image.natural_height() as f64;
-                trace!("x={:.1}, y={:.1}, width={:.1}, height={:.1}", pos_x, pos_y, width, height);
+                debug!("drawing tile image {:?}", tile);
                 context.save();
-
-                // draw tile image
-                check!(context.translate(pos_x, pos_y).ok());
-                check!(context.rotate(angle).ok());
-                check!(context.translate(-pos_x, -pos_y).ok());
-                check!(context.draw_image_with_html_image_element_and_dw_and_dh(&image, pos_x - width / 2.0, pos_y - height / 2.0, width, height).ok());
-                check!(context.set_transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0).ok());
-
-                // draw tile label
-                context.set_font("bold 14px sans-serif");
-                context.set_text_align("center");
-                context.set_text_baseline("middle");
-                context.set_line_width(2.0);
-                context.set_stroke_style(&JsValue::from_str("#FFF"));
-                check!(context.stroke_text(&tile.id().base().to_string(), pos_x, pos_y).ok());
-                context.set_fill_style(&JsValue::from_str("#444"));
-                check!(context.fill_text(&tile.id().base().to_string(), pos_x, pos_y).ok());
-
+                check!(draw_tile_image(&context, &image, pos, size, angle).ok());
+                check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
                 context.restore();
                 nuts::publish(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) as Box<dyn Fn(_)>);
         image.add_event_listener_with_callback("load", load_cb.as_ref().unchecked_ref())?;
 
+        let error_cb = Closure::wrap(Box::new({
+            let tile = tile.clone();
+            let context = context.clone();
+            move |_event: web_sys::Event| {
+                debug!("loading of tile image {:?} failed", tile);
+                context.save();
+                check!(draw_missing_image(&context, pos, size).ok());
+                check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
+                context.restore();
+                nuts::publish(DrawExportTileDoneEvent { tile: tile.clone() });
+            }
+        }) as Box<dyn Fn(_)>);
+        image.add_event_listener_with_callback("error", error_cb.as_ref().unchecked_ref())?;
+
         // start loading the tile image
         let url = format!("tiles/thumb-{}.png", tile.id());
         image.set_attribute("src", &url)?;
 
-        Ok(TileImage { image, tile, load_cb })
+        Ok(TileImage { image, tile, load_cb, error_cb })
     }
 }
 
@@ -95,6 +138,8 @@ impl Drop for TileImage {
     fn drop(&mut self) {
         let _ = self.image.remove_event_listener_with_callback("load",
             self.load_cb.as_ref().unchecked_ref());
+        let _ = self.image.remove_event_listener_with_callback("error",
+            self.error_cb.as_ref().unchecked_ref());
     }
 }
 
