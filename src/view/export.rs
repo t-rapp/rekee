@@ -23,8 +23,8 @@ use super::*;
 
 //----------------------------------------------------------------------------
 
-const PADDING: f32 = 2.0;
-const TITLE_HEIGHT: f32 = 24.0;
+const PADDING: i32 = 2;
+const TITLE_HEIGHT: i32 = 20;
 
 fn draw_tile_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlImageElement,
     pos: Point, size: Point, angle: f32) -> Result<()>
@@ -189,13 +189,20 @@ impl ExportView {
         map_area.height = map_area.height.ceil();
         trace!("map area: {:?}, layout origin: {:?}", map_area, self.layout.origin());
 
-        let width = (map_area.width + 2.0 * PADDING) as i32;
-        let height = (map_area.height + TITLE_HEIGHT + 3.0 * PADDING) as i32;
+        let width = map_area.width as i32 + 2 * PADDING;
+        let mut height = map_area.height as i32 + 2 * PADDING;
+        let has_title = !map.title().is_empty();
+        if has_title {
+            height = height + TITLE_HEIGHT + PADDING;
+        }
         check!(self.canvas.set_attribute("width", &width.to_string()).ok());
         check!(self.canvas.set_attribute("height", &height.to_string()).ok());
 
-        let origin = self.layout.origin() - Point(map_area.left, map_area.top) +
-            Point(PADDING, TITLE_HEIGHT + 2.0 * PADDING);
+        let mut origin = self.layout.origin() - Point(map_area.left, map_area.top) +
+            Point(PADDING as f32, PADDING as f32);
+        if has_title {
+            origin = origin + Point(0.0, (TITLE_HEIGHT + PADDING) as f32);
+        }
         let layout = Layout::new(self.layout.orientation(), self.layout.size(), origin);
         let context = check!(self.canvas.get_context("2d").ok().flatten()
             .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
@@ -205,11 +212,13 @@ impl ExportView {
         context.set_fill_style(&JsValue::from_str("#FFF"));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
         // draw map title
-        context.set_font("normal 24px sans-serif");
-        context.set_text_align("left");
-        context.set_text_baseline("top");
-        context.set_fill_style(&JsValue::from_str("#222"));
-        check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
+        if has_title {
+            context.set_font(&format!("normal {}px sans-serif", TITLE_HEIGHT));
+            context.set_text_align("left");
+            context.set_text_baseline("top");
+            context.set_fill_style(&JsValue::from_str("#222"));
+            check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
+        }
         context.restore();
 
         // draw each tile image asynchronously

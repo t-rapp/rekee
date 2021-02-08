@@ -99,7 +99,7 @@ pub fn export_rgt(map: &Map) -> Result<String> {
 //----------------------------------------------------------------------------
 
 pub fn build_file_name(name: &str) -> String {
-    let result: String = name.trim().chars()
+    let mut result: String = name.trim().chars()
         // remove all control characters
         .filter(|chr| !chr.is_control())
         // replace path separators
@@ -108,6 +108,9 @@ pub fn build_file_name(name: &str) -> String {
         .filter(|chr| *chr != '<' && *chr != '>' && *chr != ':' &&
                       *chr != '"' && *chr != '|' && *chr != '?' && *chr != '*')
         .collect();
+    if result.is_empty() {
+        result.push_str("MyTrack");
+    }
     result
 }
 
@@ -160,7 +163,8 @@ mod tests {
 
     #[test]
     fn file_name() {
-        assert_eq!("", &build_file_name(""));
+        assert_eq!("MyTrack", &build_file_name(""));
+        assert_eq!("MyTrack", &build_file_name("\n"));
         assert_eq!("Short Track 2", &build_file_name("Short Track 2"));
         assert_eq!("Short Track 2", &build_file_name("\n\tShort Track 2 "));
         assert_eq!("_Short_ Träck 2", &build_file_name("</Short\\ Träck: 2>"));
