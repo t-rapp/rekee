@@ -344,6 +344,8 @@ pub struct MapView {
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     document_title: String,
+    download_button: web_sys::HtmlElement,
+    export_button: web_sys::HtmlElement,
 }
 
 impl MapView {
@@ -475,26 +477,26 @@ impl MapView {
         input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        let control = document.get_element_by_id("download-map-button").unwrap()
+        let download_button = document.get_element_by_id("download-map-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::publish(ExportFileEvent);
         }) as Box<dyn Fn(_)>);
-        control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        download_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        let control = document.get_element_by_id("export-image-button").unwrap()
+        let export_button = document.get_element_by_id("export-image-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::publish(ExportImageEvent);
         }) as Box<dyn Fn(_)>);
-        control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        export_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
         let mut view = MapView {
             layout, map, canvas, tiles, title, selected, selected_menu, active,
             dragged, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb, document_title
+            dragged_mouseleave_cb, document_title, download_button, export_button
         };
         view.update_map();
         Ok(view)
@@ -600,6 +602,15 @@ impl MapView {
         }
         document_title.push_str(&self.document_title);
         document.set_title(&document_title);
+
+        // update button states
+        if self.map.tiles().is_empty() {
+            check!(self.download_button.set_attribute("disabled", "").ok());
+            check!(self.export_button.set_attribute("disabled", "").ok());
+        } else {
+            check!(self.download_button.remove_attribute("disabled").ok());
+            check!(self.export_button.remove_attribute("disabled").ok());
+        }
 
         // update catalog tile usage counters
         let tiles: Vec<TileId> = self.map.tiles().iter()
