@@ -348,9 +348,9 @@ pub struct MapView {
 
 impl MapView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        let map = Map::new();
-        let layout = layout.clone();
         let document = parent.owner_document().unwrap();
+        let layout = layout.clone();
+        let map = Map::new();
 
         // remove all pre-existing child nodes
         let range = document.create_range()?;
@@ -398,9 +398,6 @@ impl MapView {
 
         let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
-        for tile in map.tiles() {
-            tiles.append_child(&draw_tile(&document, &layout, tile.id(), tile.pos, tile.dir)?.into())?;
-        }
         canvas.append_child(&tiles)?;
 
         let title = TitleInput::new(&document)?;
@@ -494,11 +491,13 @@ impl MapView {
         control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        Ok(MapView {
+        let mut view = MapView {
             layout, map, canvas, tiles, title, selected, selected_menu, active,
             dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, document_title
-        })
+        };
+        view.update_map();
+        Ok(view)
     }
 
     pub fn import_file(&mut self, data: &str) {
