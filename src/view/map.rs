@@ -567,25 +567,31 @@ impl MapView {
         self.update_map();
     }
 
-    pub fn update_map(&mut self) {
+    fn update_map(&mut self) {
         let document = self.tiles.owner_document().unwrap();
+
         // remove all existing tiles
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
         check!(range.delete_contents().ok());
+
         // then add updated tiles
         for tile in self.map.tiles() {
             if let Ok(el) = draw_tile(&document, &self.layout, tile.id(), tile.pos, tile.dir) {
                 self.tiles.append_child(&el).unwrap();
             }
         }
-        self.title.set_value(self.map.title());
+
+        // update active insert position
         if let Some(active_pos) = self.map.active_pos() {
             self.active.update(&self.layout, active_pos, self.map.active_dir());
             self.active.set_hidden(false);
         } else {
             self.active.set_hidden(true);
         }
+
+        // update title input control
+        self.title.set_value(self.map.title());
 
         // update HTML document title, use original title (application name) as a suffix
         let mut document_title = String::with_capacity(100);
