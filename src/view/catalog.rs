@@ -93,15 +93,9 @@ impl CatalogTile {
         }
         if count < 0 {
             check!(self.counter.class_list().remove_1("is-light").ok());
-            check!(self.counter.class_list().remove_1("is-white").ok());
             check!(self.counter.class_list().add_1("is-warning").ok());
-        } else if count == 0 {
-            check!(self.counter.class_list().remove_1("is-light").ok());
-            check!(self.counter.class_list().add_1("is-white").ok());
-            check!(self.counter.class_list().remove_1("is-warning").ok());
         } else {
             check!(self.counter.class_list().add_1("is-light").ok());
-            check!(self.counter.class_list().remove_1("is-white").ok());
             check!(self.counter.class_list().remove_1("is-warning").ok());
         }
     }
