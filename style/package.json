@@ -1,0 +1,14 @@
+{
+  "name": "rekee-style",
+  "version": "1.0.0",
+  "description": "Bulma style customized for Rekee",
+  "license": "MIT",
+  "main": "bulma.scss",
+  "scripts": {
+    "build": "node-sass --omit-source-map-url --output-style compressed bulma.scss ../www/bulma.min.css"
+  },
+  "devDependencies": {
+    "bulma": "^0.9.2",
+    "node-sass": "^5.0.0"
+  }
+}

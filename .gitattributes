@@ -13,4 +13,5 @@
 *.svg   text eol=lf
 
 # Denote files that are truly binary and should not be modified
+*.min.css binary
 *.rgt   binary
