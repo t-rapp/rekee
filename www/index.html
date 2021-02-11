@@ -24,6 +24,7 @@
             font-family: 'Edo Regular';
         }
         #catalog-container {
+            max-height: calc(100vh - 3.75rem - var(--columnGap));
             overflow-y: auto;
         }
         #catalog {
@@ -181,7 +182,7 @@
           </div>
         </div>
         <div class="column">
-          <article id="welcome" class="message mx-4 my-4 is-info is-hidden is-print-hidden">
+          <article id="welcome" class="message mx-2 my-2 is-info is-hidden is-print-hidden">
             <div class="message-header">
               <p>Welcome!</p>
               <button class="delete" aria-label="delete"></button>
@@ -214,10 +215,10 @@
               </div>
             </div>
           </article>
-          <div id="map-title" class="control mx-4 my-4">
+          <div id="map-title" class="control mx-2 my-2">
             <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
           </div>
-          <div id="map-container" class="mx-4">
+          <div id="map-container" class="mx-2">
             <!-- map elements added here by WASM -->
           </div>
         </div>
