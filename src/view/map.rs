@@ -583,7 +583,7 @@ impl MapView {
             }
         }
 
-        // update active insert position
+        // update active tile append position
         if let Some(active_pos) = self.map.active_pos() {
             self.active.update(&self.layout, active_pos, self.map.active_dir());
             self.active.set_hidden(false);
@@ -635,6 +635,7 @@ impl MapView {
     pub fn update_selected(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
         info!("update selected: {:?}", pos);
+
         let is_tile = self.map.get(pos).is_some();
         if self.selected.pos() != Some(pos) || is_tile {
             self.selected.set_pos(&self.layout, Some(pos));
@@ -644,6 +645,15 @@ impl MapView {
         self.selected.set_draggable(is_tile);
         self.selected_menu.set_pos(&self.layout, pos);
         self.selected_menu.set_hidden(!is_tile);
+
+        // update active tile append position
+        self.map.set_active_pos(pos);
+        if let Some(active_pos) = self.map.active_pos() {
+            self.active.update(&self.layout, active_pos, self.map.active_dir());
+            self.active.set_hidden(false);
+        } else {
+            self.active.set_hidden(true);
+        }
     }
 
     pub fn rotate_selected_left(&mut self) {
