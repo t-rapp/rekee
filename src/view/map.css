@@ -14,7 +14,7 @@
 #selected {
     fill: white;
     fill-opacity: 0.02;
-    stroke: blue;
+    stroke: #3273dc;
     stroke-width: 1.2;
 }
 #selected-menu .button {
