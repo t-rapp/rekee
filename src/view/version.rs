@@ -6,7 +6,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use log::debug;
 use web_sys::{self, Document, Element};
 
 use super::*;
@@ -32,7 +31,7 @@ impl VersionView {
         let mut text = String::with_capacity(10);
         text.push('v');
         text.push_str(VERSION);
-        debug!("create version label: {}", text);
+        debug!("create version label: {}", &text);
         inner.append_child(&document.create_text_node(&text))?;
 
         Ok(VersionView { inner })

@@ -11,7 +11,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use log::{debug, trace};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, HtmlCanvasElement, HtmlImageElement, HtmlElement};
@@ -102,7 +101,7 @@ impl TileImage {
             let image = image.clone();
             let context = context.clone();
             move |_event: web_sys::Event| {
-                debug!("drawing tile image {:?}", tile);
+                debug!("drawing tile image {:?}", &tile);
                 context.save();
                 check!(draw_tile_image(&context, &image, pos, size, angle).ok());
                 check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
@@ -116,7 +115,7 @@ impl TileImage {
             let tile = tile.clone();
             let context = context.clone();
             move |_event: web_sys::Event| {
-                debug!("loading of tile image {:?} failed", tile);
+                debug!("loading of tile image {:?} failed", &tile);
                 context.save();
                 check!(draw_missing_image(&context, pos, size).ok());
                 check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
@@ -187,7 +186,7 @@ impl ExportView {
         map_area.top = map_area.top.floor();
         map_area.width = map_area.width.ceil();
         map_area.height = map_area.height.ceil();
-        trace!("map area: {:?}, layout origin: {:?}", map_area, self.layout.origin());
+        debug!("map area: {:?}, layout origin: {:?}", map_area, self.layout.origin());
 
         let width = map_area.width as i32 + 2 * PADDING;
         let mut height = map_area.height as i32 + 2 * PADDING;

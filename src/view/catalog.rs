@@ -8,7 +8,6 @@
 
 use std::collections::{BTreeSet, HashMap};
 
-use log::{info};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element, Storage};

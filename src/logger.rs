@@ -6,47 +6,92 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use log::{Record, Level, Metadata};
-use log::{SetLoggerError, LevelFilter};
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
+#[cfg(target_arch = "wasm32")]
+#[macro_export]
+macro_rules! warn {
+    ($($arg:tt)+) => {
+        web_sys::console::warn_1(&format!($($arg)*).into());
+    }
 }
 
-struct SimpleLogger;
-
-impl log::Log for SimpleLogger {
-    fn enabled(&self, metadata: &Metadata) -> bool {
-        metadata.level() <= Level::Trace
+#[cfg(not(target_arch = "wasm32"))]
+#[macro_export]
+macro_rules! warn {
+    ($($arg:tt)+) => {
+        eprintln!("Warning: {}", &format!($($arg)*));
     }
+}
 
-    fn log(&self, record: &Record) {
-        if self.enabled(record.metadata()) {
-            match record.level() {
-                Level::Error =>
-                    log(&format!("Error: {}", record.args())),
-                Level::Warn =>
-                    log(&format!("Warning: {}", record.args())),
-                _ =>
-                    log(&format!("{}", record.args()))
-            }
-        }
+
+#[cfg(target_arch = "wasm32")]
+#[macro_export]
+macro_rules! log {
+    ($($arg:tt)+) => {
+        web_sys::console::log_1(&format!($($arg)*).into());
     }
+}
 
-    fn flush(&self) {}
+#[cfg(not(target_arch = "wasm32"))]
+#[macro_export]
+macro_rules! log {
+    ($($arg:tt)+) => {
+        eprintln!($($arg)*);
+    }
 }
 
 //----------------------------------------------------------------------------
+// The following log macros are active only when compiled in debug mode
 
-static LOGGER: SimpleLogger = SimpleLogger;
+#[cfg(debug_assertions)]
+#[cfg(target_arch = "wasm32")]
+#[macro_export]
+macro_rules! info {
+    ($($arg:tt)+) => {
+        web_sys::console::info_1(&format!($($arg)*).into());
+    }
+}
 
-pub fn init() -> Result<(), SetLoggerError> {
-    log::set_logger(&LOGGER)?;
-    log::set_max_level(LevelFilter::Trace);
-    Ok(())
+#[cfg(debug_assertions)]
+#[cfg(not(target_arch = "wasm32"))]
+#[macro_export]
+macro_rules! info {
+    ($($arg:tt)+) => {
+        eprintln!($($arg)*);
+    }
+}
+
+#[cfg(not(debug_assertions))]
+#[macro_export]
+macro_rules! info {
+    ($($arg:tt)+) => {
+        let _ = ($($arg)*);
+    };
+}
+
+#[cfg(debug_assertions)]
+#[cfg(target_arch = "wasm32")]
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)+) => {
+        web_sys::console::debug_1(&format!($($arg)*).into());
+    }
+}
+
+#[cfg(debug_assertions)]
+#[cfg(not(target_arch = "wasm32"))]
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)+) => {
+        eprintln!($($arg)*);
+    }
+}
+
+#[cfg(not(debug_assertions))]
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)+) => {
+        let _ = ($($arg)*);
+    };
 }
 
 //----------------------------------------------------------------------------

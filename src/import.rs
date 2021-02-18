@@ -6,13 +6,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use log::debug;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
-use crate::hexagon::*;
 use crate::tile::*;
+use super::*;
 
 //----------------------------------------------------------------------------
 
@@ -89,7 +87,7 @@ pub fn export_rgt(map: &Map) -> Result<String> {
             _ => tile.id().to_string(),
         };
         debug!("export tile {}, {}, {} -> ({}, {}), {}, {}",
-            tile.pos, tile.id(), tile.dir, x, y, id, orientation);
+            tile.pos, tile.id(), tile.dir, x, y, &id, orientation);
         data.tiles.push(ImportTile { x, y, orientation, id });
     }
 

@@ -10,8 +10,6 @@ use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use log::{info, debug, trace};
-
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
 //----------------------------------------------------------------------------
@@ -323,7 +321,7 @@ impl Map {
             }
         }
 
-        trace!("next active pos: {}, dir: {}", next_active_pos, next_active_dir);
+        debug!("next active pos: {}, dir: {}", next_active_pos, next_active_dir);
         self.active_pos = next_active_pos;
         self.active_dir = next_active_dir;
     }
@@ -393,7 +391,7 @@ impl Map {
                 neighbor_edges[dir] = Some(edge);
             }
         }
-        trace!("neighbor connections: {}, dir: {}, edges: {:?}",
+        debug!("neighbor connections: {}, dir: {}, edges: {:?}",
             neighbor_conns, neighbor_dir, neighbor_edges);
 
         if hint.is_some() && tile_pos != self.active_pos && neighbor_conns == 1 {
@@ -471,7 +469,7 @@ impl Map {
                     }
                 }
             }
-            trace!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
+            debug!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
         }
     }
 

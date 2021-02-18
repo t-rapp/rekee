@@ -6,7 +6,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use log::{warn, info, debug};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -73,7 +72,7 @@ impl TitleInput {
             let input = check!(event.target()
                 .and_then(|target| target.dyn_into::<web_sys::HtmlInputElement>().ok()));
             let title = input.value();
-            debug!("map title changed: {}", title);
+            debug!("map title changed: {}", &title);
             nuts::publish(UpdateTitleEvent { title });
         }) as Box<dyn Fn(_)>);
         inner.add_event_listener_with_callback("change", change_cb.as_ref().unchecked_ref()).unwrap();
@@ -466,7 +465,7 @@ impl MapView {
                 move |_event: web_sys::Event| {
                     let result = check!(reader.result().ok());
                     let data = check!(result.as_string());
-                    info!("input file data: {}", &data);
+                    debug!("input file data: {}", &data);
                     nuts::publish(ImportFileEvent { data });
                 }
             }) as Box<dyn FnMut(_)>);

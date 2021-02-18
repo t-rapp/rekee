@@ -16,6 +16,8 @@ use hexagon::*;
 
 mod import;
 pub mod edition;
+
+#[macro_use]
 mod logger;
 
 #[macro_use]
@@ -29,9 +31,8 @@ use view::*;
 
 #[wasm_bindgen]
 pub fn main() -> Result<(), JsValue> {
-    logger::init().unwrap();
-
-    let document = web_sys::window().unwrap().document().unwrap();
+    let window = web_sys::window().unwrap();
+    let document = window.document().unwrap();
     let layout = Layout::new(Orientation::pointy(), Point(50.0, 50.0), Point(450.0, 400.0));
 
     let parent = document.get_element_by_id("catalog-container")

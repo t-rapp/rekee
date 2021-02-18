@@ -71,7 +71,6 @@ name = "rekee"
 version = "0.5.2"
 dependencies = [
  "js-sys",
- "log",
  "nuts",
  "serde",
  "serde_json",
