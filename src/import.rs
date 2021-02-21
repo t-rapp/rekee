@@ -123,20 +123,20 @@ mod tests {
         let data = include_str!("short-track2.rgt");
         let map = import_rgt(&data)
             .expect("Cannot parse import file data");
-        assert_eq!("ShortTrack2", map.title());
+        assert_eq!(map.title(), "ShortTrack2");
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D)), tiles.next());
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D)));
+        assert_eq!(tiles.next(), None);
     }
 
     #[test]
@@ -156,16 +156,16 @@ mod tests {
         map.insert(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D);
         let data = export_rgt(&map)
             .expect("Cannot export track data");
-        assert_eq!(r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#, data);
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
     fn file_name() {
-        assert_eq!("MyTrack", &build_file_name(""));
-        assert_eq!("MyTrack", &build_file_name("\n"));
-        assert_eq!("Short Track 2", &build_file_name("Short Track 2"));
-        assert_eq!("Short Track 2", &build_file_name("\n\tShort Track 2 "));
-        assert_eq!("_Short_ Träck 2", &build_file_name("</Short\\ Träck: 2>"));
+        assert_eq!(&build_file_name(""), "MyTrack");
+        assert_eq!(&build_file_name("\n"), "MyTrack");
+        assert_eq!(&build_file_name("Short Track 2"), "Short Track 2");
+        assert_eq!(&build_file_name("\n\tShort Track 2 "), "Short Track 2");
+        assert_eq!(&build_file_name("</Short\\ Träck: 2>"), "_Short_ Träck 2");
     }
 }
 

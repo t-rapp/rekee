@@ -736,122 +736,122 @@ mod tests {
     #[test]
     fn coordinate_add() {
         let pos = Coordinate::new(0, 0);
-        assert_eq!(Coordinate::new(1, 2), pos + (1, 2).into());
-        assert_eq!(Coordinate::new(-2, 3), pos + (-2, 3).into());
+        assert_eq!(pos + (1, 2).into(), Coordinate::new(1, 2));
+        assert_eq!(pos + (-2, 3).into(), Coordinate::new(-2, 3));
 
         let pos = Coordinate::new(2, 1);
-        assert_eq!(Coordinate::new(3, 3), pos + (1, 2).into());
-        assert_eq!(Coordinate::new(0, 4), pos + (-2, 3).into());
+        assert_eq!(pos + (1, 2).into(), Coordinate::new(3, 3));
+        assert_eq!(pos + (-2, 3).into(), Coordinate::new(0, 4));
     }
 
     #[test]
     fn coordinate_sub() {
         let pos = Coordinate::new(0, 0);
-        assert_eq!(Coordinate::new(-1, -2), pos - (1, 2).into());
-        assert_eq!(Coordinate::new(2, -3), pos - (-2, 3).into());
+        assert_eq!(pos - (1, 2).into(), Coordinate::new(-1, -2));
+        assert_eq!(pos - (-2, 3).into(), Coordinate::new(2, -3));
 
         let pos = Coordinate::new(2, 1);
-        assert_eq!(Coordinate::new(1, -1), pos - (1, 2).into());
-        assert_eq!(Coordinate::new(4, -2), pos - (-2, 3).into());
+        assert_eq!(pos - (1, 2).into(), Coordinate::new(1, -1));
+        assert_eq!(pos - (-2, 3).into(), Coordinate::new(4, -2));
     }
 
     #[test]
     fn coordinate_to_pixel() {
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        let p = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(0.0, 0.0).distance(p) < EPS);
-        let p = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(8.660, 15.0).distance(p) < EPS);
-        let p = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(17.321, 0.0).distance(p) < EPS);
-        let p = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(25.981, -15.0).distance(p) < EPS);
+        let pos = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(0.0, 0.0).distance(pos) < EPS);
+        let pos = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(8.660, 15.0).distance(pos) < EPS);
+        let pos = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(17.321, 0.0).distance(pos) < EPS);
+        let pos = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(25.981, -15.0).distance(pos) < EPS);
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        let p = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(0.0, 10.0).distance(p) < EPS);
-        let p = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(17.321, -20.0).distance(p) < EPS);
-        let p = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(34.641, 10.0).distance(p) < EPS);
-        let p = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(51.962, 40.0).distance(p) < EPS);
+        let pos = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(0.0, 10.0).distance(pos) < EPS);
+        let pos = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(17.321, -20.0).distance(pos) < EPS);
+        let pos = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(34.641, 10.0).distance(pos) < EPS);
+        let pos = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(51.962, 40.0).distance(pos) < EPS);
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        let p = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(10.0, 0.0).distance(p) < EPS);
-        let p = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(55.0, -17.321).distance(p) < EPS);
-        let p = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(10.0, -34.641).distance(p) < EPS);
-        let p = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(-35.0, -51.962).distance(p) < EPS);
+        let pos = Coordinate::new(0, 0).to_pixel(&layout);
+        assert!(Point(10.0, 0.0).distance(pos) < EPS);
+        let pos = Coordinate::new(0, 1).to_pixel(&layout);
+        assert!(Point(55.0, -17.321).distance(pos) < EPS);
+        let pos = Coordinate::new(1, 0).to_pixel(&layout);
+        assert!(Point(10.0, -34.641).distance(pos) < EPS);
+        let pos = Coordinate::new(2, -1).to_pixel(&layout);
+        assert!(Point(-35.0, -51.962).distance(pos) < EPS);
     }
 
     #[test]
     fn coordinate_from_pixel_rounded() {
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(0.0, 0.0));
-        assert_eq!(Coordinate::new(0, 0), pos);
+        assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(5.0, -5.0));
-        assert_eq!(Coordinate::new(0, 0), pos);
+        assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(8.0, 15.0));
-        assert_eq!(Coordinate::new(0, 1), pos);
+        assert_eq!(pos, Coordinate::new(0, 1));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(18.0, 1.0));
-        assert_eq!(Coordinate::new(1, 0), pos);
+        assert_eq!(pos, Coordinate::new(1, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(26.0, -16.0));
-        assert_eq!(Coordinate::new(2, -1), pos);
+        assert_eq!(pos, Coordinate::new(2, -1));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(0.0, 9.0));
-        assert_eq!(Coordinate::new(0, 0), pos);
+        assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(18.0, -21.0));
-        assert_eq!(Coordinate::new(0, 1), pos);
+        assert_eq!(pos, Coordinate::new(0, 1));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(33.0, 11.0));
-        assert_eq!(Coordinate::new(1, 0), pos);
+        assert_eq!(pos, Coordinate::new(1, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(52.0, 41.0));
-        assert_eq!(Coordinate::new(2, -1), pos);
+        assert_eq!(pos, Coordinate::new(2, -1));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(9.1, 0.5));
-        assert_eq!(Coordinate::new(0, 0), pos);
+        assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(53.4, -18.2));
-        assert_eq!(Coordinate::new(0, 1), pos);
+        assert_eq!(pos, Coordinate::new(0, 1));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(12.6, -32.3));
-        assert_eq!(Coordinate::new(1, 0), pos);
+        assert_eq!(pos, Coordinate::new(1, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(-36.7, -53.8));
-        assert_eq!(Coordinate::new(2, -1), pos);
+        assert_eq!(pos, Coordinate::new(2, -1));
     }
 
     #[test]
     fn direction_add() {
         let dir = Direction::A;
-        assert_eq!(Direction::B, dir + 1.into());
-        assert_eq!(Direction::D, dir + 3.into());
+        assert_eq!(dir + 1.into(), Direction::B);
+        assert_eq!(dir + 3.into(), Direction::D);
 
         let dir = Direction::E;
-        assert_eq!(Direction::F, dir + 1.into());
-        assert_eq!(Direction::B, dir + 3.into());
+        assert_eq!(dir + 1.into(), Direction::F);
+        assert_eq!(dir + 3.into(), Direction::B);
     }
 
     #[test]
     fn direction_sub() {
         let dir = Direction::A;
-        assert_eq!(Direction::F, dir - 1.into());
-        assert_eq!(Direction::D, dir - 3.into());
+        assert_eq!(dir - 1.into(), Direction::F);
+        assert_eq!(dir - 3.into(), Direction::D);
 
         let dir = Direction::E;
-        assert_eq!(Direction::D, dir - 1.into());
-        assert_eq!(Direction::B, dir - 3.into());
+        assert_eq!(dir - 1.into(), Direction::D);
+        assert_eq!(dir - 3.into(), Direction::B);
     }
 
     #[test]
     fn direction_opposite() {
         let dir = Direction::B;
-        assert_eq!(Direction::E, dir.opposite());
+        assert_eq!(dir.opposite(), Direction::E);
 
         let dir = Direction::F;
-        assert_eq!(Direction::C, dir.opposite());
+        assert_eq!(dir.opposite(), Direction::C);
     }
 
     #[test]
@@ -913,40 +913,40 @@ mod tests {
         };
 
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        assert_eq!(true, layout.is_pointy());
-        assert_eq!(false, layout.is_flat());
+        assert_eq!(layout.is_pointy(), true);
+        assert_eq!(layout.is_flat(), false);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!("(-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0), (8.7, -5.0), (8.7, 5.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0), (8.7, -5.0), (8.7, 5.0)");
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!("(8.7, 25.0), (-0.0, 20.0), (0.0, 10.0), (8.7, 5.0), (17.3, 10.0), (17.3, 20.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(8.7, 25.0), (-0.0, 20.0), (0.0, 10.0), (8.7, 5.0), (17.3, 10.0), (17.3, 20.0)");
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!("(17.3, 10.0), (8.7, 5.0), (8.7, -5.0), (17.3, -10.0), (26.0, -5.0), (26.0, 5.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(17.3, 10.0), (8.7, 5.0), (8.7, -5.0), (17.3, -10.0), (26.0, -5.0), (26.0, 5.0)");
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!("(26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0), (34.6, -20.0), (34.6, -10.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0), (34.6, -20.0), (34.6, -10.0)");
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        assert_eq!(true, layout.is_pointy());
-        assert_eq!(false, layout.is_flat());
+        assert_eq!(layout.is_pointy(), true);
+        assert_eq!(layout.is_flat(), false);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!("(-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0), (17.3, 20.0), (17.3, -0.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0), (17.3, 20.0), (17.3, -0.0)");
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!("(17.3, -40.0), (-0.0, -30.0), (0.0, -10.0), (17.3, 0.0), (34.6, -10.0), (34.6, -30.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(17.3, -40.0), (-0.0, -30.0), (0.0, -10.0), (17.3, 0.0), (34.6, -10.0), (34.6, -30.0)");
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!("(34.6, -10.0), (17.3, 0.0), (17.3, 20.0), (34.6, 30.0), (52.0, 20.0), (52.0, -0.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(34.6, -10.0), (17.3, 0.0), (17.3, 20.0), (34.6, 30.0), (52.0, 20.0), (52.0, -0.0)");
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!("(52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0), (69.3, 50.0), (69.3, 30.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0), (69.3, 50.0), (69.3, 30.0)");
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        assert_eq!(false, layout.is_pointy());
-        assert_eq!(true, layout.is_flat());
+        assert_eq!(layout.is_pointy(), false);
+        assert_eq!(layout.is_flat(), true);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!("(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)");
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!("(85.0, -17.3), (70.0, 0.0), (40.0, 0.0), (25.0, -17.3), (40.0, -34.6), (70.0, -34.6)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(85.0, -17.3), (70.0, 0.0), (40.0, 0.0), (25.0, -17.3), (40.0, -34.6), (70.0, -34.6)");
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!("(40.0, -34.6), (25.0, -17.3), (-5.0, -17.3), (-20.0, -34.6), (-5.0, -52.0), (25.0, -52.0)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(40.0, -34.6), (25.0, -17.3), (-5.0, -17.3), (-20.0, -34.6), (-5.0, -52.0), (25.0, -52.0)");
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!("(-5.0, -52.0), (-20.0, -34.6), (-50.0, -34.6), (-65.0, -52.0), (-50.0, -69.3), (-20.0, -69.3)", points_to_string(&corners));
+        assert_eq!(points_to_string(&corners), "(-5.0, -52.0), (-20.0, -34.6), (-50.0, -34.6), (-65.0, -52.0), (-50.0, -69.3), (-20.0, -69.3)");
     }
 
     #[test]
@@ -957,48 +957,48 @@ mod tests {
 
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!("(-8.7, -10.0) 17.3x20.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-8.7, -10.0) 17.3x20.0");
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!("(-0.0, 5.0) 17.3x20.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-0.0, 5.0) 17.3x20.0");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!("(8.7, -10.0) 17.3x20.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(8.7, -10.0) 17.3x20.0");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!("(17.3, -25.0) 17.3x20.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(17.3, -25.0) 17.3x20.0");
         total = total.union(&rect);
-        assert_eq!("(-8.7, -25.0) 43.3x50.0", rect_to_string(&total));
+        assert_eq!(rect_to_string(&total), "(-8.7, -25.0) 43.3x50.0");
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!("(-17.3, -10.0) 34.6x40.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-17.3, -10.0) 34.6x40.0");
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!("(-0.0, -40.0) 34.6x40.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-0.0, -40.0) 34.6x40.0");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!("(17.3, -10.0) 34.6x40.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(17.3, -10.0) 34.6x40.0");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!("(34.6, 20.0) 34.6x40.0", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(34.6, 20.0) 34.6x40.0");
         total = total.union(&rect);
-        assert_eq!("(-17.3, -40.0) 86.6x100.0", rect_to_string(&total));
+        assert_eq!(rect_to_string(&total), "(-17.3, -40.0) 86.6x100.0");
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!("(-20.0, -17.3) 60.0x34.6", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-20.0, -17.3) 60.0x34.6");
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!("(25.0, -34.6) 60.0x34.6", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(25.0, -34.6) 60.0x34.6");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!("(-20.0, -52.0) 60.0x34.6", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-20.0, -52.0) 60.0x34.6");
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!("(-65.0, -69.3) 60.0x34.6", rect_to_string(&rect));
+        assert_eq!(rect_to_string(&rect), "(-65.0, -69.3) 60.0x34.6");
         total = total.union(&rect);
-        assert_eq!("(-65.0, -69.3) 150.0x86.6", rect_to_string(&total));
+        assert_eq!(rect_to_string(&total), "(-65.0, -69.3) 150.0x86.6");
     }
 }
 

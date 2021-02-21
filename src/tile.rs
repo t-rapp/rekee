@@ -864,28 +864,28 @@ mod tests {
 
     #[test]
     fn id_to_str() {
-        assert_eq!("0", TileId::default().to_string());
-        assert_eq!("101", TileId::new(101, 0, 0).to_string());
-        assert_eq!("102a", TileId::new(102, 1, 0).to_string());
-        assert_eq!("102b", TileId::new(102, 2, 0).to_string());
-        assert_eq!("103a-1", TileId::new(103, 1, 1).to_string());
-        assert_eq!("103b-3", TileId::new(103, 2, 3).to_string());
+        assert_eq!(TileId::default().to_string(), "0");
+        assert_eq!(TileId::new(101, 0, 0).to_string(), "101");
+        assert_eq!(TileId::new(102, 1, 0).to_string(), "102a");
+        assert_eq!(TileId::new(102, 2, 0).to_string(), "102b");
+        assert_eq!(TileId::new(103, 1, 1).to_string(), "103a-1");
+        assert_eq!(TileId::new(103, 2, 3).to_string(), "103b-3");
 
-        assert_eq!("101", TileId::new(101, 0, 0).base().to_string());
-        assert_eq!("101", TileId::new(101, 1, 0).base().to_string());
-        assert_eq!("102a", TileId::new(102, 1, 0).base().to_string());
-        assert_eq!("102b", TileId::new(102, 2, 0).base().to_string());
-        assert_eq!("104a", TileId::new(104, 1, 2).base().to_string());
+        assert_eq!(TileId::new(101, 0, 0).base().to_string(), "101");
+        assert_eq!(TileId::new(101, 1, 0).base().to_string(), "101");
+        assert_eq!(TileId::new(102, 1, 0).base().to_string(), "102a");
+        assert_eq!(TileId::new(102, 2, 0).base().to_string(), "102b");
+        assert_eq!(TileId::new(104, 1, 2).base().to_string(), "104a");
     }
 
     #[test]
     fn id_from_str() {
-        assert_eq!(Ok(TileId::new(0, 0, 0)), "0".parse::<TileId>());
-        assert_eq!(Ok(TileId::new(101, 0, 0)), "101".parse::<TileId>());
-        assert_eq!(Ok(TileId::new(102, 1, 0)), "102a".parse::<TileId>());
-        assert_eq!(Ok(TileId::new(102, 2, 0)), "102b".parse::<TileId>());
-        assert_eq!(Ok(TileId::new(103, 1, 1)), "103a-1".parse::<TileId>());
-        assert_eq!(Ok(TileId::new(103, 2, 3)), "103b-3".parse::<TileId>());
+        assert_eq!("0".parse::<TileId>(), Ok(TileId::new(0, 0, 0)));
+        assert_eq!("101".parse::<TileId>(), Ok(TileId::new(101, 0, 0)));
+        assert_eq!("102a".parse::<TileId>(), Ok(TileId::new(102, 1, 0)));
+        assert_eq!("102b".parse::<TileId>(), Ok(TileId::new(102, 2, 0)));
+        assert_eq!("103a-1".parse::<TileId>(), Ok(TileId::new(103, 1, 1)));
+        assert_eq!("103b-3".parse::<TileId>(), Ok(TileId::new(103, 2, 3)));
 
         assert!("".parse::<TileId>().is_err());
         assert!("101x".parse::<TileId>().is_err());
@@ -912,20 +912,20 @@ mod tests {
         map.insert(tile!(101), (0, -2).into(), Direction::A);
         assert_eq!(map.active_pos(), None);
 
-        assert_eq!("Short Track 2", map.title());
+        assert_eq!(map.title(), "Short Track 2");
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), (-2,  0).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), (-2, -1).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-1, -2).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), (-1, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0, -1).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), ( 1, -2).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)), tiles.next());
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), (-2,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), (-2, -1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1, -2).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), (-1, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0, -1).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), ( 1, -2).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)));
+        assert_eq!(tiles.next(), None);
     }
 
     #[test]
@@ -1050,7 +1050,7 @@ mod tests {
         let mut map = Map::new();
         map.align_center();
         let mut tiles = map.tiles().iter();
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), None);
 
         let mut map = Map::new();
         map.insert(tile!(102, b, 0), (6, -1).into(), Direction::E);
@@ -1066,18 +1066,18 @@ mod tests {
         map.insert(tile!(101, a, 0), (4,  1).into(), Direction::E);
         map.align_center();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)), tiles.next());
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), None);
     }
 
     #[test]
@@ -1096,18 +1096,18 @@ mod tests {
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_left();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 0, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 1, -1).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), ( 2, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), ( 2,  0).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), ( 1,  1).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), ( 1,  0).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), (-1,  1).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), (-1,  0).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), (-1, -1).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), ( 0,  1).into(), Direction::D)), tiles.next());
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 0, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1, -1).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 2, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 2,  0).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), ( 1,  1).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 1,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  1).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), (-1,  0).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), (-1, -1).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), ( 0,  1).into(), Direction::D)));
+        assert_eq!(tiles.next(), None);
     }
 
     #[test]
@@ -1126,164 +1126,164 @@ mod tests {
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_right();
         let mut tiles = map.tiles().iter();
-        assert_eq!(Some(&PlacedTile::new(tile!(102, b, 0), ( 1,  0).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(104, b, 1), ( 0,  1).into(), Direction::C)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(113, b, 0), (-1,  2).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(117, b, 1), (-2,  2).into(), Direction::A)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(114, b, 0), (-2,  1).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 1), (-1,  1).into(), Direction::F)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::E)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(108, b, 0), ( 0, -1).into(), Direction::B)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D)), tiles.next());
-        assert_eq!(Some(&PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F)), tiles.next());
-        assert_eq!(None, tiles.next());
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1,  0).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 0,  1).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), (-1,  2).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), (-2,  2).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-2,  1).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), (-1,  1).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), ( 0, -1).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F)));
+        assert_eq!(tiles.next(), None);
     }
 
     #[test]
     fn connection_orientation() {
         let conn = Connection::None;
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Straight(0);
-        assert_eq!(true,  conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, true);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Straight(1);
-        assert_eq!(true,  conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, true);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Straight(-1);
-        assert_eq!(true,  conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, true);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Left(0);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(true,  conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, true);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Left(1);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(true,  conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, true);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Left(2);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(true,  conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, true);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::Right(0);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(true,  conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, true);
 
         let conn = Connection::Right(1);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(true,  conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, true);
 
         let conn = Connection::Right(2);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(true,  conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, true);
 
         let conn = Connection::JunctionLeft(0, 1);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(true,  conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, true);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::JunctionLeft(1, -2);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(true,  conn == ConnectionHint::Left);
-        assert_eq!(false, conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, true);
+        assert_eq!(conn == ConnectionHint::Right, false);
 
         let conn = Connection::JunctionRight(0, 2);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(true,  conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, true);
 
         let conn = Connection::JunctionRight(1, -2);
-        assert_eq!(false, conn == ConnectionHint::Straight);
-        assert_eq!(false, conn == ConnectionHint::Left);
-        assert_eq!(true,  conn == ConnectionHint::Right);
+        assert_eq!(conn == ConnectionHint::Straight, false);
+        assert_eq!(conn == ConnectionHint::Left, false);
+        assert_eq!(conn == ConnectionHint::Right, true);
     }
 
     #[test]
     fn connection_target() {
         let conn = Connection::None;
-        assert_eq!(None, conn.target(Direction::A));
-        assert_eq!(None, conn.target(Direction::D));
-        assert_eq!(None, conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), None);
+        assert_eq!(conn.target(Direction::D), None);
+        assert_eq!(conn.target(Direction::F), None);
 
         let conn = Connection::Straight(0);
-        assert_eq!(Some(Direction::D), conn.target(Direction::A));
-        assert_eq!(Some(Direction::A), conn.target(Direction::D));
-        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::D));
+        assert_eq!(conn.target(Direction::D), Some(Direction::A));
+        assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
         let conn = Connection::Straight(1);
-        assert_eq!(Some(Direction::E), conn.target(Direction::A));
-        assert_eq!(Some(Direction::B), conn.target(Direction::D));
-        assert_eq!(Some(Direction::D), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::E));
+        assert_eq!(conn.target(Direction::D), Some(Direction::B));
+        assert_eq!(conn.target(Direction::F), Some(Direction::D));
 
         let conn = Connection::Straight(-1);
-        assert_eq!(Some(Direction::C), conn.target(Direction::A));
-        assert_eq!(Some(Direction::F), conn.target(Direction::D));
-        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::C));
+        assert_eq!(conn.target(Direction::D), Some(Direction::F));
+        assert_eq!(conn.target(Direction::F), Some(Direction::B));
 
         let conn = Connection::Left(0);
-        assert_eq!(Some(Direction::D), conn.target(Direction::A));
-        assert_eq!(Some(Direction::A), conn.target(Direction::D));
-        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::D));
+        assert_eq!(conn.target(Direction::D), Some(Direction::A));
+        assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
         let conn = Connection::Left(1);
-        assert_eq!(Some(Direction::C), conn.target(Direction::A));
-        assert_eq!(Some(Direction::F), conn.target(Direction::D));
-        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::C));
+        assert_eq!(conn.target(Direction::D), Some(Direction::F));
+        assert_eq!(conn.target(Direction::F), Some(Direction::B));
 
         let conn = Connection::Left(2);
-        assert_eq!(Some(Direction::B), conn.target(Direction::A));
-        assert_eq!(Some(Direction::E), conn.target(Direction::D));
-        assert_eq!(Some(Direction::A), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::B));
+        assert_eq!(conn.target(Direction::D), Some(Direction::E));
+        assert_eq!(conn.target(Direction::F), Some(Direction::A));
 
         let conn = Connection::Right(0);
-        assert_eq!(Some(Direction::D), conn.target(Direction::A));
-        assert_eq!(Some(Direction::A), conn.target(Direction::D));
-        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::D));
+        assert_eq!(conn.target(Direction::D), Some(Direction::A));
+        assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
         let conn = Connection::Right(1);
-        assert_eq!(Some(Direction::E), conn.target(Direction::A));
-        assert_eq!(Some(Direction::B), conn.target(Direction::D));
-        assert_eq!(Some(Direction::D), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::E));
+        assert_eq!(conn.target(Direction::D), Some(Direction::B));
+        assert_eq!(conn.target(Direction::F), Some(Direction::D));
 
         let conn = Connection::Right(2);
-        assert_eq!(Some(Direction::F), conn.target(Direction::A));
-        assert_eq!(Some(Direction::C), conn.target(Direction::D));
-        assert_eq!(Some(Direction::E), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::F));
+        assert_eq!(conn.target(Direction::D), Some(Direction::C));
+        assert_eq!(conn.target(Direction::F), Some(Direction::E));
 
         let conn = Connection::JunctionLeft(0, 1);
-        assert_eq!(Some(Direction::D), conn.target(Direction::A));
-        assert_eq!(Some(Direction::A), conn.target(Direction::D));
-        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::D));
+        assert_eq!(conn.target(Direction::D), Some(Direction::A));
+        assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
         let conn = Connection::JunctionLeft(1, -2);
-        assert_eq!(Some(Direction::C), conn.target(Direction::A));
-        assert_eq!(Some(Direction::F), conn.target(Direction::D));
-        assert_eq!(Some(Direction::B), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::C));
+        assert_eq!(conn.target(Direction::D), Some(Direction::F));
+        assert_eq!(conn.target(Direction::F), Some(Direction::B));
 
         let conn = Connection::JunctionRight(0, 2);
-        assert_eq!(Some(Direction::D), conn.target(Direction::A));
-        assert_eq!(Some(Direction::A), conn.target(Direction::D));
-        assert_eq!(Some(Direction::C), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::D));
+        assert_eq!(conn.target(Direction::D), Some(Direction::A));
+        assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
         let conn = Connection::JunctionRight(1, -2);
-        assert_eq!(Some(Direction::E), conn.target(Direction::A));
-        assert_eq!(Some(Direction::B), conn.target(Direction::D));
-        assert_eq!(Some(Direction::D), conn.target(Direction::F));
+        assert_eq!(conn.target(Direction::A), Some(Direction::E));
+        assert_eq!(conn.target(Direction::D), Some(Direction::B));
+        assert_eq!(conn.target(Direction::F), Some(Direction::D));
     }
 
     #[test]
@@ -1298,15 +1298,17 @@ mod tests {
 
     #[test]
     fn tile_info_count() {
-        assert_eq!(145, TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>());
+        assert_eq!(TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>(), 145);
     }
 
     #[test]
     fn tile_info_sorted() {
-        assert!(TILE_INFOS.iter().all(|info| info.id == info.id.base()));
-        assert!(TILE_INFOS.windows(2).all(|infos| infos[0].id <= infos[1].id));
-        // FIXME: could be replaced with is_sorted() once it's no longer unstable
-        //assert!(TILE_INFOS.is_sorted_by_key(|info| info.id));
+        for info in TILE_INFOS.iter() {
+            assert!(info.id == info.id.base(), "tile info is defined with non-base identifier {}", info.id);
+        }
+        for infos in TILE_INFOS.windows(2) {
+            assert!(infos[0].id <= infos[1].id, "tile info is not sorted strictly ({} > {})", infos[0].id, infos[1].id);
+        }
     }
 
     #[test]
@@ -1321,16 +1323,16 @@ mod tests {
                     Edge::None => false,
                     _ => true,
                 };
-                // each connection must have an according edge
-                assert_eq!(has_connection, has_edge);
+                assert_eq!(has_connection, has_edge,
+                    "tile {}, direction {}: connection does not match according edge", tile, dir);
 
                 let lanes = tile.edges[*dir].lanes();
                 if has_connection {
-                    // sides with connection must have a non-zero number of lanes
-                    assert!(lanes > 0);
+                    assert!(lanes > 0,
+                        "tile {}, direction {}: side with connection must have a non-zero number of lanes", tile, dir);
                 } else {
-                    // sides without connection cannot have lanes
-                    assert_eq!(0, lanes);
+                    assert_eq!(lanes, 0,
+                        "tile {}, direction {}: side without connection cannot have lanes", tile, dir);
                 }
             }
         }
@@ -1339,108 +1341,106 @@ mod tests {
     #[test]
     fn placed_tile_connection() {
         let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
-        assert_eq!(Connection::None, tile.connection(Direction::A));
-        assert_eq!(Connection::None, tile.connection(Direction::B));
-        assert_eq!(Connection::None, tile.connection(Direction::C));
-        assert_eq!(Connection::None, tile.connection(Direction::D));
-        assert_eq!(Connection::None, tile.connection(Direction::E));
-        assert_eq!(Connection::None, tile.connection(Direction::F));
+        assert_eq!(tile.connection(Direction::A), Connection::None);
+        assert_eq!(tile.connection(Direction::B), Connection::None);
+        assert_eq!(tile.connection(Direction::C), Connection::None);
+        assert_eq!(tile.connection(Direction::D), Connection::None);
+        assert_eq!(tile.connection(Direction::E), Connection::None);
+        assert_eq!(tile.connection(Direction::F), Connection::None);
 
         let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
-        assert_eq!(Connection::Straight(0), tile.connection(Direction::A));
-        assert_eq!(Connection::None, tile.connection(Direction::B));
-        assert_eq!(Connection::None, tile.connection(Direction::C));
-        assert_eq!(Connection::Straight(0), tile.connection(Direction::D));
-        assert_eq!(Connection::None, tile.connection(Direction::E));
-        assert_eq!(Connection::None, tile.connection(Direction::F));
+        assert_eq!(tile.connection(Direction::A), Connection::Straight(0));
+        assert_eq!(tile.connection(Direction::B), Connection::None);
+        assert_eq!(tile.connection(Direction::C), Connection::None);
+        assert_eq!(tile.connection(Direction::D), Connection::Straight(0));
+        assert_eq!(tile.connection(Direction::E), Connection::None);
+        assert_eq!(tile.connection(Direction::F), Connection::None);
 
         let tile = PlacedTile::new(tile!(103, a), (0, 0).into(), Direction::B);
-        assert_eq!(Connection::None, tile.connection(Direction::A));
-        assert_eq!(Connection::Straight(0), tile.connection(Direction::B));
-        assert_eq!(Connection::None, tile.connection(Direction::C));
-        assert_eq!(Connection::None, tile.connection(Direction::D));
-        assert_eq!(Connection::Straight(0), tile.connection(Direction::E));
-        assert_eq!(Connection::None, tile.connection(Direction::F));
+        assert_eq!(tile.connection(Direction::A), Connection::None);
+        assert_eq!(tile.connection(Direction::B), Connection::Straight(0));
+        assert_eq!(tile.connection(Direction::C), Connection::None);
+        assert_eq!(tile.connection(Direction::D), Connection::None);
+        assert_eq!(tile.connection(Direction::E), Connection::Straight(0));
+        assert_eq!(tile.connection(Direction::F), Connection::None);
 
         let tile = PlacedTile::new(tile!(105, a), (0, 0).into(), Direction::C);
-        assert_eq!(Connection::None, tile.connection(Direction::A));
-        assert_eq!(Connection::None, tile.connection(Direction::B));
-        assert_eq!(Connection::None, tile.connection(Direction::C));
-        assert_eq!(Connection::Left(1), tile.connection(Direction::D));
-        assert_eq!(Connection::None, tile.connection(Direction::E));
-        assert_eq!(Connection::Right(1), tile.connection(Direction::F));
+        assert_eq!(tile.connection(Direction::A), Connection::None);
+        assert_eq!(tile.connection(Direction::B), Connection::None);
+        assert_eq!(tile.connection(Direction::C), Connection::None);
+        assert_eq!(tile.connection(Direction::D), Connection::Left(1));
+        assert_eq!(tile.connection(Direction::E), Connection::None);
+        assert_eq!(tile.connection(Direction::F), Connection::Right(1));
     }
-
 
     #[test]
     fn placed_tile_connection_target() {
         let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
-        assert_eq!(None, tile.connection_target(Direction::A));
-        assert_eq!(None, tile.connection_target(Direction::B));
-        assert_eq!(None, tile.connection_target(Direction::C));
-        assert_eq!(None, tile.connection_target(Direction::D));
-        assert_eq!(None, tile.connection_target(Direction::E));
-        assert_eq!(None, tile.connection_target(Direction::F));
+        assert_eq!(tile.connection_target(Direction::A), None);
+        assert_eq!(tile.connection_target(Direction::B), None);
+        assert_eq!(tile.connection_target(Direction::C), None);
+        assert_eq!(tile.connection_target(Direction::D), None);
+        assert_eq!(tile.connection_target(Direction::E), None);
+        assert_eq!(tile.connection_target(Direction::F), None);
 
         let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
-        assert_eq!(Some(Direction::D), tile.connection_target(Direction::A));
-        assert_eq!(None, tile.connection_target(Direction::B));
-        assert_eq!(None, tile.connection_target(Direction::C));
-        assert_eq!(Some(Direction::A), tile.connection_target(Direction::D));
-        assert_eq!(None, tile.connection_target(Direction::E));
-        assert_eq!(None, tile.connection_target(Direction::F));
+        assert_eq!(tile.connection_target(Direction::A), Some(Direction::D));
+        assert_eq!(tile.connection_target(Direction::B), None);
+        assert_eq!(tile.connection_target(Direction::C), None);
+        assert_eq!(tile.connection_target(Direction::D), Some(Direction::A));
+        assert_eq!(tile.connection_target(Direction::E), None);
+        assert_eq!(tile.connection_target(Direction::F), None);
 
         let tile = PlacedTile::new(tile!(103, a), (0, 0).into(), Direction::B);
-        assert_eq!(None, tile.connection_target(Direction::A));
-        assert_eq!(Some(Direction::E), tile.connection_target(Direction::B));
-        assert_eq!(None, tile.connection_target(Direction::C));
-        assert_eq!(None, tile.connection_target(Direction::D));
-        assert_eq!(Some(Direction::B), tile.connection_target(Direction::E));
-        assert_eq!(None, tile.connection_target(Direction::F));
+        assert_eq!(tile.connection_target(Direction::A), None);
+        assert_eq!(tile.connection_target(Direction::B), Some(Direction::E));
+        assert_eq!(tile.connection_target(Direction::C), None);
+        assert_eq!(tile.connection_target(Direction::D), None);
+        assert_eq!(tile.connection_target(Direction::E), Some(Direction::B));
+        assert_eq!(tile.connection_target(Direction::F), None);
 
         let tile = PlacedTile::new(tile!(105, a), (0, 0).into(), Direction::C);
-        assert_eq!(None, tile.connection_target(Direction::A));
-        assert_eq!(None, tile.connection_target(Direction::B));
-        assert_eq!(None, tile.connection_target(Direction::C));
-        assert_eq!(Some(Direction::F), tile.connection_target(Direction::D));
-        assert_eq!(None, tile.connection_target(Direction::E));
-        assert_eq!(Some(Direction::D), tile.connection_target(Direction::F));
+        assert_eq!(tile.connection_target(Direction::A), None);
+        assert_eq!(tile.connection_target(Direction::B), None);
+        assert_eq!(tile.connection_target(Direction::C), None);
+        assert_eq!(tile.connection_target(Direction::D), Some(Direction::F));
+        assert_eq!(tile.connection_target(Direction::E), None);
+        assert_eq!(tile.connection_target(Direction::F), Some(Direction::D));
     }
-
 
     #[test]
     fn placed_tile_edge() {
         let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
-        assert_eq!(Edge::None, tile.edge(Direction::A));
-        assert_eq!(Edge::None, tile.edge(Direction::B));
-        assert_eq!(Edge::None, tile.edge(Direction::C));
-        assert_eq!(Edge::None, tile.edge(Direction::D));
-        assert_eq!(Edge::None, tile.edge(Direction::E));
-        assert_eq!(Edge::None, tile.edge(Direction::F));
+        assert_eq!(tile.edge(Direction::A), Edge::None);
+        assert_eq!(tile.edge(Direction::B), Edge::None);
+        assert_eq!(tile.edge(Direction::C), Edge::None);
+        assert_eq!(tile.edge(Direction::D), Edge::None);
+        assert_eq!(tile.edge(Direction::E), Edge::None);
+        assert_eq!(tile.edge(Direction::F), Edge::None);
 
         let tile = PlacedTile::new(tile!(102, a), (0, 0).into(), Direction::A);
-        assert_eq!(Edge::Straight(3), tile.edge(Direction::A));
-        assert_eq!(Edge::None, tile.edge(Direction::B));
-        assert_eq!(Edge::None, tile.edge(Direction::C));
-        assert_eq!(Edge::Straight(3), tile.edge(Direction::D));
-        assert_eq!(Edge::None, tile.edge(Direction::E));
-        assert_eq!(Edge::None, tile.edge(Direction::F));
+        assert_eq!(tile.edge(Direction::A), Edge::Straight(3));
+        assert_eq!(tile.edge(Direction::B), Edge::None);
+        assert_eq!(tile.edge(Direction::C), Edge::None);
+        assert_eq!(tile.edge(Direction::D), Edge::Straight(3));
+        assert_eq!(tile.edge(Direction::E), Edge::None);
+        assert_eq!(tile.edge(Direction::F), Edge::None);
 
         let tile = PlacedTile::new(tile!(103, b), (0, 0).into(), Direction::B);
-        assert_eq!(Edge::None, tile.edge(Direction::A));
-        assert_eq!(Edge::Straight(2), tile.edge(Direction::B));
-        assert_eq!(Edge::None, tile.edge(Direction::C));
-        assert_eq!(Edge::None, tile.edge(Direction::D));
-        assert_eq!(Edge::Straight(2), tile.edge(Direction::E));
-        assert_eq!(Edge::None, tile.edge(Direction::F));
+        assert_eq!(tile.edge(Direction::A), Edge::None);
+        assert_eq!(tile.edge(Direction::B), Edge::Straight(2));
+        assert_eq!(tile.edge(Direction::C), Edge::None);
+        assert_eq!(tile.edge(Direction::D), Edge::None);
+        assert_eq!(tile.edge(Direction::E), Edge::Straight(2));
+        assert_eq!(tile.edge(Direction::F), Edge::None);
 
         let tile = PlacedTile::new(tile!(124, a), (0, 0).into(), Direction::C);
-        assert_eq!(Edge::None, tile.edge(Direction::A));
-        assert_eq!(Edge::None, tile.edge(Direction::B));
-        assert_eq!(Edge::Straight(3), tile.edge(Direction::C));
-        assert_eq!(Edge::None, tile.edge(Direction::D));
-        assert_eq!(Edge::SkewLeft(3), tile.edge(Direction::E));
-        assert_eq!(Edge::None, tile.edge(Direction::F));
+        assert_eq!(tile.edge(Direction::A), Edge::None);
+        assert_eq!(tile.edge(Direction::B), Edge::None);
+        assert_eq!(tile.edge(Direction::C), Edge::Straight(3));
+        assert_eq!(tile.edge(Direction::D), Edge::None);
+        assert_eq!(tile.edge(Direction::E), Edge::SkewLeft(3));
+        assert_eq!(tile.edge(Direction::F), Edge::None);
     }
 }
 
