@@ -10,6 +10,9 @@ use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
+use serde::{Serialize, Serializer, Deserialize, Deserializer};
+use serde::de::{self, Visitor};
+
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
 
 //----------------------------------------------------------------------------
@@ -122,6 +125,44 @@ impl FromStr for TileId {
     }
 }
 
+impl Serialize for TileId {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for TileId {
+    fn deserialize<D>(deserializer: D) -> Result<TileId, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct TileVisitor;
+
+        impl<'de> Visitor<'de> for TileVisitor {
+            type Value = TileId;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+                fmt.write_str("a tile identifier string")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                match TileId::from_str(value) {
+                    Ok(val) => Ok(val),
+                    Err(_) => Err(E::custom(format!("invalid tile identifier: {}", value))),
+                }
+            }
+        }
+
+        deserializer.deserialize_string(TileVisitor)
+    }
+}
+
 /// Creates a new tile identifier.
 ///
 /// The `tile!` macro adds convenience on directly calling `TileId::new()` as it
@@ -167,11 +208,13 @@ macro_rules! tile {
 ///
 /// Contains some private map helper functions that apply tile information
 /// to the placed tile.
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct PlacedTile {
     id: TileId,
+    #[serde(flatten)]
     pub pos: Coordinate,
     pub dir: Direction,
+    #[serde(skip_serializing)]
     info: Option<&'static TileInfo>,
 }
 
@@ -231,14 +274,98 @@ impl PartialEq<PlacedTile> for PlacedTile {
     }
 }
 
+impl<'de> Deserialize<'de> for PlacedTile {
+    fn deserialize<D>(deserializer: D) -> Result<PlacedTile, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "lowercase")]
+        enum Field { Id, Q, R, Dir }
+
+        struct PlacedTileVisitor;
+
+        impl<'de> Visitor<'de> for PlacedTileVisitor {
+            type Value = PlacedTile;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("a placed tile structure")
+            }
+
+            fn visit_seq<V>(self, mut seq: V) -> Result<PlacedTile, V::Error>
+            where
+                V: de::SeqAccess<'de>,
+            {
+                let id = seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+                let q = seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                let r = seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+                let dir = seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(3, &self))?;
+                Ok(PlacedTile::new(id, (q, r).into(), dir))
+            }
+
+            fn visit_map<V>(self, mut map: V) -> Result<PlacedTile, V::Error>
+            where
+                V: de::MapAccess<'de>,
+            {
+                let mut id = None;
+                let mut q = None;
+                let mut r = None;
+                let mut dir = None;
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Id => {
+                            if id.is_some() {
+                                return Err(de::Error::duplicate_field("id"));
+                            }
+                            id = Some(map.next_value()?);
+                        }
+                        Field::Q => {
+                            if q.is_some() {
+                                return Err(de::Error::duplicate_field("q"));
+                            }
+                            q = Some(map.next_value()?);
+                        }
+                        Field::R => {
+                            if r.is_some() {
+                                return Err(de::Error::duplicate_field("r"));
+                            }
+                            r = Some(map.next_value()?);
+                        }
+                        Field::Dir => {
+                            if dir.is_some() {
+                                return Err(de::Error::duplicate_field("dir"));
+                            }
+                            dir = Some(map.next_value()?);
+                        }
+                    }
+                }
+                let id = id.ok_or_else(|| de::Error::missing_field("id"))?;
+                let q = q.ok_or_else(|| de::Error::missing_field("q"))?;
+                let r = r.ok_or_else(|| de::Error::missing_field("r"))?;
+                let dir = dir.ok_or_else(|| de::Error::missing_field("dir"))?;
+                Ok(PlacedTile::new(id, (q, r).into(), dir))
+            }
+        }
+
+        const FIELDS: [&str; 4] = ["id", "q", "r", "dir"];
+        deserializer.deserialize_struct("tile", &FIELDS, PlacedTileVisitor)
+    }
+}
+
 //----------------------------------------------------------------------------
 
 /// Map for storing track tiles.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Map {
-    tiles: Vec<PlacedTile>,
     title: String,
+    tiles: Vec<PlacedTile>,
+    #[serde(default)]
     active_pos: Coordinate,
+    #[serde(default = "Map::default_active_dir")]
     active_dir: Direction,
 }
 
@@ -248,13 +375,8 @@ impl Map {
         let tiles = Vec::new();
         let title = "My Track".to_string();
         let active_pos = Coordinate::default();
-        let active_dir = Direction::D;
+        let active_dir = Self::default_active_dir();
         Map { tiles, title, active_pos, active_dir }
-    }
-
-    /// List of all tiles placed on the map.
-    pub fn tiles(&self) -> &[PlacedTile] {
-        &self.tiles
     }
 
     /// Map title.
@@ -265,6 +387,11 @@ impl Map {
     /// Updates the map title.
     pub fn set_title(&mut self, title: &str) {
         self.title = title.to_string();
+    }
+
+    /// List of all tiles placed on the map.
+    pub fn tiles(&self) -> &[PlacedTile] {
+        &self.tiles
     }
 
     /// Active position for the next tile `append` action.
@@ -280,7 +407,7 @@ impl Map {
     /// Update position for the next tile `append` action.
     pub fn set_active_pos(&mut self, pos: Coordinate) {
         let mut next_active_pos = pos;
-        let mut next_active_dir = Direction::D;
+        let mut next_active_dir = Self::default_active_dir();
 
         let tile = self.get(pos);
         if let Some(tile) = tile {
@@ -329,6 +456,11 @@ impl Map {
     /// Active direction for the next tile `append` action.
     pub fn active_dir(&self) -> Direction {
         self.active_dir
+    }
+
+    /// Internal helper function for (de)serialization.
+    fn default_active_dir() -> Direction {
+        Direction::D
     }
 
     /// Returns tile at the given map position, if existing.
@@ -458,7 +590,7 @@ impl Map {
         if self.tiles.len() != count {
             // update position for next tile append
             self.active_pos = pos;
-            self.active_dir = Direction::D;
+            self.active_dir = Self::default_active_dir();
             for &dir in Direction::iter() {
                 let neighbor_pos = pos.neighbor(dir);
                 if let Some(tile) = self.get(neighbor_pos) {
@@ -892,6 +1024,25 @@ mod tests {
     }
 
     #[test]
+    fn id_serde() {
+        let tile = tile!(102, a);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#""102a""#);
+
+        let text = r#""103b-1""#;
+        let tile: TileId = serde_json::from_str(&text).unwrap();
+        assert_eq!(tile, TileId::new(103, 2, 1));
+
+        let text = r#""#;
+        let result: Result<TileId, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+
+        let text = r#""a-1""#;
+        let result: Result<TileId, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+    }
+
+    #[test]
     fn map_insert_and_append() {
         let mut map = Map::new();
         map.set_title("Short Track 2");
@@ -1138,6 +1289,74 @@ mod tests {
         assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D)));
         assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F)));
         assert_eq!(tiles.next(), None);
+    }
+
+    #[test]
+    fn map_serde() {
+        let map = Map::new();
+        let text = serde_json::to_string(&map).unwrap();
+        assert_eq!(text, r#"{"title":"My Track","tiles":[],"active_pos":{"q":0,"r":0},"active_dir":3}"#);
+
+        let mut map = Map::new();
+        map.set_title("Short Track 2");
+        map.insert(tile!(102, b, 0), ( 1, -1).into(), Direction::E);
+        map.insert(tile!(104, b, 1), ( 1,  0).into(), Direction::B);
+        map.insert(tile!(113, b, 0), ( 1,  1).into(), Direction::E);
+        map.insert(tile!(117, b, 1), ( 0,  2).into(), Direction::F);
+        map.insert(tile!(114, b, 0), (-1,  2).into(), Direction::A);
+        map.insert(tile!(115, b, 1), ( 0,  1).into(), Direction::E);
+        map.insert(tile!(115, b, 2), ( 0,  0).into(), Direction::D);
+        map.insert(tile!(108, b, 0), (-1,  0).into(), Direction::A);
+        map.insert(tile!(110, b, 0), ( 0, -1).into(), Direction::C);
+        map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
+        map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
+        let text = serde_json::to_string(&map).unwrap();
+        assert_eq!(text, concat!(r#"{"title":"Short Track 2","tiles":["#,
+            r#"{"id":"102b","q":1,"r":-1,"dir":4},"#,
+            r#"{"id":"104b-1","q":1,"r":0,"dir":1},"#,
+            r#"{"id":"113b","q":1,"r":1,"dir":4},"#,
+            r#"{"id":"117b-1","q":0,"r":2,"dir":5},"#,
+            r#"{"id":"114b","q":-1,"r":2,"dir":0},"#,
+            r#"{"id":"115b-1","q":0,"r":1,"dir":4},"#,
+            r#"{"id":"115b-2","q":0,"r":0,"dir":3},"#,
+            r#"{"id":"108b","q":-1,"r":0,"dir":0},"#,
+            r#"{"id":"110b","q":0,"r":-1,"dir":2},"#,
+            r#"{"id":"107b-1","q":1,"r":-2,"dir":2},"#,
+            r#"{"id":"101a","q":-1,"r":1,"dir":4}],"#,
+            r#""active_pos":{"q":-1,"r":1},"active_dir":3}"#));
+
+        let text = r#"{
+            "title": "Short Track 2",
+            "tiles": [
+                {"id": "102b",   "q":  1, "r": -1, "dir": 4},
+                {"id": "104b-1", "q":  1, "r":  0, "dir": 1},
+                {"id": "113b",   "q":  1, "r":  1, "dir": 4},
+                {"id": "117b-1", "q":  0, "r":  2, "dir": 5},
+                {"id": "114b",   "q": -1, "r":  2, "dir": 0},
+                {"id": "115b-1", "q":  0, "r":  1, "dir": 4},
+                {"id": "115b-2", "q":  0, "r":  0, "dir": 3},
+                {"id": "108b",   "q": -1, "r":  0, "dir": 0},
+                {"id": "110b",   "q":  0, "r": -1, "dir": 2},
+                {"id": "107b-1", "q":  1, "r": -2, "dir": 2},
+                {"id": "101a",   "q": -1, "r":  1, "dir": 4}
+            ]
+        }"#;
+        let map: Map = serde_json::from_str(&text).unwrap();
+        assert_eq!(map.title(), "Short Track 2");
+        let mut tiles = map.tiles().iter();
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)));
+        assert_eq!(tiles.next(), None);
+        assert_eq!(map.active_pos(), None);
     }
 
     #[test]
@@ -1441,6 +1660,45 @@ mod tests {
         assert_eq!(tile.edge(Direction::D), Edge::None);
         assert_eq!(tile.edge(Direction::E), Edge::SkewLeft(3));
         assert_eq!(tile.edge(Direction::F), Edge::None);
+    }
+
+    #[test]
+    fn placed_tile_serde() {
+        let tile = PlacedTile::new(tile!(0), (0, 0).into(), Direction::A);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#"{"id":"0","q":0,"r":0,"dir":0}"#);
+
+        let tile = PlacedTile::new(tile!(102, a), (0, 1).into(), Direction::A);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#"{"id":"102a","q":0,"r":1,"dir":0}"#);
+
+        let tile = PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#"{"id":"103b-1","q":1,"r":-2,"dir":1}"#);
+
+        let tile = PlacedTile::new(tile!(124, a), (2, 0).into(), Direction::C);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#"{"id":"124a","q":2,"r":0,"dir":2}"#);
+
+        let text = r#"{"id":"0","q":0,"r":0,"dir":0}"#;
+        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        assert_eq!(tile, PlacedTile::new(tile!(0), (0, 0).into(), Direction::A));
+
+        let text = r#"{"id":"102a","q":0,"r":1,"dir":0}"#;
+        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        assert_eq!(tile, PlacedTile::new(tile!(102, a), (0, 1).into(), Direction::A));
+
+        let text = r#"{"id": "103b-1", "q": 1, "r": -2, "dir": 1}"#;
+        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        assert_eq!(tile, PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B));
+
+        let text = r#"{}"#;
+        let result: Result<PlacedTile, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+
+        let text = r#"{"id":"102a","q":0,"r":1}}"#;
+        let result: Result<TileId, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
     }
 }
 
