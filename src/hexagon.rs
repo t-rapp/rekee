@@ -13,6 +13,9 @@
 use std::fmt;
 use std::ops::{Add, Sub, Index, IndexMut};
 
+use serde::{Serialize, Serializer, Deserialize, Deserializer};
+use serde::de::{self, Visitor};
+
 //----------------------------------------------------------------------------
 
 /// Coordinate within a hexagon grid.
@@ -32,6 +35,7 @@ use std::ops::{Add, Sub, Index, IndexMut};
 /// assert_eq!(pos.s(), -8);
 /// ```
 #[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Serialize, Deserialize)]
 pub struct Coordinate {
     q: i32,
     r: i32,
@@ -431,6 +435,56 @@ impl From<Direction> for i32 {
     }
 }
 
+impl Serialize for Direction {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer
+    {
+        serializer.serialize_u8(u8::from(*self))
+    }
+}
+
+impl<'de> Deserialize<'de> for Direction {
+    fn deserialize<D>(deserializer: D) -> Result<Direction, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct DirectionVisitor;
+
+        impl<'de> Visitor<'de> for DirectionVisitor {
+            type Value = Direction;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+                fmt.write_str("an integer between 0 and 5")
+            }
+
+            fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                if value >= 0 && value <= 5 {
+                    Ok(Direction::from(value as u8))
+                } else {
+                    Err(E::custom(format!("direction out of range: {}", value)))
+                }
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                if value <= 5 {
+                    Ok(Direction::from(value as u8))
+                } else {
+                    Err(E::custom(format!("direction out of range: {}", value)))
+                }
+            }
+        }
+
+        deserializer.deserialize_u8(DirectionVisitor)
+    }
+}
+
 //----------------------------------------------------------------------------
 
 /// Position within a grid of rectangular pixels.
@@ -824,6 +878,17 @@ mod tests {
     }
 
     #[test]
+    fn coordinate_serde() {
+        let pos = Coordinate::new(2, -1);
+        let text = serde_json::to_string(&pos).unwrap();
+        assert_eq!(text, r#"{"q":2,"r":-1}"#);
+
+        let text = r#"{"q": 1, "r": -2}"#;
+        let pos: Coordinate = serde_json::from_str(&text).unwrap();
+        assert_eq!(pos, Coordinate::new(1, -2));
+    }
+
+    #[test]
     fn direction_add() {
         let dir = Direction::A;
         assert_eq!(dir + 1.into(), Direction::B);
@@ -901,6 +966,25 @@ mod tests {
         assert!((ang - 240.0).abs() < EPS);
         let ang = Direction::F.to_angle(&layout);
         assert!((ang - 300.0).abs() < EPS);
+    }
+
+    #[test]
+    fn direction_serde() {
+        let dir = Direction::A;
+        let text = serde_json::to_string(&dir).unwrap();
+        assert_eq!(text, r#"0"#);
+
+        let text = r#"2"#;
+        let dir: Direction = serde_json::from_str(&text).unwrap();
+        assert_eq!(dir, Direction::C);
+
+        let text = r#"-1"#;
+        let result: Result<Direction, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+
+        let text = r#"6"#;
+        let result: Result<Direction, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
     }
 
     #[test]
