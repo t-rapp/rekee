@@ -992,6 +992,7 @@ const TILE_INFOS: [TileInfo; 109] = [
 
 #[cfg(test)]
 mod tests {
+    use indoc::indoc;
     use super::*;
 
     #[test]
@@ -1294,8 +1295,16 @@ mod tests {
     #[test]
     fn map_serde() {
         let map = Map::new();
-        let text = serde_json::to_string(&map).unwrap();
-        assert_eq!(text, r#"{"title":"My Track","tiles":[],"active_pos":{"q":0,"r":0},"active_dir":3}"#);
+        let text = serde_json::to_string_pretty(&map).unwrap();
+        assert_eq!(text, indoc!(r#"{
+          "title": "My Track",
+          "tiles": [],
+          "active_pos": {
+            "q": 0,
+            "r": 0
+          },
+          "active_dir": 3
+        }"#));
 
         let mut map = Map::new();
         map.set_title("Short Track 2");
@@ -1310,22 +1319,85 @@ mod tests {
         map.insert(tile!(110, b, 0), ( 0, -1).into(), Direction::C);
         map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
-        let text = serde_json::to_string(&map).unwrap();
-        assert_eq!(text, concat!(r#"{"title":"Short Track 2","tiles":["#,
-            r#"{"id":"102b","q":1,"r":-1,"dir":4},"#,
-            r#"{"id":"104b-1","q":1,"r":0,"dir":1},"#,
-            r#"{"id":"113b","q":1,"r":1,"dir":4},"#,
-            r#"{"id":"117b-1","q":0,"r":2,"dir":5},"#,
-            r#"{"id":"114b","q":-1,"r":2,"dir":0},"#,
-            r#"{"id":"115b-1","q":0,"r":1,"dir":4},"#,
-            r#"{"id":"115b-2","q":0,"r":0,"dir":3},"#,
-            r#"{"id":"108b","q":-1,"r":0,"dir":0},"#,
-            r#"{"id":"110b","q":0,"r":-1,"dir":2},"#,
-            r#"{"id":"107b-1","q":1,"r":-2,"dir":2},"#,
-            r#"{"id":"101a","q":-1,"r":1,"dir":4}],"#,
-            r#""active_pos":{"q":-1,"r":1},"active_dir":3}"#));
+        let text = serde_json::to_string_pretty(&map).unwrap();
+        assert_eq!(text, indoc!(r#"{
+          "title": "Short Track 2",
+          "tiles": [
+            {
+              "id": "102b",
+              "q": 1,
+              "r": -1,
+              "dir": 4
+            },
+            {
+              "id": "104b-1",
+              "q": 1,
+              "r": 0,
+              "dir": 1
+            },
+            {
+              "id": "113b",
+              "q": 1,
+              "r": 1,
+              "dir": 4
+            },
+            {
+              "id": "117b-1",
+              "q": 0,
+              "r": 2,
+              "dir": 5
+            },
+            {
+              "id": "114b",
+              "q": -1,
+              "r": 2,
+              "dir": 0
+            },
+            {
+              "id": "115b-1",
+              "q": 0,
+              "r": 1,
+              "dir": 4
+            },
+            {
+              "id": "115b-2",
+              "q": 0,
+              "r": 0,
+              "dir": 3
+            },
+            {
+              "id": "108b",
+              "q": -1,
+              "r": 0,
+              "dir": 0
+            },
+            {
+              "id": "110b",
+              "q": 0,
+              "r": -1,
+              "dir": 2
+            },
+            {
+              "id": "107b-1",
+              "q": 1,
+              "r": -2,
+              "dir": 2
+            },
+            {
+              "id": "101a",
+              "q": -1,
+              "r": 1,
+              "dir": 4
+            }
+          ],
+          "active_pos": {
+            "q": -1,
+            "r": 1
+          },
+          "active_dir": 3
+        }"#));
 
-        let text = r#"{
+        let text = indoc!(r#"{
             "title": "Short Track 2",
             "tiles": [
                 {"id": "102b",   "q":  1, "r": -1, "dir": 4},
@@ -1340,7 +1412,7 @@ mod tests {
                 {"id": "107b-1", "q":  1, "r": -2, "dir": 2},
                 {"id": "101a",   "q": -1, "r":  1, "dir": 4}
             ]
-        }"#;
+        }"#);
         let map: Map = serde_json::from_str(&text).unwrap();
         assert_eq!(map.title(), "Short Track 2");
         let mut tiles = map.tiles().iter();

@@ -49,6 +49,9 @@ features = [
   'Window',
 ]
 
+[dev-dependencies]
+indoc = "1.0.3"
+
 [profile.release]
 lto = "thin"
 opt-level = "z"
