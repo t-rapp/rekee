@@ -12,7 +12,8 @@
 //! * `welcome` (optional)
 //!
 //! The library can also be used outside the web environment as a native
-//! library to process track files.
+//! library to process track files. For details take a look at the files in the
+//! `examples` folder.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +30,7 @@ pub mod edition;
 pub mod hexagon;
 use hexagon::*;
 
-mod import;
+pub mod import;
 
 #[macro_use]
 mod logger;
