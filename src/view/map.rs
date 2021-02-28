@@ -13,6 +13,7 @@ use web_sys::{self, Document, Element};
 use crate::check;
 use crate::controller::*;
 use crate::import;
+use crate::map::{PlacedTile, Map};
 use super::*;
 
 //----------------------------------------------------------------------------

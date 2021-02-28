@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------
 
 use crate::hexagon::*;
+use crate::map::{PlacedTile, Map};
 use crate::tile::*;
 use crate::view::*;
 

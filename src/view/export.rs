@@ -18,6 +18,7 @@ use web_sys::{self, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 use crate::check;
 use crate::controller::*;
 use crate::import;
+use crate::map::{PlacedTile, Map};
 use super::*;
 
 //----------------------------------------------------------------------------

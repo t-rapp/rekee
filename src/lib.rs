@@ -20,6 +20,8 @@ pub mod edition;
 #[macro_use]
 mod logger;
 
+pub mod map;
+
 #[macro_use]
 pub mod tile;
 

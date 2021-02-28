@@ -9,6 +9,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
+use crate::map::Map;
 use crate::tile::*;
 use super::*;
 
@@ -116,6 +117,7 @@ pub fn build_file_name(name: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use crate::map::PlacedTile;
     use super::*;
 
     #[test]
