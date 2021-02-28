@@ -8,9 +8,10 @@
 
 use std::collections::{BTreeSet, HashMap};
 
+use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element, Storage};
+use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::*;
@@ -187,12 +188,20 @@ impl Drop for FilterItem {
 
 //----------------------------------------------------------------------------
 
+#[derive(Default, Serialize, Deserialize)]
+pub struct CatalogSettings {
+    #[serde(default)]
+    filter_lanes: Option<u8>,
+}
+
+//----------------------------------------------------------------------------
+
 pub struct CatalogView {
     catalog: Element,
     tiles: Vec<CatalogTile>,
     filter_items: Vec<FilterItem>,
+    filter_lanes: Option<u8>,
     map: Option<Element>,
-    storage: Option<Storage>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
@@ -204,8 +213,6 @@ impl CatalogView {
         let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
 
         let document = parent.owner_document().unwrap();
-        let storage = web_sys::window()
-            .and_then(|wnd| wnd.local_storage().ok().flatten());
 
         let catalog = document.create_element("ul")?;
         catalog.set_id("catalog");
@@ -240,6 +247,7 @@ impl CatalogView {
                 .dyn_into::<web_sys::Element>().unwrap();
             filter_items.push(FilterItem::new(element)?);
         }
+        let filter_lanes = None;
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -280,24 +288,27 @@ impl CatalogView {
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
 
-        // restore previous selected filter item
-        let mut lanes = None;
-        if let Some(ref storage) = storage {
-            lanes = storage.get_item("filter")?
-                .map(|val| val.parse::<u8>().ok())
-                .unwrap_or(lanes);
-        }
-
-        let mut view = CatalogView {
-            catalog, tiles, filter_items, map: None, storage,
+        Ok(CatalogView {
+            catalog, tiles, filter_items, filter_lanes, map: None,
             dragover_cb, dragdrop_cb, keychange_cb
-        };
-        view.update_filter(lanes);
+        })
+    }
 
-        Ok(view)
+    pub fn load_settings(&mut self, settings: &CatalogSettings) {
+        self.update_filter(settings.filter_lanes);
+    }
+
+    pub fn save_settings(&mut self) -> CatalogSettings {
+        let filter_lanes = self.filter_lanes;
+        CatalogSettings { filter_lanes }
     }
 
     pub fn update_filter(&mut self, lanes: Option<u8>) {
+        self.inner_update_filter(lanes);
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+    }
+
+    fn inner_update_filter(&mut self, lanes: Option<u8>) {
         info!("update filter lanes: {:?}", lanes);
 
         let mut filter = None;
@@ -316,14 +327,7 @@ impl CatalogView {
             tile.set_hidden(hidden);
         }
 
-        // remember selected filter item
-        if let Some(ref storage) = self.storage {
-            let value = match lanes {
-                Some(val) => val.to_string(),
-                None => "all".to_string(),
-            };
-            let _ = storage.set_item("filter", &value);
-        }
+        self.filter_lanes = lanes;
     }
 
     pub fn update_tile_usage(&mut self, tiles: &[TileId]) {

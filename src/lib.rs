@@ -11,16 +11,18 @@ use wasm_bindgen::prelude::*;
 mod controller;
 use controller::*;
 
+pub mod edition;
+
 pub mod hexagon;
 use hexagon::*;
 
 mod import;
-pub mod edition;
 
 #[macro_use]
 mod logger;
 
 pub mod map;
+mod storage;
 
 #[macro_use]
 pub mod tile;
@@ -69,6 +71,9 @@ pub fn main() -> Result<(), JsValue> {
 
     // initialize after all other controllers are completed to ignore events during setup
     WelcomeController::init(WelcomeView::new(&document)?);
+
+    // restore previous view settings
+    nuts::publish(LoadSettingsEvent {});
 
     Ok(())
 }

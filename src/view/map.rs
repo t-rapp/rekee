@@ -6,6 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -330,6 +331,15 @@ impl AsRef<Element> for DraggedTile {
 
 //----------------------------------------------------------------------------
 
+#[derive(Default, Serialize, Deserialize)]
+pub struct MapSettings {
+    #[serde(flatten)]
+    map: Map,
+    selected: Option<Coordinate>,
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapView {
     layout: Layout,
     map: Map,
@@ -502,6 +512,18 @@ impl MapView {
         Ok(view)
     }
 
+    pub fn load_settings(&mut self, settings: &MapSettings) {
+        self.map = settings.map.clone();
+        self.update_map();
+        self.inner_update_selected(settings.selected.unwrap_or_default());
+    }
+
+    pub fn save_settings(&mut self) -> MapSettings {
+        let map = self.map.clone();
+        let selected = self.selected.pos();
+        MapSettings { map, selected }
+    }
+
     pub fn import_file(&mut self, data: &str) {
         let mut map = match import::import_rgt(data) {
             Ok(val) => val,
@@ -617,6 +639,9 @@ impl MapView {
             .map(|tile| tile.id())
             .collect();
         nuts::publish(UpdateTileUsageEvent { tiles });
+
+        // remember map status
+        nuts::send_to::<MapController, _>(SaveSettingsEvent {});
      }
 
     pub fn update_title(&mut self, title: &str) {
@@ -634,7 +659,12 @@ impl MapView {
 
     pub fn update_selected(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
-        info!("update selected: {:?}", pos);
+        self.inner_update_selected(pos);
+        nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+    }
+
+    fn inner_update_selected(&mut self, pos: Coordinate) {
+        debug!("update selected: {:?}", pos);
 
         let is_tile = self.map.get(pos).is_some();
         if self.selected.pos() != Some(pos) || is_tile {

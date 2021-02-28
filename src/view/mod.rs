@@ -96,10 +96,16 @@ macro_rules! check {
 //----------------------------------------------------------------------------
 
 trait ElementHidden {
+    fn hidden(&self) -> bool;
     fn set_hidden(&self, value: bool);
 }
 
 impl<T: AsRef<Element>> ElementHidden for T {
+    fn hidden(&self) -> bool {
+        let elm = self.as_ref();
+        elm.class_list().contains("is-hidden")
+    }
+
     fn set_hidden(&self, value: bool) {
         let elm = self.as_ref();
         if value {

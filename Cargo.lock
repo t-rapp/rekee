@@ -53,9 +53,9 @@ dependencies = [
 
 [[package]]
 name = "nuts"
-version = "0.1.1"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc3a9024df106526d36e587b2fccfe8154f02241a7b89c98297d9b9b2b1e7812"
+checksum = "de140f855243e190552367bac713a5e7092966db4b79bf5aff2ef1bddebadcd9"
 
 [[package]]
 name = "proc-macro2"

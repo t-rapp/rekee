@@ -6,19 +6,26 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element, Storage};
+use web_sys::{self, Document, Element};
 
 use crate::controller::*;
 use super::*;
 
 //----------------------------------------------------------------------------
 
+#[derive(Default, Serialize, Deserialize)]
+pub struct WelcomeSettings {
+    hidden: bool,
+}
+
+//----------------------------------------------------------------------------
+
 pub struct WelcomeView {
     inner: Element,
     header: Element,
-    storage: Option<Storage>,
     click_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
@@ -50,7 +57,16 @@ impl WelcomeView {
         header.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 
-        Ok(WelcomeView { inner, header, storage, click_cb })
+        Ok(WelcomeView { inner, header, click_cb })
+    }
+
+    pub fn load_settings(&mut self, settings: &WelcomeSettings) {
+        self.inner.set_hidden(settings.hidden);
+    }
+
+    pub fn save_settings(&mut self) -> WelcomeSettings {
+        let hidden = self.inner.hidden();
+        WelcomeSettings { hidden }
     }
 
     pub fn set_hidden(&self, value: bool) {
@@ -58,9 +74,7 @@ impl WelcomeView {
         self.inner.set_hidden(value);
 
         // remember visibility state
-        if let Some(ref storage) = self.storage {
-            let _ = storage.set_item("welcome", &value.to_string());
-        }
+        nuts::send_to::<WelcomeController, _>(SaveSettingsEvent {});
     }
 }
 

@@ -8,10 +8,15 @@
 
 use crate::hexagon::*;
 use crate::map::{PlacedTile, Map};
+use crate::storage::Storage;
 use crate::tile::*;
 use crate::view::*;
 
 //----------------------------------------------------------------------------
+
+pub struct LoadSettingsEvent;
+
+pub struct SaveSettingsEvent;
 
 pub struct ImportFileEvent {
     pub data: String,
@@ -94,15 +99,41 @@ pub struct HideWelcomeEvent;
 
 pub struct CatalogController {
     view: CatalogView,
+    storage: Storage,
 }
 
 impl CatalogController {
     pub fn init(view: CatalogView) {
-        let controller = CatalogController { view };
+        let storage = Storage::new("catalog");
+        let controller = CatalogController { view, storage };
         let activity = nuts::new_activity(controller);
+
+        // register private events
+        activity.private_channel(|controller, event| {
+            controller.load_settings(&event);
+        });
+        activity.private_channel(|controller, event| {
+            controller.save_settings(&event);
+        });
+
+        // register public events
+        activity.subscribe(CatalogController::load_settings);
+        activity.subscribe(CatalogController::save_settings);
         activity.subscribe(CatalogController::update_filter);
         activity.subscribe(CatalogController::update_tile_usage);
         activity.subscribe(CatalogController::drag_catalog_begin);
+    }
+
+    fn load_settings(&mut self, _event: &LoadSettingsEvent) {
+        let settings = self.storage.get();
+        if let Some(settings) = settings {
+            self.view.load_settings(&settings);
+        }
+    }
+
+    fn save_settings(&mut self, _event: &SaveSettingsEvent) {
+        let settings = self.view.save_settings();
+        self.storage.set(&settings);
     }
 
     fn update_filter(&mut self, event: &UpdateFilterEvent) {
@@ -122,12 +153,26 @@ impl CatalogController {
 
 pub struct MapController {
     view: MapView,
+    storage: Storage,
 }
 
 impl MapController {
     pub fn init(view: MapView) {
-        let controller = MapController { view };
+        let storage = Storage::new("map");
+        let controller = MapController { view, storage };
         let activity = nuts::new_activity(controller);
+
+        // register private events
+        activity.private_channel(|controller, event| {
+            controller.load_settings(&event);
+        });
+        activity.private_channel(|controller, event| {
+            controller.save_settings(&event);
+        });
+
+        // register public events
+        activity.subscribe(MapController::load_settings);
+        activity.subscribe(MapController::save_settings);
         activity.subscribe(MapController::import_file);
         activity.subscribe(MapController::export_file);
         activity.subscribe(MapController::export_image);
@@ -146,6 +191,18 @@ impl MapController {
         activity.subscribe(MapController::drag_map_end);
         activity.subscribe(MapController::drag_map_cancel);
         activity.subscribe(MapController::update_connection_hint);
+    }
+
+    fn load_settings(&mut self, _event: &LoadSettingsEvent) {
+        let settings = self.storage.get();
+        if let Some(settings) = settings {
+            self.view.load_settings(&settings);
+        }
+    }
+
+    fn save_settings(&mut self, _event: &SaveSettingsEvent) {
+        let settings = self.view.save_settings();
+        self.storage.set(&settings);
     }
 
     fn import_file(&mut self, event: &ImportFileEvent) {
@@ -256,12 +313,26 @@ impl ExportController {
 
 pub struct WelcomeController {
     view: WelcomeView,
+    storage: Storage,
 }
 
 impl WelcomeController {
     pub fn init(view: WelcomeView) {
-        let controller = WelcomeController { view };
+        let storage = Storage::with_session_storage("welcome");
+        let controller = WelcomeController { view, storage };
         let activity = nuts::new_activity(controller);
+
+        // register private events
+        activity.private_channel(|controller, event| {
+            controller.load_settings(&event);
+        });
+        activity.private_channel(|controller, event| {
+            controller.save_settings(&event);
+        });
+
+        // register public events
+        activity.subscribe(WelcomeController::load_settings);
+        activity.subscribe(WelcomeController::save_settings);
         activity.subscribe(WelcomeController::import_file);
         activity.subscribe(WelcomeController::insert_tile);
         activity.subscribe(WelcomeController::append_tile);
@@ -269,6 +340,18 @@ impl WelcomeController {
         activity.subscribe(WelcomeController::drag_map_end);
         activity.subscribe(WelcomeController::show_welcome);
         activity.subscribe(WelcomeController::hide_welcome);
+    }
+
+    fn load_settings(&mut self, _event: &LoadSettingsEvent) {
+        let settings = self.storage.get();
+        if let Some(settings) = settings {
+            self.view.load_settings(&settings);
+        }
+    }
+
+    fn save_settings(&mut self, _event: &SaveSettingsEvent) {
+        let settings = self.view.save_settings();
+        self.storage.set(&settings);
     }
 
     fn import_file(&mut self, _event: &ImportFileEvent) {
