@@ -21,7 +21,7 @@ use crate::hexagon::Direction;
 ///
 /// Each tile identifier consists of three parts:
 /// * a three digit catalog number `num` (101 .. 999)
-/// * a number `side` for the tile front (a) or back (b) (1 => a, 2 => b)
+/// * a `side` number for the tile front (a => 1) or back (b => 2)
 /// * a tile variant `var`, if there are multiple graphical variants of a tile
 ///
 /// # Examples
@@ -203,6 +203,12 @@ macro_rules! tile {
 
 //----------------------------------------------------------------------------
 
+/// Tile connection hint. Used to describe the orientation of adjacent tiles
+/// along the track in [`Map::append()`](crate::map::Map::append).
+///
+/// Represents the track characteristics of a single tile's edge-to-edge
+/// connection, simplified to one of three possible values: Straight, Left, or
+/// Right.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ConnectionHint {
     Straight,
@@ -256,6 +262,21 @@ impl fmt::Display for ParseHintError {
 
 //----------------------------------------------------------------------------
 
+/// Internal tile connection information. Describes how a specific tile edge is
+/// connected to other edges of the same tile.
+///
+/// This is basically a more detailed version of [`ConnectionHint`] information,
+/// used by [`Map`](crate::map::Map) to determine the best tile direction and
+/// next active position when adding a tile.
+///
+/// Examples:
+///
+/// ```
+/// # use rekee::tile::{Connection, ConnectionHint};
+/// let conn = Connection::Left(1);
+/// assert!(conn == ConnectionHint::Left);
+/// assert!(conn != ConnectionHint::Right);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Connection {
     None,
@@ -340,6 +361,24 @@ impl Default for Edge {
 
 //----------------------------------------------------------------------------
 
+/// Information about tile characteristics like graphical variants, connections,
+/// and edge types.
+///
+/// Use [`TileInfo::get()`] to lookup tile information by identifier.
+///
+/// Note that the list of tiles is static, it is not possible to add or change
+/// any tile information entry at runtime.
+///
+/// Examples:
+///
+/// ```
+/// # #[macro_use] extern crate rekee;
+/// # use rekee::tile::{TileId, TileInfo};
+/// # fn main() {
+/// let info = TileInfo::get(tile!(103, a, 2));
+/// assert!(info.is_some());
+/// # }
+/// ```
 #[derive(Debug, Default)]
 pub struct TileInfo {
     id: TileId,
@@ -353,10 +392,41 @@ impl TileInfo {
         TileInfo { id, count, conn, edges }
     }
 
+    /// Base identifier of the corresponding game tile.
+    ///
+    /// See [`TileId::base()`] for more information on the difference between
+    /// base and full tile identifiers.
+    ///
+    /// Examples:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, a, 2)).unwrap();
+    /// assert_eq!(info.base_id(), TileId::new(103, 1, 0));
+    /// # }
+    /// ```
     pub fn base_id(&self) -> TileId {
         self.id
     }
 
+    /// Full identifier of the corresponding game tile. If the tile has multiple
+    /// graphical variants, this will return the first possible variant.
+    ///
+    /// See [`TileId::base()`] for more information on the difference between
+    /// base and full tile identifiers.
+    ///
+    /// Examples:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, b)).unwrap();
+    /// assert_eq!(info.full_id(), TileId::new(103, 2, 1));
+    /// # }
+    /// ```
     pub fn full_id(&self) -> TileId {
         match self.count {
             1 => TileId::new(self.id.num, self.id.side, 0),
@@ -364,11 +434,16 @@ impl TileInfo {
         }
     }
 
+    /// Returns an interator over all tiles in the internal list.
     pub fn iter() -> std::slice::Iter<'static, Self> {
         TILE_INFOS.iter()
     }
 
+    /// Lookup tile information by tile identifier. The identifier can be in base
+    /// or full format (with or without graphical variant).
     pub fn get(id: TileId) -> Option<&'static Self> {
+        // Use of the fast binary search algorithm is allowed here as the proper
+        // list order is checked with unit tests
         let idx = TILE_INFOS.binary_search_by_key(&id.base(), |info| info.id);
         match idx {
             Ok(idx) => Some(&TILE_INFOS[idx]),
@@ -376,6 +451,18 @@ impl TileInfo {
         }
     }
 
+    /// Number of graphical variants that are available for a tile.
+    ///
+    /// Examples:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::TileInfo;
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, b)).unwrap();
+    /// assert_eq!(info.count(), 3);
+    /// # }
+    /// ```
     pub fn count(&self) -> usize {
         self.count
     }
