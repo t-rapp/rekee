@@ -492,6 +492,7 @@ const CN: Connection = Connection::None;
 const CS0: Connection = Connection::Straight(0);
 const CS1P: Connection = Connection::Straight(1);
 const CS1M: Connection = Connection::Straight(-1);
+const CS3: Connection = Connection::Straight(3);
 const CL0: Connection = Connection::Left(0);
 const CL1: Connection = Connection::Left(1);
 const CL2: Connection = Connection::Left(2);
@@ -514,7 +515,8 @@ const EL3: Edge = Edge::SkewLeft(3);
 const ER2: Edge = Edge::SkewRight(2);
 const ER3: Edge = Edge::SkewRight(3);
 
-const TILE_INFOS: [TileInfo; 109] = [
+const TILE_INFOS: [TileInfo; 173] = [
+    // Rallyman GT core box
     TileInfo::new(tile!(101), 1, [CN; 6], [EN; 6]),
     TileInfo::new(tile!(102, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
     TileInfo::new(tile!(102, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
@@ -554,6 +556,7 @@ const TILE_INFOS: [TileInfo; 109] = [
     TileInfo::new(tile!(119, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES3, EN, EN]),
     TileInfo::new(tile!(120, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
     TileInfo::new(tile!(120, b), 1, [CN, CN, CN, CL1, CN, CR1], [EN, EN, EN, ES3, EN, ES2]),
+    // Rallyman GT expansions
     TileInfo::new(tile!(121, a), 2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
     TileInfo::new(tile!(121, b), 2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
     TileInfo::new(tile!(122, a), 2, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, ES3]),
@@ -622,6 +625,72 @@ const TILE_INFOS: [TileInfo; 109] = [
     TileInfo::new(tile!(153, b), 1, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
     TileInfo::new(tile!(154, a), 1, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES3, ES2, ES3]),
     TileInfo::new(tile!(154, b), 1, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
+    // Rallyman DIRT core box
+    TileInfo::new(tile!(201, a), 1, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(201, b), 1, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(202, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(202, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(203, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(203, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(204, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(204, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(205, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(205, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(206, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(206, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(207, a), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(207, b), 1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(208, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(208, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(209, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(209, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(210, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(210, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(211, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(211, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(212, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(212, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(213, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(213, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(214, a), 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(214, b), 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, a), 1, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, b), 1, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(216, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(216, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(217, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(217, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(218, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(218, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(219, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(219, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(220, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(220, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(221, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(221, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(222, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(222, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(223, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(223, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(224, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(224, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(225, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(225, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, a), 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, b), 1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(227, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(227, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(228, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(228, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(229, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(229, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(230, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(230, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(231, a), 1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(231, b), 1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(232, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(232, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    // Unnumbered fillers
     TileInfo::new(tile!(901, a), 1, [CN; 6], [EN; 6]),
     TileInfo::new(tile!(901, b), 1, [CN; 6], [EN; 6]),
 ];
@@ -770,6 +839,16 @@ mod tests {
         assert_eq!(conn.target(Direction::D), Some(Direction::B));
         assert_eq!(conn.target(Direction::F), Some(Direction::D));
 
+        let conn = Connection::Straight(2);
+        assert_eq!(conn.target(Direction::A), Some(Direction::F));
+        assert_eq!(conn.target(Direction::D), Some(Direction::C));
+        assert_eq!(conn.target(Direction::F), Some(Direction::E));
+
+        let conn = Connection::Straight(3);
+        assert_eq!(conn.target(Direction::A), Some(Direction::A));
+        assert_eq!(conn.target(Direction::D), Some(Direction::D));
+        assert_eq!(conn.target(Direction::F), Some(Direction::F));
+
         let conn = Connection::Straight(-1);
         assert_eq!(conn.target(Direction::A), Some(Direction::C));
         assert_eq!(conn.target(Direction::D), Some(Direction::F));
@@ -838,7 +917,7 @@ mod tests {
 
     #[test]
     fn tile_info_count() {
-        assert_eq!(TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>(), 145);
+        assert_eq!(TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>(), 209);
     }
 
     #[test]

@@ -12,7 +12,7 @@ use crate::tile::TileId;
 
 /// Rallyman game edition (core box or one of the expansions).
 pub enum Edition {
-    /// Rallyman: GT Core Box
+    /// Rallyman: GT core box
     GtCoreBox,
     /// Championship expansion for Rallyman: GT
     GtChampionship,
@@ -22,6 +22,8 @@ pub enum Edition {
     GtTeamChallenge,
     /// Adrenaline Pack expansion for Rallyman: GT
     GtAdrenalinePack,
+    /// Rallyman: DIRT core box
+    DirtCoreBox,
 }
 
 impl Edition {
@@ -71,6 +73,8 @@ impl Edition {
                 GT_TEAM_CHALLENGE.iter(),
             Edition::GtAdrenalinePack =>
                 GT_ADRENALINE_PACK.iter(),
+            Edition::DirtCoreBox =>
+                DIRT_CORE_BOX.iter(),
         };
         for tile in iter {
             let tile_a = TileId::new(tile.num(), 1, tile.var());
@@ -93,7 +97,8 @@ impl Edition {
             Edition::GtChampionship,
             Edition::GtWorldTour,
             Edition::GtTeamChallenge,
-            Edition::GtAdrenalinePack
+            Edition::GtAdrenalinePack,
+            // TODO: add DIRT editions here once the user interface is ready
         ];
         EDITIONS.iter()
     }
@@ -184,6 +189,41 @@ const GT_ADRENALINE_PACK: [TileId; 5] = [
     tile!(901),
 ];
 
+const DIRT_CORE_BOX: [TileId; 32] = [
+    tile!(201),
+    tile!(202),
+    tile!(203),
+    tile!(204),
+    tile!(205),
+    tile!(206),
+    tile!(207),
+    tile!(208),
+    tile!(209),
+    tile!(210),
+    tile!(211),
+    tile!(212),
+    tile!(213),
+    tile!(214),
+    tile!(215),
+    tile!(216),
+    tile!(217),
+    tile!(218),
+    tile!(219),
+    tile!(220),
+    tile!(221),
+    tile!(222),
+    tile!(223),
+    tile!(224),
+    tile!(225),
+    tile!(226),
+    tile!(227),
+    tile!(228),
+    tile!(229),
+    tile!(230),
+    tile!(231),
+    tile!(232),
+];
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -198,6 +238,7 @@ mod tests {
         tiles.extend_from_slice(&GT_WORLD_TOUR);
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
+        tiles.extend_from_slice(&DIRT_CORE_BOX);
         for tile in &tiles {
             assert_eq!(tile.side(), 0, "tile {} is defined with a non-empty side", tile);
         }
@@ -211,6 +252,7 @@ mod tests {
         tiles.extend_from_slice(&GT_WORLD_TOUR);
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
+        tiles.extend_from_slice(&DIRT_CORE_BOX);
         for tile in &tiles {
             let count = tiles.iter()
                 .filter(|id| *id == tile)
