@@ -1,0 +1,29 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build source code documentation
+      run: cargo doc --lib --no-deps
+
+    - name: Create redirection page
+      run: |
+         echo "<meta http-equiv=refresh content=0;url=rekee/index.html>" > ./target/doc/index.html
+
+    - name: Deploy source code documentation
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./target/doc
