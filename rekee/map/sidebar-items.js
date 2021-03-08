@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Map","Map for storing track tiles."],["PlacedTile","Single tile that is part of the map. A placed tile consists of tile identifier, grid coordinates, and rotation direction."]]});

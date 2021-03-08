@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rekee"] = [{"text":"impl Sub&lt;Coordinate&gt; for Coordinate","synthetic":false,"types":[]},{"text":"impl Sub&lt;Direction&gt; for Direction","synthetic":false,"types":[]},{"text":"impl Sub&lt;Point&gt; for Point","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rekee"] = [{"text":"impl Serialize for Coordinate","synthetic":false,"types":[]},{"text":"impl Serialize for Direction","synthetic":false,"types":[]},{"text":"impl Serialize for PlacedTile","synthetic":false,"types":[]},{"text":"impl Serialize for Map","synthetic":false,"types":[]},{"text":"impl Serialize for TileId","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

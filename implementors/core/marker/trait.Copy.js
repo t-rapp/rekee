@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rekee"] = [{"text":"impl Copy for Coordinate","synthetic":false,"types":[]},{"text":"impl Copy for Direction","synthetic":false,"types":[]},{"text":"impl Copy for Point","synthetic":false,"types":[]},{"text":"impl Copy for Rect","synthetic":false,"types":[]},{"text":"impl Copy for TileId","synthetic":false,"types":[]},{"text":"impl Copy for ConnectionHint","synthetic":false,"types":[]},{"text":"impl Copy for Connection","synthetic":false,"types":[]},{"text":"impl Copy for Edge","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
