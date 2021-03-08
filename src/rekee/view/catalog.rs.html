@@ -1,6 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/view/catalog.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/catalog.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -403,8 +403,8 @@
     <span class="ident">id</span>: <span class="ident">TileId</span>,
     <span class="ident">count</span>: <span class="ident">usize</span>,
     <span class="ident">counter</span>: <span class="ident">Element</span>,
-    <span class="ident">dblclick_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">MouseEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">dragstart_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">dblclick_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">MouseEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">dragstart_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">CatalogTile</span> {
@@ -441,7 +441,7 @@
                 (<span class="bool-val">false</span>, <span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
             };
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="ident">id</span>.<span class="ident">base</span>(), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
         <span class="ident">tile</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dblclick&quot;</span>, <span class="ident">dblclick_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">drag_img</span> <span class="op">=</span> <span class="ident">canvas</span>;
@@ -454,7 +454,7 @@
                 <span class="ident">trans</span>.<span class="ident">set_drag_image</span>(<span class="kw-2">&amp;</span><span class="ident">drag_img</span>, <span class="number">50</span>, <span class="number">50</span>);
             }
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">DragCatalogBeginEvent</span> { <span class="ident">tile</span>: <span class="ident">id</span>.<span class="ident">base</span>() });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
         <span class="ident">tile</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dragstart&quot;</span>, <span class="ident">dragstart_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">CatalogTile</span> { <span class="ident">inner</span>: <span class="ident">tile</span>, <span class="ident">id</span>, <span class="ident">count</span>, <span class="ident">counter</span>, <span class="ident">dblclick_cb</span>, <span class="ident">dragstart_cb</span> })
@@ -501,7 +501,7 @@
     <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>,
     <span class="ident">anchor</span>: <span class="ident">Element</span>,
-    <span class="ident">click_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">Event</span>)<span class="op">&gt;</span>,
+    <span class="ident">click_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">Event</span>)<span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">FilterItem</span> {
@@ -521,7 +521,7 @@
 
         <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure</span>::<span class="ident">wrap</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys</span>::<span class="ident">Event</span><span class="op">|</span> {
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">UpdateFilterEvent</span> { <span class="ident">lanes</span>: <span class="ident">value</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
         <span class="kw">let</span> <span class="ident">anchor</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>
             .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find anchor element of filter item&quot;</span>)<span class="question-mark">?</span>;
@@ -580,9 +580,9 @@
     <span class="ident">filter_items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FilterItem</span><span class="op">&gt;</span>,
     <span class="ident">filter_lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="ident">map</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>,
-    <span class="ident">dragover_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">dragdrop_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">keychange_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">KeyboardEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">dragover_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">dragdrop_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">DragEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">keychange_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys</span>::<span class="ident">KeyboardEvent</span>)<span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">CatalogView</span> {
@@ -635,7 +635,7 @@
                 <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="macro">check</span><span class="macro">!</span>(<span class="ident">mouse_position</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>));
                 <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">DragMapMoveEvent</span> { <span class="ident">pos</span> });
             }
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
         <span class="kw">let</span> <span class="ident">dragdrop_cb</span> <span class="op">=</span> <span class="ident">Closure</span>::<span class="ident">wrap</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys</span>::<span class="ident">DragEvent</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">tile</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">data_transfer</span>()
@@ -647,7 +647,7 @@
                 <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">DragCatalogEndEvent</span> { <span class="ident">pos</span>, <span class="ident">tile</span> });
                 <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">UpdateSelectedEvent</span> { <span class="ident">pos</span> });
             }
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
         <span class="kw">let</span> <span class="ident">keychange_cb</span> <span class="op">=</span> <span class="ident">Closure</span>::<span class="ident">wrap</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys</span>::<span class="ident">KeyboardEvent</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">event</span>.<span class="ident">repeat</span>() {
@@ -660,7 +660,7 @@
                 (<span class="bool-val">false</span>, <span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
             };
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">UpdateConnectionHintEvent</span> { <span class="ident">hint</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
         <span class="ident">document</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;keydown&quot;</span>,
             <span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
         <span class="ident">document</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;keyup&quot;</span>,
