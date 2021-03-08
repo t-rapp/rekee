@@ -1,5 +1,12 @@
 //----------------------------------------------------------------------------
 //! Definition and distribution of user events.
+//!
+//! Uses the "nuts" library for sending events between global instances of view
+//! components. Acts as a replacement for the JavaScript event loop.
+//!
+//! See <https://www.jakobmeier.ch/blogging/Rust_on_the_Web.html> for a nice
+//! summary of the Rust and JavaScript programming patterns. The epilogue of that
+//! article directly inspired this module.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
