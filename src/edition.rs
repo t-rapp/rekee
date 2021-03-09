@@ -24,6 +24,8 @@ pub enum Edition {
     GtAdrenalinePack,
     /// Rallyman: DIRT core box
     DirtCoreBox,
+    /// 110% expansion for Rallyman: DIRT
+    Dirt110Percent,
 }
 
 impl Edition {
@@ -75,6 +77,8 @@ impl Edition {
                 GT_ADRENALINE_PACK.iter(),
             Edition::DirtCoreBox =>
                 DIRT_CORE_BOX.iter(),
+            Edition::Dirt110Percent =>
+                DIRT_110_PERCENT.iter(),
         };
         for tile in iter {
             let tile_a = TileId::new(tile.num(), 1, tile.var());
@@ -224,6 +228,33 @@ const DIRT_CORE_BOX: [TileId; 32] = [
     tile!(232),
 ];
 
+const DIRT_110_PERCENT: [TileId; 24] = [
+    tile!(301),
+    tile!(302),
+    tile!(303),
+    tile!(304),
+    tile!(305),
+    tile!(306),
+    tile!(307),
+    tile!(308),
+    tile!(309),
+    tile!(310),
+    tile!(311),
+    tile!(312),
+    tile!(313),
+    tile!(314),
+    tile!(315),
+    tile!(316),
+    tile!(317),
+    tile!(318),
+    tile!(319),
+    tile!(320),
+    tile!(321),
+    tile!(322),
+    tile!(323),
+    tile!(902),
+];
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -239,6 +270,7 @@ mod tests {
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
+        tiles.extend_from_slice(&DIRT_110_PERCENT);
         for tile in &tiles {
             assert_eq!(tile.side(), 0, "tile {} is defined with a non-empty side", tile);
         }
@@ -253,6 +285,7 @@ mod tests {
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
+        tiles.extend_from_slice(&DIRT_110_PERCENT);
         for tile in &tiles {
             let count = tiles.iter()
                 .filter(|id| *id == tile)
