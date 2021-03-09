@@ -6,6 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+/// Prints a warning message to the log output.
 #[cfg(target_arch = "wasm32")]
 #[macro_export]
 macro_rules! warn {
@@ -14,6 +15,7 @@ macro_rules! warn {
     }
 }
 
+/// Prints a warning message to the log output.
 #[cfg(not(target_arch = "wasm32"))]
 #[macro_export]
 macro_rules! warn {
@@ -22,7 +24,7 @@ macro_rules! warn {
     }
 }
 
-
+/// Prints a generic message to the log output.
 #[cfg(target_arch = "wasm32")]
 #[macro_export]
 macro_rules! log {
@@ -31,6 +33,7 @@ macro_rules! log {
     }
 }
 
+/// Prints a generic message to the log output.
 #[cfg(not(target_arch = "wasm32"))]
 #[macro_export]
 macro_rules! log {
@@ -42,6 +45,7 @@ macro_rules! log {
 //----------------------------------------------------------------------------
 // The following log macros are active only when compiled in debug mode
 
+/// Prints an info message to the log output.
 #[cfg(debug_assertions)]
 #[cfg(target_arch = "wasm32")]
 #[macro_export]
@@ -51,6 +55,7 @@ macro_rules! info {
     }
 }
 
+/// Prints an info message to the log output.
 #[cfg(debug_assertions)]
 #[cfg(not(target_arch = "wasm32"))]
 #[macro_export]
@@ -68,6 +73,7 @@ macro_rules! info {
     };
 }
 
+/// Prints a debug message to the log output.
 #[cfg(debug_assertions)]
 #[cfg(target_arch = "wasm32")]
 #[macro_export]
@@ -77,6 +83,7 @@ macro_rules! debug {
     }
 }
 
+/// Prints a debug message to the log output.
 #[cfg(debug_assertions)]
 #[cfg(not(target_arch = "wasm32"))]
 #[macro_export]
