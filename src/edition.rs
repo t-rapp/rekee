@@ -38,12 +38,65 @@ impl Edition {
     /// # use rekee::tile;
     /// let tiles = Edition::all_tiles();
     /// assert_eq!(tiles.first(), Some(&tile!(101)));
+    /// assert_eq!(tiles.last(), Some(&tile!(902, b)));
+    /// assert_eq!(tiles.len(), 257);
+    /// ```
+    pub fn all_tiles() -> Vec<TileId> {
+        let mut tiles = Vec::with_capacity(257);
+        for edition in Self::iter() {
+            tiles.extend_from_slice(&edition.tiles());
+        }
+        tiles.sort_unstable();
+        tiles
+    }
+
+    /// Returns tiles part of Rallyman: GT game editions joined into a sorted list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::gt_tiles();
+    /// assert_eq!(tiles.first(), Some(&tile!(101)));
     /// assert_eq!(tiles.last(), Some(&tile!(901, b)));
     /// assert_eq!(tiles.len(), 145);
     /// ```
-    pub fn all_tiles() -> Vec<TileId> {
+    pub fn gt_tiles() -> Vec<TileId> {
+        const EDITIONS: [Edition; 5] = [
+            Edition::GtCoreBox,
+            Edition::GtChampionship,
+            Edition::GtWorldTour,
+            Edition::GtTeamChallenge,
+            Edition::GtAdrenalinePack,
+        ];
         let mut tiles = Vec::with_capacity(145);
-        for edition in Self::iter() {
+        for edition in EDITIONS.iter() {
+            tiles.extend_from_slice(&edition.tiles());
+        }
+        tiles.sort_unstable();
+        tiles
+    }
+
+    /// Returns tiles part of Rallyman: DIRT game editions joined into a sorted list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::dirt_tiles();
+    /// assert_eq!(tiles.first(), Some(&tile!(201, a)));
+    /// assert_eq!(tiles.last(), Some(&tile!(902, b)));
+    /// assert_eq!(tiles.len(), 112);
+    /// ```
+    pub fn dirt_tiles() -> Vec<TileId> {
+        const EDITIONS: [Edition; 2] = [
+            Edition::DirtCoreBox,
+            Edition::Dirt110Percent,
+        ];
+        let mut tiles = Vec::with_capacity(112);
+        for edition in EDITIONS.iter() {
             tiles.extend_from_slice(&edition.tiles());
         }
         tiles.sort_unstable();
@@ -96,13 +149,14 @@ impl Edition {
 
     /// Iterator over all game editions.
     pub fn iter() -> std::slice::Iter<'static, Self> {
-        const EDITIONS: [Edition; 5] = [
+        const EDITIONS: [Edition; 7] = [
             Edition::GtCoreBox,
             Edition::GtChampionship,
             Edition::GtWorldTour,
             Edition::GtTeamChallenge,
             Edition::GtAdrenalinePack,
-            // TODO: add DIRT editions here once the user interface is ready
+            Edition::DirtCoreBox,
+            Edition::Dirt110Percent,
         ];
         EDITIONS.iter()
     }

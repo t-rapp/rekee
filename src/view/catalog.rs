@@ -218,7 +218,8 @@ impl CatalogView {
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
 
-        let tile_ids = Edition::all_tiles();
+        // TODO: include DIRT editions here once the user interface is ready
+        let tile_ids = Edition::gt_tiles();
         let mut tile_counts = HashMap::<TileId, usize>::new();
         for full_id in &tile_ids {
             let count = tile_counts.entry(full_id.base()).or_insert(0);
