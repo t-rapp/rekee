@@ -11,6 +11,10 @@ license = "MPL-2.0"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+default = []
+dirt = []
+
 [dependencies]
 js-sys = "0.3.45"
 nuts = "0.2.1"
