@@ -107,7 +107,7 @@ impl TileImage {
                 check!(draw_tile_image(&context, &image, pos, size, angle).ok());
                 check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
                 context.restore();
-                nuts::publish(DrawExportTileDoneEvent { tile: tile.clone() });
+                nuts::send_to::<ExportController, _>(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) as Box<dyn Fn(_)>);
         image.add_event_listener_with_callback("load", load_cb.as_ref().unchecked_ref())?;
@@ -121,7 +121,7 @@ impl TileImage {
                 check!(draw_missing_image(&context, pos, size).ok());
                 check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
                 context.restore();
-                nuts::publish(DrawExportTileDoneEvent { tile: tile.clone() });
+                nuts::send_to::<ExportController, _>(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) as Box<dyn Fn(_)>);
         image.add_event_listener_with_callback("error", error_cb.as_ref().unchecked_ref())?;

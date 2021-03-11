@@ -303,16 +303,18 @@ impl ExportController {
     pub fn init(view: ExportView) {
         let controller = ExportController { view };
         let activity = nuts::new_activity(controller);
+
+        // register private events
+        activity.private_channel(|controller, event: DrawExportTileDoneEvent| {
+            controller.view.draw_export_tile_done(&event.tile);
+        });
+
+        // register public events
         activity.subscribe(ExportController::draw_export_image);
-        activity.subscribe(ExportController::draw_export_tile_done);
     }
 
     fn draw_export_image(&mut self, event: &DrawExportImageEvent) {
         self.view.draw_export_image(&event.map);
-    }
-
-    fn draw_export_tile_done(&mut self, event: &DrawExportTileDoneEvent) {
-        self.view.draw_export_tile_done(&event.tile);
     }
 }
 
