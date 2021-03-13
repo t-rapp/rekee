@@ -9,7 +9,7 @@
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element};
+use web_sys::{self, Element};
 
 use crate::controller::*;
 use super::*;
@@ -30,25 +30,12 @@ pub struct WelcomeView {
 }
 
 impl WelcomeView {
-    pub fn new(document: &Document) -> Result<Self> {
-        let inner = document.get_element_by_id("welcome")
-            .ok_or("Cannot find '#welcome' element")?;
-
-        let storage = web_sys::window()
-            .and_then(|wnd| wnd.session_storage().ok().flatten());
-
-        // restore previous visibility state
-        let mut hidden = false;
-        if let Some(ref storage) = storage {
-            hidden = storage.get_item("welcome")?
-                .and_then(|val| val.parse::<bool>().ok())
-                .unwrap_or(hidden);
-        }
-        debug!("create welcome hidden: {}", hidden);
-        inner.set_hidden(hidden);
+    pub fn new(parent: Element) -> Result<Self> {
+        let inner = parent;
 
         let header = inner.query_selector(".message-header")?
             .ok_or("Cannot find header of welcome message element")?;
+        inner.set_hidden(false);
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::publish(HideWelcomeEvent);

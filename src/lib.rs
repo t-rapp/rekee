@@ -1,5 +1,18 @@
 //----------------------------------------------------------------------------
 //! Library providing track editor functions for the Rekee web application.
+//!
+//! When the library is compiled into a WASM module it will include a `main`
+//! function which connects the view components to the web page environment.
+//!
+//! The following HTML elements are looked up by element id:
+//! * `catalog-container` (mandatory)
+//! * `map-container` (mandatory)
+//! * `export-container` (mandatory)
+//! * `version` (optional)
+//! * `welcome` (optional)
+//!
+//! The library can also be used outside the web environment as a native
+//! library to process track files.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,7 +64,9 @@ pub fn main() -> Result<(), JsValue> {
         .ok_or("Cannot find '#export-container' parent element for export component")?;
     ExportController::init(ExportView::new(parent, &layout)?);
 
-    VersionView::new(&document)?;
+    if let Some(parent) = document.get_element_by_id("version") {
+        VersionView::new(parent)?;
+    }
 
     // build some example track when compiling in development mode
     if cfg!(debug_assertions) {
@@ -70,7 +85,9 @@ pub fn main() -> Result<(), JsValue> {
     }
 
     // initialize after all other controllers are completed to ignore events during setup
-    WelcomeController::init(WelcomeView::new(&document)?);
+    if let Some(parent) = document.get_element_by_id("welcome") {
+        WelcomeController::init(WelcomeView::new(parent)?);
+    }
 
     // restore previous view settings
     nuts::publish(LoadSettingsEvent {});

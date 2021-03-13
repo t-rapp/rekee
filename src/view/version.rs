@@ -6,7 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use web_sys::{self, Document, Element};
+use web_sys::{self, Element};
 
 use super::*;
 
@@ -19,9 +19,9 @@ pub struct VersionView {
 }
 
 impl VersionView {
-    pub fn new(document: &Document) -> Result<Self> {
-        let inner = document.get_element_by_id("version")
-            .ok_or("Cannot find '#version' element")?;
+    pub fn new(parent: Element) -> Result<Self> {
+        let document = parent.owner_document().unwrap();
+        let inner = parent;
 
         // remove all pre-existing child nodes
         let range = document.create_range()?;
