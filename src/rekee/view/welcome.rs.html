@@ -76,19 +76,6 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
-<span id="85">85</span>
-<span id="86">86</span>
-<span id="87">87</span>
-<span id="88">88</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Controls display of the welcome message.</span>
@@ -101,7 +88,7 @@
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
 <span class="kw">use</span> <span class="ident">wasm_bindgen</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">wasm_bindgen</span>::<span class="ident">JsCast</span>;
-<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Document</span>, <span class="ident">Element</span>};
+<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Element</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">controller</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -122,25 +109,12 @@
 }
 
 <span class="kw">impl</span> <span class="ident">WelcomeView</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;welcome&quot;</span>)
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#welcome&#39; element&quot;</span>)<span class="question-mark">?</span>;
-
-        <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">web_sys</span>::<span class="ident">window</span>()
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">wnd</span><span class="op">|</span> <span class="ident">wnd</span>.<span class="ident">session_storage</span>().<span class="ident">ok</span>().<span class="ident">flatten</span>());
-
-        <span class="comment">// restore previous visibility state</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hidden</span> <span class="op">=</span> <span class="bool-val">false</span>;
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">storage</span>) <span class="op">=</span> <span class="ident">storage</span> {
-            <span class="ident">hidden</span> <span class="op">=</span> <span class="ident">storage</span>.<span class="ident">get_item</span>(<span class="string">&quot;welcome&quot;</span>)<span class="question-mark">?</span>
-                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>().<span class="ident">ok</span>())
-                .<span class="ident">unwrap_or</span>(<span class="ident">hidden</span>);
-        }
-        <span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;create welcome hidden: {}&quot;</span>, <span class="ident">hidden</span>);
-        <span class="ident">inner</span>.<span class="ident">set_hidden</span>(<span class="ident">hidden</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">parent</span>;
 
         <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;.message-header&quot;</span>)<span class="question-mark">?</span>
             .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find header of welcome message element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">inner</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure</span>::<span class="ident">wrap</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys</span>::<span class="ident">Event</span><span class="op">|</span> {
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">HideWelcomeEvent</span>);
