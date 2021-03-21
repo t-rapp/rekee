@@ -56,7 +56,7 @@
             pointer-events: none;
             user-select: none;
         }
-        #map-title .input {
+        #map-title {
             width: 50%;
         }
         #map-title .input:not(:hover):not(:focus) {
@@ -215,8 +215,37 @@
               </div>
             </div>
           </article>
-          <div id="map-title" class="control mx-2 my-2">
-            <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
+          <div class="field is-grouped mx-2 my-2">
+            <p id="map-title" class="control">
+              <input class="input" type="text" placeholder="Enter a title for your track" title="Track title">
+            </p>
+            <p class="control">
+              <a id="rotate-map-right-button" class="button" title="Rotate map right">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
+                  </svg>
+                </span>
+              </a>
+            </p>
+            <p class="control">
+              <a id="rotate-map-left-button" class="button" title="Rotate map left">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#arrow-counterclockwise"/>
+                  </svg>
+                </span>
+              </a>
+            </p>
+            <p class="control">
+              <a id="align-center-map-button" class="button" title="Center-align map">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
+                  </svg>
+                </span>
+              </a>
+            </p>
           </div>
           <div id="map-container" class="mx-2">
             <!-- map elements added here by WASM -->

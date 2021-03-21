@@ -49,6 +49,12 @@ pub struct AlignCenterEvent;
 
 pub struct ClearMapEvent;
 
+pub struct AlignCenterMapEvent;
+
+pub struct RotateMapLeftEvent;
+
+pub struct RotateMapRightEvent;
+
 pub struct UpdateTitleEvent {
     pub title: String,
 }
@@ -187,6 +193,9 @@ impl MapController {
         activity.subscribe(MapController::append_tile);
         activity.subscribe(MapController::align_center);
         activity.subscribe(MapController::clear_map);
+        activity.subscribe(MapController::align_center_map);
+        activity.subscribe(MapController::rotate_map_left);
+        activity.subscribe(MapController::rotate_map_right);
         activity.subscribe(MapController::update_title);
         activity.subscribe(MapController::update_selected);
         activity.subscribe(MapController::rotate_selected_left);
@@ -238,6 +247,18 @@ impl MapController {
 
     fn clear_map(&mut self, _event: &ClearMapEvent) {
         self.view.clear_map();
+    }
+
+    fn align_center_map(&mut self, _event: &AlignCenterMapEvent) {
+        self.view.align_center_map();
+    }
+
+    fn rotate_map_left(&mut self, _event: &RotateMapLeftEvent) {
+        self.view.rotate_map_left();
+    }
+
+    fn rotate_map_right(&mut self, _event: &RotateMapRightEvent) {
+        self.view.rotate_map_right();
     }
 
     fn update_title(&mut self, event: &UpdateTitleEvent) {

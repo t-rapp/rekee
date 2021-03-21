@@ -452,6 +452,35 @@ impl MapView {
             nuts::publish(DragMapCancelEvent);
         }) as Box<dyn Fn(_)>);
 
+        if let Some(btn) = document.get_element_by_id("align-center-map-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(AlignCenterMapEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+        if let Some(btn) = document.get_element_by_id("rotate-map-left-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(RotateMapLeftEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
+        if let Some(btn) = document.get_element_by_id("rotate-map-right-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::publish(RotateMapRightEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
         // remember original HTML document title (application name)
         let document_title = document.title();
 
@@ -587,6 +616,28 @@ impl MapView {
     pub fn clear_map(&mut self) {
         self.clear_selected();
         self.map = Map::new();
+        self.update_map();
+    }
+
+    pub fn align_center_map(&mut self) {
+        self.clear_selected();
+        self.map.align_center();
+        self.update_map();
+    }
+
+    pub fn rotate_map_left(&mut self) {
+        self.map.rotate_left();
+        if let Some(pos) = self.selected.pos() {
+            self.inner_update_selected(pos.rotated_left());
+        }
+        self.update_map();
+    }
+
+    pub fn rotate_map_right(&mut self) {
+        self.map.rotate_right();
+        if let Some(pos) = self.selected.pos() {
+            self.inner_update_selected(pos.rotated_right());
+        }
         self.update_map();
     }
 
