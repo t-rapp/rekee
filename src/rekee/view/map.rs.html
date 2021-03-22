@@ -863,12 +863,6 @@
 <span id="860">860</span>
 <span id="861">861</span>
 <span id="862">862</span>
-<span id="863">863</span>
-<span id="864">864</span>
-<span id="865">865</span>
-<span id="866">866</span>
-<span id="867">867</span>
-<span id="868">868</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the map and according event handlers.</span>
@@ -1324,11 +1318,11 @@
             <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">DragMapCancelEvent</span>);
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">btn</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;align-center-map-button&quot;</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">btn</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;align-center-button&quot;</span>) {
             <span class="kw">let</span> <span class="ident">callback</span> <span class="op">=</span> <span class="ident">Closure</span>::<span class="ident">wrap</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys</span>::<span class="ident">MouseEvent</span><span class="op">|</span> {
                 <span class="ident">event</span>.<span class="ident">prevent_default</span>();
                 <span class="ident">event</span>.<span class="ident">stop_propagation</span>();
-                <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">AlignCenterMapEvent</span>);
+                <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">AlignCenterEvent</span>);
             }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
             <span class="ident">btn</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">callback</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">unwrap</span>();
             <span class="ident">callback</span>.<span class="ident">forget</span>();
@@ -1488,12 +1482,6 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">clear_selected</span>();
         <span class="self">self</span>.<span class="ident">map</span> <span class="op">=</span> <span class="ident">Map</span>::<span class="ident">new</span>();
-        <span class="self">self</span>.<span class="ident">update_map</span>();
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">align_center_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">clear_selected</span>();
-        <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">align_center</span>();
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
