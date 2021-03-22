@@ -452,11 +452,11 @@ impl MapView {
             nuts::publish(DragMapCancelEvent);
         }) as Box<dyn Fn(_)>);
 
-        if let Some(btn) = document.get_element_by_id("align-center-map-button") {
+        if let Some(btn) = document.get_element_by_id("align-center-button") {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::publish(AlignCenterMapEvent);
+                nuts::publish(AlignCenterEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
@@ -616,12 +616,6 @@ impl MapView {
     pub fn clear_map(&mut self) {
         self.clear_selected();
         self.map = Map::new();
-        self.update_map();
-    }
-
-    pub fn align_center_map(&mut self) {
-        self.clear_selected();
-        self.map.align_center();
         self.update_map();
     }
 
