@@ -717,8 +717,8 @@ const TILE_INFOS: [TileInfo; 221] = [
     TileInfo::new(tile!(312, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(313, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(313, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(314, a), 1, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(314, b), 1, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(314, a), 1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(314, b), 1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
     TileInfo::new(tile!(315, a), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(315, b), 1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(316, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
@@ -737,11 +737,11 @@ const TILE_INFOS: [TileInfo; 221] = [
     TileInfo::new(tile!(322, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(323, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(323, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(324, a), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(324, b), 1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     // Unnumbered fillers
     TileInfo::new(tile!(901, a), 1, [CN; 6], [EN; 6]),
     TileInfo::new(tile!(901, b), 1, [CN; 6], [EN; 6]),
-    TileInfo::new(tile!(902, a), 1, [CN; 6], [EN; 6]),
-    TileInfo::new(tile!(902, b), 1, [CN; 6], [EN; 6]),
 ];
 
 //----------------------------------------------------------------------------

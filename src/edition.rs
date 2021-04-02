@@ -38,7 +38,7 @@ impl Edition {
     /// # use rekee::tile;
     /// let tiles = Edition::all_tiles();
     /// assert_eq!(tiles.first(), Some(&tile!(101)));
-    /// assert_eq!(tiles.last(), Some(&tile!(902, b)));
+    /// assert_eq!(tiles.last(), Some(&tile!(901, b)));
     /// assert_eq!(tiles.len(), 257);
     /// ```
     pub fn all_tiles() -> Vec<TileId> {
@@ -87,7 +87,7 @@ impl Edition {
     /// # use rekee::tile;
     /// let tiles = Edition::dirt_tiles();
     /// assert_eq!(tiles.first(), Some(&tile!(201, a)));
-    /// assert_eq!(tiles.last(), Some(&tile!(902, b)));
+    /// assert_eq!(tiles.last(), Some(&tile!(324, b)));
     /// assert_eq!(tiles.len(), 112);
     /// ```
     pub fn dirt_tiles() -> Vec<TileId> {
@@ -306,7 +306,7 @@ const DIRT_110_PERCENT: [TileId; 24] = [
     tile!(321),
     tile!(322),
     tile!(323),
-    tile!(902),
+    tile!(324),
 ];
 
 //----------------------------------------------------------------------------
