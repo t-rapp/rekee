@@ -170,7 +170,7 @@ impl<'de> Deserialize<'de> for TileId {
 /// parameter `side` is restricted to `a` and `b` to avoid invalid tile
 /// identifiers.
 ///
-/// Examples:
+/// # Examples
 ///
 /// ```
 /// # #[macro_use] extern crate rekee;
@@ -266,10 +266,20 @@ impl fmt::Display for ParseHintError {
 /// connected to other edges of the same tile.
 ///
 /// This is basically a more detailed version of [`ConnectionHint`] information,
-/// used by [`Map`](crate::map::Map) to determine the best tile direction and
-/// next active position when adding a tile.
+/// use [`TileInfo::connection()`] to get the connection data of a specific tile.
 ///
-/// Examples:
+/// The connection entry contains a value that indicates the direction:
+///  * `0`: edge is connected to the opposite edge of the tile (A → D, B → E, C → F)
+///  * `1`: edge is connected one edge to the right of the opposite edge (A → E, B → F, C → A)
+///  * `2`: edge is connected two edges to the right of the opposite edge (A → F, B → A, C → B)
+///  * `-1`: edge is connected one edge to the left of the opposite edge (A → C, B → D, C → E)
+///  * `-2`: edge is connected two edges to the left of the opposite edge (A → B, B → C, C → D)
+///
+/// Junctions work the same way, except they contain two direction values. Some
+/// functions that process a single direction value only will use the first value
+/// of a junction.
+///
+/// # Examples
 ///
 /// ```
 /// # use rekee::tile::{Connection, ConnectionHint};
@@ -277,18 +287,27 @@ impl fmt::Display for ParseHintError {
 /// assert!(conn == ConnectionHint::Left);
 /// assert!(conn != ConnectionHint::Right);
 /// ```
+///
+/// ```
+/// # use rekee::hexagon::Direction;
+/// # use rekee::tile::Connection;
+/// let conn = Connection::Left(1);
+/// assert_eq!(conn.target(Direction::A), Some(Direction::C));
+///
+/// let conn = Connection::Right(2);
+/// assert_eq!(conn.target(Direction::A), Some(Direction::F));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Connection {
     None,
     Straight(i8),
     Left(i8),
     Right(i8),
-    JunctionLeft(i8, i8),
-    JunctionRight(i8, i8),
+    Junction(i8, i8),
 }
 
 impl Connection {
-    fn target(&self, source: Direction) -> Option<Direction> {
+    pub fn target(&self, source: Direction) -> Option<Direction> {
         match *self {
             Connection::None =>
                 None,
@@ -298,9 +317,7 @@ impl Connection {
                 Some(source + (3 - val).into()),
             Connection::Right(val) =>
                 Some(source + (3 + val).into()),
-            Connection::JunctionLeft(val, _) =>
-                Some(source + (3 - val).into()),
-            Connection::JunctionRight(val, _) =>
+            Connection::Junction(val, _) =>
                 Some(source + (3 + val).into()),
         }
     }
@@ -323,10 +340,19 @@ impl PartialEq<ConnectionHint> for Connection {
                 ConnectionHint::Left,
             Connection::Right(_) =>
                 ConnectionHint::Right,
-            Connection::JunctionLeft(_, _) =>
-                ConnectionHint::Left,
-            Connection::JunctionRight(_, _) =>
-                ConnectionHint::Right,
+            Connection::Junction(val1, val2) => {
+                if val1 > 0 {
+                    ConnectionHint::Right
+                } else if val1 < 0 {
+                    ConnectionHint::Left
+                } else if val2 > 0 {
+                    ConnectionHint::Right
+                } else if val2 < 0 {
+                    ConnectionHint::Left
+                } else {
+                    ConnectionHint::Straight
+                }
+            },
         };
         hint == *other
     }
@@ -334,6 +360,16 @@ impl PartialEq<ConnectionHint> for Connection {
 
 //----------------------------------------------------------------------------
 
+/// External tile edge information. Describes how the track spaces of the edge
+/// are connected to adjacent tiles.
+///
+/// Most tiles end with a full straight line between spaces. Some tiles from
+/// Rallyman GT extensions have spaces that continue on the adjacent tile, they
+/// end with a skewed half of a track space.
+///
+/// Additional to the space type edges have a lane count value.
+///
+/// Use [`TileInfo::edge()`] to get the edge data of a specific tile.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Edge {
     None,
@@ -343,6 +379,15 @@ pub enum Edge {
 }
 
 impl Edge {
+    /// Lane count of the tile edge.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::tile::Edge;
+    /// let edge = Edge::Straight(2);
+    /// assert_eq!(edge.lanes(), 2);
+    /// ```
     pub fn lanes(&self) -> u8 {
         match *self {
             Edge::None => 0,
@@ -364,12 +409,15 @@ impl Default for Edge {
 /// Information about tile characteristics like graphical variants, connections,
 /// and edge types.
 ///
-/// Use [`TileInfo::get()`] to lookup tile information by identifier.
+/// This tile characteristics data is used by [`Map`](crate::map::Map) to
+/// determine the best tile direction and next active position when adding a
+/// tile.
 ///
-/// Note that the list of tiles is static, it is not possible to add or change
-/// any tile information entry at runtime.
+/// Use [`TileInfo::get()`] to lookup tile information by identifier. Note that
+/// the list of tiles is static, it is not possible to add or change any tile
+/// information entry at runtime.
 ///
-/// Examples:
+/// # Examples
 ///
 /// ```
 /// # #[macro_use] extern crate rekee;
@@ -397,7 +445,7 @@ impl TileInfo {
     /// See [`TileId::base()`] for more information on the difference between
     /// base and full tile identifiers.
     ///
-    /// Examples:
+    /// # Examples
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
@@ -417,7 +465,7 @@ impl TileInfo {
     /// See [`TileId::base()`] for more information on the difference between
     /// base and full tile identifiers.
     ///
-    /// Examples:
+    /// # Examples
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
@@ -453,7 +501,7 @@ impl TileInfo {
 
     /// Number of graphical variants that are available for a tile.
     ///
-    /// Examples:
+    /// # Examples
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
@@ -467,14 +515,86 @@ impl TileInfo {
         self.count
     }
 
+    /// Terrain type of a tile.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{Terrain, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(104, a)).unwrap();
+    /// assert_eq!(info.terrain(), Terrain::Asphalt);
+    ///
+    /// let info = TileInfo::get(tile!(205, b)).unwrap();
+    /// assert_eq!(info.terrain(), Terrain::Gravel);
+    /// # }
+    /// ```
+    pub fn terrain(&self) -> Terrain {
+        self.terrain
+    }
+
+    /// Connection information for one of the six directions of a tile.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::Direction;
+    /// # use rekee::tile::{Connection, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, b)).unwrap();
+    /// assert_eq!(info.connection(Direction::D), Connection::Straight(0));
+    ///
+    /// let info = TileInfo::get(tile!(105, a)).unwrap();
+    /// assert_eq!(info.connection(Direction::D), Connection::Right(1));
+    /// # }
+    /// ```
     pub fn connection(&self, dir: Direction) -> Connection {
         self.conn[dir]
     }
 
+    /// Connection target direction for one of the six directions of a tile.
+    ///
+    /// Follows the inner connection of a tile from the given `source` direction
+    /// to the target. If the connection contains a [`Connection::Junction`] the
+    /// first of both target directions is returned. If the connection does not
+    /// contain a connection, `None` is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::Direction;
+    /// # use rekee::tile::{Connection, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, b)).unwrap();
+    /// assert_eq!(info.connection_target(Direction::D), Some(Direction::A));
+    ///
+    /// let info = TileInfo::get(tile!(105, a)).unwrap();
+    /// assert_eq!(info.connection_target(Direction::D), Some(Direction::B));
+    /// # }
+    /// ```
     pub fn connection_target(&self, source: Direction) -> Option<Direction> {
         self.conn[source].target(source)
     }
 
+    /// Edge informantion for one of the six directions of a tile.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::Direction;
+    /// # use rekee::tile::{Edge, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, b)).unwrap();
+    /// assert_eq!(info.edge(Direction::D), Edge::Straight(2));
+    ///
+    /// let info = TileInfo::get(tile!(105, a)).unwrap();
+    /// assert_eq!(info.edge(Direction::D), Edge::Straight(3));
+    /// # }
+    /// ```
     pub fn edge(&self, dir: Direction) -> Edge {
         self.edges[dir]
     }
@@ -499,12 +619,12 @@ const CL2: Connection = Connection::Left(2);
 const CR0: Connection = Connection::Right(0);
 const CR1: Connection = Connection::Right(1);
 const CR2: Connection = Connection::Right(2);
-const CJS0L1: Connection = Connection::JunctionLeft(0, 1);
-const CJS0L2: Connection = Connection::JunctionLeft(0, 2);
-const CJS0R1: Connection = Connection::JunctionRight(0, 1);
-const CJS0R2: Connection = Connection::JunctionRight(0, 2);
-const CJL1R2: Connection = Connection::JunctionLeft(1, -2);
-const CJR1L2: Connection = Connection::JunctionRight(1, -2);
+const CJS0L1: Connection = Connection::Junction(0, -1);
+const CJS0L2: Connection = Connection::Junction(0, -2);
+const CJS0R1: Connection = Connection::Junction(0, 1);
+const CJS0R2: Connection = Connection::Junction(0, 2);
+const CJL1R2: Connection = Connection::Junction(-1, 2);
+const CJR1L2: Connection = Connection::Junction(1, -2);
 
 const EN: Edge = Edge::None;
 const ES2: Edge = Edge::Straight(2);
@@ -850,22 +970,22 @@ mod tests {
         assert_eq!(conn == ConnectionHint::Left, false);
         assert_eq!(conn == ConnectionHint::Right, true);
 
-        let conn = Connection::JunctionLeft(0, 1);
+        let conn = Connection::Junction(0, -1);
         assert_eq!(conn == ConnectionHint::Straight, false);
         assert_eq!(conn == ConnectionHint::Left, true);
         assert_eq!(conn == ConnectionHint::Right, false);
 
-        let conn = Connection::JunctionLeft(1, -2);
+        let conn = Connection::Junction(-1, 2);
         assert_eq!(conn == ConnectionHint::Straight, false);
         assert_eq!(conn == ConnectionHint::Left, true);
         assert_eq!(conn == ConnectionHint::Right, false);
 
-        let conn = Connection::JunctionRight(0, 2);
+        let conn = Connection::Junction(0, 2);
         assert_eq!(conn == ConnectionHint::Straight, false);
         assert_eq!(conn == ConnectionHint::Left, false);
         assert_eq!(conn == ConnectionHint::Right, true);
 
-        let conn = Connection::JunctionRight(1, -2);
+        let conn = Connection::Junction(1, -2);
         assert_eq!(conn == ConnectionHint::Straight, false);
         assert_eq!(conn == ConnectionHint::Left, false);
         assert_eq!(conn == ConnectionHint::Right, true);
@@ -933,22 +1053,22 @@ mod tests {
         assert_eq!(conn.target(Direction::D), Some(Direction::C));
         assert_eq!(conn.target(Direction::F), Some(Direction::E));
 
-        let conn = Connection::JunctionLeft(0, 1);
+        let conn = Connection::Junction(0, -1);
         assert_eq!(conn.target(Direction::A), Some(Direction::D));
         assert_eq!(conn.target(Direction::D), Some(Direction::A));
         assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
-        let conn = Connection::JunctionLeft(1, -2);
+        let conn = Connection::Junction(-1, 2);
         assert_eq!(conn.target(Direction::A), Some(Direction::C));
         assert_eq!(conn.target(Direction::D), Some(Direction::F));
         assert_eq!(conn.target(Direction::F), Some(Direction::B));
 
-        let conn = Connection::JunctionRight(0, 2);
+        let conn = Connection::Junction(0, 2);
         assert_eq!(conn.target(Direction::A), Some(Direction::D));
         assert_eq!(conn.target(Direction::D), Some(Direction::A));
         assert_eq!(conn.target(Direction::F), Some(Direction::C));
 
-        let conn = Connection::JunctionRight(1, -2);
+        let conn = Connection::Junction(1, -2);
         assert_eq!(conn.target(Direction::A), Some(Direction::E));
         assert_eq!(conn.target(Direction::D), Some(Direction::B));
         assert_eq!(conn.target(Direction::F), Some(Direction::D));
