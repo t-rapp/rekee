@@ -431,13 +431,13 @@ impl Default for Edge {
 pub struct TileInfo {
     id: TileId,
     count: usize,
-    conn: [Connection; 6],
+    connections: [Connection; 6],
     edges: [Edge; 6],
 }
 
 impl TileInfo {
-    const fn new(id: TileId, count: usize, conn: [Connection; 6], edges: [Edge; 6]) -> Self {
-        TileInfo { id, count, conn, edges }
+    const fn new(id: TileId, count: usize, connections: [Connection; 6], edges: [Edge; 6]) -> Self {
+        TileInfo { id, count, connections, edges }
     }
 
     /// Base identifier of the corresponding game tile.
@@ -551,7 +551,7 @@ impl TileInfo {
     /// # }
     /// ```
     pub fn connection(&self, dir: Direction) -> Connection {
-        self.conn[dir]
+        self.connections[dir]
     }
 
     /// Connection target direction for one of the six directions of a tile.
@@ -576,7 +576,7 @@ impl TileInfo {
     /// # }
     /// ```
     pub fn connection_target(&self, source: Direction) -> Option<Direction> {
-        self.conn[source].target(source)
+        self.connections[source].target(source)
     }
 
     /// Edge informantion for one of the six directions of a tile.
@@ -1103,18 +1103,18 @@ mod tests {
     fn tile_info_connection_edge() {
         for tile in TILE_INFOS.iter() {
             for dir in Direction::iter() {
-                let has_connection = match tile.conn[*dir] {
+                let has_connection = match tile.connection(*dir) {
                     Connection::None => false,
                     _ => true,
                 };
-                let has_edge = match tile.edges[*dir] {
+                let has_edge = match tile.edge(*dir) {
                     Edge::None => false,
                     _ => true,
                 };
                 assert_eq!(has_connection, has_edge,
                     "tile {}, direction {}: connection does not match according edge", tile, dir);
 
-                let lanes = tile.edges[*dir].lanes();
+                let lanes = tile.edge(*dir).lanes();
                 if has_connection {
                     assert!(lanes > 0,
                         "tile {}, direction {}: side with connection must have a non-zero number of lanes", tile, dir);
