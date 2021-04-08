@@ -26,6 +26,12 @@ pub enum Edition {
     DirtCoreBox,
     /// 110% expansion for Rallyman: DIRT
     Dirt110Percent,
+    /// RX expansion for Rallyman: DIRT
+    DirtRx,
+    /// Climb expansion for Rallyman: DIRT
+    DirtClimb,
+    /// Copilot expansion for Rallyman: DIRT
+    DirtCopilot,
 }
 
 impl Edition {
@@ -38,11 +44,11 @@ impl Edition {
     /// # use rekee::tile;
     /// let tiles = Edition::all_tiles();
     /// assert_eq!(tiles.first(), Some(&tile!(101)));
-    /// assert_eq!(tiles.last(), Some(&tile!(901, b)));
-    /// assert_eq!(tiles.len(), 257);
+    /// assert_eq!(tiles.last(), Some(&tile!(905, b)));
+    /// assert_eq!(tiles.len(), 307);
     /// ```
     pub fn all_tiles() -> Vec<TileId> {
-        let mut tiles = Vec::with_capacity(257);
+        let mut tiles = Vec::with_capacity(307);
         for edition in Self::iter() {
             tiles.extend_from_slice(&edition.tiles());
         }
@@ -87,15 +93,18 @@ impl Edition {
     /// # use rekee::tile;
     /// let tiles = Edition::dirt_tiles();
     /// assert_eq!(tiles.first(), Some(&tile!(201, a)));
-    /// assert_eq!(tiles.last(), Some(&tile!(324, b)));
-    /// assert_eq!(tiles.len(), 112);
+    /// assert_eq!(tiles.last(), Some(&tile!(905, b)));
+    /// assert_eq!(tiles.len(), 162);
     /// ```
     pub fn dirt_tiles() -> Vec<TileId> {
-        const EDITIONS: [Edition; 2] = [
+        const EDITIONS: [Edition; 5] = [
             Edition::DirtCoreBox,
             Edition::Dirt110Percent,
+            Edition::DirtRx,
+            Edition::DirtClimb,
+            Edition::DirtCopilot,
         ];
-        let mut tiles = Vec::with_capacity(112);
+        let mut tiles = Vec::with_capacity(162);
         for edition in EDITIONS.iter() {
             tiles.extend_from_slice(&edition.tiles());
         }
@@ -132,6 +141,12 @@ impl Edition {
                 DIRT_CORE_BOX.iter(),
             Edition::Dirt110Percent =>
                 DIRT_110_PERCENT.iter(),
+            Edition::DirtRx =>
+                DIRT_RX.iter(),
+            Edition::DirtClimb =>
+                DIRT_CLIMB.iter(),
+            Edition::DirtCopilot =>
+                DIRT_COPILOT.iter(),
         };
         for tile in iter {
             let tile_a = TileId::new(tile.num(), 1, tile.var());
@@ -149,7 +164,7 @@ impl Edition {
 
     /// Iterator over all game editions.
     pub fn iter() -> std::slice::Iter<'static, Self> {
-        const EDITIONS: [Edition; 7] = [
+        const EDITIONS: [Edition; 10] = [
             Edition::GtCoreBox,
             Edition::GtChampionship,
             Edition::GtWorldTour,
@@ -157,6 +172,9 @@ impl Edition {
             Edition::GtAdrenalinePack,
             Edition::DirtCoreBox,
             Edition::Dirt110Percent,
+            Edition::DirtRx,
+            Edition::DirtClimb,
+            Edition::DirtCopilot,
         ];
         EDITIONS.iter()
     }
@@ -309,6 +327,40 @@ const DIRT_110_PERCENT: [TileId; 24] = [
     tile!(324),
 ];
 
+const DIRT_RX: [TileId; 15] = [
+    tile!(401),
+    tile!(402),
+    tile!(403),
+    tile!(404),
+    tile!(405),
+    tile!(406),
+    tile!(407),
+    tile!(408),
+    tile!(409),
+    tile!(410),
+    tile!(411),
+    tile!(412),
+    tile!(413),
+    tile!(414),
+    tile!(415),
+];
+
+const DIRT_CLIMB: [TileId; 4] = [
+    tile!(325),
+    tile!(326),
+    tile!(418),
+    tile!(419),
+];
+
+const DIRT_COPILOT: [TileId; 6] = [
+    tile!(416),
+    tile!(417),
+    tile!(902),
+    tile!(903),
+    tile!(904),
+    tile!(905),
+];
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -325,6 +377,9 @@ mod tests {
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
         tiles.extend_from_slice(&DIRT_110_PERCENT);
+        tiles.extend_from_slice(&DIRT_RX);
+        tiles.extend_from_slice(&DIRT_CLIMB);
+        tiles.extend_from_slice(&DIRT_COPILOT);
         for tile in &tiles {
             assert_eq!(tile.side(), 0, "tile {} is defined with a non-empty side", tile);
         }
@@ -340,6 +395,9 @@ mod tests {
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
         tiles.extend_from_slice(&DIRT_110_PERCENT);
+        tiles.extend_from_slice(&DIRT_RX);
+        tiles.extend_from_slice(&DIRT_CLIMB);
+        tiles.extend_from_slice(&DIRT_COPILOT);
         for tile in &tiles {
             let count = tiles.iter()
                 .filter(|id| *id == tile)

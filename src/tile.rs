@@ -736,8 +736,13 @@ const CJS0L1: Connection = Connection::Junction(0, -1);
 const CJS0L2: Connection = Connection::Junction(0, -2);
 const CJS0R1: Connection = Connection::Junction(0, 1);
 const CJS0R2: Connection = Connection::Junction(0, 2);
+const CJL1L2: Connection = Connection::Junction(-1, -2);
+const CJL1R1: Connection = Connection::Junction(-1, 1);
 const CJL1R2: Connection = Connection::Junction(-1, 2);
+const CJL2R2: Connection = Connection::Junction(-2, 2);
 const CJR1L2: Connection = Connection::Junction(1, -2);
+const CJR1R2: Connection = Connection::Junction(1, 2);
+const CJR2L2: Connection = Connection::Junction(2, -2);
 
 const EN: Edge = Edge::None;
 const ES2: Edge = Edge::Straight(2);
@@ -748,7 +753,7 @@ const EL3: Edge = Edge::SkewLeft(3);
 const ER2: Edge = Edge::SkewRight(2);
 const ER3: Edge = Edge::SkewRight(3);
 
-const TILE_INFOS: [TileInfo; 221] = [
+const TILE_INFOS: [TileInfo; 271] = [
     // Rallyman GT core box
     TileInfo::new(tile!(101), 1, TN, [CN; 6], [EN; 6]),
     TileInfo::new(tile!(102, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
@@ -972,9 +977,60 @@ const TILE_INFOS: [TileInfo; 221] = [
     TileInfo::new(tile!(323, b), 1, TS1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(324, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(324, b), 1, TS2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(325, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(325, b), 1, TS3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(326, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(326, b), 1, TS3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    // Rallyman DIRT RX expansion
+    TileInfo::new(tile!(401, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(401, b), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(402, a), 1, TA2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(402, b), 1, TG2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(403, a), 1, TA2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!(403, b), 1, TG2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(404, a), 1, TA2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(404, b), 1, TG2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(405, a), 1, TA2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES2, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(405, b), 1, TG2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(406, a), 1, TA2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(406, b), 1, TG2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(407, a), 1, TA2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(407, b), 1, TG2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(408, a), 1, TA2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(408, b), 1, TG2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(409, a), 1, TA2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES3, ES3, ES2]),
+    TileInfo::new(tile!(409, b), 1, TG2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(410, a), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(410, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(411, a), 1, TA2, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(411, b), 1, TG2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(412, a), 1, TA2, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
+    TileInfo::new(tile!(412, b), 1, TG2, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
+    TileInfo::new(tile!(413, a), 1, TA2, [CL1, CN, CR1, CN, CL2, CR2], [ES2, EN, ES2, EN, ES2, ES2]),
+    TileInfo::new(tile!(413, b), 1, TG2, [CN, CL1, CN, CR1, CL2, CR2], [EN, ES2, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(414, a), 1, TA2, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES3, EN, ES3]),
+    TileInfo::new(tile!(414, b), 1, TG2, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(415, a), 1, TA2, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!(415, b), 1, TG2, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(416, a), 1, TA3, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(416, b), 1, TG3, [CN, CS0, CS0, CN, CS0, CS0], [EN, ES2, ES2, EN, ES2, ES2]),
+    TileInfo::new(tile!(417, a), 1, TA3, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(417, b), 1, TG3, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(418, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(418, b), 1, TG3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(419, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(419, b), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     // Unnumbered fillers
-    TileInfo::new(tile!(901, a), 1, TN, [CN; 6], [EN; 6]),
-    TileInfo::new(tile!(901, b), 1, TN, [CN; 6], [EN; 6]),
+    TileInfo::new(tile!(901, a), 1, TN, [CN; 6], [EN; 6]), // Sheep Summer
+    TileInfo::new(tile!(901, b), 1, TN, [CN; 6], [EN; 6]), // People City
+    TileInfo::new(tile!(902, a), 1, TN, [CN; 6], [EN; 6]), // Barbecue Summer
+    TileInfo::new(tile!(902, b), 1, TN, [CN; 6], [EN; 6]), // Glühwein Winter
+    TileInfo::new(tile!(903, a), 1, TN, [CN; 6], [EN; 6]), // Lake
+    TileInfo::new(tile!(903, b), 1, TN, [CN; 6], [EN; 6]), // Lake with Accident
+    TileInfo::new(tile!(904, a), 1, TN, [CN; 6], [EN; 6]), // Rocks
+    TileInfo::new(tile!(904, b), 1, TN, [CN; 6], [EN; 6]), // Sheep Winter
+    TileInfo::new(tile!(905, a), 1, TN, [CN; 6], [EN; 6]), // Podium
+    TileInfo::new(tile!(905, b), 1, TN, [CN; 6], [EN; 6]), // Podium
 ];
 
 //----------------------------------------------------------------------------
@@ -1227,7 +1283,7 @@ mod tests {
     #[test]
     fn tile_info_count() {
         // check total count of tiles
-        assert_eq!(TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>(), 257);
+        assert_eq!(TILE_INFOS.iter().map(|info| info.count as u32).sum::<u32>(), 307);
 
         // check same count of variants for "a" and "b" side
         for info in TILE_INFOS.iter() {
