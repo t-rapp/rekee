@@ -20,7 +20,8 @@ jobs:
 
     - name: Create redirection page
       run: |
-         echo "<meta http-equiv=refresh content=0;url=rekee/index.html>" > ./target/doc/index.html
+        echo '<!DOCTYPE html>' > ./target/doc/index.html
+        echo '<html><head><meta http-equiv="refresh" content="0; url=rekee/index.html"></head></html>' >> ./target/doc/index.html
 
     - name: Deploy source code documentation
       uses: peaceiris/actions-gh-pages@v3
