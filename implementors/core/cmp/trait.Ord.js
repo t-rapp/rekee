@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["rekee"] = [{"text":"impl Ord for Coordinate","synthetic":false,"types":[]},{"text":"impl Ord for TileId","synthetic":false,"types":[]}];
+implementors["rekee"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html\" title=\"trait core::cmp::Ord\">Ord</a> for <a class=\"struct\" href=\"rekee/hexagon/struct.Coordinate.html\" title=\"struct rekee::hexagon::Coordinate\">Coordinate</a>","synthetic":false,"types":["rekee::hexagon::Coordinate"]},{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html\" title=\"trait core::cmp::Ord\">Ord</a> for <a class=\"struct\" href=\"rekee/tile/struct.TileId.html\" title=\"struct rekee::tile::TileId\">TileId</a>","synthetic":false,"types":["rekee::tile::TileId"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
