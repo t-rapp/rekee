@@ -247,6 +247,7 @@ impl FromStr for ConnectionHint {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ParseHintError {
     Unknown(String),
 }
@@ -1028,6 +1029,19 @@ mod tests {
         let text = r#""a-1""#;
         let result: Result<TileId, _> = serde_json::from_str(&text);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn connection_hint_from_str() {
+        assert_eq!("".parse::<ConnectionHint>(), Ok(ConnectionHint::Straight));
+        assert_eq!("s".parse::<ConnectionHint>(), Ok(ConnectionHint::Straight));
+        assert_eq!("S".parse::<ConnectionHint>(), Ok(ConnectionHint::Straight));
+        assert_eq!("l".parse::<ConnectionHint>(), Ok(ConnectionHint::Left));
+        assert_eq!("L".parse::<ConnectionHint>(), Ok(ConnectionHint::Left));
+        assert_eq!("r".parse::<ConnectionHint>(), Ok(ConnectionHint::Right));
+        assert_eq!("R".parse::<ConnectionHint>(), Ok(ConnectionHint::Right));
+
+        assert!("x".parse::<ConnectionHint>().is_err());
     }
 
     #[test]
