@@ -454,6 +454,56 @@ impl Default for Terrain {
     }
 }
 
+impl FromStr for Terrain {
+    type Err = ParseTerrainError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let idx = s.find('-').unwrap_or(s.len());
+        let surface = &s[0..idx];
+
+        let level = if let Some(val) = s.get(idx+1..) {
+            val.parse::<u8>()
+                .map_err(|_| ParseTerrainError::InvalidDangerLevel(val.to_string()))?
+        } else {
+            0
+        };
+
+        if surface.eq_ignore_ascii_case("none") {
+            if level == 0 {
+                Ok(Terrain::None)
+            } else {
+                Err(ParseTerrainError::InvalidDangerLevel(level.to_string()))
+            }
+        } else if surface.eq_ignore_ascii_case("asphalt") {
+            Ok(Terrain::Asphalt(level))
+        } else if surface.eq_ignore_ascii_case("gravel") {
+            Ok(Terrain::Gravel(level))
+        } else if surface.eq_ignore_ascii_case("snow") {
+            Ok(Terrain::Snow(level))
+        } else {
+            Err(ParseTerrainError::UnknownSurface(surface.to_string()))
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseTerrainError {
+    UnknownSurface(String),
+    InvalidDangerLevel(String),
+}
+
+impl fmt::Display for ParseTerrainError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseTerrainError::UnknownSurface(val) =>
+                write!(fmt, "Unknown terrain surface token \"{}\"", val),
+            ParseTerrainError::InvalidDangerLevel(val) =>
+                write!(fmt, "Invalid danger level token \"{}\"", val),
+        }
+    }
+}
+
+
 //----------------------------------------------------------------------------
 
 /// Information about tile characteristics like graphical variants, connections,
@@ -1134,6 +1184,20 @@ mod tests {
         assert_eq!(conn.target(Direction::A), Some(Direction::E));
         assert_eq!(conn.target(Direction::D), Some(Direction::B));
         assert_eq!(conn.target(Direction::F), Some(Direction::D));
+    }
+
+    #[test]
+    fn terrain_from_str() {
+        assert_eq!("none".parse::<Terrain>(), Ok(Terrain::None));
+        assert_eq!("asphalt".parse::<Terrain>(), Ok(Terrain::Asphalt(0)));
+        assert_eq!("asphalt-1".parse::<Terrain>(), Ok(Terrain::Asphalt(1)));
+        assert_eq!("Gravel-2".parse::<Terrain>(), Ok(Terrain::Gravel(2)));
+        assert_eq!("SNOW-3".parse::<Terrain>(), Ok(Terrain::Snow(3)));
+
+        assert!("".parse::<Terrain>().is_err());
+        assert!("x".parse::<Terrain>().is_err());
+        assert!("none-1".parse::<Terrain>().is_err());
+        assert!("asphalt-x".parse::<Terrain>().is_err());
     }
 
     #[test]
