@@ -371,6 +371,64 @@
 <span id="368">368</span>
 <span id="369">369</span>
 <span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).</span>
@@ -400,6 +458,12 @@
     <span class="ident">DirtCoreBox</span>,
     <span class="doccomment">/// 110% expansion for Rallyman: DIRT</span>
     <span class="ident">Dirt110Percent</span>,
+    <span class="doccomment">/// RX expansion for Rallyman: DIRT</span>
+    <span class="ident">DirtRx</span>,
+    <span class="doccomment">/// Climb expansion for Rallyman: DIRT</span>
+    <span class="ident">DirtClimb</span>,
+    <span class="doccomment">/// Copilot expansion for Rallyman: DIRT</span>
+    <span class="ident">DirtCopilot</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Edition</span> {
@@ -412,11 +476,11 @@
     <span class="doccomment">/// # use rekee::tile;</span>
     <span class="doccomment">/// let tiles = Edition::all_tiles();</span>
     <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(101)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(901, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 257);</span>
+    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));</span>
+    <span class="doccomment">/// assert_eq!(tiles.len(), 307);</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">all_tiles</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">257</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">307</span>);
         <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="self">Self</span>::<span class="ident">iter</span>() {
             <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
         }
@@ -461,15 +525,18 @@
     <span class="doccomment">/// # use rekee::tile;</span>
     <span class="doccomment">/// let tiles = Edition::dirt_tiles();</span>
     <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(201, a)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(324, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 112);</span>
+    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));</span>
+    <span class="doccomment">/// assert_eq!(tiles.len(), 162);</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dirt_tiles</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">2</span>] <span class="op">=</span> [
+        <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">5</span>] <span class="op">=</span> [
             <span class="ident">Edition</span>::<span class="ident">DirtCoreBox</span>,
             <span class="ident">Edition</span>::<span class="ident">Dirt110Percent</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtRx</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtClimb</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtCopilot</span>,
         ];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">112</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">162</span>);
         <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">EDITIONS</span>.<span class="ident">iter</span>() {
             <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
         }
@@ -506,6 +573,12 @@
                 <span class="ident">DIRT_CORE_BOX</span>.<span class="ident">iter</span>(),
             <span class="ident">Edition</span>::<span class="ident">Dirt110Percent</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="ident">DIRT_110_PERCENT</span>.<span class="ident">iter</span>(),
+            <span class="ident">Edition</span>::<span class="ident">DirtRx</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="ident">DIRT_RX</span>.<span class="ident">iter</span>(),
+            <span class="ident">Edition</span>::<span class="ident">DirtClimb</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="ident">DIRT_CLIMB</span>.<span class="ident">iter</span>(),
+            <span class="ident">Edition</span>::<span class="ident">DirtCopilot</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="ident">DIRT_COPILOT</span>.<span class="ident">iter</span>(),
         };
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">iter</span> {
             <span class="kw">let</span> <span class="ident">tile_a</span> <span class="op">=</span> <span class="ident">TileId</span>::<span class="ident">new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">1</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
@@ -523,7 +596,7 @@
 
     <span class="doccomment">/// Iterator over all game editions.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">7</span>] <span class="op">=</span> [
+        <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">10</span>] <span class="op">=</span> [
             <span class="ident">Edition</span>::<span class="ident">GtCoreBox</span>,
             <span class="ident">Edition</span>::<span class="ident">GtChampionship</span>,
             <span class="ident">Edition</span>::<span class="ident">GtWorldTour</span>,
@@ -531,6 +604,9 @@
             <span class="ident">Edition</span>::<span class="ident">GtAdrenalinePack</span>,
             <span class="ident">Edition</span>::<span class="ident">DirtCoreBox</span>,
             <span class="ident">Edition</span>::<span class="ident">Dirt110Percent</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtRx</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtClimb</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtCopilot</span>,
         ];
         <span class="ident">EDITIONS</span>.<span class="ident">iter</span>()
     }
@@ -683,6 +759,40 @@
     <span class="macro">tile</span><span class="macro">!</span>(<span class="number">324</span>),
 ];
 
+<span class="kw">const</span> <span class="ident">DIRT_RX</span>: [<span class="ident">TileId</span>; <span class="number">15</span>] <span class="op">=</span> [
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">401</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">402</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">403</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">404</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">405</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">406</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">407</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">408</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">409</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">410</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">411</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">412</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">413</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">414</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">415</span>),
+];
+
+<span class="kw">const</span> <span class="ident">DIRT_CLIMB</span>: [<span class="ident">TileId</span>; <span class="number">4</span>] <span class="op">=</span> [
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">325</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">326</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">418</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">419</span>),
+];
+
+<span class="kw">const</span> <span class="ident">DIRT_COPILOT</span>: [<span class="ident">TileId</span>; <span class="number">6</span>] <span class="op">=</span> [
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">416</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">417</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">902</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">903</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">904</span>),
+    <span class="macro">tile</span><span class="macro">!</span>(<span class="number">905</span>),
+];
+
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -699,6 +809,9 @@
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>);
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>);
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT</span>);
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tiles</span> {
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">tile</span>.<span class="ident">side</span>(), <span class="number">0</span>, <span class="string">&quot;tile {} is defined with a non-empty side&quot;</span>, <span class="ident">tile</span>);
         }
@@ -714,6 +827,9 @@
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>);
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>);
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>);
+        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT</span>);
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tiles</span> {
             <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">iter</span>()
                 .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">tile</span>)
