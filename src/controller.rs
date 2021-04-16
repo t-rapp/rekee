@@ -67,8 +67,12 @@ pub struct RotateSelectedRightEvent;
 
 pub struct RemoveSelectedEvent;
 
-pub struct UpdateFilterEvent {
+pub struct UpdateLanesFilterEvent {
     pub lanes: Option<u8>,
+}
+
+pub struct UpdateTerrainFilterEvent {
+    pub terrain: Option<Terrain>,
 }
 
 pub struct UpdateTileUsageEvent {
@@ -130,7 +134,8 @@ impl CatalogController {
         // register public events
         activity.subscribe(CatalogController::load_settings);
         activity.subscribe(CatalogController::save_settings);
-        activity.subscribe(CatalogController::update_filter);
+        activity.subscribe(CatalogController::update_lanes_filter);
+        activity.subscribe(CatalogController::update_terrain_filter);
         activity.subscribe(CatalogController::update_tile_usage);
         activity.subscribe(CatalogController::drag_catalog_begin);
     }
@@ -147,8 +152,12 @@ impl CatalogController {
         self.storage.set(&settings);
     }
 
-    fn update_filter(&mut self, event: &UpdateFilterEvent) {
-        self.view.update_filter(event.lanes);
+    fn update_lanes_filter(&mut self, event: &UpdateLanesFilterEvent) {
+        self.view.update_lanes_filter(event.lanes);
+    }
+
+    fn update_terrain_filter(&mut self, event: &UpdateTerrainFilterEvent) {
+        self.view.update_terrain_filter(event.terrain);
     }
 
     fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {

@@ -118,7 +118,7 @@ impl Drop for CatalogTile {
 
 //----------------------------------------------------------------------------
 
-struct FilterItem {
+struct LanesFilterElement {
     inner: Element,
     value: Option<u8>,
     tiles: BTreeSet<TileId>,
@@ -126,10 +126,10 @@ struct FilterItem {
     click_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
-impl FilterItem {
+impl LanesFilterElement {
     fn new(inner: Element) -> Result<Self> {
         let value = inner.get_attribute("data-value")
-            .map(|val| val.parse().ok())
+            .map(|val| val.parse::<u8>().ok())
             .flatten();
 
         let tiles: BTreeSet<_> = TileInfo::iter()
@@ -142,7 +142,7 @@ impl FilterItem {
             .collect();
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::publish(UpdateFilterEvent { lanes: value });
+            nuts::publish(UpdateLanesFilterEvent { lanes: value });
         }) as Box<dyn Fn(_)>);
 
         let anchor = inner.query_selector("a")?
@@ -150,7 +150,7 @@ impl FilterItem {
         anchor.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
 
-        Ok(FilterItem { inner, value, tiles, anchor, click_cb })
+        Ok(LanesFilterElement { inner, value, tiles, anchor, click_cb })
     }
 
     fn value(&self) -> Option<u8> {
@@ -173,13 +173,82 @@ impl FilterItem {
     }
 }
 
-impl AsRef<Element> for FilterItem {
+impl AsRef<Element> for LanesFilterElement {
     fn as_ref(&self) -> &Element {
         &self.inner
     }
 }
 
-impl Drop for FilterItem {
+impl Drop for LanesFilterElement {
+    fn drop(&mut self) {
+        let _ = self.anchor.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct TerrainFilterElement {
+    inner: Element,
+    value: Option<Terrain>,
+    tiles: BTreeSet<TileId>,
+    anchor: Element,
+    click_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl TerrainFilterElement {
+    fn new(inner: Element) -> Result<Self> {
+        let value = inner.get_attribute("data-value")
+            .map(|val| val.parse::<Terrain>().ok())
+            .flatten();
+
+        let tiles: BTreeSet<_> = TileInfo::iter()
+            .filter(|info| match value {
+                Some(val) => info.terrain().eq_surface(val),
+                None => true,
+            })
+            .map(|info| info.base_id())
+            .collect();
+
+        let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::publish(UpdateTerrainFilterEvent { terrain: value });
+        }) as Box<dyn Fn(_)>);
+
+        let anchor = inner.query_selector("a")?
+            .ok_or("Cannot find anchor element of filter item")?;
+        anchor.add_event_listener_with_callback("click",
+            click_cb.as_ref().unchecked_ref())?;
+
+        Ok(TerrainFilterElement { inner, value, tiles, anchor, click_cb })
+    }
+
+    fn value(&self) -> Option<Terrain> {
+        self.value
+    }
+
+    fn contains(&self, tile: TileId) -> bool {
+        match self.value {
+            Some(_) => self.tiles.contains(&tile.base()),
+            None => true,
+        }
+    }
+
+    fn set_active(&self, value: bool) {
+        if value {
+            check!(self.inner.class_list().add_1("is-active").ok());
+        } else {
+            check!(self.inner.class_list().remove_1("is-active").ok());
+        }
+    }
+}
+
+impl AsRef<Element> for TerrainFilterElement {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for TerrainFilterElement {
     fn drop(&mut self) {
         let _ = self.anchor.remove_event_listener_with_callback("click",
             self.click_cb.as_ref().unchecked_ref());
@@ -192,6 +261,8 @@ impl Drop for FilterItem {
 pub struct CatalogSettings {
     #[serde(default)]
     filter_lanes: Option<u8>,
+    #[serde(default)]
+    filter_terrain: Option<Terrain>,
 }
 
 //----------------------------------------------------------------------------
@@ -199,8 +270,10 @@ pub struct CatalogSettings {
 pub struct CatalogView {
     catalog: Element,
     tiles: Vec<CatalogTile>,
-    filter_items: Vec<FilterItem>,
     filter_lanes: Option<u8>,
+    filter_lanes_elements: Vec<LanesFilterElement>,
+    filter_terrain: Option<Terrain>,
+    filter_terrain_elements: Vec<TerrainFilterElement>,
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -219,7 +292,8 @@ impl CatalogView {
         catalog.set_attribute("class", "mt-2")?;
 
         // TODO: use both editions here once the user interface is ready
-        let tile_ids = if cfg!(feature = "dirt") {
+        let is_dirt = cfg!(feature = "dirt");
+        let tile_ids = if is_dirt {
             Edition::dirt_tiles()
         } else {
             Edition::gt_tiles()
@@ -245,14 +319,33 @@ impl CatalogView {
         }
         parent.append_child(&catalog)?;
 
-        let mut filter_items = Vec::with_capacity(4);
-        let node_list = parent.query_selector_all("#catalog-filter li")?;
-        for i in 0..node_list.length() {
-            let element = node_list.get(i).unwrap()
-                .dyn_into::<web_sys::Element>().unwrap();
-            filter_items.push(FilterItem::new(element)?);
+        if let Some(element) = document.get_element_by_id("lanes-filter") {
+            element.set_hidden(is_dirt);
+        }
+        let mut filter_lanes_elements = Vec::with_capacity(4);
+        if !is_dirt {
+            let node_list = parent.query_selector_all("#lanes-filter li")?;
+            for i in 0..node_list.length() {
+                let element = node_list.get(i).unwrap()
+                    .dyn_into::<web_sys::Element>().unwrap();
+                filter_lanes_elements.push(LanesFilterElement::new(element)?);
+            }
         }
         let filter_lanes = None;
+
+        if let Some(element) = document.get_element_by_id("terrain-filter") {
+            element.set_hidden(!is_dirt);
+        }
+        let mut filter_terrain_elements = Vec::with_capacity(4);
+        if is_dirt {
+            let node_list = parent.query_selector_all("#terrain-filter li")?;
+            for i in 0..node_list.length() {
+                let element = node_list.get(i).unwrap()
+                    .dyn_into::<web_sys::Element>().unwrap();
+                filter_terrain_elements.push(TerrainFilterElement::new(element)?);
+            }
+        }
+        let filter_terrain = None;
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -294,45 +387,66 @@ impl CatalogView {
             keychange_cb.as_ref().unchecked_ref())?;
 
         Ok(CatalogView {
-            catalog, tiles, filter_items, filter_lanes, map: None,
-            dragover_cb, dragdrop_cb, keychange_cb
+            catalog, tiles, filter_lanes, filter_lanes_elements, filter_terrain,
+            filter_terrain_elements, map: None, dragover_cb, dragdrop_cb, keychange_cb
         })
     }
 
     pub fn load_settings(&mut self, settings: &CatalogSettings) {
-        self.update_filter(settings.filter_lanes);
+        self.inner_update_filter(settings.filter_lanes, settings.filter_terrain);
     }
 
     pub fn save_settings(&mut self) -> CatalogSettings {
         let filter_lanes = self.filter_lanes;
-        CatalogSettings { filter_lanes }
+        let filter_terrain = self.filter_terrain;
+        CatalogSettings { filter_lanes, filter_terrain }
     }
 
-    pub fn update_filter(&mut self, lanes: Option<u8>) {
-        self.inner_update_filter(lanes);
+    pub fn update_lanes_filter(&mut self, lanes: Option<u8>) {
+        self.inner_update_filter(lanes, self.filter_terrain);
         nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
     }
 
-    fn inner_update_filter(&mut self, lanes: Option<u8>) {
-        info!("update filter lanes: {:?}", lanes);
+    pub fn update_terrain_filter(&mut self, terrain: Option<Terrain>) {
+        self.inner_update_filter(self.filter_lanes, terrain);
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+    }
 
-        let mut filter = None;
-        for item in &self.filter_items {
-            let active = lanes == item.value();
+    fn inner_update_filter(&mut self, lanes: Option<u8>, terrain: Option<Terrain>) {
+        info!("update filter: lanes={:?}, terrain={:?}", lanes, terrain);
+        let terrain = terrain.map(|val| val.surface());
+
+        let mut lanes_element = None;
+        for item in &self.filter_lanes_elements {
+            let active = item.value() == lanes;
             item.set_active(active);
             if active {
-                filter = Some(item);
+                lanes_element = Some(item);
             }
         }
+
+        let mut terrain_element = None;
+        for item in &self.filter_terrain_elements {
+            let active = item.value() == terrain;
+            item.set_active(active);
+            if active {
+                terrain_element = Some(item);
+            }
+        }
+
         for tile in &self.tiles {
-            let hidden = match filter {
-                Some(filter) => !filter.contains(tile.id),
-                None => false,
-            };
+            let mut hidden = false;
+            if let Some(filter) = lanes_element {
+                hidden |= !filter.contains(tile.id);
+            }
+            if let Some(filter) = terrain_element {
+                hidden |= !filter.contains(tile.id);
+            }
             tile.set_hidden(hidden);
         }
 
         self.filter_lanes = lanes;
+        self.filter_terrain = terrain;
     }
 
     pub fn update_tile_usage(&mut self, tiles: &[TileId]) {

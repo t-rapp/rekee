@@ -446,12 +446,67 @@ impl Terrain {
             Terrain::Snow(val) => val,
         }
     }
-}
 
+    /// Surface of a tile.
+    ///
+    /// Returns a copy of the terrain with danger level set to zero.
+    pub fn surface(&self) -> Terrain {
+        match *self {
+            Terrain::None => Terrain::None,
+            Terrain::Asphalt(_) => Terrain::Asphalt(0),
+            Terrain::Gravel(_) => Terrain::Gravel(0),
+            Terrain::Snow(_) => Terrain::Snow(0),
+        }
+    }
+
+    /// Compares the surface of two tiles and ignores the danger level.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::tile::Terrain;
+    /// let terrain = Terrain::Asphalt(3);
+    /// assert!(terrain.eq_surface(Terrain::Asphalt(1)));
+    ///
+    /// let terrain = Terrain::None;
+    /// assert!(!terrain.eq_surface(Terrain::Gravel(0)));
+    /// ```
+    pub fn eq_surface(&self, other: Terrain) -> bool {
+        std::mem::discriminant(self) == std::mem::discriminant(&other)
+    }
+}
 
 impl Default for Terrain {
     fn default() -> Self {
         Terrain::None
+    }
+}
+
+impl fmt::Display for Terrain {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let danger_level;
+        match self {
+            Terrain::None => {
+                write!(fmt, "none")?;
+                danger_level = 0;
+            },
+            Terrain::Asphalt(val) => {
+                write!(fmt, "asphalt")?;
+                danger_level = *val;
+            },
+            Terrain::Gravel(val) => {
+                write!(fmt, "gravel")?;
+                danger_level = *val;
+            },
+            Terrain::Snow(val) => {
+                write!(fmt, "snow")?;
+                danger_level = *val;
+            },
+        };
+        if danger_level > 0 {
+            write!(fmt, "-{}", danger_level)?;
+        }
+        Ok(())
     }
 }
 
@@ -504,6 +559,43 @@ impl fmt::Display for ParseTerrainError {
     }
 }
 
+impl Serialize for Terrain {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for Terrain {
+    fn deserialize<D>(deserializer: D) -> Result<Terrain, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct TerrainVisitor;
+
+        impl<'de> Visitor<'de> for TerrainVisitor {
+            type Value = Terrain;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+                fmt.write_str("a terrain string")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                match Terrain::from_str(value) {
+                    Ok(val) => Ok(val),
+                    Err(_) => Err(E::custom(format!("invalid terrain: {}", value))),
+                }
+            }
+        }
+
+        deserializer.deserialize_string(TerrainVisitor)
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -1254,6 +1346,15 @@ mod tests {
         assert_eq!(conn.target(Direction::A), Some(Direction::E));
         assert_eq!(conn.target(Direction::D), Some(Direction::B));
         assert_eq!(conn.target(Direction::F), Some(Direction::D));
+    }
+
+    #[test]
+    fn terrain_to_str() {
+        assert_eq!(Terrain::None.to_string(), "none");
+        assert_eq!(Terrain::Asphalt(0).to_string(), "asphalt");
+        assert_eq!(Terrain::Asphalt(1).to_string(), "asphalt-1");
+        assert_eq!(Terrain::Gravel(2).to_string(), "gravel-2");
+        assert_eq!(Terrain::Snow(3).to_string(), "snow-3");
     }
 
     #[test]
