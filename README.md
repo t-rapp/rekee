@@ -2,10 +2,10 @@ Rekee
 =====
 
 Rekee is an editor that allows to design custom tracks for the [Rallyman: GT]
-board game published by Holy Grail Games. Support for the upcoming edition of
-[Rallyman: DIRT] is planned. This software is a project with the goal to build
-a cross-platform web application as an alternative to the currently existing
-[Rallyman Track Editor][track editor], which is Windows-only.
+and [Rallyman: DIRT] board games published by Holy Grail Games. This software
+project has the goal to build a cross-platform web application as an
+alternative to the currently existing [Rallyman Track Editor][track editor],
+which is Windows-only.
 
 [Rallyman: GT]: https://holygrail.games/en/games/rallyman-gt/
 [Rallyman: DIRT]: https://holygrail.games/en/games/rallyman-dirt/
@@ -33,6 +33,23 @@ Command for running a local instance of the web application:
 ```
 (cd www/ && python3 -m http.server 8000)
 ```
+
+### Examples
+
+The non-visual parts of Rekee can also be used as a library outside the
+WebAssembly environment, they allow to open and process track data files. See
+the files in the `examples` subfolder for some simple stand-alone applications.
+
+### Source Documentation
+
+To generate HTML code documentation for the library sources use command:
+```
+cargo doc --lib --no-deps
+```
+Then open the file `target/doc/rekee/index.html` in your web browser.
+
+Alternatively you can find auto-generated source documentation from the main
+branch on GitHub at <https://t-rapp.github.io/rekee/rekee/index.html>.
 
 ### Unit Tests
 
