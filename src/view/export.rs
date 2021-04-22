@@ -234,7 +234,7 @@ impl ExportView {
         // remove tile from todo list
         self.images.retain(|img| img.tile != *tile);
 
-        if self.images.len() == 0 {
+        if self.images.is_empty() {
             debug!("export of all tile images is completed");
             let url = check!(self.canvas.to_data_url_with_type("image/png").ok());
             check!(self.anchor.set_attribute("href", &url).ok());

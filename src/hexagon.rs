@@ -180,6 +180,7 @@ impl FloatCoordinate {
         -self.q - self.r
     }
 
+    #[allow(clippy::many_single_char_names)]
     pub fn from_pixel(layout: &Layout, p: Point) -> Self {
         let o = &layout.orientation;
         let x = (p.0 - layout.origin.0) / layout.size.0;
@@ -462,7 +463,7 @@ impl<'de> Deserialize<'de> for Direction {
             where
                 E: de::Error,
             {
-                if value >= 0 && value <= 5 {
+                if (0..6).contains(&value) {
                     Ok(Direction::from(value as u8))
                 } else {
                     Err(E::custom(format!("direction out of range: {}", value)))
@@ -473,7 +474,7 @@ impl<'de> Deserialize<'de> for Direction {
             where
                 E: de::Error,
             {
-                if value <= 5 {
+                if (0..6).contains(&value) {
                     Ok(Direction::from(value as u8))
                 } else {
                     Err(E::custom(format!("direction out of range: {}", value)))

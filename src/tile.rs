@@ -514,7 +514,7 @@ impl FromStr for Terrain {
     type Err = ParseTerrainError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let idx = s.find('-').unwrap_or(s.len());
+        let idx = s.find('-').unwrap_or_else(|| s.len());
         let surface = &s[0..idx];
 
         let level = if let Some(val) = s.get(idx+1..) {
