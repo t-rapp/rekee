@@ -43,6 +43,7 @@ impl WelcomeView {
 
         header.add_event_listener_with_callback("click",
             click_cb.as_ref().unchecked_ref())?;
+        header.class_list().add_1("is-clickable")?;
 
         Ok(WelcomeView { inner, header, click_cb })
     }
