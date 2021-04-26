@@ -76,6 +76,7 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
+<span id="76">76</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Controls display of the welcome message.</span>
@@ -122,6 +123,7 @@
 
         <span class="ident">header</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
             <span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="ident">header</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-clickable&quot;</span>)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">WelcomeView</span> { <span class="ident">inner</span>, <span class="ident">header</span>, <span class="ident">click_cb</span> })
     }
