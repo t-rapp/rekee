@@ -554,7 +554,7 @@ impl MapView {
     }
 
     pub fn import_file(&mut self, data: &str) {
-        let mut map = match import::import_rgt(data) {
+        let mut map = match import::import_auto(data) {
             Ok(val) => val,
             Err(err) => {
                 warn!("Cannot import file data: {}", err);

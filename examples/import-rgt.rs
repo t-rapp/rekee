@@ -23,7 +23,7 @@ fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
     if let Some(filename) = args.get(1) {
         let map = import_file(filename)?;
-        let text = serde_json::to_string_pretty(&map).unwrap();
+        let text = import::export_native(&map).unwrap();
         println!("{}", &text);
     } else {
         // FIXME: better use CARGO_BIN_NAME here instead, but this seems to be unset for examples

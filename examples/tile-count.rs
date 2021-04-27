@@ -1,11 +1,12 @@
 //----------------------------------------------------------------------------
-// Example that reads a Rekee JSON file and outputs an ordered list of tiles
+// Example that reads a Rekee or RGT track file, and outputs an ordered list of used tiles
 //----------------------------------------------------------------------------
 
 use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 
+use rekee::import;
 use rekee::map::Map;
 
 //----------------------------------------------------------------------------
@@ -13,7 +14,7 @@ use rekee::map::Map;
 fn load_file(filename: &str) -> Result<Map, String> {
     let data = fs::read_to_string(filename)
         .map_err(|err| format!("Cannot read track file: {}", err))?;
-    let map = serde_json::from_str(&data)
+    let map = import::import_auto(&data)
         .map_err(|err| format!("Cannot parse track data: {}", err))?;
     Ok(map)
 }
