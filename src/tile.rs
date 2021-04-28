@@ -105,6 +105,11 @@ impl FromStr for TileId {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // check for tile alias
+        if s.eq_ignore_ascii_case("podium") {
+            return Ok(TileId::new(905, 1, 0));
+        }
+        // parse string pattern "{num}{side}-{var}"
         let mut idx = s.len().min(3);
         let num = s[0..idx].parse::<u16>()?;
         let side = match s.get(idx..idx+1) {
@@ -1139,12 +1144,14 @@ mod tests {
         assert_eq!(TileId::new(102, 2, 0).to_string(), "102b");
         assert_eq!(TileId::new(103, 1, 1).to_string(), "103a-1");
         assert_eq!(TileId::new(103, 2, 3).to_string(), "103b-3");
+        assert_eq!(TileId::new(905, 1, 0).to_string(), "905a");
 
         assert_eq!(TileId::new(101, 0, 0).base().to_string(), "101");
         assert_eq!(TileId::new(101, 1, 0).base().to_string(), "101");
         assert_eq!(TileId::new(102, 1, 0).base().to_string(), "102a");
         assert_eq!(TileId::new(102, 2, 0).base().to_string(), "102b");
         assert_eq!(TileId::new(104, 1, 2).base().to_string(), "104a");
+        assert_eq!(TileId::new(905, 2, 0).base().to_string(), "905b");
     }
 
     #[test]
@@ -1155,6 +1162,7 @@ mod tests {
         assert_eq!("102b".parse::<TileId>(), Ok(TileId::new(102, 2, 0)));
         assert_eq!("103a-1".parse::<TileId>(), Ok(TileId::new(103, 1, 1)));
         assert_eq!("103b-3".parse::<TileId>(), Ok(TileId::new(103, 2, 3)));
+        assert_eq!("905A".parse::<TileId>(), Ok(TileId::new(905, 1, 0)));
 
         assert!("".parse::<TileId>().is_err());
         assert!("101x".parse::<TileId>().is_err());
@@ -1169,6 +1177,10 @@ mod tests {
         let text = r#""103b-1""#;
         let tile: TileId = serde_json::from_str(&text).unwrap();
         assert_eq!(tile, TileId::new(103, 2, 1));
+
+        let text = r#""PODIUM""#;
+        let tile: TileId = serde_json::from_str(&text).unwrap();
+        assert_eq!(tile, TileId::new(905, 1, 0));
 
         let text = r#""#;
         let result: Result<TileId, _> = serde_json::from_str(&text);

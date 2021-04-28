@@ -166,11 +166,15 @@ mod rgt {
             // convert from axial to offset coordinates
             let x = -pos.q() - ((pos.r() & 1) + pos.r()) / 2;
             let y = pos.r();
-            let id = match tile.id().num() {
+            let mut id = match tile.id().num() {
                 // special mapping for pit-stop tile
                 101 => "101a".to_string(),
                 _ => tile.id().to_string(),
             };
+            if matches!(tile.id().num(), 200..=499) || matches!(tile.id().num(), 902..=905) {
+                // DIRT tiles are handled uppercase
+                id.make_ascii_uppercase();
+            }
             let dir = i32::from(tile.dir);
             debug!("export tile {}, {}, {} -> ({}, {}), {}, {}",
                 tile.pos, tile.id(), tile.dir, x, y, &id, dir);
@@ -320,6 +324,19 @@ mod tests {
 
         let data = "{}";
         assert!(import_auto(&data).is_err());
+    }
+
+    #[test]
+    fn import_export_rx_track() {
+        let data = include_str!("tests/rx-finland.rgt");
+        let map = import_auto(&data)
+            .expect("Cannot parse import file data");
+        assert_eq!(map.title(), "RX Finland");
+        assert_eq!(map.tiles().len(), 16);
+
+        let data = export_rgt(&map)
+            .expect("Cannot export track data");
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"RX Finland","Tuiles":[{"X":54,"Y":56,"Orientation":4,"TuileId":"403A"},{"X":54,"Y":55,"Orientation":1,"TuileId":"401A"},{"X":53,"Y":57,"Orientation":1,"TuileId":"119b"},{"X":54,"Y":58,"Orientation":2,"TuileId":"118b"},{"X":55,"Y":58,"Orientation":0,"TuileId":"414B"},{"X":54,"Y":57,"Orientation":0,"TuileId":"137b"},{"X":55,"Y":56,"Orientation":3,"TuileId":"126b"},{"X":55,"Y":55,"Orientation":4,"TuileId":"905A"},{"X":55,"Y":59,"Orientation":2,"TuileId":"206A"},{"X":56,"Y":59,"Orientation":4,"TuileId":"209B"},{"X":56,"Y":60,"Orientation":5,"TuileId":"402B"},{"X":57,"Y":58,"Orientation":5,"TuileId":"208A"},{"X":57,"Y":59,"Orientation":4,"TuileId":"209A"},{"X":57,"Y":60,"Orientation":1,"TuileId":"204A"},{"X":56,"Y":61,"Orientation":2,"TuileId":"410B"},{"X":56,"Y":58,"Orientation":3,"TuileId":"403B"}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
