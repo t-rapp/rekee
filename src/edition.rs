@@ -112,6 +112,31 @@ impl Edition {
         tiles
     }
 
+    fn internal_tiles(&self) -> &'static [TileId] {
+        match self {
+            Edition::GtCoreBox =>
+                &GT_CORE_BOX,
+            Edition::GtChampionship =>
+                &GT_CHAMPIONSHIP,
+            Edition::GtWorldTour =>
+                &GT_WORLD_TOUR,
+            Edition::GtTeamChallenge =>
+                &GT_TEAM_CHALLENGE,
+            Edition::GtAdrenalinePack =>
+                &GT_ADRENALINE_PACK,
+            Edition::DirtCoreBox =>
+                &DIRT_CORE_BOX,
+            Edition::Dirt110Percent =>
+                &DIRT_110_PERCENT,
+            Edition::DirtRx =>
+                &DIRT_RX,
+            Edition::DirtClimb =>
+                &DIRT_CLIMB,
+            Edition::DirtCopilot =>
+                &DIRT_COPILOT,
+        }
+     }
+
     /// Returns the tiles of a specific game edition.
     ///
     /// # Examples
@@ -126,29 +151,7 @@ impl Edition {
     /// ```
     pub fn tiles(&self) -> Vec<TileId> {
         let mut tiles = Vec::with_capacity(63);
-        let iter = match self {
-            Edition::GtCoreBox =>
-                GT_CORE_BOX.iter(),
-            Edition::GtChampionship =>
-                GT_CHAMPIONSHIP.iter(),
-            Edition::GtWorldTour =>
-                GT_WORLD_TOUR.iter(),
-            Edition::GtTeamChallenge =>
-                GT_TEAM_CHALLENGE.iter(),
-            Edition::GtAdrenalinePack =>
-                GT_ADRENALINE_PACK.iter(),
-            Edition::DirtCoreBox =>
-                DIRT_CORE_BOX.iter(),
-            Edition::Dirt110Percent =>
-                DIRT_110_PERCENT.iter(),
-            Edition::DirtRx =>
-                DIRT_RX.iter(),
-            Edition::DirtClimb =>
-                DIRT_CLIMB.iter(),
-            Edition::DirtCopilot =>
-                DIRT_COPILOT.iter(),
-        };
-        for tile in iter {
+        for tile in self.internal_tiles().iter() {
             let tile_a = TileId::new(tile.num(), 1, tile.var());
             let tile_b = TileId::new(tile.num(), 2, tile.var());
             // only add both sides if the tile actually has two different ones (not #101)
@@ -160,6 +163,30 @@ impl Edition {
             }
         }
         tiles
+    }
+
+    /// Check whether a specific game edition contains the given tile.
+    ///
+    /// Returns `true` when the identifier is found in the list of tiles.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let edition = Edition::DirtCoreBox;
+    /// assert_eq!(edition.contains(tile!(201, a)), true);
+    /// assert_eq!(edition.contains(tile!(325, b)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains(tile!(201, a)), false);
+    /// assert_eq!(edition.contains(tile!(325, b)), true);
+    /// ```
+    pub fn contains(&self, tile: TileId) -> bool {
+        // clear side, any edition contains both sides of a tile
+        let tile = TileId::new(tile.num(), 0, tile.var());
+        // can use fast binary search as the list order is checked with unit tests
+        self.internal_tiles().binary_search(&tile).is_ok()
     }
 
     /// Iterator over all game editions.
@@ -403,6 +430,15 @@ mod tests {
                 .filter(|id| *id == tile)
                 .count();
             assert_eq!(count, 1, "tile {} is defined more than once", tile);
+        }
+    }
+
+    #[test]
+    fn edition_tiles_sorted() {
+        for edition in Edition::iter() {
+            for tiles in edition.internal_tiles().windows(2) {
+                assert!(tiles[0] <= tiles[1], "tile list is not strictly sorted ({} > {})", tiles[0], tiles[1]);
+            }
         }
     }
 
