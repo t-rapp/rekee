@@ -429,6 +429,42 @@
 <span id="426">426</span>
 <span id="427">427</span>
 <span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).</span>
@@ -544,6 +580,31 @@
         <span class="ident">tiles</span>
     }
 
+    <span class="kw">fn</span> <span class="ident">internal_tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">TileId</span>] {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Edition</span>::<span class="ident">GtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">GT_CORE_BOX</span>,
+            <span class="ident">Edition</span>::<span class="ident">GtChampionship</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">GT_CHAMPIONSHIP</span>,
+            <span class="ident">Edition</span>::<span class="ident">GtWorldTour</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">GT_WORLD_TOUR</span>,
+            <span class="ident">Edition</span>::<span class="ident">GtTeamChallenge</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">GT_TEAM_CHALLENGE</span>,
+            <span class="ident">Edition</span>::<span class="ident">GtAdrenalinePack</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>,
+            <span class="ident">Edition</span>::<span class="ident">Dirt110Percent</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtRx</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtClimb</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>,
+            <span class="ident">Edition</span>::<span class="ident">DirtCopilot</span> <span class="op">=</span><span class="op">&gt;</span>
+                <span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT</span>,
+        }
+     }
+
     <span class="doccomment">/// Returns the tiles of a specific game edition.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
@@ -558,29 +619,7 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">63</span>);
-        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Edition</span>::<span class="ident">GtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">GT_CORE_BOX</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">GtChampionship</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">GT_CHAMPIONSHIP</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">GtWorldTour</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">GT_WORLD_TOUR</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">GtTeamChallenge</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">GT_TEAM_CHALLENGE</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">GtAdrenalinePack</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">GT_ADRENALINE_PACK</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">DirtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">DIRT_CORE_BOX</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">Dirt110Percent</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">DIRT_110_PERCENT</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">DirtRx</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">DIRT_RX</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">DirtClimb</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">DIRT_CLIMB</span>.<span class="ident">iter</span>(),
-            <span class="ident">Edition</span>::<span class="ident">DirtCopilot</span> <span class="op">=</span><span class="op">&gt;</span>
-                <span class="ident">DIRT_COPILOT</span>.<span class="ident">iter</span>(),
-        };
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">iter</span> {
+        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">iter</span>() {
             <span class="kw">let</span> <span class="ident">tile_a</span> <span class="op">=</span> <span class="ident">TileId</span>::<span class="ident">new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">1</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
             <span class="kw">let</span> <span class="ident">tile_b</span> <span class="op">=</span> <span class="ident">TileId</span>::<span class="ident">new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">2</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
             <span class="comment">// only add both sides if the tile actually has two different ones (not #101)</span>
@@ -592,6 +631,30 @@
             }
         }
         <span class="ident">tiles</span>
+    }
+
+    <span class="doccomment">/// Check whether a specific game edition contains the given tile.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `true` when the identifier is found in the list of tiles.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use rekee::edition::*;</span>
+    <span class="doccomment">/// # use rekee::tile;</span>
+    <span class="doccomment">/// let edition = Edition::DirtCoreBox;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), true);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), false);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let edition = Edition::DirtClimb;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), false);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), true);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="comment">// clear side, any edition contains both sides of a tile</span>
+        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">TileId</span>::<span class="ident">new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">0</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
+        <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
+        <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">binary_search</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>).<span class="ident">is_ok</span>()
     }
 
     <span class="doccomment">/// Iterator over all game editions.</span>
@@ -835,6 +898,15 @@
                 .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">tile</span>)
                 .<span class="ident">count</span>();
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">count</span>, <span class="number">1</span>, <span class="string">&quot;tile {} is defined more than once&quot;</span>, <span class="ident">tile</span>);
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">edition_tiles_sorted</span>() {
+        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Edition</span>::<span class="ident">iter</span>() {
+            <span class="kw">for</span> <span class="ident">tiles</span> <span class="kw">in</span> <span class="ident">edition</span>.<span class="ident">internal_tiles</span>().<span class="ident">windows</span>(<span class="number">2</span>) {
+                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">tiles</span>[<span class="number">0</span>] <span class="op">&lt;</span><span class="op">=</span> <span class="ident">tiles</span>[<span class="number">1</span>], <span class="string">&quot;tile list is not strictly sorted ({} &gt; {})&quot;</span>, <span class="ident">tiles</span>[<span class="number">0</span>], <span class="ident">tiles</span>[<span class="number">1</span>]);
+            }
         }
     }
 
