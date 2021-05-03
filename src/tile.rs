@@ -106,7 +106,19 @@ impl FromStr for TileId {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // check for tile alias
-        if s.eq_ignore_ascii_case("podium") {
+        if s.eq_ignore_ascii_case("filler1a") {
+            return Ok(TileId::new(902, 1, 0));
+        } else if s.eq_ignore_ascii_case("filler1b") {
+            return Ok(TileId::new(902, 2, 0));
+        } else if s.eq_ignore_ascii_case("filler2a") {
+            return Ok(TileId::new(903, 1, 0));
+        } else if s.eq_ignore_ascii_case("filler2b") {
+            return Ok(TileId::new(903, 2, 0));
+        } else if s.eq_ignore_ascii_case("filler3a") {
+            return Ok(TileId::new(904, 1, 0));
+        } else if s.eq_ignore_ascii_case("filler3b") {
+            return Ok(TileId::new(904, 2, 0));
+        } else if s.eq_ignore_ascii_case("podium") {
             return Ok(TileId::new(905, 1, 0));
         }
         // parse string pattern "{num}{side}-{var}"
