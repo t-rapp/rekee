@@ -6,11 +6,18 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::fmt;
+use std::str::FromStr;
+
+use serde::{Serialize, Serializer, Deserialize, Deserializer};
+use serde::de::{self, Visitor};
+
 use crate::tile::TileId;
 
 //----------------------------------------------------------------------------
 
 /// Rallyman game edition (core box or one of the expansions).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Edition {
     /// Rallyman: GT core box
     GtCoreBox,
@@ -204,6 +211,119 @@ impl Edition {
             Edition::DirtCopilot,
         ];
         EDITIONS.iter()
+    }
+}
+
+impl fmt::Display for Edition {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Edition::GtCoreBox =>
+                write!(fmt, "gt-core-box")?,
+            Edition::GtChampionship =>
+                write!(fmt, "gt-championship")?,
+            Edition::GtWorldTour =>
+                write!(fmt, "gt-world-tour")?,
+            Edition::GtTeamChallenge =>
+                write!(fmt, "gt-team-challenge")?,
+            Edition::GtAdrenalinePack =>
+                write!(fmt, "gt-adrenaline-pack")?,
+            Edition::DirtCoreBox =>
+                write!(fmt, "dirt-core-box")?,
+            Edition::Dirt110Percent =>
+                write!(fmt, "dirt-110-percent")?,
+            Edition::DirtRx =>
+                write!(fmt, "dirt-rx")?,
+            Edition::DirtClimb =>
+                write!(fmt, "dirt-climb")?,
+            Edition::DirtCopilot =>
+                write!(fmt, "dirt-copilot")?,
+        }
+        Ok(())
+    }
+}
+
+impl FromStr for Edition {
+    type Err = ParseEditionError;
+
+    fn from_str(val: &str) -> Result<Self, Self::Err> {
+        let mut s = val.replace(char::is_whitespace, "-");
+        s.make_ascii_lowercase();
+        match s.as_ref() {
+            "gt-core-box" =>
+                Ok(Edition::GtCoreBox),
+            "gt-championship" =>
+                Ok(Edition::GtChampionship),
+            "gt-world-tour" =>
+                Ok(Edition::GtWorldTour),
+            "gt-team-challenge" =>
+                Ok(Edition::GtTeamChallenge),
+            "gt-adrenaline-pack" =>
+                Ok(Edition::GtAdrenalinePack),
+            "dirt-core-box" =>
+                Ok(Edition::DirtCoreBox),
+            "dirt-110-percent" =>
+                Ok(Edition::Dirt110Percent),
+            "dirt-rx" =>
+                Ok(Edition::DirtRx),
+            "dirt-climb" =>
+                Ok(Edition::DirtClimb),
+            "dirt-copilot" =>
+                Ok(Edition::DirtCopilot),
+            _ =>
+                Err(ParseEditionError::Unknown(val.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseEditionError {
+    Unknown(String),
+}
+
+impl fmt::Display for ParseEditionError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseEditionError::Unknown(val) =>
+                write!(fmt, "Unknown edition token \"{}\"", val),
+        }
+    }
+}
+
+impl Serialize for Edition {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for Edition {
+    fn deserialize<D>(deserializer: D) -> Result<Edition, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct EditionVisitor;
+
+        impl<'de> Visitor<'de> for EditionVisitor {
+            type Value = Edition;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+                fmt.write_str("an edition identifier string")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                match Edition::from_str(value) {
+                    Ok(val) => Ok(val),
+                    Err(_) => Err(E::custom(format!("invalid edition identifier: {}", value))),
+                }
+            }
+        }
+
+        deserializer.deserialize_string(EditionVisitor)
     }
 }
 
@@ -431,6 +551,44 @@ mod tests {
                 .count();
             assert_eq!(count, 1, "tile {} is defined more than once", tile);
         }
+    }
+
+    #[test]
+    fn edition_to_str() {
+        assert_eq!(Edition::GtCoreBox.to_string(), "gt-core-box");
+        assert_eq!(Edition::GtAdrenalinePack.to_string(), "gt-adrenaline-pack");
+        assert_eq!(Edition::DirtCoreBox.to_string(), "dirt-core-box");
+        assert_eq!(Edition::Dirt110Percent.to_string(), "dirt-110-percent");
+    }
+
+    #[test]
+    fn edition_from_str() {
+        assert_eq!("gt-world-tour".parse::<Edition>(), Ok(Edition::GtWorldTour));
+        assert_eq!("GT Team Challenge".parse::<Edition>(), Ok(Edition::GtTeamChallenge));
+        assert_eq!("DIRT-RX".parse::<Edition>(), Ok(Edition::DirtRx));
+        assert_eq!("dirt-copilot".parse::<Edition>(), Ok(Edition::DirtCopilot));
+
+        assert!("".parse::<Edition>().is_err());
+        assert!("rx".parse::<Edition>().is_err());
+    }
+
+    #[test]
+    fn edition_serde() {
+        let edition = Edition::GtChampionship;
+        let text = serde_json::to_string(&edition).unwrap();
+        assert_eq!(text, r#""gt-championship""#);
+
+        let text = r#""Dirt Climb""#;
+        let edition: Edition = serde_json::from_str(&text).unwrap();
+        assert_eq!(edition, Edition::DirtClimb);
+
+        let text = r#""#;
+        let result: Result<Edition, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+
+        let text = r#""core-box""#;
+        let result: Result<TileId, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
     }
 
     #[test]
