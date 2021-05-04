@@ -9,8 +9,7 @@
 use std::fmt;
 use std::str::FromStr;
 
-use serde::{Serialize, Serializer, Deserialize, Deserializer};
-use serde::de::{self, Visitor};
+use serde::{Serialize, Deserialize};
 
 use crate::tile::TileId;
 
@@ -18,6 +17,8 @@ use crate::tile::TileId;
 
 /// Rallyman game edition (core box or one of the expansions).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case", try_from = "&str")]
 pub enum Edition {
     /// Rallyman: GT core box
     GtCoreBox,
@@ -32,6 +33,7 @@ pub enum Edition {
     /// Rallyman: DIRT core box
     DirtCoreBox,
     /// 110% expansion for Rallyman: DIRT
+    #[serde(rename = "dirt-110-percent")]
     Dirt110Percent,
     /// RX expansion for Rallyman: DIRT
     DirtRx,
@@ -289,41 +291,11 @@ impl fmt::Display for ParseEditionError {
     }
 }
 
-impl Serialize for Edition {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer
-    {
-        serializer.serialize_str(&self.to_string())
-    }
-}
+impl std::convert::TryFrom<&str> for Edition {
+    type Error = ParseEditionError;
 
-impl<'de> Deserialize<'de> for Edition {
-    fn deserialize<D>(deserializer: D) -> Result<Edition, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct EditionVisitor;
-
-        impl<'de> Visitor<'de> for EditionVisitor {
-            type Value = Edition;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-                fmt.write_str("an edition identifier string")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                match Edition::from_str(value) {
-                    Ok(val) => Ok(val),
-                    Err(_) => Err(E::custom(format!("invalid edition identifier: {}", value))),
-                }
-            }
-        }
-
-        deserializer.deserialize_string(EditionVisitor)
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Edition::from_str(value)
     }
 }
 

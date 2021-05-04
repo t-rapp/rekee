@@ -10,8 +10,7 @@ use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use serde::{Serialize, Serializer, Deserialize, Deserializer};
-use serde::de::{self, Visitor};
+use serde::{Serialize, Serializer, Deserialize};
 
 use crate::hexagon::Direction;
 
@@ -37,6 +36,8 @@ use crate::hexagon::Direction;
 /// assert_eq!(tile.to_string(), "103a-2");
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Deserialize)]
+#[serde(try_from = "&str")]
 pub struct TileId {
     num: u16,
     side: u8,
@@ -142,41 +143,20 @@ impl FromStr for TileId {
     }
 }
 
+impl std::convert::TryFrom<&str> for TileId {
+    type Error = ParseIntError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        TileId::from_str(value)
+    }
+}
+
 impl Serialize for TileId {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer
     {
         serializer.serialize_str(&self.to_string())
-    }
-}
-
-impl<'de> Deserialize<'de> for TileId {
-    fn deserialize<D>(deserializer: D) -> Result<TileId, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct TileVisitor;
-
-        impl<'de> Visitor<'de> for TileVisitor {
-            type Value = TileId;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-                fmt.write_str("a tile identifier string")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                match TileId::from_str(value) {
-                    Ok(val) => Ok(val),
-                    Err(_) => Err(E::custom(format!("invalid tile identifier: {}", value))),
-                }
-            }
-        }
-
-        deserializer.deserialize_string(TileVisitor)
     }
 }
 
@@ -435,6 +415,8 @@ impl Default for Edge {
 ///
 /// Use [`TileInfo::terrain()`] to get the terrain data of a specific tile.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Deserialize)]
+#[serde(try_from = "&str")]
 pub enum Terrain {
     None,
     Asphalt(u8),
@@ -576,41 +558,20 @@ impl fmt::Display for ParseTerrainError {
     }
 }
 
+impl std::convert::TryFrom<&str> for Terrain {
+    type Error = ParseTerrainError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Terrain::from_str(value)
+    }
+}
+
 impl Serialize for Terrain {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer
     {
         serializer.serialize_str(&self.to_string())
-    }
-}
-
-impl<'de> Deserialize<'de> for Terrain {
-    fn deserialize<D>(deserializer: D) -> Result<Terrain, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct TerrainVisitor;
-
-        impl<'de> Visitor<'de> for TerrainVisitor {
-            type Value = Terrain;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-                fmt.write_str("a terrain string")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                match Terrain::from_str(value) {
-                    Ok(val) => Ok(val),
-                    Err(_) => Err(E::custom(format!("invalid terrain: {}", value))),
-                }
-            }
-        }
-
-        deserializer.deserialize_string(TerrainVisitor)
     }
 }
 

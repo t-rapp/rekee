@@ -13,8 +13,7 @@
 use std::fmt;
 use std::ops::{Add, Sub, Index, IndexMut};
 
-use serde::{Serialize, Serializer, Deserialize, Deserializer};
-use serde::de::{self, Visitor};
+use serde::{Serialize, Deserialize};
 
 //----------------------------------------------------------------------------
 
@@ -223,6 +222,8 @@ impl FloatCoordinate {
 /// assert_eq!(dir - Direction::B, Direction::F);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
+#[serde(into = "u8", from = "u8")]
 pub enum Direction {
     /// Direction of the positive `q` axis.
     A = 0,
@@ -433,56 +434,6 @@ impl From<Direction> for i8 {
 impl From<Direction> for i32 {
     fn from(value: Direction) -> i32 {
         value as i32
-    }
-}
-
-impl Serialize for Direction {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer
-    {
-        serializer.serialize_u8(u8::from(*self))
-    }
-}
-
-impl<'de> Deserialize<'de> for Direction {
-    fn deserialize<D>(deserializer: D) -> Result<Direction, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct DirectionVisitor;
-
-        impl<'de> Visitor<'de> for DirectionVisitor {
-            type Value = Direction;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-                fmt.write_str("an integer between 0 and 5")
-            }
-
-            fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                if (0..6).contains(&value) {
-                    Ok(Direction::from(value as u8))
-                } else {
-                    Err(E::custom(format!("direction out of range: {}", value)))
-                }
-            }
-
-            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                if (0..6).contains(&value) {
-                    Ok(Direction::from(value as u8))
-                } else {
-                    Err(E::custom(format!("direction out of range: {}", value)))
-                }
-            }
-        }
-
-        deserializer.deserialize_u8(DirectionVisitor)
     }
 }
 
@@ -979,11 +930,15 @@ mod tests {
         let dir: Direction = serde_json::from_str(&text).unwrap();
         assert_eq!(dir, Direction::C);
 
+        let text = r#"6"#;
+        let dir: Direction = serde_json::from_str(&text).unwrap();
+        assert_eq!(dir, Direction::A);
+
         let text = r#"-1"#;
         let result: Result<Direction, _> = serde_json::from_str(&text);
         assert!(result.is_err());
 
-        let text = r#"6"#;
+        let text = r#"hello"#;
         let result: Result<Direction, _> = serde_json::from_str(&text);
         assert!(result.is_err());
     }
