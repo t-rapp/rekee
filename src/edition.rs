@@ -37,8 +37,8 @@ pub enum Edition {
     DirtRx,
     /// Climb expansion for Rallyman: DIRT
     DirtClimb,
-    /// Copilot expansion for Rallyman: DIRT
-    DirtCopilot,
+    /// Copilot Pack expansion for Rallyman: DIRT
+    DirtCopilotPack,
 }
 
 impl Edition {
@@ -109,7 +109,7 @@ impl Edition {
             Edition::Dirt110Percent,
             Edition::DirtRx,
             Edition::DirtClimb,
-            Edition::DirtCopilot,
+            Edition::DirtCopilotPack,
         ];
         let mut tiles = Vec::with_capacity(162);
         for edition in EDITIONS.iter() {
@@ -139,8 +139,8 @@ impl Edition {
                 &DIRT_RX,
             Edition::DirtClimb =>
                 &DIRT_CLIMB,
-            Edition::DirtCopilot =>
-                &DIRT_COPILOT,
+            Edition::DirtCopilotPack =>
+                &DIRT_COPILOT_PACK,
         }
      }
 
@@ -208,7 +208,7 @@ impl Edition {
             Edition::Dirt110Percent,
             Edition::DirtRx,
             Edition::DirtClimb,
-            Edition::DirtCopilot,
+            Edition::DirtCopilotPack,
         ];
         EDITIONS.iter()
     }
@@ -235,8 +235,8 @@ impl fmt::Display for Edition {
                 write!(fmt, "dirt-rx")?,
             Edition::DirtClimb =>
                 write!(fmt, "dirt-climb")?,
-            Edition::DirtCopilot =>
-                write!(fmt, "dirt-copilot")?,
+            Edition::DirtCopilotPack =>
+                write!(fmt, "dirt-copilot-pack")?,
         }
         Ok(())
     }
@@ -267,8 +267,8 @@ impl FromStr for Edition {
                 Ok(Edition::DirtRx),
             "dirt-climb" =>
                 Ok(Edition::DirtClimb),
-            "dirt-copilot" =>
-                Ok(Edition::DirtCopilot),
+            "dirt-copilot-pack" =>
+                Ok(Edition::DirtCopilotPack),
             _ =>
                 Err(ParseEditionError::Unknown(val.to_string())),
         }
@@ -499,7 +499,7 @@ const DIRT_CLIMB: [TileId; 4] = [
     tile!(419),
 ];
 
-const DIRT_COPILOT: [TileId; 6] = [
+const DIRT_COPILOT_PACK: [TileId; 6] = [
     tile!(416),
     tile!(417),
     tile!(902),
@@ -526,7 +526,7 @@ mod tests {
         tiles.extend_from_slice(&DIRT_110_PERCENT);
         tiles.extend_from_slice(&DIRT_RX);
         tiles.extend_from_slice(&DIRT_CLIMB);
-        tiles.extend_from_slice(&DIRT_COPILOT);
+        tiles.extend_from_slice(&DIRT_COPILOT_PACK);
         for tile in &tiles {
             assert_eq!(tile.side(), 0, "tile {} is defined with a non-empty side", tile);
         }
@@ -544,7 +544,7 @@ mod tests {
         tiles.extend_from_slice(&DIRT_110_PERCENT);
         tiles.extend_from_slice(&DIRT_RX);
         tiles.extend_from_slice(&DIRT_CLIMB);
-        tiles.extend_from_slice(&DIRT_COPILOT);
+        tiles.extend_from_slice(&DIRT_COPILOT_PACK);
         for tile in &tiles {
             let count = tiles.iter()
                 .filter(|id| *id == tile)
@@ -566,7 +566,7 @@ mod tests {
         assert_eq!("gt-world-tour".parse::<Edition>(), Ok(Edition::GtWorldTour));
         assert_eq!("GT Team Challenge".parse::<Edition>(), Ok(Edition::GtTeamChallenge));
         assert_eq!("DIRT-RX".parse::<Edition>(), Ok(Edition::DirtRx));
-        assert_eq!("dirt-copilot".parse::<Edition>(), Ok(Edition::DirtCopilot));
+        assert_eq!("dirt-copilot-pack".parse::<Edition>(), Ok(Edition::DirtCopilotPack));
 
         assert!("".parse::<Edition>().is_err());
         assert!("rx".parse::<Edition>().is_err());
