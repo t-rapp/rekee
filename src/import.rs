@@ -9,6 +9,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
+use crate::edition::Series;
 use crate::map::Map;
 use crate::tile::*;
 use super::*;
@@ -171,9 +172,11 @@ mod rgt {
                 101 => "101a".to_string(),
                 _ => tile.id().to_string(),
             };
-            if matches!(tile.id().num(), 200..=499) || matches!(tile.id().num(), 902..=905) {
-                // DIRT tiles are handled uppercase
-                id.make_ascii_uppercase();
+            if let Some(info) = TileInfo::get(tile.id()) {
+                if info.series() == Series::Dirt {
+                    // DIRT tiles are handled uppercase
+                    id.make_ascii_uppercase();
+                }
             }
             let dir = i32::from(tile.dir);
             debug!("export tile {}, {}, {} -> ({}, {}), {}, {}",

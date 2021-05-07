@@ -12,6 +12,7 @@ use std::str::FromStr;
 
 use serde::{Serialize, Serializer, Deserialize};
 
+use crate::edition::Series;
 use crate::hexagon::Direction;
 
 //----------------------------------------------------------------------------
@@ -769,6 +770,32 @@ impl TileInfo {
     /// ```
     pub fn edge(&self, dir: Direction) -> Edge {
         self.edges[dir]
+    }
+
+    /// Series information for a tile.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Series;
+    /// # use rekee::tile::TileInfo;
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, a)).unwrap();
+    /// assert_eq!(info.series(), Series::Gt);
+    ///
+    /// let info = TileInfo::get(tile!(205, b)).unwrap();
+    /// assert_eq!(info.series(), Series::Dirt);
+    /// # }
+    /// ```
+    pub fn series(&self) -> Series {
+        if matches!(self.id.num, 100..=199) || self.id.num == 901 {
+            return Series::Gt;
+        }
+        if matches!(self.id.num, 200..=499) || matches!(self.id.num, 902..=905) {
+            return Series::Dirt;
+        }
+        unimplemented!();
     }
 }
 

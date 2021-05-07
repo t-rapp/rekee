@@ -15,7 +15,7 @@ use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::*;
-use crate::edition::Edition;
+use crate::edition::Series;
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -293,11 +293,16 @@ impl CatalogView {
 
         // TODO: use both editions here once the user interface is ready
         let is_dirt = cfg!(feature = "dirt");
-        let tile_ids = if is_dirt {
-            Edition::dirt_tiles()
+        let editions = if is_dirt {
+            Series::Dirt.editions()
         } else {
-            Edition::gt_tiles()
+            Series::Gt.editions()
         };
+        let mut tile_ids: Vec<TileId> = editions
+            .map(|edition| edition.tiles())
+            .flatten()
+            .collect();
+        tile_ids.sort_unstable();
         let mut tile_counts = HashMap::<TileId, usize>::new();
         for full_id in &tile_ids {
             let count = tile_counts.entry(full_id.base()).or_insert(0);

@@ -1,5 +1,10 @@
 //----------------------------------------------------------------------------
 //! Set of tiles that belong to the same game edition (core box or expansion).
+//!
+//! (Sidenote: I have not fully settled on the term "edition" yet; "box" might
+//! be better but is already widely used for a different purpose in the Rust std
+//! library. This type name might still change until the Rekee library reaches
+//! version 1.0)
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -77,16 +82,10 @@ impl Edition {
     /// assert_eq!(tiles.last(), Some(&tile!(901, b)));
     /// assert_eq!(tiles.len(), 145);
     /// ```
+    #[deprecated(note = "Please use Series::editions() together with Edition::tiles() instead")]
     pub fn gt_tiles() -> Vec<TileId> {
-        const EDITIONS: [Edition; 5] = [
-            Edition::GtCoreBox,
-            Edition::GtChampionship,
-            Edition::GtWorldTour,
-            Edition::GtTeamChallenge,
-            Edition::GtAdrenalinePack,
-        ];
         let mut tiles = Vec::with_capacity(145);
-        for edition in EDITIONS.iter() {
+        for edition in Series::Gt.editions() {
             tiles.extend_from_slice(&edition.tiles());
         }
         tiles.sort_unstable();
@@ -105,16 +104,10 @@ impl Edition {
     /// assert_eq!(tiles.last(), Some(&tile!(905, b)));
     /// assert_eq!(tiles.len(), 162);
     /// ```
+    #[deprecated(note = "Please use Series::editions() together with Edition::tiles() instead")]
     pub fn dirt_tiles() -> Vec<TileId> {
-        const EDITIONS: [Edition; 5] = [
-            Edition::DirtCoreBox,
-            Edition::Dirt110Percent,
-            Edition::DirtRx,
-            Edition::DirtClimb,
-            Edition::DirtCopilotPack,
-        ];
         let mut tiles = Vec::with_capacity(162);
-        for edition in EDITIONS.iter() {
+        for edition in Series::Dirt.editions() {
             tiles.extend_from_slice(&edition.tiles());
         }
         tiles.sort_unstable();
@@ -211,6 +204,24 @@ impl Edition {
         !matches!(self, Edition::GtCoreBox | Edition::DirtCoreBox)
     }
 
+    /// Game series that the edition belongs to.
+    /// # use rekee::tile;
+    /// let series = Edition::GtWorldTour.series();
+    /// assert_eq!(series, Series::Gt);
+    ///
+    /// let series = Edition::Dirt110Percent.series();
+    /// assert_eq!(series, Series::Dirt);
+    /// ```
+    pub fn series(&self) -> Series {
+        if GT_EDITIONS.contains(self) {
+            Series::Gt
+        } else if DIRT_EDITIONS.contains(self) {
+            Series::Dirt
+        } else {
+            unimplemented!();
+        }
+    }
+
     /// Iterator over all game editions.
     pub fn iter() -> std::slice::Iter<'static, Self> {
         const EDITIONS: [Edition; 10] = [
@@ -261,7 +272,7 @@ impl FromStr for Edition {
     type Err = ParseEditionError;
 
     fn from_str(val: &str) -> Result<Self, Self::Err> {
-        // match string from both trait implementations, std::fmt::Display and serde::Serialize
+        // match strings from both trait implementations, std::fmt::Display and serde::Serialize
         let mut s = val.replace(char::is_whitespace, "-");
         s.make_ascii_lowercase();
         match s.as_ref() {
@@ -494,6 +505,97 @@ const DIRT_COPILOT_PACK: [TileId; 6] = [
     tile!(905),
 ];
 
+const GT_EDITIONS: [Edition; 5] = [
+    Edition::GtCoreBox,
+    Edition::GtChampionship,
+    Edition::GtWorldTour,
+    Edition::GtTeamChallenge,
+    Edition::GtAdrenalinePack,
+];
+
+const DIRT_EDITIONS: [Edition; 5] = [
+    Edition::DirtCoreBox,
+    Edition::Dirt110Percent,
+    Edition::DirtRx,
+    Edition::DirtClimb,
+    Edition::DirtCopilotPack,
+];
+
+//----------------------------------------------------------------------------
+
+/// Rallyman game series (GT or DIRT).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Series {
+    /// Rallyman: GT
+    Gt,
+    /// Rallyman: DIRT
+    Dirt,
+}
+
+impl Series {
+    /// Iterator over the editions of the game series.
+    pub fn editions(&self) -> std::slice::Iter<'static, Edition> {
+        let editions = match self {
+            Series::Gt =>
+                &GT_EDITIONS,
+            Series::Dirt =>
+                &DIRT_EDITIONS,
+        };
+        editions.iter()
+    }
+
+    /// Iterator over all game series.
+    pub fn iter() -> std::slice::Iter<'static, Self> {
+        const SERIES: [Series; 2] = [
+            Series::Gt,
+            Series::Dirt,
+        ];
+        SERIES.iter()
+    }
+}
+
+impl fmt::Display for Series {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Series::Gt =>
+                write!(fmt, "Rallyman: GT")?,
+            Series::Dirt =>
+                write!(fmt, "Rallyman: DIRT")?,
+        }
+        Ok(())
+    }
+}
+
+impl FromStr for Series {
+    type Err = ParseSeriesError;
+
+    fn from_str(val: &str) -> Result<Self, Self::Err> {
+        let mut s = String::from(val);
+        s.make_ascii_lowercase();
+        if s.ends_with("gt") {
+            Ok(Series::Gt)
+        } else if s.ends_with("dirt") {
+            Ok(Series::Dirt)
+        } else {
+            Err(ParseSeriesError::Unknown(val.to_string()))
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseSeriesError {
+    Unknown(String),
+}
+
+impl fmt::Display for ParseSeriesError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseSeriesError::Unknown(val) =>
+                write!(fmt, "Unknown series token \"{}\"", val),
+        }
+    }
+}
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -551,8 +653,8 @@ mod tests {
     fn edition_from_str() {
         assert_eq!("gt-world-tour".parse::<Edition>(), Ok(Edition::GtWorldTour));
         assert_eq!("GT Team Challenge".parse::<Edition>(), Ok(Edition::GtTeamChallenge));
-        assert_eq!("Dirt 110%".parse::<Edition>(), Ok(Edition::Dirt110Percent));
         assert_eq!("dirt-110-percent".parse::<Edition>(), Ok(Edition::Dirt110Percent));
+        assert_eq!("Dirt 110%".parse::<Edition>(), Ok(Edition::Dirt110Percent));
         assert_eq!("DIRT-RX".parse::<Edition>(), Ok(Edition::DirtRx));
         assert_eq!("dirt-copilot-pack".parse::<Edition>(), Ok(Edition::DirtCopilotPack));
 
@@ -596,18 +698,38 @@ mod tests {
     fn edition_tiles_match_info() {
         use crate::tile::TileInfo;
 
-        let tiles = Edition::all_tiles();
-        for tile in &tiles {
-            let info = match TileInfo::get(*tile) {
-                Some(val) => val,
-                None => panic!("no tile info found for tile {}", tile),
-            };
-            if info.count() <= 1 {
-                assert!(tile.var() == 0, "tile {} is defined with non-empty variation", tile);
-            } else {
-                assert!(tile.var() > 0, "tile {} is defined with empty variation", tile);
+        for edition in Edition::iter() {
+            for tile in edition.tiles() {
+                let info = match TileInfo::get(tile) {
+                    Some(val) => val,
+                    None => panic!("no tile info found for tile {}", tile),
+                };
+                if info.count() <= 1 {
+                    assert!(tile.var() == 0, "tile {} is defined with non-empty variation", tile);
+                } else {
+                    assert!(tile.var() > 0, "tile {} is defined with empty variation", tile);
+                }
+                assert_eq!(edition.series(), info.series(), "series of tile {} does not match edition", tile);
             }
         }
+    }
+
+    #[test]
+    fn series_to_str() {
+        assert_eq!(Series::Gt.to_string(), "Rallyman: GT");
+        assert_eq!(Series::Dirt.to_string(), "Rallyman: DIRT");
+    }
+
+    #[test]
+    fn series_from_str() {
+        assert_eq!("gt".parse::<Series>(), Ok(Series::Gt));
+        assert_eq!("Rallyman GT".parse::<Series>(), Ok(Series::Gt));
+        assert_eq!("DIRT".parse::<Series>(), Ok(Series::Dirt));
+        assert_eq!("rallyman-dirt".parse::<Series>(), Ok(Series::Dirt));
+        assert_eq!("Rallyman: DIRT".parse::<Series>(), Ok(Series::Dirt));
+
+        assert!("".parse::<Series>().is_err());
+        assert!("Rallyman".parse::<Series>().is_err());
     }
 }
 
