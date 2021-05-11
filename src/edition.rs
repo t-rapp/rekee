@@ -198,6 +198,19 @@ impl Edition {
         self.internal_tiles().binary_search(&tile).is_ok()
     }
 
+    /// Check whether the edition is a stand-alone game, or an expansion module.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// assert_eq!(Edition::GtAdrenalinePack.is_expansion(), true);
+    /// assert_eq!(Edition::GtCoreBox.is_expansion(), false);
+    /// ```
+    pub fn is_expansion(&self) -> bool {
+        !matches!(self, Edition::GtCoreBox | Edition::DirtCoreBox)
+    }
+
     /// Iterator over all game editions.
     pub fn iter() -> std::slice::Iter<'static, Self> {
         const EDITIONS: [Edition; 10] = [
@@ -220,25 +233,25 @@ impl fmt::Display for Edition {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Edition::GtCoreBox =>
-                write!(fmt, "gt-core-box")?,
+                write!(fmt, "GT Core Box")?,
             Edition::GtChampionship =>
-                write!(fmt, "gt-championship")?,
+                write!(fmt, "GT Championship")?,
             Edition::GtWorldTour =>
-                write!(fmt, "gt-world-tour")?,
+                write!(fmt, "GT World Tour")?,
             Edition::GtTeamChallenge =>
-                write!(fmt, "gt-team-challenge")?,
+                write!(fmt, "GT Team Challenge")?,
             Edition::GtAdrenalinePack =>
-                write!(fmt, "gt-adrenaline-pack")?,
+                write!(fmt, "GT Adrenaline Pack")?,
             Edition::DirtCoreBox =>
-                write!(fmt, "dirt-core-box")?,
+                write!(fmt, "DIRT Core Box")?,
             Edition::Dirt110Percent =>
-                write!(fmt, "dirt-110-percent")?,
+                write!(fmt, "DIRT 110%")?,
             Edition::DirtRx =>
-                write!(fmt, "dirt-rx")?,
+                write!(fmt, "DIRT RX")?,
             Edition::DirtClimb =>
-                write!(fmt, "dirt-climb")?,
+                write!(fmt, "DIRT Climb")?,
             Edition::DirtCopilotPack =>
-                write!(fmt, "dirt-copilot-pack")?,
+                write!(fmt, "DIRT Copilot Pack")?,
         }
         Ok(())
     }
@@ -248,6 +261,7 @@ impl FromStr for Edition {
     type Err = ParseEditionError;
 
     fn from_str(val: &str) -> Result<Self, Self::Err> {
+        // match string from both trait implementations, std::fmt::Display and serde::Serialize
         let mut s = val.replace(char::is_whitespace, "-");
         s.make_ascii_lowercase();
         match s.as_ref() {
@@ -263,7 +277,7 @@ impl FromStr for Edition {
                 Ok(Edition::GtAdrenalinePack),
             "dirt-core-box" =>
                 Ok(Edition::DirtCoreBox),
-            "dirt-110-percent" =>
+            "dirt-110-percent" | "dirt-110%" =>
                 Ok(Edition::Dirt110Percent),
             "dirt-rx" =>
                 Ok(Edition::DirtRx),
@@ -527,16 +541,18 @@ mod tests {
 
     #[test]
     fn edition_to_str() {
-        assert_eq!(Edition::GtCoreBox.to_string(), "gt-core-box");
-        assert_eq!(Edition::GtAdrenalinePack.to_string(), "gt-adrenaline-pack");
-        assert_eq!(Edition::DirtCoreBox.to_string(), "dirt-core-box");
-        assert_eq!(Edition::Dirt110Percent.to_string(), "dirt-110-percent");
+        assert_eq!(Edition::GtCoreBox.to_string(), "GT Core Box");
+        assert_eq!(Edition::GtAdrenalinePack.to_string(), "GT Adrenaline Pack");
+        assert_eq!(Edition::DirtCoreBox.to_string(), "DIRT Core Box");
+        assert_eq!(Edition::Dirt110Percent.to_string(), "DIRT 110%");
     }
 
     #[test]
     fn edition_from_str() {
         assert_eq!("gt-world-tour".parse::<Edition>(), Ok(Edition::GtWorldTour));
         assert_eq!("GT Team Challenge".parse::<Edition>(), Ok(Edition::GtTeamChallenge));
+        assert_eq!("Dirt 110%".parse::<Edition>(), Ok(Edition::Dirt110Percent));
+        assert_eq!("dirt-110-percent".parse::<Edition>(), Ok(Edition::Dirt110Percent));
         assert_eq!("DIRT-RX".parse::<Edition>(), Ok(Edition::DirtRx));
         assert_eq!("dirt-copilot-pack".parse::<Edition>(), Ok(Edition::DirtCopilotPack));
 
@@ -549,6 +565,10 @@ mod tests {
         let edition = Edition::GtChampionship;
         let text = serde_json::to_string(&edition).unwrap();
         assert_eq!(text, r#""gt-championship""#);
+
+        let edition = Edition::Dirt110Percent;
+        let text = serde_json::to_string(&edition).unwrap();
+        assert_eq!(text, r#""dirt-110-percent""#);
 
         let text = r#""Dirt Climb""#;
         let edition: Edition = serde_json::from_str(&text).unwrap();
