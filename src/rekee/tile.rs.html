@@ -1439,6 +1439,33 @@
 <span id="1436">1436</span>
 <span id="1437">1437</span>
 <span id="1438">1438</span>
+<span id="1439">1439</span>
+<span id="1440">1440</span>
+<span id="1441">1441</span>
+<span id="1442">1442</span>
+<span id="1443">1443</span>
+<span id="1444">1444</span>
+<span id="1445">1445</span>
+<span id="1446">1446</span>
+<span id="1447">1447</span>
+<span id="1448">1448</span>
+<span id="1449">1449</span>
+<span id="1450">1450</span>
+<span id="1451">1451</span>
+<span id="1452">1452</span>
+<span id="1453">1453</span>
+<span id="1454">1454</span>
+<span id="1455">1455</span>
+<span id="1456">1456</span>
+<span id="1457">1457</span>
+<span id="1458">1458</span>
+<span id="1459">1459</span>
+<span id="1460">1460</span>
+<span id="1461">1461</span>
+<span id="1462">1462</span>
+<span id="1463">1463</span>
+<span id="1464">1464</span>
+<span id="1465">1465</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Tile identifier and characteristics.</span>
@@ -1454,6 +1481,7 @@
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Serializer</span>, <span class="ident">Deserialize</span>};
 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">edition</span>::<span class="ident">Series</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">hexagon</span>::<span class="ident">Direction</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
@@ -2211,6 +2239,32 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">edge</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Edge</span> {
         <span class="self">self</span>.<span class="ident">edges</span>[<span class="ident">dir</span>]
+    }
+
+    <span class="doccomment">/// Series information for a tile.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # #[macro_use] extern crate rekee;</span>
+    <span class="doccomment">/// # use rekee::edition::Series;</span>
+    <span class="doccomment">/// # use rekee::tile::TileInfo;</span>
+    <span class="doccomment">/// # fn main() {</span>
+    <span class="doccomment">/// let info = TileInfo::get(tile!(103, a)).unwrap();</span>
+    <span class="doccomment">/// assert_eq!(info.series(), Series::Gt);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let info = TileInfo::get(tile!(205, b)).unwrap();</span>
+    <span class="doccomment">/// assert_eq!(info.series(), Series::Dirt);</span>
+    <span class="doccomment">/// # }</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Series</span> {
+        <span class="kw">if</span> <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">100</span>..<span class="op">=</span><span class="number">199</span>) <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span> <span class="op">=</span><span class="op">=</span> <span class="number">901</span> {
+            <span class="kw">return</span> <span class="ident">Series</span>::<span class="ident">Gt</span>;
+        }
+        <span class="kw">if</span> <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">200</span>..<span class="op">=</span><span class="number">499</span>) <span class="op">|</span><span class="op">|</span> <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">902</span>..<span class="op">=</span><span class="number">905</span>) {
+            <span class="kw">return</span> <span class="ident">Series</span>::<span class="ident">Dirt</span>;
+        }
+        <span class="macro">unimplemented</span><span class="macro">!</span>();
     }
 }
 

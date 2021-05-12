@@ -353,6 +353,9 @@
 <span id="350">350</span>
 <span id="351">351</span>
 <span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Import and export of map data.</span>
@@ -365,6 +368,7 @@
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="prelude-ty">Result</span>;
 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">edition</span>::<span class="ident">Series</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">map</span>::<span class="ident">Map</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">tile</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -527,9 +531,11 @@
                 <span class="number">101</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;101a&quot;</span>.<span class="ident">to_string</span>(),
                 <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">to_string</span>(),
             };
-            <span class="kw">if</span> <span class="macro">matches</span><span class="macro">!</span>(<span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">num</span>(), <span class="number">200</span>..<span class="op">=</span><span class="number">499</span>) <span class="op">|</span><span class="op">|</span> <span class="macro">matches</span><span class="macro">!</span>(<span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">num</span>(), <span class="number">902</span>..<span class="op">=</span><span class="number">905</span>) {
-                <span class="comment">// DIRT tiles are handled uppercase</span>
-                <span class="ident">id</span>.<span class="ident">make_ascii_uppercase</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">info</span>) <span class="op">=</span> <span class="ident">TileInfo</span>::<span class="ident">get</span>(<span class="ident">tile</span>.<span class="ident">id</span>()) {
+                <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">series</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Series</span>::<span class="ident">Dirt</span> {
+                    <span class="comment">// DIRT tiles are handled uppercase</span>
+                    <span class="ident">id</span>.<span class="ident">make_ascii_uppercase</span>();
+                }
             }
             <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">i32</span>::<span class="ident">from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
             <span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;export tile {}, {}, {} -&gt; ({}, {}), {}, {}&quot;</span>,

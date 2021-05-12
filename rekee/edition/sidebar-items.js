@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Edition","Rallyman game edition (core box or one of the expansions)."],["ParseEditionError",""]]});
+initSidebarItems({"enum":[["Edition","Rallyman game edition (core box or one of the expansions)."],["ParseEditionError",""],["ParseSeriesError",""],["Series","Rallyman game series (GT or DIRT)."]]});
