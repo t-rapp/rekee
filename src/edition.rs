@@ -205,7 +205,11 @@ impl Edition {
     }
 
     /// Game series that the edition belongs to.
-    /// # use rekee::tile;
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
     /// let series = Edition::GtWorldTour.series();
     /// assert_eq!(series, Series::Gt);
     ///
