@@ -6,7 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeSet, HashMap, HashSet};
 
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
@@ -15,7 +15,7 @@ use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::*;
-use crate::edition::Series;
+use crate::edition::{Edition, Series};
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -24,13 +24,14 @@ struct CatalogTile {
     inner: Element,
     id: TileId,
     count: usize,
+    usage: usize,
     counter: Element,
     dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
 }
 
 impl CatalogTile {
-    fn new(document: &Document, layout: &Layout, id: TileId, count: usize) -> Result<Self> {
+    fn new(document: &Document, layout: &Layout, id: TileId) -> Result<Self> {
         let canvas = document.create_element_ns(SVG_NS, "svg")?;
         let width = (2.0 * layout.size().x()).round() as i32;
         let height = (2.0 * layout.size().y()).round() as i32;
@@ -51,8 +52,6 @@ impl CatalogTile {
 
         let counter = document.create_element("div")?;
         counter.set_attribute("class", "counter tag is-rounded is-light")?;
-        let text = count.to_string();
-        counter.append_child(&document.create_text_node(&text))?;
         tile.append_child(&counter)?;
 
         let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
@@ -79,25 +78,34 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogTile { inner: tile, id, count, counter, dblclick_cb, dragstart_cb })
+        Ok(CatalogTile { inner: tile, id, count: 0, usage: 0, counter, dblclick_cb, dragstart_cb })
     }
 
-    fn set_usage(&self, value: usize) {
-        let count = self.count as i32 - value as i32;
-        let text = count.to_string();
-        self.counter.set_inner_html(&text);
-        if count <= 0 {
+    fn inner_update_counter(&mut self, count: usize, usage: usize) {
+        self.count = count;
+        self.usage = usage;
+        let counter = self.count as i32 - self.usage as i32;
+        self.counter.set_inner_html(&counter.to_string());
+        if counter <= 0 {
             check!(self.inner.class_list().add_1("is-disabled").ok());
         } else {
             check!(self.inner.class_list().remove_1("is-disabled").ok());
         }
-        if count < 0 {
+        if counter < 0 {
             check!(self.counter.class_list().remove_1("is-light").ok());
             check!(self.counter.class_list().add_1("is-warning").ok());
         } else {
             check!(self.counter.class_list().add_1("is-light").ok());
             check!(self.counter.class_list().remove_1("is-warning").ok());
         }
+    }
+
+    pub fn set_count(&mut self, value: usize) {
+        self.inner_update_counter(value, self.usage);
+    }
+
+    pub fn set_usage(&mut self, value: usize) {
+        self.inner_update_counter(self.count, value);
     }
 }
 
@@ -257,12 +265,23 @@ impl Drop for TerrainFilterElement {
 
 //----------------------------------------------------------------------------
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
+#[serde(default)]
 pub struct CatalogSettings {
-    #[serde(default)]
+    editions: Vec<Edition>,
     filter_lanes: Option<u8>,
-    #[serde(default)]
     filter_terrain: Option<Terrain>,
+}
+
+impl Default for CatalogSettings {
+    fn default() -> Self {
+        let editions: Vec<_> = Series::Gt.editions()
+            .cloned()
+            .collect();
+        let filter_lanes = None;
+        let filter_terrain = None;
+        CatalogSettings { editions, filter_lanes, filter_terrain }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -270,6 +289,7 @@ pub struct CatalogSettings {
 pub struct CatalogView {
     catalog: Element,
     tiles: Vec<CatalogTile>,
+    editions: Vec<Edition>,
     filter_lanes: Option<u8>,
     filter_lanes_elements: Vec<LanesFilterElement>,
     filter_terrain: Option<Terrain>,
@@ -291,32 +311,25 @@ impl CatalogView {
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
 
-        // TODO: use both editions here once the user interface is ready
-        let is_dirt = cfg!(feature = "dirt");
-        let editions = if is_dirt {
-            Series::Dirt.editions()
-        } else {
-            Series::Gt.editions()
-        };
-        let mut tile_ids: Vec<TileId> = editions
+        let editions: Vec<_> = Series::Gt.editions()
+            .cloned()
+            .collect();
+
+        let mut tile_ids: Vec<TileId> = Edition::iter()
             .map(|edition| edition.tiles())
             .flatten()
             .collect();
         tile_ids.sort_unstable();
-        let mut tile_counts = HashMap::<TileId, usize>::new();
-        for full_id in &tile_ids {
-            let count = tile_counts.entry(full_id.base()).or_insert(0);
-            *count += 1;
-        }
 
         let mut tiles = Vec::with_capacity(tile_ids.len());
-        for full_id in &tile_ids {
-            /* create only a single tile for each base identifier, ignore more variants */
-            let count = match tile_counts.remove(&full_id.base()) {
-                Some(val) => val,
-                None => continue,
-            };
-            let tile = CatalogTile::new(&document, &layout, *full_id, count)?;
+        let mut base_ids = HashSet::<TileId>::new();
+        for tile_id in &tile_ids {
+            // create only a single tile for each base identifier, ignore more variants
+            if base_ids.contains(&tile_id.base()) {
+                continue;
+            }
+            base_ids.insert(tile_id.base());
+            let tile = CatalogTile::new(&document, &layout, *tile_id)?;
             let item = document.create_element("li")?;
             item.append_child(tile.as_ref())?;
             catalog.append_child(&item)?;
@@ -324,31 +337,21 @@ impl CatalogView {
         }
         parent.append_child(&catalog)?;
 
-        if let Some(element) = document.get_element_by_id("lanes-filter") {
-            element.set_hidden(is_dirt);
-        }
         let mut filter_lanes_elements = Vec::with_capacity(4);
-        if !is_dirt {
-            let node_list = parent.query_selector_all("#lanes-filter li")?;
-            for i in 0..node_list.length() {
-                let element = node_list.get(i).unwrap()
-                    .dyn_into::<web_sys::Element>().unwrap();
-                filter_lanes_elements.push(LanesFilterElement::new(element)?);
-            }
+        let node_list = parent.query_selector_all("#lanes-filter li")?;
+        for i in 0..node_list.length() {
+            let element = node_list.get(i).unwrap()
+                .dyn_into::<web_sys::Element>().unwrap();
+            filter_lanes_elements.push(LanesFilterElement::new(element)?);
         }
         let filter_lanes = None;
 
-        if let Some(element) = document.get_element_by_id("terrain-filter") {
-            element.set_hidden(!is_dirt);
-        }
         let mut filter_terrain_elements = Vec::with_capacity(4);
-        if is_dirt {
-            let node_list = parent.query_selector_all("#terrain-filter li")?;
-            for i in 0..node_list.length() {
-                let element = node_list.get(i).unwrap()
-                    .dyn_into::<web_sys::Element>().unwrap();
-                filter_terrain_elements.push(TerrainFilterElement::new(element)?);
-            }
+        let node_list = parent.query_selector_all("#terrain-filter li")?;
+        for i in 0..node_list.length() {
+            let element = node_list.get(i).unwrap()
+                .dyn_into::<web_sys::Element>().unwrap();
+            filter_terrain_elements.push(TerrainFilterElement::new(element)?);
         }
         let filter_terrain = None;
 
@@ -392,19 +395,80 @@ impl CatalogView {
             keychange_cb.as_ref().unchecked_ref())?;
 
         Ok(CatalogView {
-            catalog, tiles, filter_lanes, filter_lanes_elements, filter_terrain,
+            catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
             filter_terrain_elements, map: None, dragover_cb, dragdrop_cb, keychange_cb
         })
     }
 
     pub fn load_settings(&mut self, settings: &CatalogSettings) {
+        self.update_editions(&settings.editions);
         self.inner_update_filter(settings.filter_lanes, settings.filter_terrain);
     }
 
     pub fn save_settings(&mut self) -> CatalogSettings {
+        let editions = self.editions.clone();
         let filter_lanes = self.filter_lanes;
         let filter_terrain = self.filter_terrain;
-        CatalogSettings { filter_lanes, filter_terrain }
+        CatalogSettings { editions, filter_lanes, filter_terrain }
+    }
+
+    pub fn update_editions(&mut self, editions: &[Edition]) {
+        info!("update editions {:?}", editions);
+        self.editions.clear();
+        self.editions.extend_from_slice(editions);
+
+        // count number of editions per series to determine the active filter types
+        let gt_count = self.editions.iter()
+            .filter(|val| val.series() == Series::Gt)
+            .count();
+        let dirt_count = self.editions.iter()
+            .filter(|val| val.series() == Series::Dirt)
+            .count();
+        let lanes_filter_active = gt_count >= dirt_count;
+        let terrain_filter_active = dirt_count >= gt_count;
+
+        // show or hide filter types based on the active series, clear filter
+        // settings that are not visible and thus can't be changed by the user
+        let document = self.catalog.owner_document().unwrap();
+        if let Some(element) = document.get_element_by_id("lanes-filter") {
+            if !lanes_filter_active {
+                self.filter_lanes = None;
+            }
+            element.set_hidden(!lanes_filter_active);
+        } else {
+            self.filter_lanes = None;
+        }
+        if let Some(element) = document.get_element_by_id("terrain-filter") {
+            if !terrain_filter_active {
+                self.filter_terrain = None;
+            }
+            element.set_hidden(!terrain_filter_active);
+        } else {
+            self.filter_terrain = None;
+        }
+
+        // calculate the number of available tile variants
+        let mut tile_ids: Vec<TileId> = editions.iter()
+            .map(|edition| edition.tiles())
+            .flatten()
+            .collect();
+        tile_ids.sort_unstable();
+        let mut tile_counts = HashMap::<TileId, usize>::new();
+        for tile_id in &tile_ids {
+            let count = tile_counts.entry(tile_id.base())
+                .or_insert(0);
+            *count += 1;
+        }
+
+        // update the catalog tile elements with number of tile variants
+        for tile in self.tiles.iter_mut() {
+            let count = tile_counts.get(&tile.id.base())
+                .unwrap_or(&0);
+            tile.set_count(*count);
+        }
+
+        self.inner_update_filter(self.filter_lanes, self.filter_terrain);
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
     }
 
     pub fn update_lanes_filter(&mut self, lanes: Option<u8>) {
@@ -420,6 +484,12 @@ impl CatalogView {
     fn inner_update_filter(&mut self, lanes: Option<u8>, terrain: Option<Terrain>) {
         info!("update filter: lanes={:?}, terrain={:?}", lanes, terrain);
         let terrain = terrain.map(|val| val.surface());
+
+        let edition_tiles: HashSet<TileId> = self.editions.iter()
+            .map(|edition| edition.tiles())
+            .flatten()
+            .map(|id| id.base())
+            .collect();
 
         let mut lanes_element = None;
         for item in &self.filter_lanes_elements {
@@ -440,7 +510,7 @@ impl CatalogView {
         }
 
         for tile in &self.tiles {
-            let mut hidden = false;
+            let mut hidden = !edition_tiles.contains(&tile.id.base());
             if let Some(filter) = lanes_element {
                 hidden |= !filter.contains(tile.id);
             }
@@ -463,7 +533,7 @@ impl CatalogView {
             let count = tile_counts.entry(full_id.num()).or_insert(0);
             *count += 1;
         }
-        for tile in &self.tiles {
+        for tile in self.tiles.iter_mut() {
             let count = tile_counts.get(&tile.id.num()).unwrap_or(&0);
             tile.set_usage(*count);
         }

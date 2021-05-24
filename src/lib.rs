@@ -26,6 +26,7 @@ mod controller;
 use controller::*;
 
 pub mod edition;
+use edition::Series;
 
 pub mod hexagon;
 use hexagon::*;
@@ -92,6 +93,17 @@ pub fn main() -> Result<(), JsValue> {
 
     // restore previous view settings
     nuts::publish(LoadSettingsEvent {});
+
+    // update default editions depending on whether the DIRT feature is enabled or not
+    let editions = if cfg!(feature = "dirt") {
+        Series::Dirt.editions()
+    } else {
+        Series::Gt.editions()
+    };
+    let editions = editions
+        .cloned()
+        .collect();
+    nuts::publish(UpdateCatalogEditionsEvent { editions });
 
     Ok(())
 }

@@ -13,6 +13,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use crate::edition::Edition;
 use crate::hexagon::*;
 use crate::map::{PlacedTile, Map};
 use crate::storage::Storage;
@@ -112,6 +113,10 @@ pub struct HideWelcomeEvent;
 
 //----------------------------------------------------------------------------
 
+pub struct UpdateCatalogEditionsEvent {
+    pub editions: Vec<Edition>,
+}
+
 pub struct CatalogController {
     view: CatalogView,
     storage: Storage,
@@ -134,6 +139,7 @@ impl CatalogController {
         // register public events
         activity.subscribe(CatalogController::load_settings);
         activity.subscribe(CatalogController::save_settings);
+        activity.subscribe(CatalogController::update_catalog_editions);
         activity.subscribe(CatalogController::update_lanes_filter);
         activity.subscribe(CatalogController::update_terrain_filter);
         activity.subscribe(CatalogController::update_tile_usage);
@@ -150,6 +156,10 @@ impl CatalogController {
     fn save_settings(&mut self, _event: &SaveSettingsEvent) {
         let settings = self.view.save_settings();
         self.storage.set(&settings);
+    }
+
+    fn update_catalog_editions(&mut self, event: &UpdateCatalogEditionsEvent) {
+        self.view.update_editions(&event.editions);
     }
 
     fn update_lanes_filter(&mut self, event: &UpdateLanesFilterEvent) {
