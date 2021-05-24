@@ -332,10 +332,11 @@ impl AsRef<Element> for DraggedTile {
 //----------------------------------------------------------------------------
 
 #[derive(Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct MapSettings {
     #[serde(flatten)]
-    map: Map,
-    selected: Option<Coordinate>,
+    pub map: Map,
+    pub selected: Option<Coordinate>,
 }
 
 //----------------------------------------------------------------------------

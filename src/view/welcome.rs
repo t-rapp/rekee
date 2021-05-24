@@ -17,8 +17,9 @@ use super::*;
 //----------------------------------------------------------------------------
 
 #[derive(Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct WelcomeSettings {
-    hidden: bool,
+    pub hidden: bool,
 }
 
 //----------------------------------------------------------------------------

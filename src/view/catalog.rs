@@ -268,9 +268,9 @@ impl Drop for TerrainFilterElement {
 #[derive(Serialize, Deserialize)]
 #[serde(default)]
 pub struct CatalogSettings {
-    editions: Vec<Edition>,
-    filter_lanes: Option<u8>,
-    filter_terrain: Option<Terrain>,
+    pub editions: Vec<Edition>,
+    pub filter_lanes: Option<u8>,
+    pub filter_terrain: Option<Terrain>,
 }
 
 impl Default for CatalogSettings {

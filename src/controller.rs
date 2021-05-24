@@ -13,6 +13,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use nuts::DefaultDomain;
+
 use crate::edition::Edition;
 use crate::hexagon::*;
 use crate::map::{PlacedTile, Map};
@@ -126,7 +128,7 @@ impl CatalogController {
     pub fn init(view: CatalogView) {
         let storage = Storage::new("catalog");
         let controller = CatalogController { view, storage };
-        let activity = nuts::new_activity(controller);
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
         activity.private_channel(|controller, event| {
@@ -156,6 +158,7 @@ impl CatalogController {
     fn save_settings(&mut self, _event: &SaveSettingsEvent) {
         let settings = self.view.save_settings();
         self.storage.set(&settings);
+        nuts::store_to_domain(&DefaultDomain, settings);
     }
 
     fn update_catalog_editions(&mut self, event: &UpdateCatalogEditionsEvent) {
@@ -190,7 +193,7 @@ impl MapController {
     pub fn init(view: MapView) {
         let storage = Storage::new("map");
         let controller = MapController { view, storage };
-        let activity = nuts::new_activity(controller);
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
         activity.private_channel(|controller, event| {
@@ -235,6 +238,7 @@ impl MapController {
     fn save_settings(&mut self, _event: &SaveSettingsEvent) {
         let settings = self.view.save_settings();
         self.storage.set(&settings);
+        nuts::store_to_domain(&DefaultDomain, settings);
     }
 
     fn import_file(&mut self, event: &ImportFileEvent) {
@@ -335,7 +339,7 @@ pub struct ExportController {
 impl ExportController {
     pub fn init(view: ExportView) {
         let controller = ExportController { view };
-        let activity = nuts::new_activity(controller);
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
         activity.private_channel(|controller, event: DrawExportTileDoneEvent| {
@@ -362,7 +366,7 @@ impl WelcomeController {
     pub fn init(view: WelcomeView) {
         let storage = Storage::with_session_storage("welcome");
         let controller = WelcomeController { view, storage };
-        let activity = nuts::new_activity(controller);
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
         activity.private_channel(|controller, event| {
@@ -394,6 +398,7 @@ impl WelcomeController {
     fn save_settings(&mut self, _event: &SaveSettingsEvent) {
         let settings = self.view.save_settings();
         self.storage.set(&settings);
+        nuts::store_to_domain(&DefaultDomain, settings);
     }
 
     fn import_file(&mut self, _event: &ImportFileEvent) {
