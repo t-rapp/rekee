@@ -863,6 +863,7 @@
 <span id="860">860</span>
 <span id="861">861</span>
 <span id="862">862</span>
+<span id="863">863</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the map and according event handlers.</span>
@@ -1198,10 +1199,11 @@
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapSettings</span> {
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
-    <span class="ident">map</span>: <span class="ident">Map</span>,
-    <span class="ident">selected</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">map</span>: <span class="ident">Map</span>,
+    <span class="kw">pub</span> <span class="ident">selected</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>,
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>

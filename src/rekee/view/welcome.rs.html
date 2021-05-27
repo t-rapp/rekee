@@ -77,6 +77,7 @@
 <span id="74">74</span>
 <span id="75">75</span>
 <span id="76">76</span>
+<span id="77">77</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Controls display of the welcome message.</span>
@@ -97,8 +98,9 @@
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WelcomeSettings</span> {
-    <span class="ident">hidden</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">hidden</span>: <span class="ident">bool</span>,
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
