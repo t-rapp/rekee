@@ -104,14 +104,6 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
-<span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Library providing track editor functions for the Rekee web application.</span>
@@ -141,7 +133,6 @@
 <span class="kw">use</span> <span class="ident">controller</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">edition</span>;
-<span class="kw">use</span> <span class="ident">edition</span>::<span class="ident">Series</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">hexagon</span>;
 <span class="kw">use</span> <span class="ident">hexagon</span>::<span class="kw-2">*</span>;
@@ -177,6 +168,10 @@
         .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#map-container&#39; parent element for map component&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">MapController</span>::<span class="ident">init</span>(<span class="ident">MapView</span>::<span class="ident">new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
 
+    <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;catalog-config-container&quot;</span>)
+        .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#catalog-config-container&#39; parent element for catalog config component&quot;</span>)<span class="question-mark">?</span>;
+    <span class="ident">CatalogConfigController</span>::<span class="ident">init</span>(<span class="ident">CatalogConfigView</span>::<span class="ident">new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+
     <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;export-container&quot;</span>)
         .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#export-container&#39; parent element for export component&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">ExportController</span>::<span class="ident">init</span>(<span class="ident">ExportView</span>::<span class="ident">new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
@@ -208,17 +203,6 @@
 
     <span class="comment">// restore previous view settings</span>
     <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">LoadSettingsEvent</span> {});
-
-    <span class="comment">// update default editions depending on whether the DIRT feature is enabled or not</span>
-    <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;dirt&quot;</span>) {
-        <span class="ident">Series</span>::<span class="ident">Dirt</span>.<span class="ident">editions</span>()
-    } <span class="kw">else</span> {
-        <span class="ident">Series</span>::<span class="ident">Gt</span>.<span class="ident">editions</span>()
-    };
-    <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="ident">editions</span>
-        .<span class="ident">cloned</span>()
-        .<span class="ident">collect</span>();
-    <span class="ident">nuts</span>::<span class="ident">publish</span>(<span class="ident">UpdateCatalogEditionsEvent</span> { <span class="ident">editions</span> });
 
     <span class="prelude-val">Ok</span>(())
 }
