@@ -1,6 +1,6 @@
 [package]
 name = "rekee"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Tobias Rapp"]
 edition = "2018"
 description = "Track editor for the Rallyman:GT and Rallyman:DIRT boardgames"
@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
+# Show Rallyman DIRT game tiles in the catalog by default
 dirt = []
 # Enables verbose log output. When compiled as a native library the output is
 # written to standard errorr (stderr), when compiled for WASM log output is
