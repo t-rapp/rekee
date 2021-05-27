@@ -272,6 +272,15 @@ impl fmt::Display for Edition {
     }
 }
 
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for Edition {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
 impl FromStr for Edition {
     type Err = ParseEditionError;
 
@@ -651,6 +660,11 @@ mod tests {
         assert_eq!(Edition::GtAdrenalinePack.to_string(), "GT Adrenaline Pack");
         assert_eq!(Edition::DirtCoreBox.to_string(), "DIRT Core Box");
         assert_eq!(Edition::Dirt110Percent.to_string(), "DIRT 110%");
+
+        let text = format!("{:x}", Edition::GtChampionship);
+        assert_eq!(text, "gt-championship");
+        let text = format!("{:x}", Edition::DirtCopilotPack);
+        assert_eq!(text, "dirt-copilot-pack");
     }
 
     #[test]

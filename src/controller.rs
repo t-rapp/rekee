@@ -13,7 +13,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use nuts::DefaultDomain;
+use nuts::{DefaultDomain, DomainState};
 
 use crate::edition::Edition;
 use crate::hexagon::*;
@@ -319,6 +319,52 @@ impl MapController {
 
     fn update_connection_hint(&mut self, event: &UpdateConnectionHintEvent) {
         self.view.update_connection_hint(event.hint);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+pub struct ShowCatalogConfigEvent;
+
+pub struct HideCatalogConfigEvent;
+
+pub struct ToggleCatalogEditionEvent {
+    pub edition: Edition,
+}
+
+pub struct ApplyCatalogEditionsEvent;
+
+pub struct CatalogConfigController {
+    view: CatalogConfigView,
+}
+
+impl CatalogConfigController {
+    pub fn init(view: CatalogConfigView) {
+        let controller = CatalogConfigController { view };
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
+
+        // register private events
+        activity.private_channel(|controller, event: ToggleCatalogEditionEvent| {
+            controller.view.toggle_edition(event.edition);
+        });
+        activity.private_channel(|controller, _event: ApplyCatalogEditionsEvent| {
+            controller.view.apply_catalog_editions();
+        });
+
+        // register public events
+        activity.subscribe_domained(CatalogConfigController::show);
+        activity.subscribe(CatalogConfigController::hide);
+    }
+
+    fn show(&mut self, domain: &mut DomainState, _event: &ShowCatalogConfigEvent) {
+        if let Some(settings) = domain.try_get::<CatalogSettings>() {
+            self.view.set_editions(&settings.editions);
+        }
+        self.view.set_active(true);
+    }
+
+    fn hide(&mut self, _event: &HideCatalogConfigEvent) {
+        self.view.set_active(false);
     }
 }
 

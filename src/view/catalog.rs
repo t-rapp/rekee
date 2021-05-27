@@ -275,7 +275,13 @@ pub struct CatalogSettings {
 
 impl Default for CatalogSettings {
     fn default() -> Self {
-        let editions: Vec<_> = Series::Gt.editions()
+        // list of default editions depends on whether the DIRT feature is enabled or not
+        let editions = if cfg!(feature = "dirt") {
+            Series::Dirt.editions()
+        } else {
+            Series::Gt.editions()
+        };
+        let editions = editions
             .cloned()
             .collect();
         let filter_lanes = None;
@@ -298,6 +304,8 @@ pub struct CatalogView {
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
+    config_button: Element,
+    config_show_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
 impl CatalogView {
@@ -394,14 +402,24 @@ impl CatalogView {
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogView {
+        let config_button = document.get_element_by_id("catalog-config-button").unwrap();
+        let config_show_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+            nuts::publish(ShowCatalogConfigEvent);
+        }) as Box<dyn Fn(_)>);
+        config_button.add_event_listener_with_callback("click", config_show_cb.as_ref().unchecked_ref()).unwrap();
+
+        let mut view = CatalogView {
             catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
-            filter_terrain_elements, map: None, dragover_cb, dragdrop_cb, keychange_cb
-        })
+            filter_terrain_elements, map: None, dragover_cb, dragdrop_cb, keychange_cb,
+            config_button, config_show_cb
+        };
+        view.load_settings(&CatalogSettings::default());
+        Ok(view)
     }
 
     pub fn load_settings(&mut self, settings: &CatalogSettings) {
-        self.update_editions(&settings.editions);
+        self.inner_update_editions(&settings.editions);
         self.inner_update_filter(settings.filter_lanes, settings.filter_terrain);
     }
 
@@ -413,6 +431,11 @@ impl CatalogView {
     }
 
     pub fn update_editions(&mut self, editions: &[Edition]) {
+        self.inner_update_editions(editions);
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+    }
+
+    fn inner_update_editions(&mut self, editions: &[Edition]) {
         info!("update editions {:?}", editions);
         self.editions.clear();
         self.editions.extend_from_slice(editions);
@@ -468,7 +491,6 @@ impl CatalogView {
         }
 
         self.inner_update_filter(self.filter_lanes, self.filter_terrain);
-        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
     }
 
     pub fn update_lanes_filter(&mut self, lanes: Option<u8>) {
@@ -562,6 +584,8 @@ impl Drop for CatalogView {
             self.keychange_cb.as_ref().unchecked_ref());
         let _ = document.remove_event_listener_with_callback("keyup",
             self.keychange_cb.as_ref().unchecked_ref());
+        let _ = self.config_button.remove_event_listener_with_callback("click",
+            self.config_show_cb.as_ref().unchecked_ref());
     }
 }
 

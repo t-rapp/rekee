@@ -73,6 +73,9 @@
         .is-draggable {
             cursor: grab;
         }
+        .card:not(:last-child) {
+            margin-bottom: 0.75rem;
+        }
         kbd {
             border-radius: 3px;
             border: 1px solid #bbb;
@@ -145,6 +148,16 @@
                 </svg>
               </span>
               <span>Export PNG</span>
+            </button>
+          </div>
+          <div class="control">
+            <button id="catalog-config-button" class="button is-light" title="Configure the available tiles">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#hexagon"/>
+                </svg>
+              </span>
+              <span>Catalog Tiles</span>
             </button>
           </div>
         </div>
@@ -271,9 +284,28 @@
       </div>
     </main>
 
+    <div id="catalog-config-container" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <h2 class="title">Catalog Tiles</h2>
+
+          <div class="columns">
+	    <!-- configuration elements added here by WASM -->
+          </div>
+
+          <div class="buttons is-right">
+            <button id="apply-catalog-config" class="button is-link">Save &amp; Close</button>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
     <div id="export-container" class="is-hidden">
       <!-- export elements added here by WASM -->
     </div>
+
     <div id="menus" class="is-hidden">
       <div id="selected-menu" class="buttons are-small has-addons is-centered">
         <button id="rotate-selected-left-button" class="button" title="Rotate tile left">

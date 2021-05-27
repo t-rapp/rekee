@@ -12,8 +12,14 @@
       <path d="M8 4.466V.534a.25.25 0 00-.41-.192L5.23 2.308a.25.25 0 000 .384l2.36 1.966A.25.25 0 008 4.466z"/>
     </g>
   </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="currentColor" id="check-circle-fill">
+    <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zm-3.97-3.03a.75.75 0 00-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 00-1.06 1.06L6.97 11.03a.75.75 0 001.079-.02l3.992-4.99a.75.75 0 00-.01-1.05z"/>
+  </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-chevron-bar-contract" fill="currentColor" id="chevron-bar-contract">
     <path fill-rule="evenodd" d="M3.646 14.854a.5.5 0 00.708 0L8 11.207l3.646 3.647a.5.5 0 00.708-.708l-4-4a.5.5 0 00-.708 0l-4 4a.5.5 0 000 .708zm0-13.708a.5.5 0 01.708 0L8 4.793l3.646-3.647a.5.5 0 01.708.708l-4 4a.5.5 0 01-.708 0l-4-4a.5.5 0 010-.708zM1 8a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13A.5.5 0 011 8z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-circle" fill="currentColor" id="circle">
+    <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/>
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" id="download">
     <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/>
@@ -21,6 +27,9 @@
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-file" fill="currentColor" id="file">
     <path fill-rule="evenodd" d="M4 0h8a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V2a2 2 0 012-2zm0 1a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V2a1 1 0 00-1-1H4z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor" id="hexagon">
+    <path fill-rule="evenodd" d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 00-1 0l-6 3.577a1 1 0 00-.5.866v6.846a1 1 0 00.5.866l6 3.577a1 1 0 001 0l6-3.577a1 1 0 00.5-.866V4.577a1 1 0 00-.5-.866L8.5.134z"/>
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-image" fill="currentColor" id="image">
     <path fill-rule="evenodd" d="M14.002 2h-12a1 1 0 00-1 1v9l2.646-2.354a.5.5 0 01.63-.062l2.66 1.773 3.71-3.71a.5.5 0 01.577-.094L15.002 9.5V3a1 1 0 00-1-1zm-12-1a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V3a2 2 0 00-2-2h-12zm4 4.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>

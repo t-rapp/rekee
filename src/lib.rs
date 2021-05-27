@@ -26,7 +26,6 @@ mod controller;
 use controller::*;
 
 pub mod edition;
-use edition::Series;
 
 pub mod hexagon;
 use hexagon::*;
@@ -62,6 +61,10 @@ pub fn main() -> Result<(), JsValue> {
         .ok_or("Cannot find '#map-container' parent element for map component")?;
     MapController::init(MapView::new(parent, &layout)?);
 
+    let parent = document.get_element_by_id("catalog-config-container")
+        .ok_or("Cannot find '#catalog-config-container' parent element for catalog config component")?;
+    CatalogConfigController::init(CatalogConfigView::new(parent)?);
+
     let parent = document.get_element_by_id("export-container")
         .ok_or("Cannot find '#export-container' parent element for export component")?;
     ExportController::init(ExportView::new(parent, &layout)?);
@@ -93,17 +96,6 @@ pub fn main() -> Result<(), JsValue> {
 
     // restore previous view settings
     nuts::publish(LoadSettingsEvent {});
-
-    // update default editions depending on whether the DIRT feature is enabled or not
-    let editions = if cfg!(feature = "dirt") {
-        Series::Dirt.editions()
-    } else {
-        Series::Gt.editions()
-    };
-    let editions = editions
-        .cloned()
-        .collect();
-    nuts::publish(UpdateCatalogEditionsEvent { editions });
 
     Ok(())
 }
