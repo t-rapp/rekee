@@ -31,6 +31,7 @@ pub type CatalogConfigView = catalog_config::CatalogConfigView;
 
 pub type ExportView = export::ExportView;
 
+pub type MapSettings = map::MapSettings;
 pub type MapView = map::MapView;
 
 pub type VersionView = version::VersionView;

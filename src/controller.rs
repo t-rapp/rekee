@@ -16,10 +16,10 @@
 use nuts::{DefaultDomain, DomainState};
 
 use crate::edition::Edition;
-use crate::hexagon::*;
-use crate::map::{PlacedTile, Map};
+use crate::hexagon::{Coordinate, Direction, Point};
+use crate::map::PlacedTile;
 use crate::storage::Storage;
-use crate::tile::*;
+use crate::tile::{ConnectionHint, Terrain, TileId};
 use crate::view::*;
 
 //----------------------------------------------------------------------------
@@ -208,7 +208,6 @@ impl MapController {
         activity.subscribe(MapController::save_settings);
         activity.subscribe(MapController::import_file);
         activity.subscribe(MapController::export_file);
-        activity.subscribe(MapController::export_image);
         activity.subscribe(MapController::insert_tile);
         activity.subscribe(MapController::append_tile);
         activity.subscribe(MapController::align_center);
@@ -247,10 +246,6 @@ impl MapController {
 
     fn export_file(&mut self, _event: &ExportFileEvent) {
         self.view.export_file();
-    }
-
-    fn export_image(&mut self, _event: &ExportImageEvent) {
-        self.view.export_image();
     }
 
     fn insert_tile(&mut self, event: &InsertTileEvent) {
@@ -370,10 +365,6 @@ impl CatalogConfigController {
 
 //----------------------------------------------------------------------------
 
-pub struct DrawExportImageEvent {
-    pub map: Map,
-}
-
 pub struct DrawExportTileDoneEvent {
     pub tile: PlacedTile,
 }
@@ -393,11 +384,13 @@ impl ExportController {
         });
 
         // register public events
-        activity.subscribe(ExportController::draw_export_image);
+        activity.subscribe_domained(ExportController::export_image);
     }
 
-    fn draw_export_image(&mut self, event: &DrawExportImageEvent) {
-        self.view.draw_export_image(&event.map);
+    fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {
+        if let Some(settings) = domain.try_get::<MapSettings>() {
+            self.view.draw_export_image(&settings.map);
+        }
     }
 }
 

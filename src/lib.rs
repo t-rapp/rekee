@@ -6,8 +6,9 @@
 //!
 //! The following HTML elements are looked up by element id:
 //! * `catalog-container` (mandatory)
-//! * `map-container` (mandatory)
+//! * `catalog-config-container` (mandatory)
 //! * `export-container` (mandatory)
+//! * `map-container` (mandatory)
 //! * `version` (optional)
 //! * `welcome` (optional)
 //!

@@ -528,6 +528,7 @@ impl MapView {
         let export_button = document.get_element_by_id("export-image-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
             nuts::publish(ExportImageEvent);
         }) as Box<dyn Fn(_)>);
         export_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
@@ -590,12 +591,6 @@ impl MapView {
         check!(document.body().unwrap().append_child(&anchor).ok());
         anchor.click();
         check!(document.body().unwrap().remove_child(&anchor).ok());
-    }
-
-    pub fn export_image(&mut self) {
-        // forward the request together with current map data to the export view
-        let map = self.map.clone();
-        nuts::publish(DrawExportImageEvent { map });
     }
 
     pub fn insert_tile(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
