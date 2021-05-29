@@ -987,10 +987,10 @@ const TILE_INFOS: [TileInfo; 271] = [
     TileInfo::new(tile!(212, b), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(213, a), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(213, b), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(214, a), 1, TG1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(214, b), 1, TG2, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(215, a), 1, TG2, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(215, b), 1, TG1, [CL0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(214, a), 1, TG1, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(214, b), 1, TG2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, a), 1, TG2, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, b), 1, TG1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
     TileInfo::new(tile!(216, a), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(216, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
     TileInfo::new(tile!(217, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
@@ -1011,8 +1011,8 @@ const TILE_INFOS: [TileInfo; 271] = [
     TileInfo::new(tile!(224, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(225, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(225, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(226, a), 1, TG3, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(226, b), 1, TG1, [CR0, CN, CN, CL0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, a), 1, TG3, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, b), 1, TG1, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
     TileInfo::new(tile!(227, a), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(227, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     TileInfo::new(tile!(228, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
@@ -1202,6 +1202,27 @@ mod tests {
         assert_eq!("R".parse::<ConnectionHint>(), Ok(ConnectionHint::Right));
 
         assert!("x".parse::<ConnectionHint>().is_err());
+    }
+
+    #[test]
+    fn tile_chicane_hint() {
+        let chicane_tiles = [
+            tile!(110, a),
+            tile!(110, b),
+            tile!(116, a),
+            tile!(116, b),
+            tile!(214, a),
+            tile!(214, b),
+            tile!(226, a),
+            tile!(226, b),
+            tile!(411, a),
+            tile!(411, b),
+        ];
+        for &tile in &chicane_tiles {
+            let info = TileInfo::get(tile).unwrap();
+            assert!(info.connection(Direction::A) == ConnectionHint::Left);
+            assert!(info.connection(Direction::D) == ConnectionHint::Right);
+        }
     }
 
     #[test]
