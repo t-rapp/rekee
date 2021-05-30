@@ -16,6 +16,7 @@ use web_sys::{self, Document, Element};
 use crate::check;
 use crate::controller::*;
 use crate::edition::{Edition, Series};
+use crate::map::Map;
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -428,6 +429,21 @@ impl CatalogView {
         let filter_lanes = self.filter_lanes;
         let filter_terrain = self.filter_terrain;
         CatalogSettings { editions, filter_lanes, filter_terrain }
+    }
+
+    pub fn import_file(&mut self, map: &Map) {
+        // ensure that all editions that are used by tiles of the imported map are visible
+        let mut used_editions = self.editions.clone();
+        for tile in map.tiles() {
+            for edition in Edition::iter() {
+                if !used_editions.contains(edition) && edition.contains(tile.id()) {
+                    info!("automatically add used edition {}", edition);
+                    used_editions.push(*edition);
+                }
+            }
+        }
+        used_editions.sort_unstable();
+        self.update_editions(&used_editions);
     }
 
     pub fn update_editions(&mut self, editions: &[Edition]) {

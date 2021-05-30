@@ -507,7 +507,14 @@ impl MapView {
                     let result = check!(reader.result().ok());
                     let data = check!(result.as_string());
                     debug!("input file data: {}", &data);
-                    nuts::publish(ImportFileEvent { data });
+                    let map = match import::import_auto(&data) {
+                        Ok(val) => val,
+                        Err(err) => {
+                            warn!("Cannot import file data: {}", err);
+                            return;
+                        },
+                    };
+                    nuts::publish(ImportFileEvent { map });
                 }
             }) as Box<dyn FnMut(_)>);
             reader.add_event_listener_with_callback("load", callback.as_ref().unchecked_ref()).unwrap();
@@ -555,14 +562,8 @@ impl MapView {
         MapSettings { map, selected }
     }
 
-    pub fn import_file(&mut self, data: &str) {
-        let mut map = match import::import_auto(data) {
-            Ok(val) => val,
-            Err(err) => {
-                warn!("Cannot import file data: {}", err);
-                return;
-            },
-        };
+    pub fn import_file(&mut self, map: &Map) {
+        let mut map = map.clone();
         map.align_center();
         self.clear_selected();
         self.map = map;

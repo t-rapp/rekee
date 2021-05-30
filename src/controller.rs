@@ -17,7 +17,7 @@ use nuts::{DefaultDomain, DomainState};
 
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, Point};
-use crate::map::PlacedTile;
+use crate::map::{Map, PlacedTile};
 use crate::storage::Storage;
 use crate::tile::{ConnectionHint, Terrain, TileId};
 use crate::view::*;
@@ -29,7 +29,7 @@ pub struct LoadSettingsEvent;
 pub struct SaveSettingsEvent;
 
 pub struct ImportFileEvent {
-    pub data: String,
+    pub map: Map,
 }
 
 pub struct ExportFileEvent;
@@ -141,6 +141,7 @@ impl CatalogController {
         // register public events
         activity.subscribe(CatalogController::load_settings);
         activity.subscribe(CatalogController::save_settings);
+        activity.subscribe(CatalogController::import_file);
         activity.subscribe(CatalogController::update_catalog_editions);
         activity.subscribe(CatalogController::update_lanes_filter);
         activity.subscribe(CatalogController::update_terrain_filter);
@@ -159,6 +160,10 @@ impl CatalogController {
         let settings = self.view.save_settings();
         self.storage.set(&settings);
         nuts::store_to_domain(&DefaultDomain, settings);
+    }
+
+    fn import_file(&mut self, event: &ImportFileEvent) {
+        self.view.import_file(&event.map);
     }
 
     fn update_catalog_editions(&mut self, event: &UpdateCatalogEditionsEvent) {
@@ -241,7 +246,7 @@ impl MapController {
     }
 
     fn import_file(&mut self, event: &ImportFileEvent) {
-        self.view.import_file(&event.data);
+        self.view.import_file(&event.map);
     }
 
     fn export_file(&mut self, _event: &ExportFileEvent) {
