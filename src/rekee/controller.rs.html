@@ -478,8 +478,6 @@
 <span id="475">475</span>
 <span id="476">476</span>
 <span id="477">477</span>
-<span id="478">478</span>
-<span id="479">479</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
@@ -499,10 +497,10 @@
 <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">edition</span>::<span class="ident">Edition</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">hexagon</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">Map</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Point</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">map</span>::{<span class="ident">Map</span>, <span class="ident">PlacedTile</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">storage</span>::<span class="ident">Storage</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">tile</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">tile</span>::{<span class="ident">ConnectionHint</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">view</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
@@ -512,7 +510,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SaveSettingsEvent</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImportFileEvent</span> {
-    <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">map</span>: <span class="ident">Map</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportFileEvent</span>;
@@ -624,6 +622,7 @@
         <span class="comment">// register public events</span>
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">load_settings</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">save_settings</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">import_file</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">update_catalog_editions</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">update_lanes_filter</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController</span>::<span class="ident">update_terrain_filter</span>);
@@ -642,6 +641,10 @@
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
         <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         <span class="ident">nuts</span>::<span class="ident">store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
+    }
+
+    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">update_catalog_editions</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateCatalogEditionsEvent</span>) {
@@ -691,7 +694,6 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">save_settings</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">import_file</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">export_file</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">export_image</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">insert_tile</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">append_tile</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController</span>::<span class="ident">align_center</span>);
@@ -725,15 +727,11 @@
     }
 
     <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">data</span>);
+        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportFileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">export_file</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">export_image</span>();
     }
 
     <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
@@ -853,10 +851,6 @@
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DrawExportImageEvent</span> {
-    <span class="kw">pub</span> <span class="ident">map</span>: <span class="ident">Map</span>,
-}
-
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DrawExportTileDoneEvent</span> {
     <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
 }
@@ -876,11 +870,13 @@
         });
 
         <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController</span>::<span class="ident">draw_export_image</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">ExportController</span>::<span class="ident">export_image</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DrawExportImageEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
+    <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>);
+        }
     }
 }
 
