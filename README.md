@@ -7,8 +7,8 @@ project has the goal to build a cross-platform web application as an
 alternative to the currently existing [Rallyman Track Editor][track editor],
 which is Windows-only.
 
-[Rallyman: GT]: https://holygrail.games/en/games/rallyman-gt/
-[Rallyman: DIRT]: https://holygrail.games/en/games/rallyman-dirt/
+[Rallyman: GT]: https://holygrail.games/rallyman-gt/
+[Rallyman: DIRT]: https://holygrail.games/rallyman-dirt/
 [track editor]: https://boardgamegeek.com/thread/2399829/upload-new-track-editor-v15-9th-may-2020
 
 ## Development
@@ -77,4 +77,4 @@ see [LICENSE-BootstrapIcons](LICENSE-BootstrapIcons.txt) for details.
 This project uses Bulma CSS framework distributed under the terms of the MIT
 License, see [LICENSE-Bulma](LICENSE-Bulma.txt) for details.
 
-[HGG]: https://holygrail.games/en/
+[HGG]: https://holygrail.games/
