@@ -365,11 +365,6 @@ impl MapView {
         let layout = layout.clone();
         let map = Map::new();
 
-        // remove all pre-existing child nodes
-        let range = document.create_range()?;
-        range.select_node_contents(&parent)?;
-        range.delete_contents()?;
-
         let canvas = document.create_element_ns(SVG_NS, "svg")?;
         canvas.set_id("map");
         let width = (2.0 * layout.origin().x()).round() as i32;

@@ -23,9 +23,25 @@
         .navbar-brand > .navbar-item {
             font-family: 'Edo Regular';
         }
+        .navbar-item {
+            padding: 0.25rem 0.75rem;
+        }
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+        }
+        main {
+            display: flex;
+            flex-flow: row nowrap;
+            height: calc(100vh - 3.25rem);
+        }
         #catalog-container {
-            max-height: calc(100vh - 3.75rem - var(--columnGap));
-            overflow-y: auto;
+            flex: 1 1 auto;
+            margin: 0;
+            overflow-y: scroll;
+            resize: horizontal;
+            width: 25%;
+            z-index: 10;
         }
         #catalog {
             display: flex;
@@ -55,6 +71,10 @@
             height: 1.5rem;
             pointer-events: none;
             user-select: none;
+        }
+        #map-container {
+            flex: 3 3 75%;
+            overflow: auto;
         }
         #map-title {
             width: 50%;
@@ -94,10 +114,10 @@
     </script>
   </head>
 
-  <body>
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+  <body class="has-navbar-fixed-top">
+    <nav class="navbar is-fixed-top is-dark" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <div class="navbar-item is-size-4">
+        <div class="navbar-item is-size-4 mr-4">
           Rallyman Rekee
         </div>
       </div>
@@ -172,115 +192,109 @@
     </nav>
 
     <main>
-      <div class="columns is-variable is-2">
-        <div class="column is-one-third is-print-hidden">
-          <div id="catalog-container" class="box has-background-light">
-            <div id="lanes-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth">
-              <ul>
-                <li class="is-active" data-value="*">
-                  <a>All</a>
-                </li>
-                <li data-value="2">
-                  <a>2 Lanes</a>
-                </li>
-                <li data-value="3">
-                  <a>3 Lanes</a>
-                </li>
-                <li data-value="4">
-                  <a>4 Lanes</a>
-                </li>
-              </ul>
-            </div>
-            <div id="terrain-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth is-hidden">
-              <ul>
-                <li class="is-active" data-value="*">
-                  <a>All</a>
-                </li>
-                <li data-value="asphalt">
-                  <a>Asphalt</a>
-                </li>
-                <li data-value="gravel">
-                  <a>Gravel</a>
-                </li>
-                <li data-value="snow">
-                  <a>Snow</a>
-                </li>
-              </ul>
-            </div>
-            <!-- catalog elements added here by WASM -->
-          </div>
+      <div id="catalog-container" class="box is-print-hidden has-background-light">
+        <div id="lanes-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth">
+          <ul>
+            <li class="is-active" data-value="*">
+              <a>All</a>
+            </li>
+            <li data-value="2">
+              <a>2 Lanes</a>
+            </li>
+            <li data-value="3">
+              <a>3 Lanes</a>
+            </li>
+            <li data-value="4">
+              <a>4 Lanes</a>
+            </li>
+          </ul>
         </div>
-        <div class="column">
-          <article id="welcome" class="message mx-2 my-2 is-info is-hidden is-print-hidden">
-            <div class="message-header">
-              <p>Welcome!</p>
-              <button class="delete" aria-label="delete"></button>
-            </div>
-            <div class="message-body">
-              <div class="content">
-                <p>
-                  Rekee allows to design custom racing tracks for the
-                  <a href="https://holygrail.games/en/games/rallyman-gt/">Rallyman: GT</a>
-                  and <a href="https://holygrail.games/en/games/rallyman-dirt/">Rallyman: DIRT</a>
-                  board games. The editor application is optimized for desktop screen sizes
-                  and modern browsers with <a href="https://webassembly.org/">WebAssembly</a>
-                  support.
-                </p>
-                <p>
-                  Use the mouse to drag tiles from the catalog (left side)
-                  and drop them on the map (right side).
-                  Additionally the editor supports a "quick building" mode:
-                  double-click on catalog tiles will auto-append the tile at the
-                  map position highlighted by an arrow icon. When pressing the
-                  <kbd>Shift</kbd> or <kbd>Ctrl</kbd> keys (<kbd>Cmd</kbd> on Mac)
-                  during double-click the tile will be appended either as
-                  a left or right curve.
-                </p>
-                <p>
-                  This project is under development with improvements and features
-                  to be added, or possibly changed in upcoming versions. Contributions
-                  are welcome, you can get involved with the project on
-                  <a href="https://github.com/t-rapp/rekee">GitHub</a>.
-                </p>
-              </div>
-            </div>
-          </article>
-          <div class="field is-grouped mx-2 my-2">
-            <p id="map-title" class="control">
-              <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
-            </p>
-            <p class="control">
-              <a id="rotate-map-left-button" class="button" title="Rotate map left">
-                <span class="icon">
-                  <svg class="bi" width="16" height="16" fill="currentColor">
-                    <use xlink:href="bootstrap-icons.svg#arrow-counterclockwise"/>
-                  </svg>
-                </span>
-              </a>
-            </p>
-            <p class="control">
-              <a id="rotate-map-right-button" class="button" title="Rotate map right">
-                <span class="icon">
-                  <svg class="bi" width="16" height="16" fill="currentColor">
-                    <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
-                  </svg>
-                </span>
-              </a>
-            </p>
-            <p class="control">
-              <a id="align-center-button" class="button" title="Center-align map">
-                <span class="icon">
-                  <svg class="bi" width="16" height="16" fill="currentColor">
-                    <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
-                  </svg>
-                </span>
-              </a>
-            </p>
-          </div>
-          <div id="map-container" class="mx-2">
-            <!-- map elements added here by WASM -->
-          </div>
+        <div id="terrain-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth is-hidden">
+          <ul>
+            <li class="is-active" data-value="*">
+              <a>All</a>
+            </li>
+            <li data-value="asphalt">
+              <a>Asphalt</a>
+            </li>
+            <li data-value="gravel">
+              <a>Gravel</a>
+            </li>
+            <li data-value="snow">
+              <a>Snow</a>
+            </li>
+          </ul>
         </div>
+        <!-- catalog elements added here by WASM -->
+      </div>
+      <div id="map-container" class="p-2">
+        <article id="welcome" class="message mb-2 is-info is-hidden is-print-hidden">
+          <div class="message-header">
+            <p>Welcome!</p>
+            <button class="delete" aria-label="delete"></button>
+          </div>
+          <div class="message-body">
+            <div class="content">
+              <p>
+                Rekee allows to design custom racing tracks for the
+                <a href="https://holygrail.games/en/games/rallyman-gt/">Rallyman: GT</a>
+                and <a href="https://holygrail.games/en/games/rallyman-dirt/">Rallyman: DIRT</a>
+                board games. The editor application is optimized for desktop screen sizes
+                and modern browsers with <a href="https://webassembly.org/">WebAssembly</a>
+                support.
+              </p>
+              <p>
+                Use the mouse to drag tiles from the catalog (left side)
+                and drop them on the map (right side).
+                Additionally the editor supports a "quick building" mode:
+                double-click on catalog tiles will auto-append the tile at the
+                map position highlighted by an arrow icon. When pressing the
+                <kbd>Shift</kbd> or <kbd>Ctrl</kbd> keys (<kbd>Cmd</kbd> on Mac)
+                during double-click the tile will be appended either as
+                a left or right curve.
+              </p>
+              <p>
+                This project is under development with improvements and features
+                to be added, or possibly changed in upcoming versions. Contributions
+                are welcome, you can get involved with the project on
+                <a href="https://github.com/t-rapp/rekee">GitHub</a>.
+              </p>
+            </div>
+          </div>
+        </article>
+        <div class="field is-grouped">
+          <p id="map-title" class="control">
+            <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
+          </p>
+          <p class="control is-print-hidden">
+            <a id="rotate-map-left-button" class="button" title="Rotate map left">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#arrow-counterclockwise"/>
+                </svg>
+              </span>
+            </a>
+          </p>
+          <p class="control is-print-hidden">
+            <a id="rotate-map-right-button" class="button" title="Rotate map right">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
+                </svg>
+              </span>
+            </a>
+          </p>
+          <p class="control is-print-hidden">
+            <a id="align-center-button" class="button" title="Center-align map">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
+                </svg>
+              </span>
+            </a>
+          </p>
+        </div>
+        <!-- map elements added here by WASM -->
       </div>
     </main>
 
@@ -291,7 +305,7 @@
           <h2 class="title">Catalog Tiles</h2>
 
           <div class="columns">
-	    <!-- configuration elements added here by WASM -->
+      <!-- configuration elements added here by WASM -->
           </div>
 
           <div class="buttons is-right">
