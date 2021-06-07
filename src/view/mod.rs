@@ -69,7 +69,6 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
 
     let pos = pos.into().to_pixel(&layout);
     let tile = document.create_element_ns(SVG_NS, "g")?;
-    tile.set_attribute("id", &id.to_string())?;
     tile.set_attribute("class", "tile")?;
     tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
     tile.append_child(&img)?;

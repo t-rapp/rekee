@@ -41,7 +41,7 @@ impl TileCount {
         }
         TileCount { inner: list }
     }
-    
+
     pub fn iter(&self) -> Iter<u16, u32> {
         self.inner.iter()
     }
@@ -157,7 +157,6 @@ fn main() -> Result<(), String> {
     if undefined_count > 0 {
         println!("Undefined: {} tiles", undefined_count);
     }
-
 
     Ok(())
 }

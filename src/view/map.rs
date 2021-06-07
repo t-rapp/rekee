@@ -269,9 +269,9 @@ impl ActiveHex {
 
     fn set_hint(&mut self, hint: Option<ConnectionHint>) {
         let href = match hint {
-            Some(ConnectionHint::Left) => 
+            Some(ConnectionHint::Left) =>
                 "arrow-return-left-circle.svg",
-            Some(ConnectionHint::Right) => 
+            Some(ConnectionHint::Right) =>
                 "arrow-return-right-circle.svg",
             _ =>
                 "arrow-down-circle.svg",
