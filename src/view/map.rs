@@ -20,6 +20,7 @@ use super::*;
 //----------------------------------------------------------------------------
 
 const MAP_STYLE: &str = include_str!("map.css");
+const MAP_PADDING: f32 = 15.0;
 
 fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
 {
@@ -345,6 +346,7 @@ pub struct MapView {
     layout: Layout,
     map: Map,
     canvas: Element,
+    canvas_viewbox: Rect,
     tiles: Element,
     title: TitleInput,
     selected: SelectedHex,
@@ -365,13 +367,17 @@ impl MapView {
         let layout = layout.clone();
         let map = Map::new();
 
+        let width = (2.0 * layout.origin().x()).round();
+        let height = (2.0 * layout.origin().y()).round();
+        let canvas_viewbox = Rect::new(0.0, 0.0, width, height);
+
         let canvas = document.create_element_ns(SVG_NS, "svg")?;
         canvas.set_id("map");
-        let width = (2.0 * layout.origin().x()).round() as i32;
-        canvas.set_attribute("width", &format!("{}px", width))?;
-        let height = (2.0 * layout.origin().y()).round() as i32;
-        canvas.set_attribute("height", &format!("{}px", height))?;
-        canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
+        canvas.set_attribute("width", &format!("{}px", canvas_viewbox.width as i32))?;
+        canvas.set_attribute("height", &format!("{}px", canvas_viewbox.height as i32))?;
+        canvas.set_attribute("viewBox", &format!("{} {} {} {}",
+            canvas_viewbox.left as i32, canvas_viewbox.top as i32,
+            canvas_viewbox.width as i32, canvas_viewbox.height as i32))?;
         canvas.set_attribute("xmlns", SVG_NS_STR)?;
         parent.append_child(&canvas)?;
 
@@ -537,8 +543,8 @@ impl MapView {
         callback.forget();
 
         let mut view = MapView {
-            layout, map, canvas, tiles, title, selected, selected_menu, active,
-            dragged, dragged_mousemove_cb, dragged_mouseup_cb,
+            layout, map, canvas, canvas_viewbox, tiles, title, selected, selected_menu,
+            active, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, document_title, download_button, export_button
         };
         view.update_map();
@@ -630,6 +636,30 @@ impl MapView {
     fn update_map(&mut self) {
         let document = self.tiles.owner_document().unwrap();
 
+        // calculate rectangular map area that is covered with tiles
+        let mut map_area = Rect::new(f32::NAN, f32::NAN, 0.0, 0.0);
+        for tile in self.map.tiles() {
+            map_area = map_area.union(&self.layout.hexagon_rect(tile.pos));
+        }
+        map_area = map_area.with_padding(MAP_PADDING);
+        map_area.left = map_area.left.floor();
+        map_area.top = map_area.top.floor();
+        map_area.width = map_area.width.ceil();
+        map_area.height = map_area.height.ceil();
+        debug!("map area: {:?}, layout origin: {:?}", map_area, self.layout.origin());
+
+        // then update the SVG viewport properties
+        let width = (2.0 * self.layout.origin().x()).round();
+        let height = (2.0 * self.layout.origin().y()).round();
+        let canvas_viewbox = Rect::new(0.0, 0.0, width, height)
+            .union(&map_area);
+        check!(self.canvas.set_attribute("width", &format!("{}px", canvas_viewbox.width as i32)).ok());
+        check!(self.canvas.set_attribute("height", &format!("{}px", canvas_viewbox.height as i32)).ok());
+        check!(self.canvas.set_attribute("viewBox", &format!("{} {} {} {}",
+            canvas_viewbox.left as i32, canvas_viewbox.top as i32,
+            canvas_viewbox.width as i32, canvas_viewbox.height as i32)).ok());
+        self.canvas_viewbox = canvas_viewbox;
+
         // remove all existing tiles
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
@@ -695,7 +725,8 @@ impl MapView {
     }
 
     pub fn update_selected(&mut self, pos: Point) {
-        let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+        let pos = Coordinate::from_pixel_rounded(&self.layout,
+            self.canvas_viewbox.top_left() + pos);
         self.inner_update_selected(pos);
         nuts::send_to::<MapController, _>(SaveSettingsEvent {});
     }
@@ -751,7 +782,8 @@ impl MapView {
     }
 
     pub fn drag_begin(&mut self, pos: Point) {
-        let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+        let pos = Coordinate::from_pixel_rounded(&self.layout,
+            self.canvas_viewbox.top_left() + pos);
         if self.selected.pos() != Some(pos) {
             return;
         }
@@ -777,6 +809,7 @@ impl MapView {
 
     pub fn drag_move(&mut self, pos: Point) {
         if let Some(ref dragged) = self.dragged {
+            let pos = self.canvas_viewbox.top_left() + pos;
             debug!("drag move: {:?}", pos);
             dragged.set_pos(pos);
             // make dragged element visible on first mouse move
@@ -788,7 +821,8 @@ impl MapView {
 
     pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
         if let Some(ref dragged) = self.dragged {
-            let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+            let pos = Coordinate::from_pixel_rounded(&self.layout,
+                self.canvas_viewbox.top_left() + pos);
             let tile = dragged.tile();
             info!("drag end: {:?} -> {:?}", tile, pos);
             check!(self.canvas.remove_child(dragged.as_ref()).ok());
@@ -801,7 +835,8 @@ impl MapView {
         self.dragged = None;
 
         if let Some(tile) = added_tile {
-            let pos = Coordinate::from_pixel_rounded(&self.layout, pos);
+            let pos = Coordinate::from_pixel_rounded(&self.layout,
+                self.canvas_viewbox.top_left() + pos);
             info!("drag end: {:?} -> {:?}", tile, pos);
             self.map.append(tile, Some(pos), None);
             self.update_map();

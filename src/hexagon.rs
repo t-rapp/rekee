@@ -563,6 +563,36 @@ impl Rect {
         Point(x, y)
     }
 
+    /// Top-left corner of the rectangle.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let rect = Rect::new(0.0, 1.0, 3.0, 4.0);
+    /// assert_eq!(rect.top_left(), Point(0.0, 1.0));
+    /// assert_eq!(rect.left, 0.0);
+    /// assert_eq!(rect.top, 1.0);
+    /// ```
+    pub fn top_left(&self) -> Point {
+        Point(self.left, self.top)
+    }
+
+    /// Bottom-right corner of the rectangle.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let rect = Rect::new(0.0, 1.0, 3.0, 4.0);
+    /// assert_eq!(rect.bottom_right(), Point(3.0, 5.0));
+    /// assert_eq!(rect.right(), 3.0);
+    /// assert_eq!(rect.bottom(), 5.0);
+    /// ```
+    pub fn bottom_right(&self) -> Point {
+        Point(self.right(), self.bottom())
+    }
+
     /// Calculates the union of two rectangles, the smallest rectangle that
     /// fully contains both source rectangles.
     ///
@@ -585,6 +615,28 @@ impl Rect {
         let top = a.top.min(b.top);
         let width = a.right().max(b.right()) - left;
         let height = a.bottom().max(b.bottom()) - top;
+        Rect { left, top, width, height }
+    }
+
+    /// Creates a new rectangle from the existing one by adding a padding border
+    /// on all four sides.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let a = Rect::new(1.0, 2.0, 3.0, 4.0);
+    /// let rect = a.with_padding(0.5);
+    /// assert_eq!(rect.left, 0.5);
+    /// assert_eq!(rect.top, 1.5);
+    /// assert_eq!(rect.width, 4.0);
+    /// assert_eq!(rect.height, 5.0);
+    /// ```
+    pub fn with_padding(&self, value: f32) -> Self {
+        let left = self.left - value;
+        let top = self.top - value;
+        let width = self.width + value + value;
+        let height = self.height + 2.0 * value;
         Rect { left, top, width, height }
     }
 
