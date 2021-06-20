@@ -87,6 +87,12 @@ impl PartialEq<PlacedTile> for PlacedTile {
     }
 }
 
+impl AsRef<TileId> for PlacedTile {
+    fn as_ref(&self) -> &TileId {
+        &self.id
+    }
+}
+
 impl<'de> Deserialize<'de> for PlacedTile {
     fn deserialize<D>(deserializer: D) -> Result<PlacedTile, D::Error>
     where

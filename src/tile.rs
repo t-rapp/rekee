@@ -6,13 +6,16 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::cmp::Reverse;
+use std::collections::BTreeMap;
+use std::collections::btree_map::Iter;
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
 use serde::{Serialize, Serializer, Deserialize};
 
-use crate::edition::Series;
+use crate::edition::{Edition, Series};
 use crate::hexagon::Direction;
 
 //----------------------------------------------------------------------------
@@ -161,6 +164,12 @@ impl Serialize for TileId {
     }
 }
 
+impl AsRef<TileId> for TileId {
+    fn as_ref(&self) -> &TileId {
+        &self
+    }
+}
+
 /// Creates a new tile identifier.
 ///
 /// The `tile!` macro adds convenience on directly calling `TileId::new()` as it
@@ -197,6 +206,375 @@ macro_rules! tile {
     ($num:expr, b, $var:expr) => {
         $crate::tile::TileId::new($num, 2, $var)
     };
+}
+
+//----------------------------------------------------------------------------
+
+/// Helper that counts tiles per catalog number.
+struct TileCount {
+    inner: BTreeMap::<u16, u32>,
+}
+
+impl TileCount {
+    fn from_tiles<T: AsRef<TileId>>(tiles: &[T]) -> Self {
+        let mut list = BTreeMap::new();
+        for tile in tiles {
+            let tile_num = tile.as_ref().num();
+            let count = list.entry(tile_num).or_insert(0);
+            *count += 1;
+        }
+        TileCount { inner: list }
+    }
+
+    fn from_edition(edition: Edition) -> Self {
+        let mut list = BTreeMap::new();
+        for tile in edition.tiles() {
+            if tile.side() > 1 {
+                continue; // only count each tile once per a/b side
+            }
+            let tile_num = tile.num();
+            let count = list.entry(tile_num).or_insert(0);
+            *count += 1;
+        }
+        TileCount { inner: list }
+    }
+
+    fn iter(&self) -> Iter<u16, u32> {
+        self.inner.iter()
+    }
+
+    fn intersection(&self, other: &Self) -> Self {
+        let mut list = BTreeMap::new();
+        for (tile_num, count) in self.inner.iter() {
+            if let Some(other_count) = other.inner.get(tile_num) {
+                let count = count.min(other_count);
+                if *count > 0 {
+                    list.insert(*tile_num, *count);
+                }
+            }
+        }
+        TileCount { inner: list }
+    }
+
+    fn total_count(&self) -> u32 {
+        let mut total_count = 0;
+        for (_, count) in self.inner.iter() {
+            total_count += count;
+        }
+        total_count
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Helper that counts common tiles per catalog number between a single edition
+/// and another list of tiles.
+struct EditionTileCount {
+    edition: Edition,
+    common: TileCount,
+}
+
+impl EditionTileCount {
+    fn new(edition: Edition, list_tiles: &TileCount) -> Self {
+        let common = TileCount::from_edition(edition)
+            .intersection(&list_tiles);
+        EditionTileCount { edition, common }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// An iterator that yields the editions that are necessary to assemble a list
+/// of tiles.
+///
+/// This struct is created by the [`group_by_edition`] method on [`TileList`].
+/// See its documentation for more.
+///
+/// [`group_by_edition`]: TileList::group_by_edition
+pub struct GroupByEdition {
+    editions: Vec<EditionTileCount>,
+    edition_offset: usize,
+    tiles_remaining: Vec<TileId>,
+    tiles_used: Vec<TileId>,
+}
+
+impl GroupByEdition {
+    fn new<T: AsRef<TileId> + Clone>(list: &[T]) -> Self {
+        let list_tiles = TileCount::from_tiles(list);
+        let mut editions: Vec<_> = Edition::iter()
+            .map(|&edition| EditionTileCount::new(edition, &list_tiles))
+            .filter(|item| !item.common.inner.is_empty())
+            .collect();
+        editions.sort_by_cached_key(|item| Reverse(item.common.total_count()));
+        let tiles_remaining: Vec<_> = list.iter()
+            .map(|val| *val.as_ref())
+            .collect();
+        let tiles_used = Vec::with_capacity(tiles_remaining.len());
+        GroupByEdition { editions, edition_offset: 0, tiles_remaining, tiles_used }
+    }
+
+    /// Returns the subset of tiles that are part of the current edition.
+    ///
+    /// The result of this method is updated with each call to [`next`]. Each
+    /// time the iterator yields `Some(Edition)` the according tiles are
+    /// returned. Once the iterator reaches `None` it returns the list of
+    /// remaining tiles that are not part of any edition.
+    ///
+    /// Note that the order of tiles returned by this method depends on
+    /// internal implementation. There is no guarantee that the order of the
+    /// returned subset matches the original order of the tile list.
+    ///
+    /// See [`group_by_edition`] for some code examples.
+    ///
+    /// [`next`]: Iterator::next
+    /// [`group_by_edition`]: TileList::group_by_edition
+    pub fn tiles(&self) -> &[TileId] {
+        self.tiles_used.as_ref()
+    }
+}
+
+impl Iterator for GroupByEdition {
+    type Item = Edition;
+
+    fn next(&mut self) -> Option<Edition> {
+        let mut edition = None;
+        self.tiles_used.clear();
+        // iterate through all editions once with offset
+        for item in self.editions.iter()
+            .cycle()
+            .skip(self.edition_offset)
+            .take(self.editions.len())
+        {
+            for (&tile_num, &count) in item.common.iter() {
+                for _ in 0..count {
+                    let index = self.tiles_remaining.iter()
+                        .position(|tile| tile.num() == tile_num);
+                    if let Some(index) = index {
+                        let tile = self.tiles_remaining.swap_remove(index);
+                        self.tiles_used.push(tile);
+                    }
+                }
+            }
+            // return first edition that has tiles used
+            if !self.tiles_used.is_empty() {
+                edition = Some(item.edition);
+                break;
+            }
+        }
+        if edition.is_none() {
+            // report tiles that do not match any edition when reaching end of iteration
+            self.tiles_used.append(&mut self.tiles_remaining);
+        }
+        // increment offset after each call
+        self.edition_offset += 1;
+        edition
+     }
+}
+
+//----------------------------------------------------------------------------
+
+/// An iterator that yields the terrain surfaces that are included in a list of
+/// tiles.
+///
+/// This struct is created by the [`group_by_surface`] method on [`TileList`].
+/// See its documentation for more.
+///
+/// [`group_by_surface`]: TileList::group_by_surface
+pub struct GroupBySurface {
+    surfaces: Vec<Terrain>,
+    tiles: Vec<TileId>,
+    index: usize,
+    next_index: usize,
+}
+
+impl GroupBySurface {
+    fn new<T: AsRef<TileId> + Clone>(list: &[T]) -> Self {
+        // collect terrain surface information for all tiles
+        let mut surface_tiles: Vec<_> = list.iter()
+            .map(|item| {
+                let tile_id = *item.as_ref();
+                let surface = match TileInfo::get(tile_id) {
+                    Some(info) => info.terrain().surface(),
+                    None => Terrain::None,
+                };
+                (surface, tile_id)
+            })
+            .collect();
+        surface_tiles.sort_by_key(|(surface, _)| *surface);
+
+        // split the combined list into two separate lists once, for less
+        // overhead in the tiles() function implementation
+        let mut surfaces = Vec::with_capacity(surface_tiles.len());
+        let mut tiles = Vec::with_capacity(surface_tiles.len());
+        for (surface, tile_id) in surface_tiles {
+            surfaces.push(surface);
+            tiles.push(tile_id);
+        }
+
+        GroupBySurface { surfaces, tiles, index: 0, next_index: 0 }
+    }
+
+    fn find_next_index(&self) -> Option<usize> {
+        let surface = self.surfaces.get(self.index)?;
+        let mut index = self.index;
+        loop {
+            index += 1;
+            let next_surface = match self.surfaces.get(index) {
+                Some(val) => val,
+                None => break,
+            };
+            if next_surface != surface {
+                break;
+            }
+        }
+        Some(index)
+    }
+
+    /// Returns the subset of tiles that belong to the current terrain surface.
+    ///
+    /// The result of this method is updated upon each call to [`next`]. Each
+    /// time the iterator yields `Some(Terrain)` the according tiles are
+    /// returned. Tiles where no internal terrain surface information exists are
+    /// assigned to the group of [`Terrain::None`].
+    ///
+    /// Note that the order of tiles returned by this method depends on internal
+    /// implementation. There is no guarantee that the order of the returned
+    /// subset matches the original order of the tile list.
+    ///
+    /// See [`group_by_surface`] for some code examples.
+    ///
+    /// [`next`]: Iterator::next
+    /// [`group_by_surface`]: TileList::group_by_surface
+    pub fn tiles(&self) -> &[TileId] {
+        debug_assert_eq!(self.surfaces.len(), self.tiles.len());
+        assert!(self.index <= self.next_index);
+        if self.index < self.tiles.len() {
+            &self.tiles[self.index..self.next_index]
+        } else {
+            &[][..]
+        }
+    }
+}
+
+impl Iterator for GroupBySurface {
+    type Item = Terrain;
+
+    fn next(&mut self) -> Option<Terrain> {
+        self.index = self.next_index;
+        if let Some(surface) = self.surfaces.get(self.index) {
+            self.next_index = self.find_next_index().unwrap_or(self.index);
+            Some(*surface)
+        } else {
+            None
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Utilitiy methods on any list of [`TileId`]s.
+pub trait TileList {
+
+    /// Returns an iterator over the editions that are necessary to build the
+    /// current list of tiles.
+    ///
+    /// Editions can occur multiple times during the iteration if more instances
+    /// of a tile are used than what is provided by a single edition. Only the
+    /// tile catalog number [`num`](TileId::num) is relevant for matching tiles
+    /// and editions, [`side`](TileId::side) and [`var`](TileId::var) are
+    /// ignored.
+    ///
+    /// The order of editions returned by the iterator depends on the internal
+    /// implementation.
+    ///
+    /// Upon each step of the iterator the group of tiles that belong to the
+    /// current edition is available in [`tiles`](GroupByEdition::tiles).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(103, a, 1), tile!(124, a), tile!(124, b)];
+    /// let mut iter = tiles.group_by_edition();
+    ///
+    /// assert_eq!(iter.next(), Some(Edition::GtCoreBox));
+    /// assert_eq!(iter.tiles(), &[tile!(101), tile!(103, a, 1)][..]);
+    /// assert_eq!(iter.next(), Some(Edition::GtChampionship));
+    /// assert_eq!(iter.tiles(), &[tile!(124, b)][..]);
+    /// assert_eq!(iter.next(), Some(Edition::GtWorldTour));
+    /// assert_eq!(iter.tiles(), &[tile!(124, a)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// assert_eq!(iter.tiles(), &[][..]);
+    /// ```
+    ///
+    /// Remaining tiles that do not belong to any edition are listed after the
+    /// iterator has completed:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(999)];
+    /// let mut iter = tiles.group_by_edition();
+    ///
+    /// assert_eq!(iter.next(), Some(Edition::GtCoreBox));
+    /// assert_eq!(iter.tiles(), &[tile!(101)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// assert_eq!(iter.tiles(), &[tile!(999)][..]);
+    /// ```
+    fn group_by_edition(&self) -> GroupByEdition;
+
+    /// Returns an iterator over the terrain surfaces that are included in the
+    /// current list of tiles.
+    ///
+    /// Only the tile terrain [`surface`](Terrain::surface) value is relevant
+    /// for grouping of tiles, the [`danger_level`](Terrain::danger_level) is
+    /// ignored. The order of terrain surfaces returned by the iterator depends
+    /// on the internal implementation.
+    ///
+    /// Upon each step of the iterator the group of tiles that belong to the
+    /// current surface is available in [`tiles`](GroupBySurface::tiles).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{Terrain, TileId, TileList};
+    /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
+    /// let mut iter = tiles.group_by_surface();
+    ///
+    /// assert_eq!(iter.next(), Some(Terrain::Asphalt(0)));
+    /// assert_eq!(iter.tiles(), &[tile!(301, a), tile!(418, a)][..]);
+    /// assert_eq!(iter.next(), Some(Terrain::Gravel(0)));
+    /// assert_eq!(iter.tiles(), &[tile!(220, b), tile!(419, b)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// ```
+    /// Tiles that do not have terrain information are grouped with filler
+    /// tiles:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{Terrain, TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(999)];
+    /// let mut iter = tiles.group_by_surface();
+    ///
+    /// assert_eq!(iter.next(), Some(Terrain::None));
+    /// assert_eq!(iter.tiles(), &[tile!(101), tile!(999)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// ```
+    fn group_by_surface(&self) -> GroupBySurface;
+}
+
+impl<T: AsRef<TileId> + Clone> TileList for [T] {
+    fn group_by_edition(&self) -> GroupByEdition {
+        GroupByEdition::new(&self)
+    }
+
+    fn group_by_surface(&self) -> GroupBySurface {
+        GroupBySurface::new(&self)
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -415,7 +793,7 @@ impl Default for Edge {
 ///  * `3`: tile has danger level "red" (high)
 ///
 /// Use [`TileInfo::terrain()`] to get the terrain data of a specific tile.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Deserialize)]
 #[serde(try_from = "&str")]
 pub enum Terrain {
@@ -1189,6 +1567,73 @@ mod tests {
         let text = r#""a-1""#;
         let result: Result<TileId, _> = serde_json::from_str(&text);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn tile_list_group_by_edition() {
+        let tiles: &[TileId] = &[][..];
+        let mut iter = tiles.group_by_edition();
+        assert_eq!(iter.tiles(), &[][..]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[][..]);
+
+        let tiles = vec![tile!(101)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::GtCoreBox][..]);
+        let tiles = vec![tile!(101), tile!(103, a), tile!(103, b)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::GtCoreBox][..]);
+        let tiles = vec![tile!(101), tile!(121, a), tile!(121, b)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::GtChampionship, Edition::GtCoreBox][..]);
+        let tiles = vec![tile!(101), tile!(124, a), tile!(124, b)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::GtCoreBox, Edition::GtChampionship, Edition::GtWorldTour][..]);
+
+        let tiles = vec![tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::Dirt110Percent, Edition::DirtCopilotPack][..]);
+        let tiles = vec![tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
+        let editions: Vec<_> = tiles.group_by_edition().collect();
+        assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::DirtRx, Edition::DirtCoreBox][..]);
+
+        let tiles = vec![tile!(999, a)];
+        let mut iter = tiles.group_by_edition();
+        assert_eq!(iter.tiles(), &[][..]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[tile!(999, a)]);
+    }
+
+    #[test]
+    fn tile_list_group_by_surface() {
+        let tiles = vec![
+            tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
+            tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
+            tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
+        ];
+        let mut iter = tiles.group_by_surface();
+        assert_eq!(iter.next(), Some(Terrain::Asphalt(0)));
+        assert_eq!(iter.tiles(), &[
+            tile!(301, a), tile!(418, a),
+        ]);
+        assert_eq!(iter.next(), Some(Terrain::Gravel(0)));
+        assert_eq!(iter.tiles(), &[
+            tile!(220, a), tile!(231, b), tile!(211, b), tile!(219, a),
+            tile!(419, b), tile!(208, a), tile!(232, a),
+        ]);
+        assert_eq!(iter.next(), Some(Terrain::Snow(0)));
+        assert_eq!(iter.tiles(), &[
+            tile!(311, b), tile!(326, b), tile!(302, b),
+        ]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[][..]);
+
+        let tiles = vec![tile!(999, a)];
+        let mut iter = tiles.group_by_surface();
+        assert_eq!(iter.next(), Some(Terrain::None));
+        assert_eq!(iter.tiles(), &[tile!(999, a)]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[][..]);
     }
 
     #[test]

@@ -434,15 +434,12 @@ impl CatalogView {
     pub fn import_file(&mut self, map: &Map) {
         // ensure that all editions that are used by tiles of the imported map are visible
         let mut used_editions = self.editions.clone();
-        for tile in map.tiles() {
-            for edition in Edition::iter() {
-                if !used_editions.contains(edition) && edition.contains(tile.id()) {
-                    info!("automatically add used edition {}", edition);
-                    used_editions.push(*edition);
-                }
+        for edition in map.tiles().group_by_edition() {
+            if !used_editions.contains(&edition) {
+                info!("automatically add used edition {}", &edition);
+                used_editions.push(edition);
             }
         }
-        used_editions.sort_unstable();
         self.update_editions(&used_editions);
     }
 
@@ -455,6 +452,7 @@ impl CatalogView {
         info!("update editions {:?}", editions);
         self.editions.clear();
         self.editions.extend_from_slice(editions);
+        self.editions.sort_unstable();
 
         // count number of editions per series to determine the active filter types
         let gt_count = self.editions.iter()
