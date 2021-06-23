@@ -28,7 +28,7 @@ struct EditionCard {
 impl EditionCard {
     fn new(document: &Document, edition: Edition) -> Result<Self> {
         let card = document.create_element("div")?;
-        card.set_attribute("class", "card is-clickable")?;
+        card.set_attribute("class", "card is-clickable is-unselectable")?;
 
         let card_content = document.create_element("div")?;
         card_content.set_attribute("class", "card-content")?;
@@ -114,12 +114,12 @@ impl EditionCard {
             } else {
                 check!(self.inner.class_list().add_1("has-background-success").ok());
             }
-            check!(self.icon.class_list().add_1("has-text-white").ok());
+            check!(self.inner.class_list().add_1("has-text-white").ok());
             check!(self.icon.class_list().remove_1("has-text-grey").ok());
         } else {
             check!(self.inner.class_list().remove_1("has-background-info").ok());
             check!(self.inner.class_list().remove_1("has-background-success").ok());
-            check!(self.icon.class_list().remove_1("has-text-white").ok());
+            check!(self.inner.class_list().remove_1("has-text-white").ok());
             check!(self.icon.class_list().add_1("has-text-grey").ok());
         }
         let icon_href = if value {
