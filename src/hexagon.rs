@@ -117,7 +117,7 @@ impl Coordinate {
     }
 
     /// Convert this hexagon grid coordinate into x/y pixel positions.
-    pub fn to_pixel(&self, layout: &Layout) -> Point {
+    pub fn to_pixel(self, layout: &Layout) -> Point {
         let o = &layout.orientation;
         let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
         let y = (o.f2 * self.q as f32 + o.f3 * self.r as f32) * layout.size.1;
@@ -323,7 +323,7 @@ impl Direction {
     /// let dir = Direction::B;
     /// assert_eq!(dir.to_angle(&layout), 150.0);
     /// ```
-    pub fn to_angle(&self, layout: &Layout) -> f32 {
+    pub fn to_angle(self, layout: &Layout) -> f32 {
         let start_angle = layout.orientation.start_angle * 60.0;
         let angle = match self {
             Direction::A => start_angle + 0.0,
@@ -749,7 +749,7 @@ impl Layout {
 
     /// Calculates the corners of a hexagon with the given coordinate.
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
-        let center = hex.to_pixel(&self);
+        let center = hex.to_pixel(self);
         let mut corners = [Point::default(); 6];
         for (i, corner) in corners.iter_mut().enumerate() {
             use std::f32::consts::PI;
