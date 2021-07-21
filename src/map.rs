@@ -185,11 +185,11 @@ pub struct Map {
 impl Map {
     /// Creates a new and empty map.
     pub fn new() -> Self {
-        let tiles = Vec::new();
         let title = "My Track".to_string();
+        let tiles = Vec::new();
         let active_pos = Coordinate::default();
         let active_dir = Self::default_active_dir();
-        Map { tiles, title, active_pos, active_dir }
+        Map { title, tiles, active_pos, active_dir }
     }
 
     /// Map title.
