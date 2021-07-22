@@ -1203,11 +1203,11 @@
 <span class="kw">impl</span> <span class="ident">Map</span> {
     <span class="doccomment">/// Creates a new and empty map.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">title</span> <span class="op">=</span> <span class="string">&quot;My Track&quot;</span>.<span class="ident">to_string</span>();
+        <span class="kw">let</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">active_pos</span> <span class="op">=</span> <span class="ident">Coordinate::default</span>();
         <span class="kw">let</span> <span class="ident">active_dir</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::default_active_dir</span>();
-        <span class="ident">Map</span> { <span class="ident">tiles</span>, <span class="ident">title</span>, <span class="ident">active_pos</span>, <span class="ident">active_dir</span> }
+        <span class="ident">Map</span> { <span class="ident">title</span>, <span class="ident">tiles</span>, <span class="ident">active_pos</span>, <span class="ident">active_dir</span> }
     }
 
     <span class="doccomment">/// Map title.</span>

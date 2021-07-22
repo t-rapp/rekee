@@ -58,7 +58,7 @@ and to specify the rotation angle of hexagon tiles.</p>
 
 <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">Direction::F</span>;
 <span class="macro">assert_eq!</span>(<span class="ident">dir</span>.<span class="ident">rotated_right</span>(), <span class="ident">Direction::A</span>);</pre></div>
-</div><h4 id="method.to_angle" class="method"><code>pub fn <a href="#method.to_angle" class="fnname">to_angle</a>(&amp;self, layout: &amp;<a class="struct" href="struct.Layout.html" title="struct rekee::hexagon::Layout">Layout</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code><a href="#method.to_angle" class="anchor"></a><a class="srclink" href="../../src/rekee/hexagon.rs.html#326-337" title="goto source code">[src]</a></h4><div class="docblock"><p>Convert this hexagon grid direction into an angle in degrees.</p>
+</div><h4 id="method.to_angle" class="method"><code>pub fn <a href="#method.to_angle" class="fnname">to_angle</a>(self, layout: &amp;<a class="struct" href="struct.Layout.html" title="struct rekee::hexagon::Layout">Layout</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code><a href="#method.to_angle" class="anchor"></a><a class="srclink" href="../../src/rekee/hexagon.rs.html#326-337" title="goto source code">[src]</a></h4><div class="docblock"><p>Convert this hexagon grid direction into an angle in degrees.</p>
 <p>Applies <code>start_angle</code> of the given layout. The retuned value is wrapped
 within the range of [0 .. 360) degrees.</p>
 <h1 id="examples-5" class="section-header"><a href="#examples-5">Examples</a></h1>
