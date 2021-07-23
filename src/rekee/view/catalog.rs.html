@@ -607,8 +607,6 @@
 <span id="604">604</span>
 <span id="605">605</span>
 <span id="606">606</span>
-<span id="607">607</span>
-<span id="608">608</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the tile catalog and according event handlers.</span>
@@ -1046,15 +1044,12 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) {
         <span class="comment">// ensure that all editions that are used by tiles of the imported map are visible</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">used_editions</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">clone</span>();
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>() {
-            <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Edition::iter</span>() {
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">used_editions</span>.<span class="ident">contains</span>(<span class="ident">edition</span>) <span class="op">&amp;&amp;</span> <span class="ident">edition</span>.<span class="ident">contains</span>(<span class="ident">tile</span>.<span class="ident">id</span>()) {
-                    <span class="macro">info!</span>(<span class="string">&quot;automatically add used edition {}&quot;</span>, <span class="ident">edition</span>);
-                    <span class="ident">used_editions</span>.<span class="ident">push</span>(<span class="kw-2">*</span><span class="ident">edition</span>);
-                }
+        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">group_by_edition</span>() {
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">used_editions</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>) {
+                <span class="macro">info!</span>(<span class="string">&quot;automatically add used edition {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">edition</span>);
+                <span class="ident">used_editions</span>.<span class="ident">push</span>(<span class="ident">edition</span>);
             }
         }
-        <span class="ident">used_editions</span>.<span class="ident">sort_unstable</span>();
         <span class="self">self</span>.<span class="ident">update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">used_editions</span>);
     }
 
@@ -1067,6 +1062,7 @@
         <span class="macro">info!</span>(<span class="string">&quot;update editions {:?}&quot;</span>, <span class="ident">editions</span>);
         <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">clear</span>();
         <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">extend_from_slice</span>(<span class="ident">editions</span>);
+        <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">sort_unstable</span>();
 
         <span class="comment">// count number of editions per series to determine the active filter types</span>
         <span class="kw">let</span> <span class="ident">gt_count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
