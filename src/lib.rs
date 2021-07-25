@@ -9,6 +9,7 @@
 //! * `catalog-config-container` (mandatory)
 //! * `export-container` (mandatory)
 //! * `map-container` (mandatory)
+//! * `track-info-container` (optional)
 //! * `version` (optional)
 //! * `welcome` (optional)
 //!
@@ -65,6 +66,10 @@ pub fn main() -> Result<(), JsValue> {
     let parent = document.get_element_by_id("catalog-config-container")
         .ok_or("Cannot find '#catalog-config-container' parent element for catalog config component")?;
     CatalogConfigController::init(CatalogConfigView::new(parent)?);
+
+    if let Some(parent) = document.get_element_by_id("track-info-container") {
+        TrackInfoController::init(TrackInfoView::new(parent)?);
+    }
 
     let parent = document.get_element_by_id("export-container")
         .ok_or("Cannot find '#export-container' parent element for export component")?;

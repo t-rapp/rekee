@@ -104,6 +104,14 @@
         .card .subtitle {
             color: inherit;
         }
+        .content p {
+            margin-top: .5rem;
+        }
+        .content ul {
+            list-style-position: inside;
+            margin-left: .25rem;
+            margin-top: .5rem;
+        }
         .tile {
             image-rendering: -webkit-optimize-contrast;
         }
@@ -304,6 +312,15 @@
               </span>
             </a>
           </p>
+          <p class="control is-print-hidden">
+            <a id="track-info-button" class="button" title="Show track info">
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#info-circle"/>
+                </svg>
+              </span>
+            </a>
+          </p>
         </div>
         <!-- map elements added here by WASM -->
       </div>
@@ -321,6 +338,78 @@
 
           <div class="buttons is-centered">
             <button id="apply-catalog-config" class="button is-link">Save &amp; Close</button>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <div id="track-info-container" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <h2 class="title">Track Info</h2>
+
+          <div class="columns is-multiline">
+            <div class="column is-half">
+              <span class="icon-text">
+                <span><strong>Boxes and Expansions</strong></span>
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#box-seam"/>
+                  </svg>
+                </span>
+              </span>
+              <div id="track-info-edition-data" class="content">
+                <!-- track info elements added here by WASM -->
+              </div>
+            </div>
+
+            <div class="column is-half">
+              <span class="icon-text">
+                <span><strong>Track Length</strong></span>
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#signpost"/>
+                  </svg>
+                </span>
+              </span>
+              <div id="track-info-length-data" class="content">
+                <!-- track info elements added here by WASM -->
+              </div>
+            </div>
+
+            <div class="column is-half">
+              <span class="icon-text">
+                <span><strong>Terrain Surface</strong></span>
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#layers"/>
+                  </svg>
+                </span>
+              </span>
+              <div id="track-info-surface-data" class="content">
+                <!-- track info elements added here by WASM -->
+              </div>
+            </div>
+
+            <div class="column is-half">
+              <span class="icon-text">
+                <span><strong>Danger Level</strong></span>
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#speedometer2"/>
+                  </svg>
+                </span>
+              </span>
+              <div id="track-info-danger-level-data" class="content">
+                <!-- track info elements added here by WASM -->
+              </div>
+            </div>
+          </div>
+
+          <div class="buttons is-centered">
+            <button id="close-track-info" class="button is-link">Close</button>
           </div>
         </div>
       </div>

@@ -370,6 +370,38 @@ impl CatalogConfigController {
 
 //----------------------------------------------------------------------------
 
+pub struct ShowTrackInfoEvent;
+
+pub struct HideTrackInfoEvent;
+
+pub struct TrackInfoController {
+    view: TrackInfoView,
+}
+
+impl TrackInfoController {
+    pub fn init(view: TrackInfoView) {
+        let controller = TrackInfoController { view };
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
+
+        // register public events
+        activity.subscribe_domained(Self::show);
+        activity.subscribe(Self::hide);
+    }
+
+    fn show(&mut self, domain: &mut DomainState, _event: &ShowTrackInfoEvent) {
+        if let Some(settings) = domain.try_get::<MapSettings>() {
+            self.view.update_map_tiles(&settings.map.tiles());
+        }
+        self.view.set_active(true);
+    }
+
+    fn hide(&mut self, _event: &HideTrackInfoEvent) {
+        self.view.set_active(false);
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct DrawExportTileDoneEvent {
     pub tile: PlacedTile,
 }

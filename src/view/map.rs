@@ -483,6 +483,15 @@ impl MapView {
             callback.forget();
         }
 
+        if let Some(btn) = document.get_element_by_id("track-info-button") {
+            let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+                nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+                nuts::publish(ShowTrackInfoEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
         // remember original HTML document title (application name)
         let document_title = document.title();
 

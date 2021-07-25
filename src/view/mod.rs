@@ -19,6 +19,7 @@ mod catalog;
 mod catalog_config;
 mod export;
 mod map;
+mod track_info;
 mod version;
 mod welcome;
 
@@ -33,6 +34,8 @@ pub type ExportView = export::ExportView;
 
 pub type MapSettings = map::MapSettings;
 pub type MapView = map::MapView;
+
+pub type TrackInfoView = track_info::TrackInfoView;
 
 pub type VersionView = version::VersionView;
 

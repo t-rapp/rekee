@@ -12,7 +12,7 @@ use serde::{Serialize, Deserialize, Deserializer};
 use serde::de::{self, Visitor};
 
 use crate::hexagon::{Coordinate, Direction, Layout, Point};
-use crate::tile::{Connection, ConnectionHint, Edge, TileId, TileInfo};
+use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo};
 
 //----------------------------------------------------------------------------
 
@@ -41,6 +41,36 @@ impl PlacedTile {
     /// Tile identifier.
     pub fn id(&self) -> TileId {
         self.id
+    }
+
+    /// Terrain information for a tile.
+    ///
+    /// Returns `Some(Terrain)` for tiles that have internal terrain surface
+    /// information, otherwise returns `None`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::{Coordinate, Direction};
+    /// # use rekee::map::PlacedTile;
+    /// # use rekee::tile::{Terrain, TileId};
+    ///
+    /// let tile = PlacedTile::new(tile!(301, a), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.terrain(), Some(Terrain::Asphalt(1)));
+    ///
+    /// let tile = PlacedTile::new(tile!(302, b), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.terrain(), Some(Terrain::Snow(2)));
+    ///
+    /// let tile = PlacedTile::new(tile!(999, a), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.terrain(), None);
+    /// ```
+    pub fn terrain(&self) -> Option<Terrain> {
+        if let Some(info) = self.info {
+            Some(info.terrain())
+        } else {
+            None
+        }
     }
 
     fn connection(&self, dir: Direction) -> Connection {
