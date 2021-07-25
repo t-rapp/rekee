@@ -320,9 +320,9 @@ impl GroupByEdition {
     /// returned. Once the iterator reaches `None` it returns the list of
     /// remaining tiles that are not part of any edition.
     ///
-    /// Note that the order of tiles returned by this method depends on
-    /// internal implementation. There is no guarantee that the order of the
-    /// returned subset matches the original order of the tile list.
+    /// Note that the order of tiles returned by this method depends on internal
+    /// implementation. There is no guarantee that the order of the returned
+    /// subset matches the original order of the tile list.
     ///
     /// See [`group_by_edition`] for some code examples.
     ///
@@ -381,7 +381,7 @@ impl Iterator for GroupByEdition {
 ///
 /// [`group_by_surface`]: TileList::group_by_surface
 pub struct GroupBySurface {
-    surfaces: Vec<Terrain>,
+    surfaces: Vec<Option<Terrain>>,
     tiles: Vec<TileId>,
     index: usize,
     next_index: usize,
@@ -393,14 +393,13 @@ impl GroupBySurface {
         let mut surface_tiles: Vec<_> = list.iter()
             .map(|item| {
                 let tile_id = *item.as_ref();
-                let surface = match TileInfo::get(tile_id) {
-                    Some(info) => info.terrain().surface(),
-                    None => Terrain::None,
-                };
+                let surface = TileInfo::get(tile_id)
+                    .map(|info| info.terrain().surface());
                 (surface, tile_id)
             })
             .collect();
-        surface_tiles.sort_by_key(|(surface, _)| *surface);
+        // when sorting make sure the tile count for unknown tiles appears at the end
+        surface_tiles.sort_by_key(|(surface, _)| (surface.is_none(), *surface));
 
         // split the combined list into two separate lists once, for less
         // overhead in the tiles() function implementation
@@ -435,7 +434,7 @@ impl GroupBySurface {
     /// The result of this method is updated upon each call to [`next`]. Each
     /// time the iterator yields `Some(Terrain)` the according tiles are
     /// returned. Tiles where no internal terrain surface information exists are
-    /// assigned to the group of [`Terrain::None`].
+    /// returned once the iterator yields `None`.
     ///
     /// Note that the order of tiles returned by this method depends on internal
     /// implementation. There is no guarantee that the order of the returned
@@ -463,7 +462,7 @@ impl Iterator for GroupBySurface {
         self.index = self.next_index;
         if let Some(surface) = self.surfaces.get(self.index) {
             self.next_index = self.find_next_index().unwrap_or(self.index);
-            Some(*surface)
+            *surface
         } else {
             None
         }
@@ -551,18 +550,20 @@ pub trait TileList {
     /// assert_eq!(iter.tiles(), &[tile!(220, b), tile!(419, b)][..]);
     /// assert_eq!(iter.next(), None);
     /// ```
-    /// Tiles that do not have terrain information are grouped with filler
-    /// tiles:
+    ///
+    /// Tiles that do not have terrain information are listed at the end,
+    /// separated from filler tiles:
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
     /// # use rekee::tile::{Terrain, TileId, TileList};
-    /// let tiles = vec![tile!(101), tile!(999)];
+    /// let tiles = vec![tile!(101), tile!(999, a)];
     /// let mut iter = tiles.group_by_surface();
     ///
     /// assert_eq!(iter.next(), Some(Terrain::None));
-    /// assert_eq!(iter.tiles(), &[tile!(101), tile!(999)][..]);
+    /// assert_eq!(iter.tiles(), &[tile!(101)][..]);
     /// assert_eq!(iter.next(), None);
+    /// assert_eq!(iter.tiles(), &[tile!(999, a)][..]);
     /// ```
     fn group_by_surface(&self) -> GroupBySurface;
 }
@@ -1628,12 +1629,12 @@ mod tests {
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[][..]);
 
-        let tiles = vec![tile!(999, a)];
+        let tiles = vec![tile!(101), tile!(999, a)];
         let mut iter = tiles.group_by_surface();
         assert_eq!(iter.next(), Some(Terrain::None));
-        assert_eq!(iter.tiles(), &[tile!(999, a)]);
+        assert_eq!(iter.tiles(), &[tile!(101)]);
         assert_eq!(iter.next(), None);
-        assert_eq!(iter.tiles(), &[][..]);
+        assert_eq!(iter.tiles(), &[tile!(999, a)]);
     }
 
     #[test]
