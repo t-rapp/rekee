@@ -471,6 +471,46 @@ impl Iterator for GroupBySurface {
 
 //----------------------------------------------------------------------------
 
+/// Edition and tile count information for a specific edition.
+///
+/// This struct is created by the [`edition_summary`] method on [`TileList`].
+/// See its documentation for more.
+///
+/// [`edition_summary`]: TileList::edition_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EditionSummary {
+    pub edition: Option<Edition>,
+    pub edition_count: u32,
+    pub tile_count: u32,
+}
+
+impl EditionSummary {
+    const fn new(edition: Option<Edition>, edition_count: u32, tile_count: u32) -> Self {
+        EditionSummary { edition, edition_count, tile_count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Tile count information for a specific terrain surface.
+///
+/// This truct is created by the [`surface_summary`] method on [`TileList`].
+///
+/// [`surface_summary`]: TileList::surface_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SurfaceSummary {
+    pub surface: Option<Terrain>,
+    pub tile_count: u32,
+}
+
+impl SurfaceSummary {
+    const fn new(surface: Option<Terrain>, tile_count: u32) -> Self {
+        SurfaceSummary { surface, tile_count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Utilitiy methods on any list of [`TileId`]s.
 pub trait TileList {
 
@@ -566,6 +606,101 @@ pub trait TileList {
     /// assert_eq!(iter.tiles(), &[tile!(999, a)][..]);
     /// ```
     fn group_by_surface(&self) -> GroupBySurface;
+
+    /// Returns a summary about the editions that are necessary to build the
+    /// current list of tiles.
+    ///
+    /// For each edition the entry contains the number of edition instances
+    /// (boxes) required, and the number of tiles that belong to the edition.
+    ///
+    /// This method is a convenience wrapper around the [`group_by_edition`]
+    /// method. It merges the tile count of editions that occur mutiple times.
+    /// Different from [`group_by_edition`] the returned array is always sorted
+    /// by edition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(103, a, 1), tile!(124, a), tile!(124, b)];
+    /// for row in tiles.edition_summary() {
+    ///     let label = match row.edition {
+    ///         Some(val) => val.to_string(),
+    ///         None => "Unknown".to_string(),
+    ///     };
+    ///     println!("{}: {}x ({} tiles)", label, row.edition_count, row.tile_count);
+    /// }
+    /// ```
+    fn edition_summary(&self) -> Vec<EditionSummary> {
+        let mut summary = BTreeMap::new();
+        let mut iter = self.group_by_edition();
+        loop {
+            let edition = iter.next();
+            let tile_count = iter.tiles().len() as u32;
+            if tile_count > 0 {
+                let mut entry = summary.entry(edition).or_insert((0, 0));
+                entry.0 += 1;
+                entry.1 += tile_count;
+            }
+            if edition.is_none() {
+                break;
+            }
+        }
+        let summary: Vec<_> = summary.iter()
+            .map(|(&edition, &(edition_count, tile_count))|
+                EditionSummary::new(edition, edition_count, tile_count)
+            )
+            .collect();
+        summary
+    }
+
+    /// Returns a summary about the terrain surfaces that occur within the
+    /// current list of tiles.
+    ///
+    /// For each terrain surface the entry contains the number of matching
+    /// tiles.
+    ///
+    /// This method is a convenience wrapper around the [`group_by_surface`]
+    /// method. Different from [`group_by_surface`] the returned array is always
+    /// sorted by terrain.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
+    /// for row in tiles.surface_summary() {
+    ///     let label = match row.surface {
+    ///         Some(val) => val.to_string(),
+    ///         None => "Unknown".to_string(),
+    ///     };
+    ///     println!("{}: {} tiles", label, row.tile_count);
+    /// }
+    /// ```
+    fn surface_summary(&self) -> Vec<SurfaceSummary> {
+        let mut summary = Vec::with_capacity(4);
+        let mut iter = self.group_by_surface();
+        let mut tile_count;
+        loop {
+            let surface = iter.next();
+            tile_count = iter.tiles().len() as u32;
+            if surface.is_none() {
+                break;
+            } else if tile_count > 0 {
+                summary.push(SurfaceSummary::new(surface, tile_count));
+            }
+        }
+        summary.sort_unstable_by_key(|item| item.surface);
+        // insert tile count for unknown tiles at the end
+        if tile_count > 0 {
+            summary.push(SurfaceSummary::new(None, tile_count));
+        }
+        summary
+    }
 }
 
 impl<T: AsRef<TileId> + Clone> TileList for [T] {
@@ -1606,6 +1741,61 @@ mod tests {
     }
 
     #[test]
+    fn tile_list_edition_summary() {
+        let tiles: &[TileId] = &[][..];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![]);
+
+        let tiles = vec![tile!(101)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(103, a), tile!(103, b)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 1, 3),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(121, a), tile!(121, b)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
+            EditionSummary::new(Some(Edition::GtChampionship), 1, 2),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(124, a), tile!(124, b)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
+            EditionSummary::new(Some(Edition::GtChampionship), 1, 1),
+            EditionSummary::new(Some(Edition::GtWorldTour), 1, 1),
+        ]);
+
+        let tiles = vec![tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::DirtCoreBox), 1, 2),
+            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 1),
+            EditionSummary::new(Some(Edition::DirtCopilotPack), 1, 1),
+        ]);
+
+        let tiles = vec![tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::DirtCoreBox), 2, 3),
+            EditionSummary::new(Some(Edition::DirtRx), 1, 1),
+        ]);
+
+        let tiles = vec![tile!(999, a)];
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(None, 1, 1),
+        ]);
+    }
+
+    #[test]
     fn tile_list_group_by_surface() {
         let tiles = vec![
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
@@ -1635,6 +1825,28 @@ mod tests {
         assert_eq!(iter.tiles(), &[tile!(101)]);
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[tile!(999, a)]);
+    }
+
+    #[test]
+    fn tile_list_surface_summary() {
+        let tiles = vec![
+            tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
+            tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
+            tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
+        ];
+        let summary = tiles.surface_summary();
+        assert_eq!(summary, vec![
+            SurfaceSummary::new(Some(Terrain::Asphalt(0)), 2),
+            SurfaceSummary::new(Some(Terrain::Gravel(0)), 7),
+            SurfaceSummary::new(Some(Terrain::Snow(0)), 3),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(999, a)];
+        let summary = tiles.surface_summary();
+        assert_eq!(summary, vec![
+            SurfaceSummary::new(Some(Terrain::None), 1),
+            SurfaceSummary::new(None, 1),
+        ]);
     }
 
     #[test]
