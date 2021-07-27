@@ -471,6 +471,104 @@ impl Iterator for GroupBySurface {
 
 //----------------------------------------------------------------------------
 
+/// An iterator that yields the terrain danger levels that are included in a
+/// list of tiles.
+///
+/// This struct is created by the [`group_by_danger_level`] method on
+/// [`TileList`].  See its documentation for more.
+///
+/// [`group_by_danger_level`]: TileList::group_by_danger_level
+pub struct GroupByDangerLevel {
+    danger_levels: Vec<Option<u8>>,
+    tiles: Vec<TileId>,
+    index: usize,
+    next_index: usize,
+}
+
+impl GroupByDangerLevel {
+    fn new<T: AsRef<TileId> + Clone>(list: &[T]) -> Self {
+        // collect terrain danger level information for all tiles
+        let mut danger_level_tiles: Vec<_> = list.iter()
+            .map(|item| {
+                let tile_id = *item.as_ref();
+                let danger_level = TileInfo::get(tile_id)
+                    .map(|info| info.terrain().danger_level());
+                (danger_level, tile_id)
+            })
+            .collect();
+        // when sorting make sure the entries for unknown tiles appear at the end
+        danger_level_tiles.sort_by_key(|(danger_level, _)| (danger_level.is_none(), *danger_level));
+
+        // split the combined list into two separate lists once, for less
+        // overhead in the tiles() function implementation
+        let mut danger_levels = Vec::with_capacity(danger_level_tiles.len());
+        let mut tiles = Vec::with_capacity(danger_level_tiles.len());
+        for (danger_level, tile_id) in danger_level_tiles {
+            danger_levels.push(danger_level);
+            tiles.push(tile_id);
+        }
+
+        GroupByDangerLevel { danger_levels, tiles, index: 0, next_index: 0 }
+    }
+
+    fn find_next_index(&self) -> Option<usize> {
+        let danger_level = self.danger_levels.get(self.index)?;
+        let mut index = self.index;
+        loop {
+            index += 1;
+            let next_danger_level = match self.danger_levels.get(index) {
+                Some(val) => val,
+                None => break,
+            };
+            if next_danger_level != danger_level {
+                break;
+            }
+        }
+        Some(index)
+    }
+
+    /// Returns the subset of tiles that share the same terrain danger level.
+    ///
+    /// The result of this method is updated upon each call to [`next`]. Each
+    /// time the iterator yields `Some(u8)` the according tiles are returned.
+    /// Tiles where no internal terrain information exists are returned once the
+    /// iterator yields `None`.
+    ///
+    /// Note that the order of tiles returned by this method depends on internal
+    /// implementation. There is no guarantee that the order of the returned
+    /// subset matches the original order of the tile list.
+    ///
+    /// See [`group_by_danger_level`] for some code examples.
+    ///
+    /// [`next`]: Iterator::next
+    /// [`group_by_danger_level`]: TileList::group_by_danger_level
+    pub fn tiles(&self) -> &[TileId] {
+        debug_assert_eq!(self.danger_levels.len(), self.tiles.len());
+        assert!(self.index <= self.next_index);
+        if self.index < self.tiles.len() {
+            &self.tiles[self.index..self.next_index]
+        } else {
+            &[][..]
+        }
+    }
+}
+
+impl Iterator for GroupByDangerLevel {
+    type Item = u8;
+
+    fn next(&mut self) -> Option<u8> {
+        self.index = self.next_index;
+        if let Some(danger_level) = self.danger_levels.get(self.index) {
+            self.next_index = self.find_next_index().unwrap_or(self.index);
+            *danger_level
+        } else {
+            None
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Edition and tile count information for a specific edition.
 ///
 /// This struct is created by the [`edition_summary`] method on [`TileList`].
@@ -506,6 +604,25 @@ pub struct SurfaceSummary {
 impl SurfaceSummary {
     const fn new(surface: Option<Terrain>, tile_count: u32) -> Self {
         SurfaceSummary { surface, tile_count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Tile count information for a specific terrain danger level.
+///
+/// This truct is created by the [`danger_level_summary`] method on [`TileList`].
+///
+/// [`danger_level_summary`]: TileList::danger_level_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DangerLevelSummary {
+    pub danger_level: Option<u8>,
+    pub tile_count: u32,
+}
+
+impl DangerLevelSummary {
+    const fn new(danger_level: Option<u8>, tile_count: u32) -> Self {
+        DangerLevelSummary { danger_level, tile_count }
     }
 }
 
@@ -607,6 +724,51 @@ pub trait TileList {
     /// ```
     fn group_by_surface(&self) -> GroupBySurface;
 
+    /// Returns an iterator over the terrain danger levels that occur in the
+    /// current list of tiles.
+    ///
+    /// Only the tile terrain [`danger_level`](Terrain::danger_level) value is
+    /// relevant for the grouping of tiles, the [`surface`](Terrain::surface) is
+    /// ignored. The order of danger levels returned by the iterator depends on
+    /// the internal implementation.
+    ///
+    /// Upon each step of the iterator the group of tiles that belong to the
+    /// current danger level is available in
+    /// [`tiles`](GroupByDangerLevel::tiles).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(301, a), tile!(221, b), tile!(418, a), tile!(119, b)];
+    /// let mut iter = tiles.group_by_danger_level();
+    ///
+    /// assert_eq!(iter.next(), Some(1));
+    /// assert_eq!(iter.tiles(), &[tile!(301, a), tile!(221, b)][..]);
+    /// assert_eq!(iter.next(), Some(2));
+    /// assert_eq!(iter.tiles(), &[tile!(119, b)][..]);
+    /// assert_eq!(iter.next(), Some(3));
+    /// assert_eq!(iter.tiles(), &[tile!(418, a)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// ```
+    ///
+    /// Tiles that do not have terrain information are listed at the end,
+    /// separated from filler tiles:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(999, a)];
+    /// let mut iter = tiles.group_by_danger_level();
+    ///
+    /// assert_eq!(iter.next(), Some(0));
+    /// assert_eq!(iter.tiles(), &[tile!(101)][..]);
+    /// assert_eq!(iter.next(), None);
+    /// assert_eq!(iter.tiles(), &[tile!(999, a)][..]);
+    /// ```
+    fn group_by_danger_level(&self) -> GroupByDangerLevel;
+
     /// Returns a summary about the editions that are necessary to build the
     /// current list of tiles.
     ///
@@ -670,7 +832,6 @@ pub trait TileList {
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
-    /// # use rekee::edition::Edition;
     /// # use rekee::tile::{TileId, TileList};
     /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
     /// for row in tiles.surface_summary() {
@@ -701,6 +862,51 @@ pub trait TileList {
         }
         summary
     }
+
+    /// Returns a summary about the danger levels that occur within the current
+    /// list of tiles.
+    ///
+    /// For each danger level the entry contains the number of matching tiles.
+    ///
+    /// This method is a convenience wrapper around the
+    /// [`group_by_danger_level`] method. Different from
+    /// [`group_by_danger_level`] the returned array is always sorted by level
+    /// value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
+    /// for row in tiles.danger_level_summary() {
+    ///     let label = match row.danger_level {
+    ///         Some(val) => val.to_string(),
+    ///         None => "Unknown".to_string(),
+    ///     };
+    ///     println!("{}: {} tiles", label, row.tile_count);
+    /// }
+    /// ```
+    fn danger_level_summary(&self) -> Vec<DangerLevelSummary> {
+        let mut summary = Vec::with_capacity(4);
+        let mut iter = self.group_by_danger_level();
+        let mut tile_count;
+        loop {
+            let danger_level = iter.next();
+            tile_count = iter.tiles().len() as u32;
+            if danger_level.is_none() {
+                break;
+            } else if tile_count > 0 {
+                summary.push(DangerLevelSummary::new(danger_level, tile_count));
+            }
+        }
+        summary.sort_unstable_by_key(|item| item.danger_level);
+        // insert tile count for unknown tiles at the end
+        if tile_count > 0 {
+            summary.push(DangerLevelSummary::new(None, tile_count));
+        }
+        summary
+    }
 }
 
 impl<T: AsRef<TileId> + Clone> TileList for [T] {
@@ -710,6 +916,10 @@ impl<T: AsRef<TileId> + Clone> TileList for [T] {
 
     fn group_by_surface(&self) -> GroupBySurface {
         GroupBySurface::new(&self)
+    }
+
+    fn group_by_danger_level(&self) -> GroupByDangerLevel {
+        GroupByDangerLevel::new(&self)
     }
 }
 
@@ -1846,6 +2056,61 @@ mod tests {
         assert_eq!(summary, vec![
             SurfaceSummary::new(Some(Terrain::None), 1),
             SurfaceSummary::new(None, 1),
+        ]);
+    }
+
+    #[test]
+    fn tile_list_group_by_danger_level() {
+        let tiles = vec![
+            tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
+            tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
+            tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
+        ];
+        let mut iter = tiles.group_by_danger_level();
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.tiles(), &[
+            tile!(301, a), tile!(208, a),
+        ]);
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.tiles(), &[
+            tile!(231, b), tile!(211, b), tile!(219, a), tile!(311, b),
+            tile!(302, b),
+        ]);
+        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.tiles(), &[
+            tile!(220, a), tile!(418, a), tile!(419, b), tile!(232, a),
+            tile!(326, b),
+        ]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[][..]);
+
+        let tiles = vec![tile!(101), tile!(999, a)];
+        let mut iter = tiles.group_by_danger_level();
+        assert_eq!(iter.next(), Some(0));
+        assert_eq!(iter.tiles(), &[tile!(101)]);
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.tiles(), &[tile!(999, a)]);
+    }
+
+    #[test]
+    fn tile_list_danger_level_summary() {
+        let tiles = vec![
+            tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
+            tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
+            tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
+        ];
+        let summary = tiles.danger_level_summary();
+        assert_eq!(summary, vec![
+            DangerLevelSummary::new(Some(1), 2),
+            DangerLevelSummary::new(Some(2), 5),
+            DangerLevelSummary::new(Some(3), 5),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(999, a)];
+        let summary = tiles.danger_level_summary();
+        assert_eq!(summary, vec![
+            DangerLevelSummary::new(Some(0), 1),
+            DangerLevelSummary::new(None, 1),
         ]);
     }
 
