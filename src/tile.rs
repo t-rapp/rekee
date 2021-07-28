@@ -1211,19 +1211,19 @@ impl fmt::Display for Terrain {
         let danger_level;
         match self {
             Terrain::None => {
-                write!(fmt, "none")?;
+                write!(fmt, "None")?;
                 danger_level = 0;
             },
             Terrain::Asphalt(val) => {
-                write!(fmt, "asphalt")?;
+                write!(fmt, "Asphalt")?;
                 danger_level = *val;
             },
             Terrain::Gravel(val) => {
-                write!(fmt, "gravel")?;
+                write!(fmt, "Gravel")?;
                 danger_level = *val;
             },
             Terrain::Snow(val) => {
-                write!(fmt, "snow")?;
+                write!(fmt, "Snow")?;
                 danger_level = *val;
             },
         };
@@ -1234,11 +1234,21 @@ impl fmt::Display for Terrain {
     }
 }
 
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for Terrain {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
 impl FromStr for Terrain {
     type Err = ParseTerrainError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let idx = s.find('-').unwrap_or_else(|| s.len());
+        let idx = s.find(&[' ', '-'][..])
+            .unwrap_or_else(|| s.len());
         let surface = &s[0..idx];
 
         let level = if let Some(val) = s.get(idx+1..) {
@@ -1296,7 +1306,9 @@ impl Serialize for Terrain {
     where
         S: Serializer
     {
-        serializer.serialize_str(&self.to_string())
+        let mut data = self.to_string();
+        data.make_ascii_lowercase();
+        serializer.serialize_str(&data)
     }
 }
 
@@ -2306,25 +2318,57 @@ mod tests {
 
     #[test]
     fn terrain_to_str() {
-        assert_eq!(Terrain::None.to_string(), "none");
-        assert_eq!(Terrain::Asphalt(0).to_string(), "asphalt");
-        assert_eq!(Terrain::Asphalt(1).to_string(), "asphalt-1");
-        assert_eq!(Terrain::Gravel(2).to_string(), "gravel-2");
-        assert_eq!(Terrain::Snow(3).to_string(), "snow-3");
+        assert_eq!(Terrain::None.to_string(), "None");
+        assert_eq!(Terrain::Asphalt(0).to_string(), "Asphalt");
+        assert_eq!(Terrain::Asphalt(1).to_string(), "Asphalt-1");
+        assert_eq!(Terrain::Gravel(2).to_string(), "Gravel-2");
+        assert_eq!(Terrain::Snow(3).to_string(), "Snow-3");
+
+        let text = format!("{:x}", Terrain::Gravel(0));
+        assert_eq!(text, "gravel");
+        let text = format!("{:x}", Terrain::Snow(1));
+        assert_eq!(text, "snow-1");
     }
 
     #[test]
     fn terrain_from_str() {
-        assert_eq!("none".parse::<Terrain>(), Ok(Terrain::None));
+        assert_eq!("None".parse::<Terrain>(), Ok(Terrain::None));
         assert_eq!("asphalt".parse::<Terrain>(), Ok(Terrain::Asphalt(0)));
         assert_eq!("asphalt-1".parse::<Terrain>(), Ok(Terrain::Asphalt(1)));
         assert_eq!("Gravel-2".parse::<Terrain>(), Ok(Terrain::Gravel(2)));
-        assert_eq!("SNOW-3".parse::<Terrain>(), Ok(Terrain::Snow(3)));
+        assert_eq!("SNOW 3".parse::<Terrain>(), Ok(Terrain::Snow(3)));
 
         assert!("".parse::<Terrain>().is_err());
         assert!("x".parse::<Terrain>().is_err());
-        assert!("none-1".parse::<Terrain>().is_err());
-        assert!("asphalt-x".parse::<Terrain>().is_err());
+        assert!("None-1".parse::<Terrain>().is_err());
+        assert!("Asphalt x".parse::<Terrain>().is_err());
+    }
+
+    #[test]
+    fn terrain_serde() {
+        let terrain = Terrain::None;
+        let text = serde_json::to_string(&terrain).unwrap();
+        assert_eq!(text, r#""none""#);
+
+        let terrain = Terrain::Asphalt(0);
+        let text = serde_json::to_string(&terrain).unwrap();
+        assert_eq!(text, r#""asphalt""#);
+
+        let terrain = Terrain::Gravel(2);
+        let text = serde_json::to_string(&terrain).unwrap();
+        assert_eq!(text, r#""gravel-2""#);
+
+        let text = r#""snow-3""#;
+        let terrain: Terrain = serde_json::from_str(&text).unwrap();
+        assert_eq!(terrain, Terrain::Snow(3));
+
+        let text = r#""#;
+        let result: Result<Terrain, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
+
+        let text = r#""none-1""#;
+        let result: Result<Terrain, _> = serde_json::from_str(&text);
+        assert!(result.is_err());
     }
 
     #[test]
