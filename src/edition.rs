@@ -699,7 +699,7 @@ mod tests {
         assert!(result.is_err());
 
         let text = r#""core-box""#;
-        let result: Result<TileId, _> = serde_json::from_str(&text);
+        let result: Result<Edition, _> = serde_json::from_str(&text);
         assert!(result.is_err());
     }
 
