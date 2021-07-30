@@ -1021,6 +1021,36 @@
 <span id="1018">1018</span>
 <span id="1019">1019</span>
 <span id="1020">1020</span>
+<span id="1021">1021</span>
+<span id="1022">1022</span>
+<span id="1023">1023</span>
+<span id="1024">1024</span>
+<span id="1025">1025</span>
+<span id="1026">1026</span>
+<span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
+<span id="1038">1038</span>
+<span id="1039">1039</span>
+<span id="1040">1040</span>
+<span id="1041">1041</span>
+<span id="1042">1042</span>
+<span id="1043">1043</span>
+<span id="1044">1044</span>
+<span id="1045">1045</span>
+<span id="1046">1046</span>
+<span id="1047">1047</span>
+<span id="1048">1048</span>
+<span id="1049">1049</span>
+<span id="1050">1050</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Map of tiles within a hexagon grid.</span>
@@ -1036,7 +1066,7 @@
 <span class="kw">use</span> <span class="ident">serde::de</span>::{<span class="self">self</span>, <span class="ident">Visitor</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Layout</span>, <span class="ident">Point</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tile</span>::{<span class="ident">Connection</span>, <span class="ident">ConnectionHint</span>, <span class="ident">Edge</span>, <span class="ident">TileId</span>, <span class="ident">TileInfo</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tile</span>::{<span class="ident">Connection</span>, <span class="ident">ConnectionHint</span>, <span class="ident">Edge</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>, <span class="ident">TileInfo</span>};
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
@@ -1065,6 +1095,36 @@
     <span class="doccomment">/// Tile identifier.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TileId</span> {
         <span class="self">self</span>.<span class="ident">id</span>
+    }
+
+    <span class="doccomment">/// Terrain information for a tile.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `Some(Terrain)` for tiles that have internal terrain surface</span>
+    <span class="doccomment">/// information, otherwise returns `None`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # #[macro_use] extern crate rekee;</span>
+    <span class="doccomment">/// # use rekee::hexagon::{Coordinate, Direction};</span>
+    <span class="doccomment">/// # use rekee::map::PlacedTile;</span>
+    <span class="doccomment">/// # use rekee::tile::{Terrain, TileId};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let tile = PlacedTile::new(tile!(301, a), Coordinate::new(0, 0), Direction::A);</span>
+    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Asphalt(1)));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let tile = PlacedTile::new(tile!(302, b), Coordinate::new(0, 0), Direction::A);</span>
+    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Snow(2)));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let tile = PlacedTile::new(tile!(999, a), Coordinate::new(0, 0), Direction::A);</span>
+    <span class="doccomment">/// assert_eq!(tile.terrain(), None);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">terrain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">info</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">info</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">info</span>.<span class="ident">terrain</span>())
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        }
     }
 
     <span class="kw">fn</span> <span class="ident">connection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Connection</span> {

@@ -105,6 +105,11 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Library providing track editor functions for the Rekee web application.</span>
@@ -117,6 +122,7 @@
 <span class="doccomment">//! * `catalog-config-container` (mandatory)</span>
 <span class="doccomment">//! * `export-container` (mandatory)</span>
 <span class="doccomment">//! * `map-container` (mandatory)</span>
+<span class="doccomment">//! * `track-info-container` (optional)</span>
 <span class="doccomment">//! * `version` (optional)</span>
 <span class="doccomment">//! * `welcome` (optional)</span>
 <span class="doccomment">//!</span>
@@ -173,6 +179,10 @@
     <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;catalog-config-container&quot;</span>)
         .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#catalog-config-container&#39; parent element for catalog config component&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">CatalogConfigController::init</span>(<span class="ident">CatalogConfigView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;track-info-container&quot;</span>) {
+        <span class="ident">TrackInfoController::init</span>(<span class="ident">TrackInfoView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    }
 
     <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;export-container&quot;</span>)
         .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#export-container&#39; parent element for export component&quot;</span>)<span class="question-mark">?</span>;

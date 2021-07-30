@@ -890,6 +890,15 @@
 <span id="887">887</span>
 <span id="888">888</span>
 <span id="889">889</span>
+<span id="890">890</span>
+<span id="891">891</span>
+<span id="892">892</span>
+<span id="893">893</span>
+<span id="894">894</span>
+<span id="895">895</span>
+<span id="896">896</span>
+<span id="897">897</span>
+<span id="898">898</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the map and according event handlers.</span>
@@ -1371,6 +1380,15 @@
                 <span class="ident">event</span>.<span class="ident">prevent_default</span>();
                 <span class="ident">event</span>.<span class="ident">stop_propagation</span>();
                 <span class="ident">nuts::publish</span>(<span class="ident">RotateMapRightEvent</span>);
+            }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+            <span class="ident">btn</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">callback</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">unwrap</span>();
+            <span class="ident">callback</span>.<span class="ident">forget</span>();
+        }
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">btn</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;track-info-button&quot;</span>) {
+            <span class="kw">let</span> <span class="ident">callback</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
+                <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span> {});
+                <span class="ident">nuts::publish</span>(<span class="ident">ShowTrackInfoEvent</span>);
             }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
             <span class="ident">btn</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">callback</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">unwrap</span>();
             <span class="ident">callback</span>.<span class="ident">forget</span>();
