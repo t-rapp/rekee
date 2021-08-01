@@ -592,7 +592,7 @@ impl EditionSummary {
 
 /// Tile count information for a specific terrain surface.
 ///
-/// This truct is created by the [`surface_summary`] method on [`TileList`].
+/// This struct is created by the [`surface_summary`] method on [`TileList`].
 ///
 /// [`surface_summary`]: TileList::surface_summary
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -611,7 +611,7 @@ impl SurfaceSummary {
 
 /// Tile count information for a specific terrain danger level.
 ///
-/// This truct is created by the [`danger_level_summary`] method on [`TileList`].
+/// This struct is created by the [`danger_level_summary`] method on [`TileList`].
 ///
 /// [`danger_level_summary`]: TileList::danger_level_summary
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -778,7 +778,11 @@ pub trait TileList {
     /// This method is a convenience wrapper around the [`group_by_edition`]
     /// method. It merges the tile count of editions that occur mutiple times.
     /// Different from [`group_by_edition`] the returned array is always sorted
-    /// by edition.
+    /// by edition. If the tile list contains unknown tiles an entry with
+    /// [`edition`] set to `None` is put at the end of the summary.
+    ///
+    /// [`group_by_edition`]: TileList::group_by_edition
+    /// [`edition`]: EditionSummary::edition
     ///
     /// # Examples
     ///
@@ -826,7 +830,11 @@ pub trait TileList {
     ///
     /// This method is a convenience wrapper around the [`group_by_surface`]
     /// method. Different from [`group_by_surface`] the returned array is always
-    /// sorted by terrain.
+    /// sorted by terrain. If the tile list contains unknown tiles an entry with
+    /// [`surface`] set to `None` is put at the end of the summary.
+    ///
+    /// [`group_by_surface`]: TileList::group_by_surface
+    /// [`surface`]: SurfaceSummary::surface
     ///
     /// # Examples
     ///
@@ -871,7 +879,11 @@ pub trait TileList {
     /// This method is a convenience wrapper around the
     /// [`group_by_danger_level`] method. Different from
     /// [`group_by_danger_level`] the returned array is always sorted by level
-    /// value.
+    /// value. If the tile list contains unknown tiles an entry with
+    /// [`danger_level`] set to `None` is put at the end of the summary.
+    ///
+    /// [`group_by_danger_level`]: TileList::group_by_danger_level
+    /// [`danger_level`]: DangerLevelSummary::danger_level
     ///
     /// # Examples
     ///
