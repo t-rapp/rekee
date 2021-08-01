@@ -49,6 +49,7 @@ use view::*;
 
 //----------------------------------------------------------------------------
 
+#[doc(hidden)]
 #[wasm_bindgen]
 pub fn main() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
