@@ -2454,6 +2454,18 @@
 <span id="2451">2451</span>
 <span id="2452">2452</span>
 <span id="2453">2453</span>
+<span id="2454">2454</span>
+<span id="2455">2455</span>
+<span id="2456">2456</span>
+<span id="2457">2457</span>
+<span id="2458">2458</span>
+<span id="2459">2459</span>
+<span id="2460">2460</span>
+<span id="2461">2461</span>
+<span id="2462">2462</span>
+<span id="2463">2463</span>
+<span id="2464">2464</span>
+<span id="2465">2465</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Tile identifier and characteristics.</span>
@@ -3049,7 +3061,7 @@
 
 <span class="doccomment">/// Tile count information for a specific terrain surface.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// This truct is created by the [`surface_summary`] method on [`TileList`].</span>
+<span class="doccomment">/// This struct is created by the [`surface_summary`] method on [`TileList`].</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [`surface_summary`]: TileList::surface_summary</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
@@ -3068,7 +3080,7 @@
 
 <span class="doccomment">/// Tile count information for a specific terrain danger level.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// This truct is created by the [`danger_level_summary`] method on [`TileList`].</span>
+<span class="doccomment">/// This struct is created by the [`danger_level_summary`] method on [`TileList`].</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [`danger_level_summary`]: TileList::danger_level_summary</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
@@ -3235,7 +3247,11 @@
     <span class="doccomment">/// This method is a convenience wrapper around the [`group_by_edition`]</span>
     <span class="doccomment">/// method. It merges the tile count of editions that occur mutiple times.</span>
     <span class="doccomment">/// Different from [`group_by_edition`] the returned array is always sorted</span>
-    <span class="doccomment">/// by edition.</span>
+    <span class="doccomment">/// by edition. If the tile list contains unknown tiles an entry with</span>
+    <span class="doccomment">/// [`edition`] set to `None` is put at the end of the summary.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [`group_by_edition`]: TileList::group_by_edition</span>
+    <span class="doccomment">/// [`edition`]: EditionSummary::edition</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -3283,7 +3299,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This method is a convenience wrapper around the [`group_by_surface`]</span>
     <span class="doccomment">/// method. Different from [`group_by_surface`] the returned array is always</span>
-    <span class="doccomment">/// sorted by terrain.</span>
+    <span class="doccomment">/// sorted by terrain. If the tile list contains unknown tiles an entry with</span>
+    <span class="doccomment">/// [`surface`] set to `None` is put at the end of the summary.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [`group_by_surface`]: TileList::group_by_surface</span>
+    <span class="doccomment">/// [`surface`]: SurfaceSummary::surface</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -3328,7 +3348,11 @@
     <span class="doccomment">/// This method is a convenience wrapper around the</span>
     <span class="doccomment">/// [`group_by_danger_level`] method. Different from</span>
     <span class="doccomment">/// [`group_by_danger_level`] the returned array is always sorted by level</span>
-    <span class="doccomment">/// value.</span>
+    <span class="doccomment">/// value. If the tile list contains unknown tiles an entry with</span>
+    <span class="doccomment">/// [`danger_level`] set to `None` is put at the end of the summary.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [`group_by_danger_level`]: TileList::group_by_danger_level</span>
+    <span class="doccomment">/// [`danger_level`]: DangerLevelSummary::danger_level</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
