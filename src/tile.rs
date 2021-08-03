@@ -2429,7 +2429,7 @@ mod tests {
             if info.terrain() == Terrain::None {
                 assert_eq!(danger_level, 0, "tile info {} has undefined terrain with non-zero danger level", info.id);
             } else {
-                assert!(danger_level >= 1 && danger_level <= 3, "tile info {} has unsupported danger level {}", info.id, danger_level);
+                assert!((1..=3).contains(&danger_level), "tile info {} has unsupported danger level {}", info.id, danger_level);
             }
         }
     }
@@ -2438,14 +2438,8 @@ mod tests {
     fn tile_info_connection_edge() {
         for tile in TILE_INFOS.iter() {
             for dir in Direction::iter() {
-                let has_connection = match tile.connection(*dir) {
-                    Connection::None => false,
-                    _ => true,
-                };
-                let has_edge = match tile.edge(*dir) {
-                    Edge::None => false,
-                    _ => true,
-                };
+                let has_connection = !matches!(tile.connection(*dir), Connection::None);
+                let has_edge = !matches!(tile.edge(*dir), Edge::None);
                 assert_eq!(has_connection, has_edge,
                     "tile {}, direction {}: connection does not match according edge", tile, dir);
 
