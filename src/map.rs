@@ -66,11 +66,7 @@ impl PlacedTile {
     /// assert_eq!(tile.terrain(), None);
     /// ```
     pub fn terrain(&self) -> Option<Terrain> {
-        if let Some(info) = self.info {
-            Some(info.terrain())
-        } else {
-            None
-        }
+        self.info.map(|info| info.terrain())
     }
 
     fn connection(&self, dir: Direction) -> Connection {
