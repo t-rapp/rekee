@@ -56,7 +56,7 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
     where C: Into<Coordinate>, D: Into<Direction>
 {
     let size = layout.size();
-    let angle = dir.into().to_angle(&layout);
+    let angle = dir.into().to_angle(layout);
     let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("tiles/thumb-{}.png", id))?;
     img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
@@ -71,7 +71,7 @@ fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir
     let text = id.base().to_string();
     label.append_child(&document.create_text_node(&text))?;
 
-    let pos = pos.into().to_pixel(&layout);
+    let pos = pos.into().to_pixel(layout);
     let tile = document.create_element_ns(SVG_NS, "g")?;
     tile.set_attribute("class", "tile")?;
     tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;

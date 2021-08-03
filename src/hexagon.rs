@@ -888,7 +888,7 @@ mod tests {
         assert_eq!(text, r#"{"q":2,"r":-1}"#);
 
         let text = r#"{"q": 1, "r": -2}"#;
-        let pos: Coordinate = serde_json::from_str(&text).unwrap();
+        let pos: Coordinate = serde_json::from_str(text).unwrap();
         assert_eq!(pos, Coordinate::new(1, -2));
     }
 
@@ -979,19 +979,19 @@ mod tests {
         assert_eq!(text, r#"0"#);
 
         let text = r#"2"#;
-        let dir: Direction = serde_json::from_str(&text).unwrap();
+        let dir: Direction = serde_json::from_str(text).unwrap();
         assert_eq!(dir, Direction::C);
 
         let text = r#"6"#;
-        let dir: Direction = serde_json::from_str(&text).unwrap();
+        let dir: Direction = serde_json::from_str(text).unwrap();
         assert_eq!(dir, Direction::A);
 
         let text = r#"-1"#;
-        let result: Result<Direction, _> = serde_json::from_str(&text);
+        let result: Result<Direction, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
         let text = r#"hello"#;
-        let result: Result<Direction, _> = serde_json::from_str(&text);
+        let result: Result<Direction, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 

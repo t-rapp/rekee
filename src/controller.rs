@@ -390,7 +390,7 @@ impl TrackInfoController {
 
     fn show(&mut self, domain: &mut DomainState, _event: &ShowTrackInfoEvent) {
         if let Some(settings) = domain.try_get::<MapSettings>() {
-            self.view.update_map_tiles(&settings.map.tiles());
+            self.view.update_map_tiles(settings.map.tiles());
         }
         self.view.set_active(true);
     }

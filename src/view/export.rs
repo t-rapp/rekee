@@ -44,7 +44,7 @@ fn draw_tile_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlImag
     context.translate(pos_x, pos_y)?;
     context.rotate(angle)?;
     context.translate(-pos_x, -pos_y)?;
-    context.draw_image_with_html_image_element_and_dw_and_dh(&image,
+    context.draw_image_with_html_image_element_and_dw_and_dh(image,
         pos_x - width / 2.0, pos_y - height / 2.0, width, height)?;
     context.set_transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)?;
 

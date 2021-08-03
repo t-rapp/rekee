@@ -232,7 +232,7 @@ mod tests {
     #[test]
     fn import_native_short_track() {
         let data = include_str!("tests/short-track2.json");
-        let map = import_native(&data)
+        let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
         let mut tiles = map.tiles().iter();
@@ -273,7 +273,7 @@ mod tests {
     #[test]
     fn import_rgt_short_track() {
         let data = include_str!("tests/short-track2.rgt");
-        let map = import_rgt(&data)
+        let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
         let mut tiles = map.tiles().iter();
@@ -314,25 +314,25 @@ mod tests {
     #[test]
     fn import_auto_short_track() {
         let data = include_str!("tests/short-track2.json");
-        let native_map = import_auto(&data)
+        let native_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(native_map.title(), "ShortTrack2");
         assert_eq!(native_map.tiles().len(), 11);
 
         let data = include_str!("tests/short-track2.rgt");
-        let rgt_map = import_auto(&data)
+        let rgt_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(rgt_map.title(), native_map.title());
         assert_eq!(rgt_map.tiles(), native_map.tiles());
 
         let data = "{}";
-        assert!(import_auto(&data).is_err());
+        assert!(import_auto(data).is_err());
     }
 
     #[test]
     fn import_export_rx_track() {
         let data = include_str!("tests/rx-finland.rgt");
-        let map = import_auto(&data)
+        let map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "RX Finland");
         assert_eq!(map.tiles().len(), 16);

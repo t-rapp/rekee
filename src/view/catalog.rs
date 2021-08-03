@@ -44,7 +44,7 @@ impl CatalogTile {
         let style = document.create_element_ns(SVG_NS, "style")?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
-        canvas.append_child(&draw_tile(&document, &layout, id, (0, 0), Direction::A)?.into())?;
+        canvas.append_child(&draw_tile(document, layout, id, (0, 0), Direction::A)?.into())?;
 
         let tile = document.create_element("div")?;
         tile.set_attribute("class", "tile")?;

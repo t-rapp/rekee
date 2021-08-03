@@ -38,7 +38,7 @@ fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
 fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
     where C: Into<Coordinate>
 {
-    let pos = pos.into().to_pixel(&layout);
+    let pos = pos.into().to_pixel(layout);
     let hex = document.create_element_ns(SVG_NS, "use")?;
     hex.set_attribute("href", "#hex")?;
     hex.set_attribute("x", &pos.x().to_string())?;
@@ -49,7 +49,7 @@ fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Eleme
 fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Result<Element>
     where C: Into<Coordinate>
 {
-    let pos = pos.into().to_pixel(&layout);
+    let pos = pos.into().to_pixel(layout);
     let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
     label.set_attribute("x", &pos.x().to_string())?;
@@ -133,7 +133,7 @@ impl SelectedHex {
 
     fn set_pos(&mut self, layout: &Layout, pos: Option<Coordinate>) {
         if pos.is_some() && pos != self.pos {
-            let pos = pos.unwrap().to_pixel(&layout);
+            let pos = pos.unwrap().to_pixel(layout);
             let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
@@ -164,7 +164,7 @@ struct SelectedMenu {
 
 impl SelectedMenu {
     fn new(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Self> {
-        let pos = pos.to_pixel(&layout);
+        let pos = pos.to_pixel(layout);
         let menu = document.create_element_ns(SVG_NS, "foreignObject")?;
         menu.set_attribute("class", "is-print-hidden")?;
         menu.set_attribute("x", &(pos.x() - 60.0).to_string())?;
@@ -212,7 +212,7 @@ impl SelectedMenu {
     }
 
     fn set_pos(&self, layout: &Layout, pos: Coordinate) {
-        let pos = pos.to_pixel(&layout);
+        let pos = pos.to_pixel(layout);
         check!(self.inner.set_attribute("x", &(pos.x() - 60.0).to_string()).ok());
         check!(self.inner.set_attribute("y", &(pos.y() + layout.size().y() - 8.0).to_string()).ok());
     }
@@ -248,8 +248,8 @@ impl ActiveHex {
         let inner = document.create_element_ns(SVG_NS, "g")?;
         inner.set_id("active");
         inner.set_attribute("class", "is-print-hidden")?;
-        let inner_pos = pos.to_pixel(&layout);
-        let angle = dir.to_angle(&layout);
+        let inner_pos = pos.to_pixel(layout);
+        let angle = dir.to_angle(layout);
         let transform = format!("translate({:.3} {:.3}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
         inner.set_attribute("transform", &transform)?;
         inner.append_child(&img)?;
@@ -259,8 +259,8 @@ impl ActiveHex {
 
     fn update(&mut self, layout: &Layout, pos: Coordinate, dir: Direction) {
         if pos != self.pos || dir != self.dir {
-            let pos = pos.to_pixel(&layout);
-            let angle = dir.to_angle(&layout);
+            let pos = pos.to_pixel(layout);
+            let angle = dir.to_angle(layout);
             let transform = format!("translate({:.3} {:.3}) rotate({:.0})", pos.x(), pos.y(), angle);
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
@@ -297,14 +297,14 @@ struct DraggedTile {
 impl DraggedTile {
     fn new(document: &Document, layout: &Layout, tile: PlacedTile) -> Result<Self> {
         let size = layout.size();
-        let angle = tile.dir.to_angle(&layout);
+        let angle = tile.dir.to_angle(layout);
         let img = document.create_element_ns(SVG_NS, "image")?;
         img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
         img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
         img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
 
-        let pos = tile.pos.to_pixel(&layout);
+        let pos = tile.pos.to_pixel(layout);
         let inner = document.create_element_ns(SVG_NS, "g")?;
         inner.set_id("dragged");
         inner.set_attribute("class", "tile")?;

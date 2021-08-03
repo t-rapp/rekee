@@ -691,15 +691,15 @@ mod tests {
         assert_eq!(text, r#""dirt-110-percent""#);
 
         let text = r#""Dirt Climb""#;
-        let edition: Edition = serde_json::from_str(&text).unwrap();
+        let edition: Edition = serde_json::from_str(text).unwrap();
         assert_eq!(edition, Edition::DirtClimb);
 
         let text = r#""#;
-        let result: Result<Edition, _> = serde_json::from_str(&text);
+        let result: Result<Edition, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
         let text = r#""core-box""#;
-        let result: Result<Edition, _> = serde_json::from_str(&text);
+        let result: Result<Edition, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 

@@ -634,23 +634,23 @@ mod tests {
         assert_eq!(text, r#"{"id":"124a","q":2,"r":0,"dir":2}"#);
 
         let text = r#"{"id":"0","q":0,"r":0,"dir":0}"#;
-        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        let tile: PlacedTile = serde_json::from_str(text).unwrap();
         assert_eq!(tile, PlacedTile::new(tile!(0), (0, 0).into(), Direction::A));
 
         let text = r#"{"id":"102a","q":0,"r":1,"dir":0}"#;
-        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        let tile: PlacedTile = serde_json::from_str(text).unwrap();
         assert_eq!(tile, PlacedTile::new(tile!(102, a), (0, 1).into(), Direction::A));
 
         let text = r#"{"id": "103b-1", "q": 1, "r": -2, "dir": 1}"#;
-        let tile: PlacedTile = serde_json::from_str(&text).unwrap();
+        let tile: PlacedTile = serde_json::from_str(text).unwrap();
         assert_eq!(tile, PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B));
 
         let text = r#"{}"#;
-        let result: Result<PlacedTile, _> = serde_json::from_str(&text);
+        let result: Result<PlacedTile, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
         let text = r#"{"id":"102a","q":0,"r":1}}"#;
-        let result: Result<TileId, _> = serde_json::from_str(&text);
+        let result: Result<TileId, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 
@@ -1024,7 +1024,7 @@ mod tests {
                 {"id": "101a",   "q": -1, "r":  1, "dir": 4}
             ]
         }"#);
-        let map: Map = serde_json::from_str(&text).unwrap();
+        let map: Map = serde_json::from_str(text).unwrap();
         assert_eq!(map.title(), "Short Track 2");
         let mut tiles = map.tiles().iter();
         assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)));

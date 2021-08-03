@@ -166,7 +166,7 @@ impl Serialize for TileId {
 
 impl AsRef<TileId> for TileId {
     fn as_ref(&self) -> &TileId {
-        &self
+        self
     }
 }
 
@@ -277,7 +277,7 @@ struct EditionTileCount {
 impl EditionTileCount {
     fn new(edition: Edition, list_tiles: &TileCount) -> Self {
         let common = TileCount::from_edition(edition)
-            .intersection(&list_tiles);
+            .intersection(list_tiles);
         EditionTileCount { edition, common }
     }
 }
@@ -923,15 +923,15 @@ pub trait TileList {
 
 impl<T: AsRef<TileId> + Clone> TileList for [T] {
     fn group_by_edition(&self) -> GroupByEdition {
-        GroupByEdition::new(&self)
+        GroupByEdition::new(self)
     }
 
     fn group_by_surface(&self) -> GroupBySurface {
-        GroupBySurface::new(&self)
+        GroupBySurface::new(self)
     }
 
     fn group_by_danger_level(&self) -> GroupByDangerLevel {
-        GroupByDangerLevel::new(&self)
+        GroupByDangerLevel::new(self)
     }
 }
 
@@ -1923,19 +1923,19 @@ mod tests {
         assert_eq!(text, r#""102a""#);
 
         let text = r#""103b-1""#;
-        let tile: TileId = serde_json::from_str(&text).unwrap();
+        let tile: TileId = serde_json::from_str(text).unwrap();
         assert_eq!(tile, TileId::new(103, 2, 1));
 
         let text = r#""PODIUM""#;
-        let tile: TileId = serde_json::from_str(&text).unwrap();
+        let tile: TileId = serde_json::from_str(text).unwrap();
         assert_eq!(tile, TileId::new(905, 1, 0));
 
         let text = r#""#;
-        let result: Result<TileId, _> = serde_json::from_str(&text);
+        let result: Result<TileId, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
         let text = r#""a-1""#;
-        let result: Result<TileId, _> = serde_json::from_str(&text);
+        let result: Result<TileId, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 
@@ -2371,15 +2371,15 @@ mod tests {
         assert_eq!(text, r#""gravel-2""#);
 
         let text = r#""snow-3""#;
-        let terrain: Terrain = serde_json::from_str(&text).unwrap();
+        let terrain: Terrain = serde_json::from_str(text).unwrap();
         assert_eq!(terrain, Terrain::Snow(3));
 
         let text = r#""#;
-        let result: Result<Terrain, _> = serde_json::from_str(&text);
+        let result: Result<Terrain, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
         let text = r#""none-1""#;
-        let result: Result<Terrain, _> = serde_json::from_str(&text);
+        let result: Result<Terrain, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 
