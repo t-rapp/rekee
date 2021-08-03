@@ -343,6 +343,7 @@ impl Map {
     /// Append a new tile to the map using the active position. In contrast
     /// to `insert()` this function allows auto-detection of tile position and
     /// direction.
+    #[allow(clippy::unnecessary_unwrap)] // false positive, see issue rust-lang/rust-clippy#4530
     pub fn append(&mut self, id: TileId, pos: Option<Coordinate>, hint: Option<ConnectionHint>) -> bool {
         debug!("append tile {}, pos: {:?}, hint: {:?}", id, pos, hint);
 

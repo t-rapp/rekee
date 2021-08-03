@@ -131,6 +131,7 @@ impl SelectedHex {
         self.pos
     }
 
+    #[allow(clippy::unnecessary_unwrap)] // false positive, see issue rust-lang/rust-clippy#4530
     fn set_pos(&mut self, layout: &Layout, pos: Option<Coordinate>) {
         if pos.is_some() && pos != self.pos {
             let pos = pos.unwrap().to_pixel(layout);
