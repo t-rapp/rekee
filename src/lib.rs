@@ -22,6 +22,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+#![allow(clippy::bool_assert_comparison)]
+
 use wasm_bindgen::prelude::*;
 
 mod controller;
