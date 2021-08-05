@@ -16,6 +16,19 @@
 //! The library can also be used outside the web environment as a native
 //! library to process track files. For details take a look at the files in the
 //! `examples` folder.
+//!
+//! # Examples
+//!
+//! ```
+//! use rekee::import;
+//!
+//! # std::env::set_current_dir("./src/tests")?;
+//! let data = std::fs::read_to_string("rx-finland.rgt")?;
+//! let mut map = import::import_auto(&data)?;
+//! map.align_center();
+//!
+//! # std::io::Result::<()>::Ok(())
+//! ```
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
