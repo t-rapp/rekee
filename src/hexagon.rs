@@ -118,16 +118,14 @@ impl Coordinate {
 
     /// Convert this hexagon grid coordinate into x/y pixel positions.
     pub fn to_pixel(self, layout: &Layout) -> Point {
-        let o = &layout.orientation;
-        let x = (o.f0 * self.q as f32 + o.f1 * self.r as f32) * layout.size.0;
-        let y = (o.f2 * self.q as f32 + o.f3 * self.r as f32) * layout.size.1;
-        layout.origin + Point(x, y)
+        FloatCoordinate::from(self)
+            .to_pixel(layout)
     }
 
     /// Convert x/y pixel positions back into a hexagon grid coordinate.
     pub fn from_pixel_rounded(layout: &Layout, p: Point) -> Self {
-        let tmp = FloatCoordinate::from_pixel(layout, p);
-        tmp.round()
+        FloatCoordinate::from_pixel(layout, p)
+            .to_coordinate()
     }
 }
 
@@ -161,12 +159,24 @@ impl From<(i32, i32)> for Coordinate {
 
 //----------------------------------------------------------------------------
 
-struct FloatCoordinate {
+/// Floating-point variant of a grid [`Coordinate`].
+///
+/// Mainly used as an intermediate type when converting between x/y pixel
+/// positions and hexagon grid coordinates.
+#[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Serialize, Deserialize)]
+pub struct FloatCoordinate {
     q: f32,
     r: f32,
 }
 
 impl FloatCoordinate {
+    /// Creates a new floating-point grid coordinate from positions on `q` and
+    /// `r` axis.
+    pub const fn new(q: f32, r: f32) -> Self {
+        FloatCoordinate { q, r }
+    }
+
     pub fn q(&self) -> f32 {
         self.q
     }
@@ -179,6 +189,23 @@ impl FloatCoordinate {
         -self.q - self.r
     }
 
+    #[cfg(test)]
+    fn distance(&self, other: FloatCoordinate) -> f32 {
+        let dq = (other.q() - self.q()).abs();
+        let dr = (other.r() - self.r()).abs();
+        let ds = (other.s() - self.s()).abs();
+        dq.max(dr.max(ds))
+    }
+
+    /// Convert this floating-point grid coordinate into x/y pixel positions.
+    pub fn to_pixel(self, layout: &Layout) -> Point {
+        let o = &layout.orientation;
+        let x = (o.f0 * self.q + o.f1 * self.r) * layout.size.0;
+        let y = (o.f2 * self.q + o.f3 * self.r) * layout.size.1;
+        layout.origin + Point(x, y)
+    }
+
+    /// Convert x/y pixel positions into a floating-point grid coordinate.
     #[allow(clippy::many_single_char_names)]
     pub fn from_pixel(layout: &Layout, p: Point) -> Self {
         let o = &layout.orientation;
@@ -189,7 +216,9 @@ impl FloatCoordinate {
         FloatCoordinate { q, r }
     }
 
-    pub fn round(&self) -> Coordinate {
+    /// Convert this floating-point grid coordinate into the nearest hexagon
+    /// grid coordinate.
+    pub fn to_coordinate(self) -> Coordinate {
         let mut q = self.q().round();
         let mut r = self.r().round();
         let s = self.s().round();
@@ -202,6 +231,24 @@ impl FloatCoordinate {
             r = -q - s;
         }
         Coordinate { q: q as i32, r: r as i32 }
+    }
+}
+
+impl fmt::Display for FloatCoordinate {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        write!(fmt, "({}, {})", self.q, self.r)
+    }
+}
+
+impl From<(f32, f32)> for FloatCoordinate {
+    fn from(value: (f32, f32)) -> FloatCoordinate {
+        FloatCoordinate { q: value.0, r: value.1 }
+    }
+}
+
+impl From<Coordinate> for FloatCoordinate {
+    fn from(value: Coordinate) -> FloatCoordinate {
+        FloatCoordinate { q: value.q as f32, r: value.r as f32 }
     }
 }
 
@@ -900,6 +947,93 @@ mod tests {
         let text = r#"{"q": 1, "r": -2}"#;
         let pos: Coordinate = serde_json::from_str(text).unwrap();
         assert_eq!(pos, Coordinate::new(1, -2));
+    }
+
+    #[test]
+    fn float_coordinate_to_pixel() {
+        fn assert_approx_eq(left: Point, right: Point) {
+            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
+        }
+
+        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(0.0, 0.0));
+        let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
+        assert_approx_eq(pos, Point(12.990, 22.5));
+        let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(25.981, 0.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(25.981, -15.0));
+
+        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(0.0, 10.0));
+        let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
+        assert_approx_eq(pos, Point(25.981, -35.0));
+        let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(51.962, 10.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(51.962, 40.0));
+
+        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(10.0, 0.0));
+        let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
+        assert_approx_eq(pos, Point(77.5, -25.981));
+        let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(10.0, -51.962));
+        let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
+        assert_approx_eq(pos, Point(-35.0, -51.962));
+    }
+
+    #[test]
+    fn float_coordinate_from_pixel() {
+        fn assert_approx_eq(left: FloatCoordinate, right: FloatCoordinate) {
+            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
+        }
+
+        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 0.0));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(5.0, -5.0));
+        assert_approx_eq(pos, FloatCoordinate::new(0.455, -0.333));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(12.990, 22.5));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, 0.0));
+        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, -15.0));
+        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+
+        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 10.0));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, -35.0));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(51.962, 10.0));
+        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(51.962, 40.0));
+        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+
+        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, 0.0));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(77.5, -25.981));
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, -51.962));
+        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(-35.0, -51.962));
+        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+    }
+
+    #[test]
+    fn float_coordinate_serde() {
+        let pos = FloatCoordinate::new(2.5, -1.25);
+        let text = serde_json::to_string(&pos).unwrap();
+        assert_eq!(text, r#"{"q":2.5,"r":-1.25}"#);
+
+        let text = r#"{"q": 1.25, "r": -2.5}"#;
+        let pos: FloatCoordinate = serde_json::from_str(text).unwrap();
+        assert_eq!(pos, FloatCoordinate::new(1.25, -2.5));
     }
 
     #[test]
