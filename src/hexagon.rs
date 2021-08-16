@@ -472,6 +472,12 @@ impl Point {
     }
 }
 
+impl fmt::Display for Point {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        write!(fmt, "({}, {})", self.0, self.1)
+    }
+}
+
 impl Add for Point {
     type Output = Self;
 
@@ -815,35 +821,39 @@ mod tests {
 
     #[test]
     fn coordinate_to_pixel() {
+        fn assert_approx_eq(left: Point, right: Point) {
+            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
+        }
+
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(0.0, 0.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(0.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(8.660, 15.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(8.660, 15.0));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(17.321, 0.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(17.321, 0.0));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(25.981, -15.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(25.981, -15.0));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(0.0, 10.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(0.0, 10.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(17.321, -20.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(17.321, -20.0));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(34.641, 10.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(34.641, 10.0));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(51.962, 40.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(51.962, 40.0));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert!(Point(10.0, 0.0).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(10.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert!(Point(55.0, -17.321).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(55.0, -17.321));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert!(Point(10.0, -34.641).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(10.0, -34.641));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert!(Point(-35.0, -51.962).distance(pos) < EPS);
+        assert_approx_eq(pos, Point(-35.0, -51.962));
     }
 
     #[test]
@@ -925,51 +935,35 @@ mod tests {
 
     #[test]
     fn direction_to_angle() {
+        fn assert_approx_eq(left: f32, right: f32) {
+            assert!((left - right).abs() < EPS, "left = {}, right = {}", left, right);
+        }
+
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        let ang = Direction::A.to_angle(&layout);
-        assert!((ang - 90.0).abs() < EPS);
-        let ang = Direction::B.to_angle(&layout);
-        assert!((ang - 150.0).abs() < EPS);
-        let ang = Direction::C.to_angle(&layout);
-        assert!((ang - 210.0).abs() < EPS);
-        let ang = Direction::D.to_angle(&layout);
-        assert!((ang - 270.0).abs() < EPS);
-        let ang = Direction::E.to_angle(&layout);
-        assert!((ang - 330.0).abs() < EPS);
-        let ang = Direction::F.to_angle(&layout);
-        assert!((ang - 30.0).abs() < EPS);
+        assert_approx_eq(Direction::A.to_angle(&layout), 90.0);
+        assert_approx_eq(Direction::B.to_angle(&layout), 150.0);
+        assert_approx_eq(Direction::C.to_angle(&layout), 210.0);
+        assert_approx_eq(Direction::D.to_angle(&layout), 270.0);
+        assert_approx_eq(Direction::E.to_angle(&layout), 330.0);
+        assert_approx_eq(Direction::F.to_angle(&layout), 30.0);
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        let ang = Direction::from(-1).to_angle(&layout);
-        assert!((ang - 30.0).abs() < EPS);
-        let ang = Direction::from(0).to_angle(&layout);
-        assert!((ang - 90.0).abs() < EPS);
-        let ang = Direction::from(1).to_angle(&layout);
-        assert!((ang - 150.0).abs() < EPS);
-        let ang = Direction::from(2).to_angle(&layout);
-        assert!((ang - 210.0).abs() < EPS);
-        let ang = Direction::from(3).to_angle(&layout);
-        assert!((ang - 270.0).abs() < EPS);
-        let ang = Direction::from(4).to_angle(&layout);
-        assert!((ang - 330.0).abs() < EPS);
-        let ang = Direction::from(5).to_angle(&layout);
-        assert!((ang - 30.0).abs() < EPS);
-        let ang = Direction::from(6).to_angle(&layout);
-        assert!((ang - 90.0).abs() < EPS);
+        assert_approx_eq(Direction::from(-1).to_angle(&layout), 30.0);
+        assert_approx_eq(Direction::from(0).to_angle(&layout), 90.0);
+        assert_approx_eq(Direction::from(1).to_angle(&layout), 150.0);
+        assert_approx_eq(Direction::from(2).to_angle(&layout), 210.0);
+        assert_approx_eq(Direction::from(3).to_angle(&layout), 270.0);
+        assert_approx_eq(Direction::from(4).to_angle(&layout), 330.0);
+        assert_approx_eq(Direction::from(5).to_angle(&layout), 30.0);
+        assert_approx_eq(Direction::from(6).to_angle(&layout), 90.0);
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        let ang = Direction::A.to_angle(&layout);
-        assert!((ang - 0.0).abs() < EPS);
-        let ang = Direction::B.to_angle(&layout);
-        assert!((ang - 60.0).abs() < EPS);
-        let ang = Direction::C.to_angle(&layout);
-        assert!((ang - 120.0).abs() < EPS);
-        let ang = Direction::D.to_angle(&layout);
-        assert!((ang - 180.0).abs() < EPS);
-        let ang = Direction::E.to_angle(&layout);
-        assert!((ang - 240.0).abs() < EPS);
-        let ang = Direction::F.to_angle(&layout);
-        assert!((ang - 300.0).abs() < EPS);
+        assert_approx_eq(Direction::A.to_angle(&layout), 0.0);
+        assert_approx_eq(Direction::B.to_angle(&layout), 60.0);
+        assert_approx_eq(Direction::C.to_angle(&layout), 120.0);
+        assert_approx_eq(Direction::D.to_angle(&layout), 180.0);
+        assert_approx_eq(Direction::E.to_angle(&layout), 240.0);
+        assert_approx_eq(Direction::F.to_angle(&layout), 300.0);
     }
 
     #[test]
