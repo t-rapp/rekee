@@ -14,7 +14,7 @@ use web_sys::{self, Document, Element};
 use crate::check;
 use crate::controller::*;
 use crate::import;
-use crate::map::{PlacedTile, Map};
+use crate::map::{Map, PlacedTile, PlacedToken};
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -352,6 +352,7 @@ pub struct MapView {
     canvas_viewbox: Rect,
     grid: Element,
     tiles: Element,
+    tokens: Element,
     labels: Element,
     title: TitleInput,
     selected: SelectedHex,
@@ -421,6 +422,10 @@ impl MapView {
         let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
         canvas.append_child(&tiles)?;
+
+        let tokens = document.create_element_ns(SVG_NS, "g")?;
+        tokens.set_id("tokens");
+        canvas.append_child(&tokens)?;
 
         let labels = document.create_element_ns(SVG_NS, "g")?;
         labels.set_id("labels");
@@ -609,10 +614,10 @@ impl MapView {
         settings_button.remove_attribute("disabled").unwrap();
 
         let mut view = MapView {
-            layout, map, canvas, canvas_viewbox, grid, tiles, labels, title, selected, selected_menu,
-            active, tile_labels_visible, keychange_cb, dragged, dragged_mousemove_cb,
-            dragged_mouseup_cb, dragged_mouseleave_cb, document_title, download_button,
-            export_button
+            layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels, title,
+            selected, selected_menu, active, tile_labels_visible, keychange_cb,
+            dragged, dragged_mousemove_cb, dragged_mouseup_cb, dragged_mouseleave_cb,
+            document_title, download_button, export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -733,9 +738,11 @@ impl MapView {
             canvas_viewbox.width as i32, canvas_viewbox.height as i32)).ok());
         self.canvas_viewbox = canvas_viewbox;
 
-        // remove all existing tiles and labels
+        // remove all existing tiles, tokens, and labels
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
+        check!(range.delete_contents().ok());
+        check!(range.select_node_contents(&self.tokens).ok());
         check!(range.delete_contents().ok());
         check!(range.select_node_contents(&self.labels).ok());
         check!(range.delete_contents().ok());
@@ -744,6 +751,11 @@ impl MapView {
         for tile in self.map.tiles() {
             if let Ok(el) = draw_tile(&document, &self.layout, tile) {
                 self.tiles.append_child(&el).unwrap();
+            }
+            for token in &tile.tokens {
+                if let Ok(el) = draw_tile_token(&document, &self.layout, tile, token) {
+                    self.tokens.append_child(&el).unwrap();
+                }
             }
             if let Ok(el) = draw_tile_label(&document, &self.layout, tile) {
                 self.labels.append_child(&el).unwrap();
@@ -854,6 +866,13 @@ impl MapView {
             self.active.set_hidden(false);
         } else {
             self.active.set_hidden(true);
+        }
+    }
+
+    pub fn add_selected_tile_token(&mut self, token: PlacedToken) {
+        if let Some(pos) = self.selected.pos() {
+            self.map.add_tile_token(pos, token);
+            self.update_map();
         }
     }
 

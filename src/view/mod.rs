@@ -14,7 +14,9 @@ use web_sys::{self, Document, Element};
 
 use crate::hexagon::*;
 use crate::map::PlacedTile;
+use crate::map::PlacedToken;
 use crate::tile::*;
+use crate::token::TokenId;
 
 mod catalog;
 mod catalog_config;
@@ -82,7 +84,10 @@ fn draw_tile_with_label(document: &Document, layout: &Layout, tile: &PlacedTile)
     label.set_attribute("class", "label")?;
     label.set_attribute("x", "0")?;
     label.set_attribute("y", "0")?;
-    let text = tile.id().base().to_string();
+    let mut text = tile.id().base().to_string();
+    if !tile.tokens.is_empty() {
+        text.push('*');
+    }
     label.append_child(&document.create_text_node(&text))?;
     parent.append_child(&label)?;
 
@@ -99,9 +104,42 @@ fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> R
     label.set_attribute("class", "label")?;
     label.set_attribute("x", "0")?;
     label.set_attribute("y", "0")?;
-    let text = tile.id().base().to_string();
+    let mut text = tile.id().base().to_string();
+    if !tile.tokens.is_empty() {
+        text.push('*');
+    }
     label.append_child(&document.create_text_node(&text))?;
     parent.append_child(&label)?;
+
+    Ok(parent)
+}
+
+fn draw_tile_token(document: &Document, layout: &Layout, tile: &PlacedTile, token: &PlacedToken) -> Result<Element> {
+    let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
+    let parent = document.create_element_ns(SVG_NS, "g")?;
+    parent.set_attribute("class", "token")?;
+    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+
+    let size = match token.id {
+        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
+            Point(0.41 * layout.size().x(), 0.28 * layout.size().y()),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
+            Point(0.82 * layout.size().x(), 0.40 * layout.size().y()),
+    };
+    let center = match token.id {
+        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
+            Point(size.x() / 2.0, size.y() / 2.0),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
+            Point(size.x() / 2.0, size.y()),
+    };
+    let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
+    let img = document.create_element_ns(SVG_NS, "image")?;
+    img.set_attribute("href", &format!("tokens/{:x}.png", token.id))?;
+    img.set_attribute("width", &format!("{}", size.x()))?;
+    img.set_attribute("height", &format!("{}", size.y()))?;
+    img.set_attribute("image-rendering", "optimizeQuality")?;
+    img.set_attribute("transform", &format!("rotate({:.1}) translate({:.3} {:.3})", angle, -center.x(), -center.y()))?;
+    parent.append_child(&img)?;
 
     Ok(parent)
 }

@@ -17,7 +17,7 @@ use nuts::{DefaultDomain, DomainState};
 
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, Point};
-use crate::map::{Map, PlacedTile};
+use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::storage::Storage;
 use crate::tile::{ConnectionHint, Terrain, TileId};
 use crate::view::*;
@@ -74,6 +74,10 @@ pub struct ToggleTileLabelsEvent {
 
 pub struct UpdateSelectedEvent {
     pub pos: Point,
+}
+
+pub struct AddSelectedTileTokenEvent {
+    pub token: PlacedToken,
 }
 
 pub struct RotateSelectedLeftEvent;
@@ -246,6 +250,7 @@ impl MapController {
         activity.subscribe(MapController::update_tile_labels);
         activity.subscribe(MapController::toggle_tile_labels);
         activity.subscribe(MapController::update_selected);
+        activity.subscribe(MapController::add_selected_tile_token);
         activity.subscribe(MapController::rotate_selected_left);
         activity.subscribe(MapController::rotate_selected_right);
         activity.subscribe(MapController::remove_selected);
@@ -320,6 +325,10 @@ impl MapController {
 
     fn update_selected(&mut self, event: &UpdateSelectedEvent) {
         self.view.update_selected(event.pos);
+    }
+
+    fn add_selected_tile_token(&mut self, event: &AddSelectedTileTokenEvent) {
+        self.view.add_selected_tile_token(event.token.clone());
     }
 
     fn rotate_selected_left(&mut self, _event: &RotateSelectedLeftEvent) {

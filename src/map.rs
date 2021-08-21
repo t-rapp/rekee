@@ -349,7 +349,14 @@ impl Map {
 
     /// Returns tile at the given map position, if existing.
     pub fn get(&self, pos: Coordinate) -> Option<&PlacedTile> {
-        self.tiles.iter().find(|tile| tile.pos == pos)
+        self.tiles.iter()
+            .find(|tile| tile.pos == pos)
+    }
+
+    /// Internal helper function for updating tile tokens.
+    fn get_mut(&mut self, pos: Coordinate) -> Option<&mut PlacedTile> {
+        self.tiles.iter_mut()
+            .find(|tile| tile.pos == pos)
     }
 
     /// Insert a new tile using the specified position and direction.
@@ -496,6 +503,13 @@ impl Map {
             }
             debug!("next active pos: {}, dir: {}", self.active_pos, self.active_dir);
         }
+    }
+
+    /// Adds a token to the tile at the given position.
+    pub fn add_tile_token(&mut self, pos: Coordinate, token: PlacedToken) {
+        if let Some(tile) = self.get_mut(pos) {
+            tile.tokens.push(token);
+        };
     }
 
     /// Re-align all tiles around the map center.

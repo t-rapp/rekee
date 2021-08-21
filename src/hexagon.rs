@@ -266,6 +266,22 @@ impl fmt::Display for FloatCoordinate {
     }
 }
 
+impl Add for FloatCoordinate {
+    type Output = Self;
+
+    fn add(self, other: FloatCoordinate) -> FloatCoordinate {
+        FloatCoordinate::new(self.q + other.q, self.r + other.r)
+    }
+}
+
+impl Sub for FloatCoordinate {
+    type Output = Self;
+
+    fn sub(self, other: FloatCoordinate) -> FloatCoordinate {
+        FloatCoordinate::new(self.q - other.q, self.r - other.r)
+    }
+}
+
 impl From<(f32, f32)> for FloatCoordinate {
     fn from(value: (f32, f32)) -> FloatCoordinate {
         FloatCoordinate { q: value.0, r: value.1 }
@@ -536,6 +552,22 @@ impl FloatDirection {
 impl fmt::Display for FloatDirection {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "{}", self.0)
+    }
+}
+
+impl Add for FloatDirection {
+    type Output = Self;
+
+    fn add(self, other: FloatDirection) -> FloatDirection {
+        FloatDirection(self.0 + other.0)
+    }
+}
+
+impl Sub for FloatDirection {
+    type Output = Self;
+
+    fn sub(self, other: FloatDirection) -> FloatDirection {
+        FloatDirection(self.0 - other.0)
     }
 }
 
