@@ -24,3 +24,10 @@ AddType font/woff .woff
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
 </IfModule>
+
+# reduce information exchange with external sites
+<IfModule mod_headers.c>
+  Header set Content-Security-Policy "default-src data: 'self' 'unsafe-inline';"
+  Header set Referrer-Policy same-origin
+  Header set X-Frame-Options "deny"
+</IfModule>
