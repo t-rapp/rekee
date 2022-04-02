@@ -27,7 +27,7 @@ AddType font/woff .woff
 
 # reduce information exchange with external sites
 <IfModule mod_headers.c>
-  Header set Content-Security-Policy "default-src data: 'self' 'unsafe-inline';"
+  Header set Content-Security-Policy "default-src data: 'self' 'unsafe-inline'; object-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
   Header set Referrer-Policy same-origin
   Header set X-Frame-Options "deny"
 </IfModule>
