@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;view&#x2F;map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>map.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;view&#x2F;map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -897,8 +899,7 @@
 <span id="897">897</span>
 <span id="898">898</span>
 <span id="899">899</span>
-</pre><pre class="rust">
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the map and according event handlers.</span>
 <span class="comment">//</span>
 <span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
@@ -911,10 +912,10 @@
 <span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
 <span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Document</span>, <span class="ident">Element</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::check</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::controller</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::import</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">Map</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::import</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">Map</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
@@ -922,7 +923,7 @@
 <span class="kw">const</span> <span class="ident">MAP_STYLE</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;map.css&quot;</span>);
 <span class="kw">const</span> <span class="ident">MAP_PADDING</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">15.0</span>;
 
-<span class="kw">fn</span> <span class="ident">define_grid_hex</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
+<span class="kw">fn</span> <span class="ident">define_grid_hex</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
 {
     <span class="kw">let</span> <span class="ident">corners</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">hexagon_corners</span>((<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>());
     <span class="kw">let</span> <span class="ident">points</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">corners</span>.<span class="ident">iter</span>()
@@ -935,7 +936,7 @@
     <span class="prelude-val">Ok</span>(<span class="ident">hex</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">use_grid_hex</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">C</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
+<span class="kw">fn</span> <span class="ident">use_grid_hex</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">C</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>
 {
     <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">into</span>().<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
@@ -946,7 +947,7 @@
     <span class="prelude-val">Ok</span>(<span class="ident">hex</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">draw_label</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">C</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
+<span class="kw">fn</span> <span class="ident">draw_label</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">C</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>
 {
     <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">into</span>().<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
@@ -966,7 +967,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">TitleInput</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">query_selector</span>(<span class="string">&quot;#map-title .input&quot;</span>)<span class="question-mark">?</span>
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">elm</span><span class="op">|</span> <span class="ident">elm</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::HtmlInputElement</span><span class="op">&gt;</span>().<span class="ident">ok</span>())
             .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find map title input element&quot;</span>)<span class="question-mark">?</span>;
@@ -989,13 +990,13 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TitleInput</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">TitleInput</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;change&quot;</span>,
             <span class="self">self</span>.<span class="ident">change_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
     }
@@ -1009,7 +1010,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">SelectedHex</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">corners</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">hexagon_corners</span>((<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>());
         <span class="kw">let</span> <span class="ident">points</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">corners</span>.<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">p</span> <span class="op">-</span> <span class="ident">layout</span>.<span class="ident">origin</span>())
@@ -1027,12 +1028,12 @@
         <span class="prelude-val">Ok</span>(<span class="ident">SelectedHex</span> { <span class="ident">inner</span>: <span class="ident">hex</span>, <span class="ident">pos</span>: <span class="prelude-val">None</span> })
     }
 
-    <span class="kw">fn</span> <span class="ident">pos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">pos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">pos</span>
     }
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_unwrap</span>)]</span> <span class="comment">// false positive, see issue rust-lang/rust-clippy#4530</span>
-    <span class="kw">fn</span> <span class="ident">set_pos</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">set_pos</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>) {
         <span class="kw">if</span> <span class="ident">pos</span>.<span class="ident">is_some</span>() <span class="op">&amp;&amp;</span> <span class="ident">pos</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span> {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">unwrap</span>().<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
             <span class="kw">let</span> <span class="ident">transform</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>());
@@ -1052,7 +1053,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SelectedHex</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
     }
 }
@@ -1064,7 +1065,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">SelectedMenu</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
         <span class="kw">let</span> <span class="ident">menu</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;foreignObject&quot;</span>)<span class="question-mark">?</span>;
         <span class="ident">menu</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;is-print-hidden&quot;</span>)<span class="question-mark">?</span>;
@@ -1120,7 +1121,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SelectedMenu</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
     }
 }
@@ -1135,7 +1136,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ActiveHex</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>);
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">Direction::D</span>;
 
@@ -1158,7 +1159,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">ActiveHex</span> { <span class="ident">inner</span>, <span class="ident">img</span>, <span class="ident">pos</span>, <span class="ident">dir</span> })
     }
 
-    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) {
+    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) {
         <span class="kw">if</span> <span class="ident">pos</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">|</span><span class="op">|</span> <span class="ident">dir</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">dir</span> {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
             <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">to_angle</span>(<span class="ident">layout</span>);
@@ -1169,13 +1170,13 @@
         <span class="self">self</span>.<span class="ident">dir</span> <span class="op">=</span> <span class="ident">dir</span>;
     }
 
-    <span class="kw">fn</span> <span class="ident">set_hint</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">set_hint</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
         <span class="kw">let</span> <span class="ident">href</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">hint</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Left</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Left</span>) =&gt;
                 <span class="string">&quot;arrow-return-left-circle.svg&quot;</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Right</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Right</span>) =&gt;
                 <span class="string">&quot;arrow-return-right-circle.svg&quot;</span>,
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="kw">_</span> =&gt;
                 <span class="string">&quot;arrow-down-circle.svg&quot;</span>,
         };
         <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="ident">href</span>).<span class="ident">ok</span>());
@@ -1183,7 +1184,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ActiveHex</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
     }
 }
@@ -1196,7 +1197,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">DraggedTile</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">size</span>();
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">dir</span>.<span class="ident">to_angle</span>(<span class="ident">layout</span>);
         <span class="kw">let</span> <span class="ident">img</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
@@ -1215,7 +1216,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">DraggedTile</span>{ <span class="ident">inner</span>, <span class="ident">tile</span> })
     }
 
-    <span class="kw">fn</span> <span class="ident">tile</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span> {
+    <span class="kw">fn</span> <span class="ident">tile</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>
     }
 
@@ -1226,7 +1227,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DraggedTile</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
     }
 }
@@ -1263,7 +1264,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MapView</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">clone</span>();
         <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
@@ -1419,8 +1420,8 @@
                     <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">result</span>.<span class="ident">as_string</span>());
                     <span class="macro">debug!</span>(<span class="string">&quot;input file data: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>);
                     <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">import::import_auto</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>) {
-                        <span class="prelude-val">Ok</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-                        <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="prelude-val">Ok</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                        <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
                             <span class="macro">warn!</span>(<span class="string">&quot;Cannot import file data: {}&quot;</span>, <span class="ident">err</span>);
                             <span class="kw">return</span>;
                         },
@@ -1461,19 +1462,19 @@
         <span class="prelude-val">Ok</span>(<span class="ident">view</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">MapSettings</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">MapSettings</span>) {
         <span class="self">self</span>.<span class="ident">map</span> <span class="op">=</span> <span class="ident">settings</span>.<span class="ident">map</span>.<span class="ident">clone</span>();
         <span class="self">self</span>.<span class="ident">update_map</span>();
         <span class="self">self</span>.<span class="ident">inner_update_selected</span>(<span class="ident">settings</span>.<span class="ident">selected</span>.<span class="ident">unwrap_or_default</span>());
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MapSettings</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">MapSettings</span> {
         <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">clone</span>();
         <span class="kw">let</span> <span class="ident">selected</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>();
         <span class="ident">MapSettings</span> { <span class="ident">map</span>, <span class="ident">selected</span> }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">clone</span>();
         <span class="ident">map</span>.<span class="ident">align_center</span>();
         <span class="self">self</span>.<span class="ident">clear_selected</span>();
@@ -1481,10 +1482,10 @@
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">import::export_rgt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">map</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
                 <span class="macro">warn!</span>(<span class="string">&quot;Cannot export file data: {}&quot;</span>, <span class="ident">err</span>);
                 <span class="kw">return</span>;
             },
@@ -1505,29 +1506,29 @@
         <span class="macro">check!</span>(<span class="ident">document</span>.<span class="ident">body</span>().<span class="ident">unwrap</span>().<span class="ident">remove_child</span>(<span class="kw-2">&amp;</span><span class="ident">anchor</span>).<span class="ident">ok</span>());
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) {
         <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>);
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">append</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">hint</span>);
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">clear_selected</span>();
         <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">align_center</span>();
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">clear_selected</span>();
         <span class="self">self</span>.<span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">rotate_left</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pos</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>() {
             <span class="self">self</span>.<span class="ident">inner_update_selected</span>(<span class="ident">pos</span>.<span class="ident">rotated_left</span>());
@@ -1535,7 +1536,7 @@
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">rotate_right</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pos</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>() {
             <span class="self">self</span>.<span class="ident">inner_update_selected</span>(<span class="ident">pos</span>.<span class="ident">rotated_right</span>());
@@ -1543,7 +1544,7 @@
         <span class="self">self</span>.<span class="ident">update_map</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">update_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">update_map</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
 
         <span class="comment">// calculate rectangular map area that is covered with tiles</span>
@@ -1621,27 +1622,27 @@
         <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span> {});
      }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">title</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">title</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) {
         <span class="kw">if</span> <span class="ident">title</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">title</span>() {
             <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">set_title</span>(<span class="ident">title</span>);
             <span class="self">self</span>.<span class="ident">update_map</span>();
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">set_pos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="prelude-val">None</span>);
         <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">set_draggable</span>(<span class="bool-val">false</span>);
         <span class="self">self</span>.<span class="ident">selected_menu</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::from_pixel_rounded</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>,
             <span class="self">self</span>.<span class="ident">canvas_viewbox</span>.<span class="ident">top_left</span>() <span class="op">+</span> <span class="ident">pos</span>);
         <span class="self">self</span>.<span class="ident">inner_update_selected</span>(<span class="ident">pos</span>);
         <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span> {});
     }
 
-    <span class="kw">fn</span> <span class="ident">inner_update_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>) {
+    <span class="kw">fn</span> <span class="ident">inner_update_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>) {
         <span class="macro">debug!</span>(<span class="string">&quot;update selected: {:?}&quot;</span>, <span class="ident">pos</span>);
 
         <span class="kw">let</span> <span class="ident">is_tile</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">pos</span>).<span class="ident">is_some</span>();
@@ -1664,7 +1665,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_selected_left</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_selected_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>()
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">pos</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">pos</span>).<span class="ident">cloned</span>());
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">tile</span> {
@@ -1673,7 +1674,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_selected_right</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate_selected_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>()
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">pos</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">pos</span>).<span class="ident">cloned</span>());
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">tile</span> {
@@ -1682,7 +1683,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pos</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>() {
             <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">remove</span>(<span class="ident">pos</span>);
             <span class="self">self</span>.<span class="ident">update_map</span>();
@@ -1691,7 +1692,7 @@
         <span class="self">self</span>.<span class="ident">selected_menu</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_begin</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::from_pixel_rounded</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>,
             <span class="self">self</span>.<span class="ident">canvas_viewbox</span>.<span class="ident">top_left</span>() <span class="op">+</span> <span class="ident">pos</span>);
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">selected</span>.<span class="ident">pos</span>() <span class="op">!</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pos</span>) {
@@ -1717,7 +1718,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_move</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_move</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">dragged</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">dragged</span> {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas_viewbox</span>.<span class="ident">top_left</span>() <span class="op">+</span> <span class="ident">pos</span>;
             <span class="macro">debug!</span>(<span class="string">&quot;drag move: {:?}&quot;</span>, <span class="ident">pos</span>);
@@ -1729,7 +1730,7 @@
         <span class="self">self</span>.<span class="ident">selected_menu</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>, <span class="ident">added_tile</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">pos</span>: <span class="ident">Point</span>, <span class="ident">added_tile</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">dragged</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">dragged</span> {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::from_pixel_rounded</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>,
                 <span class="self">self</span>.<span class="ident">canvas_viewbox</span>.<span class="ident">top_left</span>() <span class="op">+</span> <span class="ident">pos</span>);
@@ -1762,7 +1763,7 @@
             <span class="self">self</span>.<span class="ident">dragged_mouseleave_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">ok</span>());
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_cancel</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_cancel</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">dragged</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">dragged</span> {
             <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">dragged</span>.<span class="ident">tile</span>();
             <span class="macro">info!</span>(<span class="string">&quot;drag cancel: {:?}&quot;</span>, <span class="ident">tile</span>);
@@ -1780,13 +1781,13 @@
             <span class="self">self</span>.<span class="ident">dragged_mouseleave_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">ok</span>());
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">hint</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">active</span>.<span class="ident">set_hint</span>(<span class="ident">hint</span>);
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">MapView</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;mousemove&quot;</span>,
             <span class="self">self</span>.<span class="ident">dragged_mousemove_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;mouseup&quot;</span>,
@@ -1797,7 +1798,6 @@
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
 </body></html>

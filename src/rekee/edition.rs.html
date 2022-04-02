@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;edition.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>edition.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;edition.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>edition.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -752,8 +754,7 @@
 <span id="752">752</span>
 <span id="753">753</span>
 <span id="754">754</span>
-</pre><pre class="rust">
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! (Sidenote: I have not fully settled on the term &quot;edition&quot; yet; &quot;box&quot; might</span>
@@ -771,7 +772,7 @@
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tile::TileId</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile::TileId</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
@@ -816,9 +817,9 @@
     <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));</span>
     <span class="doccomment">/// assert_eq!(tiles.len(), 307);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">all_tiles</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">all_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">307</span>);
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="self">Self</span><span class="ident">::iter</span>() {
+        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident"><span class="self">Self</span>::iter</span>() {
             <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
         }
         <span class="ident">tiles</span>.<span class="ident">sort_unstable</span>();
@@ -838,7 +839,7 @@
     <span class="doccomment">/// assert_eq!(tiles.len(), 145);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gt_tiles</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gt_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">145</span>);
         <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Gt</span>.<span class="ident">editions</span>() {
             <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
@@ -860,7 +861,7 @@
     <span class="doccomment">/// assert_eq!(tiles.len(), 162);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dirt_tiles</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dirt_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">162</span>);
         <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Dirt</span>.<span class="ident">editions</span>() {
             <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
@@ -869,27 +870,27 @@
         <span class="ident">tiles</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">internal_tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">TileId</span>] {
+    <span class="kw">fn</span> <span class="ident">internal_tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">TileId</span>] {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Edition::GtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtCoreBox</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_CORE_BOX</span>,
-            <span class="ident">Edition::GtChampionship</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtChampionship</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_CHAMPIONSHIP</span>,
-            <span class="ident">Edition::GtWorldTour</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtWorldTour</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_WORLD_TOUR</span>,
-            <span class="ident">Edition::GtTeamChallenge</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtTeamChallenge</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_TEAM_CHALLENGE</span>,
-            <span class="ident">Edition::GtAdrenalinePack</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtAdrenalinePack</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>,
-            <span class="ident">Edition::DirtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtCoreBox</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>,
-            <span class="ident">Edition::Dirt110Percent</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::Dirt110Percent</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>,
-            <span class="ident">Edition::DirtRx</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtRx</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>,
-            <span class="ident">Edition::DirtClimb</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtClimb</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>,
-            <span class="ident">Edition::DirtCopilotPack</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtCopilotPack</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT_PACK</span>,
         }
      }
@@ -906,7 +907,7 @@
     <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(120, b)));</span>
     <span class="doccomment">/// assert_eq!(tiles.len(), 63);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">63</span>);
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">iter</span>() {
             <span class="kw">let</span> <span class="ident">tile_a</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">1</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
@@ -939,7 +940,7 @@
     <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), false);</span>
     <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), true);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
         <span class="comment">// clear side, any edition contains both sides of a tile</span>
         <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">0</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
         <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
@@ -955,7 +956,7 @@
     <span class="doccomment">/// assert_eq!(Edition::GtAdrenalinePack.is_expansion(), true);</span>
     <span class="doccomment">/// assert_eq!(Edition::GtCoreBox.is_expansion(), false);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_expansion</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_expansion</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="op">!</span><span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">Edition::GtCoreBox</span> <span class="op">|</span> <span class="ident">Edition::DirtCoreBox</span>)
     }
 
@@ -971,7 +972,7 @@
     <span class="doccomment">/// let series = Edition::Dirt110Percent.series();</span>
     <span class="doccomment">/// assert_eq!(series, Series::Dirt);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Series</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Series</span> {
         <span class="kw">if</span> <span class="ident">GT_EDITIONS</span>.<span class="ident">contains</span>(<span class="self">self</span>) {
             <span class="ident">Series::Gt</span>
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">DIRT_EDITIONS</span>.<span class="ident">contains</span>(<span class="self">self</span>) {
@@ -982,7 +983,7 @@
     }
 
     <span class="doccomment">/// Iterator over all game editions.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">10</span>] <span class="op">=</span> [
             <span class="ident">Edition::GtCoreBox</span>,
             <span class="ident">Edition::GtChampionship</span>,
@@ -1000,27 +1001,27 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Edition::GtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtCoreBox</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Core Box&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtChampionship</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtChampionship</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Championship&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtWorldTour</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtWorldTour</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT World Tour&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtTeamChallenge</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtTeamChallenge</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Team Challenge&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtAdrenalinePack</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::GtAdrenalinePack</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Adrenaline Pack&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtCoreBox</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtCoreBox</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Core Box&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::Dirt110Percent</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::Dirt110Percent</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT 110%&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtRx</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtRx</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT RX&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtClimb</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtClimb</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Climb&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtCopilotPack</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Edition::DirtCopilotPack</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Copilot Pack&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
@@ -1029,7 +1030,7 @@
 
 <span class="comment">// small hack to provide the Serde string serialization as a formatter</span>
 <span class="kw">impl</span> <span class="ident">fmt::LowerHex</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="self">self</span>).<span class="ident">unwrap</span>();
         <span class="ident">text</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span>);
         <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">text</span>)
@@ -1039,32 +1040,32 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Edition</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseEditionError</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
         <span class="comment">// match strings from both trait implementations, std::fmt::Display and serde::Serialize</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">val</span>.<span class="ident">replace</span>(<span class="ident">char::is_whitespace</span>, <span class="string">&quot;-&quot;</span>);
         <span class="ident">s</span>.<span class="ident">make_ascii_lowercase</span>();
         <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">as_ref</span>() {
-            <span class="string">&quot;gt-core-box&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;gt-core-box&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtCoreBox</span>),
-            <span class="string">&quot;gt-championship&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;gt-championship&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtChampionship</span>),
-            <span class="string">&quot;gt-world-tour&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;gt-world-tour&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtWorldTour</span>),
-            <span class="string">&quot;gt-team-challenge&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;gt-team-challenge&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtTeamChallenge</span>),
-            <span class="string">&quot;gt-adrenaline-pack&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;gt-adrenaline-pack&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtAdrenalinePack</span>),
-            <span class="string">&quot;dirt-core-box&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;dirt-core-box&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtCoreBox</span>),
-            <span class="string">&quot;dirt-110-percent&quot;</span> <span class="op">|</span> <span class="string">&quot;dirt-110%&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;dirt-110-percent&quot;</span> <span class="op">|</span> <span class="string">&quot;dirt-110%&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::Dirt110Percent</span>),
-            <span class="string">&quot;dirt-rx&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;dirt-rx&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtRx</span>),
-            <span class="string">&quot;dirt-climb&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;dirt-climb&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtClimb</span>),
-            <span class="string">&quot;dirt-copilot-pack&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;dirt-copilot-pack&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtCopilotPack</span>),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="kw">_</span> =&gt;
                 <span class="prelude-val">Err</span>(<span class="ident">ParseEditionError::Unknown</span>(<span class="ident">val</span>.<span class="ident">to_string</span>())),
         }
     }
@@ -1076,9 +1077,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseEditionError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseEditionError::Unknown</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ParseEditionError::Unknown</span>(<span class="ident">val</span>) =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown edition token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
         }
     }
@@ -1087,7 +1088,7 @@
 <span class="kw">impl</span> <span class="ident">std::convert::TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Edition</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ParseEditionError</span>;
 
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
         <span class="ident">Edition::from_str</span>(<span class="ident">value</span>)
     }
 }
@@ -1096,11 +1097,11 @@
 
 <span class="comment">// Private variation of the public macro that skips tile a/b side information</span>
 <span class="macro">macro_rules!</span> <span class="ident">tile</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="number">0</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="number">0</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
     };
 }
 
@@ -1302,18 +1303,18 @@
 
 <span class="kw">impl</span> <span class="ident">Series</span> {
     <span class="doccomment">/// Iterator over the editions of the game series.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">Edition</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">Edition</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Series::Gt</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Series::Gt</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">GT_EDITIONS</span>,
-            <span class="ident">Series::Dirt</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Series::Dirt</span> =&gt;
                 <span class="kw-2">&amp;</span><span class="ident">DIRT_EDITIONS</span>,
         };
         <span class="ident">editions</span>.<span class="ident">iter</span>()
     }
 
     <span class="doccomment">/// Iterator over all game series.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">const</span> <span class="ident">SERIES</span>: [<span class="ident">Series</span>; <span class="number">2</span>] <span class="op">=</span> [
             <span class="ident">Series::Gt</span>,
             <span class="ident">Series::Dirt</span>,
@@ -1323,11 +1324,11 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Series</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Series::Gt</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Series::Gt</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Rallyman: GT&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Series::Dirt</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Series::Dirt</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Rallyman: DIRT&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
@@ -1337,7 +1338,7 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Series</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseSeriesError</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String::from</span>(<span class="ident">val</span>);
         <span class="ident">s</span>.<span class="ident">make_ascii_lowercase</span>();
         <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&quot;gt&quot;</span>) {
@@ -1356,9 +1357,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseSeriesError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseSeriesError::Unknown</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ParseSeriesError::Unknown</span>(<span class="ident">val</span>) =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown series token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
         }
     }
@@ -1403,7 +1404,7 @@
         <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT_PACK</span>);
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tiles</span> {
             <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">iter</span>()
-                .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">tile</span>)
+                .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">id</span> <span class="op">==</span> <span class="ident">tile</span>)
                 .<span class="ident">count</span>();
             <span class="macro">assert_eq!</span>(<span class="ident">count</span>, <span class="number">1</span>, <span class="string">&quot;tile {} is defined more than once&quot;</span>, <span class="ident">tile</span>);
         }
@@ -1469,16 +1470,16 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">edition_tiles_match_info</span>() {
-        <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tile::TileInfo</span>;
+        <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile::TileInfo</span>;
 
         <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Edition::iter</span>() {
             <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">edition</span>.<span class="ident">tiles</span>() {
                 <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">TileInfo::get</span>(<span class="ident">tile</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;no tile info found for tile {}&quot;</span>, <span class="ident">tile</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                    <span class="prelude-val">None</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;no tile info found for tile {}&quot;</span>, <span class="ident">tile</span>),
                 };
                 <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">1</span> {
-                    <span class="macro">assert!</span>(<span class="ident">tile</span>.<span class="ident">var</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span>, <span class="string">&quot;tile {} is defined with non-empty variation&quot;</span>, <span class="ident">tile</span>);
+                    <span class="macro">assert!</span>(<span class="ident">tile</span>.<span class="ident">var</span>() <span class="op">==</span> <span class="number">0</span>, <span class="string">&quot;tile {} is defined with non-empty variation&quot;</span>, <span class="ident">tile</span>);
                 } <span class="kw">else</span> {
                     <span class="macro">assert!</span>(<span class="ident">tile</span>.<span class="ident">var</span>() <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;tile {} is defined with empty variation&quot;</span>, <span class="ident">tile</span>);
                 }
@@ -1507,7 +1508,6 @@
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
 </body></html>

@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tile.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tile.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tile.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tile.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2457,8 +2459,7 @@
 <span id="2457">2457</span>
 <span id="2458">2458</span>
 <span id="2459">2459</span>
-</pre><pre class="rust">
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Tile identifier and characteristics.</span>
 <span class="comment">//</span>
 <span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
@@ -2475,8 +2476,8 @@
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Serializer</span>, <span class="ident">Deserialize</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::edition</span>::{<span class="ident">Edition</span>, <span class="ident">Series</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hexagon::Direction</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition</span>::{<span class="ident">Edition</span>, <span class="ident">Series</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon::Direction</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
@@ -2510,26 +2511,26 @@
 
 <span class="kw">impl</span> <span class="ident">TileId</span> {
     <span class="doccomment">/// Creates a new tile identifier from catalog number, tile side, and variant.</span>
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">num</span>: <span class="ident">u16</span>, <span class="ident">side</span>: <span class="ident">u8</span>, <span class="ident">var</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">num</span>: <span class="ident">u16</span>, <span class="ident">side</span>: <span class="ident">u8</span>, <span class="ident">var</span>: <span class="ident">u8</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">TileId</span> { <span class="ident">num</span>, <span class="ident">side</span>, <span class="ident">var</span> }
     }
 
     <span class="doccomment">/// Tile catalog number.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">num</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">num</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u16</span> {
         <span class="self">self</span>.<span class="ident">num</span>
     }
 
     <span class="doccomment">/// Tile side (1 =&gt; front / a, 2 =&gt; back / b).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Side can be zero if tile front and back are the same.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">side</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">side</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">side</span>
     }
 
     <span class="doccomment">/// Graphical tile variant.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Variant number can be zero if there is only a single variant existing.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">var</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">var</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">var</span>
     }
 
@@ -2539,25 +2540,25 @@
     <span class="doccomment">/// and back.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The base identifier is used for track setup tile lists, for example.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">side</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">num</span> {
             <span class="comment">// pitstop tile is the same on front and back</span>
-            <span class="number">101</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
+            <span class="number">101</span> =&gt; <span class="number">0</span>,
             <span class="comment">// all other tiles have two different sides</span>
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">side</span>,
+            <span class="kw">_</span> =&gt; <span class="self">self</span>.<span class="ident">side</span>,
         };
         <span class="ident">TileId</span> { <span class="ident">num</span>: <span class="self">self</span>.<span class="ident">num</span>, <span class="ident">side</span>, <span class="ident">var</span>: <span class="number">0</span> }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TileId</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.<span class="ident">num</span>)<span class="question-mark">?</span>;
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">side</span> {
-            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> (),
-            <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>,
-            <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;b&quot;</span>)<span class="question-mark">?</span>,
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unimplemented!</span>(),
+            <span class="number">0</span> =&gt; (),
+            <span class="number">1</span> =&gt; <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>,
+            <span class="number">2</span> =&gt; <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;b&quot;</span>)<span class="question-mark">?</span>,
+            <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
         }
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">var</span> <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;-{}&quot;</span>, <span class="self">self</span>.<span class="ident">var</span>)<span class="question-mark">?</span>;
@@ -2569,7 +2570,7 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">TileId</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseIntError</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
         <span class="comment">// check for tile alias</span>
         <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;filler1a&quot;</span>) {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">TileId::new</span>(<span class="number">902</span>, <span class="number">1</span>, <span class="number">0</span>));
@@ -2590,12 +2591,12 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>().<span class="ident">min</span>(<span class="number">3</span>);
         <span class="kw">let</span> <span class="ident">num</span> <span class="op">=</span> <span class="ident">s</span>[<span class="number">0</span>..<span class="ident">idx</span>].<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">side</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">get</span>(<span class="ident">idx</span>..<span class="ident">idx</span><span class="op">+</span><span class="number">1</span>) {
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="prelude-val">Some</span>(<span class="string">&quot;a&quot;</span>) <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;A&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">idx</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>; <span class="number">1</span>},
-            <span class="prelude-val">Some</span>(<span class="string">&quot;b&quot;</span>) <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;B&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">idx</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>; <span class="number">2</span>},
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
+            <span class="prelude-val">None</span> =&gt; <span class="number">0</span>,
+            <span class="prelude-val">Some</span>(<span class="string">&quot;a&quot;</span>) <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;A&quot;</span>) =&gt; { <span class="ident">idx</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>; <span class="number">1</span>},
+            <span class="prelude-val">Some</span>(<span class="string">&quot;b&quot;</span>) <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;B&quot;</span>) =&gt; { <span class="ident">idx</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>; <span class="number">2</span>},
+            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
         };
-        <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="string">&quot;-&quot;</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">s</span>.<span class="ident">get</span>(<span class="ident">idx</span>..<span class="ident">idx</span><span class="op">+</span><span class="number">1</span>) {
+        <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="string">&quot;-&quot;</span>) <span class="op">==</span> <span class="ident">s</span>.<span class="ident">get</span>(<span class="ident">idx</span>..<span class="ident">idx</span><span class="op">+</span><span class="number">1</span>) {
             <span class="ident">idx</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
         <span class="kw">let</span> <span class="ident">var</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">idx</span> {
@@ -2610,13 +2611,13 @@
 <span class="kw">impl</span> <span class="ident">std::convert::TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TileId</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ParseIntError</span>;
 
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
         <span class="ident">TileId::from_str</span>(<span class="ident">value</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">TileId</span> {
-    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S::Ok</span>, <span class="ident">S::Error</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S::Ok</span>, <span class="ident">S::Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">Serializer</span>
     {
@@ -2625,7 +2626,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TileId</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">TileId</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">TileId</span> {
         <span class="self">self</span>
     }
 }
@@ -2651,20 +2652,20 @@
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">tile</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="number">0</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="number">0</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">a</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">1</span>, <span class="number">0</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">a</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">1</span>, <span class="number">0</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">b</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">2</span>, <span class="number">0</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">b</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">2</span>, <span class="number">0</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">a</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">1</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">a</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">1</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">b</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">2</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="ident">b</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) =&gt; {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">2</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
     };
 }
 
@@ -2676,7 +2677,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">TileCount</span> {
-    <span class="kw">fn</span> <span class="ident">from_tiles</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">tiles</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_tiles</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">tiles</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">list</span> <span class="op">=</span> <span class="ident">BTreeMap::new</span>();
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">tiles</span> {
             <span class="kw">let</span> <span class="ident">tile_num</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">as_ref</span>().<span class="ident">num</span>();
@@ -2686,7 +2687,7 @@
         <span class="ident">TileCount</span> { <span class="ident">inner</span>: <span class="ident">list</span> }
     }
 
-    <span class="kw">fn</span> <span class="ident">from_edition</span>(<span class="ident">edition</span>: <span class="ident">Edition</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_edition</span>(<span class="ident">edition</span>: <span class="ident">Edition</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">list</span> <span class="op">=</span> <span class="ident">BTreeMap::new</span>();
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">edition</span>.<span class="ident">tiles</span>() {
             <span class="kw">if</span> <span class="ident">tile</span>.<span class="ident">side</span>() <span class="op">&gt;</span> <span class="number">1</span> {
@@ -2699,11 +2700,11 @@
         <span class="ident">TileCount</span> { <span class="ident">inner</span>: <span class="ident">list</span> }
     }
 
-    <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="ident">u16</span>, <span class="ident">u32</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="ident">u16</span>, <span class="ident">u32</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">intersection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">intersection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">list</span> <span class="op">=</span> <span class="ident">BTreeMap::new</span>();
         <span class="kw">for</span> (<span class="ident">tile_num</span>, <span class="ident">count</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>() {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">other_count</span>) <span class="op">=</span> <span class="ident">other</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="ident">tile_num</span>) {
@@ -2716,7 +2717,7 @@
         <span class="ident">TileCount</span> { <span class="ident">inner</span>: <span class="ident">list</span> }
     }
 
-    <span class="kw">fn</span> <span class="ident">total_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">total_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">total_count</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">for</span> (<span class="kw">_</span>, <span class="ident">count</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>() {
             <span class="ident">total_count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">count</span>;
@@ -2735,7 +2736,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">EditionTileCount</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">edition</span>: <span class="ident">Edition</span>, <span class="ident">list_tiles</span>: <span class="kw-2">&amp;</span><span class="ident">TileCount</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">edition</span>: <span class="ident">Edition</span>, <span class="ident">list_tiles</span>: <span class="kw-2">&amp;</span><span class="ident">TileCount</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">common</span> <span class="op">=</span> <span class="ident">TileCount::from_edition</span>(<span class="ident">edition</span>)
             .<span class="ident">intersection</span>(<span class="ident">list_tiles</span>);
         <span class="ident">EditionTileCount</span> { <span class="ident">edition</span>, <span class="ident">common</span> }
@@ -2759,7 +2760,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">GroupByEdition</span> {
-    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">list_tiles</span> <span class="op">=</span> <span class="ident">TileCount::from_tiles</span>(<span class="ident">list</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">editions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Edition::iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">EditionTileCount::new</span>(<span class="ident">edition</span>, <span class="kw-2">&amp;</span><span class="ident">list_tiles</span>))
@@ -2788,7 +2789,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`next`]: Iterator::next</span>
     <span class="doccomment">/// [`group_by_edition`]: TileList::group_by_edition</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
         <span class="self">self</span>.<span class="ident">tiles_used</span>.<span class="ident">as_ref</span>()
     }
 }
@@ -2796,7 +2797,7 @@
 <span class="kw">impl</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">GroupByEdition</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Edition</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">edition</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         <span class="self">self</span>.<span class="ident">tiles_used</span>.<span class="ident">clear</span>();
         <span class="comment">// iterate through all editions once with offset</span>
@@ -2808,7 +2809,7 @@
             <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">tile_num</span>, <span class="kw-2">&amp;</span><span class="ident">count</span>) <span class="kw">in</span> <span class="ident">item</span>.<span class="ident">common</span>.<span class="ident">iter</span>() {
                 <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">count</span> {
                     <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tiles_remaining</span>.<span class="ident">iter</span>()
-                        .<span class="ident">position</span>(<span class="op">|</span><span class="ident">tile</span><span class="op">|</span> <span class="ident">tile</span>.<span class="ident">num</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">tile_num</span>);
+                        .<span class="ident">position</span>(<span class="op">|</span><span class="ident">tile</span><span class="op">|</span> <span class="ident">tile</span>.<span class="ident">num</span>() <span class="op">==</span> <span class="ident">tile_num</span>);
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span> <span class="ident">index</span> {
                         <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tiles_remaining</span>.<span class="ident">swap_remove</span>(<span class="ident">index</span>);
                         <span class="self">self</span>.<span class="ident">tiles_used</span>.<span class="ident">push</span>(<span class="ident">tile</span>);
@@ -2823,7 +2824,7 @@
         }
         <span class="kw">if</span> <span class="ident">edition</span>.<span class="ident">is_none</span>() {
             <span class="comment">// report tiles that do not match any edition when reaching end of iteration</span>
-            <span class="self">self</span>.<span class="ident">tiles_used</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">tiles_remaining</span>);
+            <span class="self">self</span>.<span class="ident">tiles_used</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">tiles_remaining</span>);
         }
         <span class="comment">// increment offset after each call</span>
         <span class="self">self</span>.<span class="ident">edition_offset</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
@@ -2848,7 +2849,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">GroupBySurface</span> {
-    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) -&gt; <span class="self">Self</span> {
         <span class="comment">// collect terrain surface information for all tiles</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">surface_tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">list</span>.<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
@@ -2873,14 +2874,14 @@
         <span class="ident">GroupBySurface</span> { <span class="ident">surfaces</span>, <span class="ident">tiles</span>, <span class="ident">index</span>: <span class="number">0</span>, <span class="ident">next_index</span>: <span class="number">0</span> }
     }
 
-    <span class="kw">fn</span> <span class="ident">find_next_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">find_next_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">surface</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">index</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">index</span>;
         <span class="kw">loop</span> {
             <span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             <span class="kw">let</span> <span class="ident">next_surface</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">get</span>(<span class="ident">index</span>) {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
+                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                <span class="prelude-val">None</span> =&gt; <span class="kw">break</span>,
             };
             <span class="kw">if</span> <span class="ident">next_surface</span> <span class="op">!</span><span class="op">=</span> <span class="ident">surface</span> {
                 <span class="kw">break</span>;
@@ -2904,7 +2905,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`next`]: Iterator::next</span>
     <span class="doccomment">/// [`group_by_surface`]: TileList::group_by_surface</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
         <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">len</span>(), <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">len</span>());
         <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">index</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">next_index</span>);
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">index</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">len</span>() {
@@ -2918,7 +2919,7 @@
 <span class="kw">impl</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">GroupBySurface</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Terrain</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">next_index</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">surface</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">index</span>) {
             <span class="self">self</span>.<span class="ident">next_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">find_next_index</span>().<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">index</span>);
@@ -2946,7 +2947,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">GroupByDangerLevel</span> {
-    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="ident">list</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) -&gt; <span class="self">Self</span> {
         <span class="comment">// collect terrain danger level information for all tiles</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">danger_level_tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">list</span>.<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
@@ -2971,14 +2972,14 @@
         <span class="ident">GroupByDangerLevel</span> { <span class="ident">danger_levels</span>, <span class="ident">tiles</span>, <span class="ident">index</span>: <span class="number">0</span>, <span class="ident">next_index</span>: <span class="number">0</span> }
     }
 
-    <span class="kw">fn</span> <span class="ident">find_next_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">find_next_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">danger_level</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">danger_levels</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">index</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">index</span>;
         <span class="kw">loop</span> {
             <span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             <span class="kw">let</span> <span class="ident">next_danger_level</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">danger_levels</span>.<span class="ident">get</span>(<span class="ident">index</span>) {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
+                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                <span class="prelude-val">None</span> =&gt; <span class="kw">break</span>,
             };
             <span class="kw">if</span> <span class="ident">next_danger_level</span> <span class="op">!</span><span class="op">=</span> <span class="ident">danger_level</span> {
                 <span class="kw">break</span>;
@@ -3002,7 +3003,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`next`]: Iterator::next</span>
     <span class="doccomment">/// [`group_by_danger_level`]: TileList::group_by_danger_level</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>] {
         <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.<span class="ident">danger_levels</span>.<span class="ident">len</span>(), <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">len</span>());
         <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">index</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">next_index</span>);
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">index</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">len</span>() {
@@ -3016,7 +3017,7 @@
 <span class="kw">impl</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">GroupByDangerLevel</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">u8</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">next_index</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">danger_level</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">danger_levels</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">index</span>) {
             <span class="self">self</span>.<span class="ident">next_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">find_next_index</span>().<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">index</span>);
@@ -3043,7 +3044,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">EditionSummary</span> {
-    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">edition</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>, <span class="ident">edition_count</span>: <span class="ident">u32</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">edition</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>, <span class="ident">edition_count</span>: <span class="ident">u32</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">EditionSummary</span> { <span class="ident">edition</span>, <span class="ident">edition_count</span>, <span class="ident">tile_count</span> }
     }
 }
@@ -3062,7 +3063,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">SurfaceSummary</span> {
-    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">surface</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">surface</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">SurfaceSummary</span> { <span class="ident">surface</span>, <span class="ident">tile_count</span> }
     }
 }
@@ -3081,7 +3082,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">DangerLevelSummary</span> {
-    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">danger_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">danger_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">tile_count</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">DangerLevelSummary</span> { <span class="ident">danger_level</span>, <span class="ident">tile_count</span> }
     }
 }
@@ -3140,7 +3141,7 @@
     <span class="doccomment">/// assert_eq!(iter.next(), None);</span>
     <span class="doccomment">/// assert_eq!(iter.tiles(), &amp;[tile!(999)][..]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">group_by_edition</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupByEdition</span>;
+    <span class="kw">fn</span> <span class="ident">group_by_edition</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupByEdition</span>;
 
     <span class="doccomment">/// Returns an iterator over the terrain surfaces that are included in the</span>
     <span class="doccomment">/// current list of tiles.</span>
@@ -3182,7 +3183,7 @@
     <span class="doccomment">/// assert_eq!(iter.next(), None);</span>
     <span class="doccomment">/// assert_eq!(iter.tiles(), &amp;[tile!(999, a)][..]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">group_by_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupBySurface</span>;
+    <span class="kw">fn</span> <span class="ident">group_by_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupBySurface</span>;
 
     <span class="doccomment">/// Returns an iterator over the terrain danger levels that occur in the</span>
     <span class="doccomment">/// current list of tiles.</span>
@@ -3227,7 +3228,7 @@
     <span class="doccomment">/// assert_eq!(iter.next(), None);</span>
     <span class="doccomment">/// assert_eq!(iter.tiles(), &amp;[tile!(999, a)][..]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">group_by_danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupByDangerLevel</span>;
+    <span class="kw">fn</span> <span class="ident">group_by_danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupByDangerLevel</span>;
 
     <span class="doccomment">/// Returns a summary about the editions that are necessary to build the</span>
     <span class="doccomment">/// current list of tiles.</span>
@@ -3259,7 +3260,7 @@
     <span class="doccomment">///     println!(&quot;{}: {}x ({} tiles)&quot;, label, row.edition_count, row.tile_count);</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">edition_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">EditionSummary</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">edition_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">EditionSummary</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">BTreeMap::new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">group_by_edition</span>();
         <span class="kw">loop</span> {
@@ -3310,7 +3311,7 @@
     <span class="doccomment">///     println!(&quot;{}: {} tiles&quot;, label, row.tile_count);</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">surface_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SurfaceSummary</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">surface_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SurfaceSummary</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">group_by_surface</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_count</span>;
@@ -3359,7 +3360,7 @@
     <span class="doccomment">///     println!(&quot;{}: {} tiles&quot;, label, row.tile_count);</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">danger_level_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DangerLevelSummary</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">danger_level_summary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DangerLevelSummary</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">group_by_danger_level</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_count</span>;
@@ -3382,15 +3383,15 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">TileList</span> <span class="kw">for</span> [<span class="ident">T</span>] {
-    <span class="kw">fn</span> <span class="ident">group_by_edition</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupByEdition</span> {
+    <span class="kw">fn</span> <span class="ident">group_by_edition</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupByEdition</span> {
         <span class="ident">GroupByEdition::new</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">group_by_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupBySurface</span> {
+    <span class="kw">fn</span> <span class="ident">group_by_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupBySurface</span> {
         <span class="ident">GroupBySurface::new</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">group_by_danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GroupByDangerLevel</span> {
+    <span class="kw">fn</span> <span class="ident">group_by_danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">GroupByDangerLevel</span> {
         <span class="ident">GroupByDangerLevel::new</span>(<span class="self">self</span>)
     }
 }
@@ -3411,13 +3412,13 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ConnectionHint</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ConnectionHint::Straight</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ConnectionHint::Straight</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;S&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">ConnectionHint::Left</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ConnectionHint::Left</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;L&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">ConnectionHint::Right</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ConnectionHint::Right</span> =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;R&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
@@ -3427,15 +3428,15 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">ConnectionHint</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseHintError</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;S&quot;</span> <span class="op">|</span> <span class="string">&quot;s&quot;</span> <span class="op">|</span> <span class="string">&quot;&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;S&quot;</span> <span class="op">|</span> <span class="string">&quot;s&quot;</span> <span class="op">|</span> <span class="string">&quot;&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">ConnectionHint::Straight</span>),
-            <span class="string">&quot;L&quot;</span> <span class="op">|</span> <span class="string">&quot;l&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;L&quot;</span> <span class="op">|</span> <span class="string">&quot;l&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">ConnectionHint::Left</span>),
-            <span class="string">&quot;R&quot;</span> <span class="op">|</span> <span class="string">&quot;r&quot;</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="string">&quot;R&quot;</span> <span class="op">|</span> <span class="string">&quot;r&quot;</span> =&gt;
                 <span class="prelude-val">Ok</span>(<span class="ident">ConnectionHint::Right</span>),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="kw">_</span> =&gt;
                 <span class="prelude-val">Err</span>(<span class="ident">ParseHintError::Unknown</span>(<span class="ident">s</span>.<span class="ident">to_string</span>())),
         }
     }
@@ -3447,9 +3448,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseHintError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseHintError::Unknown</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ParseHintError::Unknown</span>(<span class="ident">val</span>) =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown hint token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
         }
     }
@@ -3502,40 +3503,40 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Connection</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">target</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">source</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Direction</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">target</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">source</span>: <span class="ident">Direction</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Direction</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Connection::None</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::None</span> =&gt;
                 <span class="prelude-val">None</span>,
-            <span class="ident">Connection::Straight</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Straight</span>(<span class="ident">val</span>) =&gt;
                 <span class="prelude-val">Some</span>(<span class="ident">source</span> <span class="op">+</span> (<span class="number">3</span> <span class="op">+</span> <span class="ident">val</span>).<span class="ident">into</span>()),
-            <span class="ident">Connection::Left</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Left</span>(<span class="ident">val</span>) =&gt;
                 <span class="prelude-val">Some</span>(<span class="ident">source</span> <span class="op">+</span> (<span class="number">3</span> <span class="op">-</span> <span class="ident">val</span>).<span class="ident">into</span>()),
-            <span class="ident">Connection::Right</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Right</span>(<span class="ident">val</span>) =&gt;
                 <span class="prelude-val">Some</span>(<span class="ident">source</span> <span class="op">+</span> (<span class="number">3</span> <span class="op">+</span> <span class="ident">val</span>).<span class="ident">into</span>()),
-            <span class="ident">Connection::Junction</span>(<span class="ident">val</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Junction</span>(<span class="ident">val</span>, <span class="kw">_</span>) =&gt;
                 <span class="prelude-val">Some</span>(<span class="ident">source</span> <span class="op">+</span> (<span class="number">3</span> <span class="op">+</span> <span class="ident">val</span>).<span class="ident">into</span>()),
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Connection</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">Connection::None</span>
     }
 }
 
 <span class="kw">impl</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">ConnectionHint</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Connection</span> {
-    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">ConnectionHint</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">ConnectionHint</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">hint</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Connection::None</span> <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::None</span> =&gt;
                 <span class="kw">return</span> <span class="bool-val">false</span>,
-            <span class="ident">Connection::Straight</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Straight</span>(<span class="kw">_</span>) =&gt;
                 <span class="ident">ConnectionHint::Straight</span>,
-            <span class="ident">Connection::Left</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Left</span>(<span class="kw">_</span>) =&gt;
                 <span class="ident">ConnectionHint::Left</span>,
-            <span class="ident">Connection::Right</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">Connection::Right</span>(<span class="kw">_</span>) =&gt;
                 <span class="ident">ConnectionHint::Right</span>,
-            <span class="ident">Connection::Junction</span>(<span class="ident">val1</span>, <span class="ident">val2</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Connection::Junction</span>(<span class="ident">val1</span>, <span class="ident">val2</span>) =&gt; {
                 <span class="kw">if</span> <span class="ident">val1</span> <span class="op">&gt;</span> <span class="number">0</span> {
                     <span class="ident">ConnectionHint::Right</span>
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">val1</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -3549,7 +3550,7 @@
                 }
             },
         };
-        <span class="ident">hint</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>
+        <span class="ident">hint</span> <span class="op">==</span> <span class="kw-2">*</span><span class="ident">other</span>
     }
 }
 
@@ -3583,18 +3584,18 @@
     <span class="doccomment">/// let edge = Edge::Straight(2);</span>
     <span class="doccomment">/// assert_eq!(edge.lanes(), 2);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lanes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lanes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Edge::None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="ident">Edge::Straight</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-            <span class="ident">Edge::SkewLeft</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-            <span class="ident">Edge::SkewRight</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
+            <span class="ident">Edge::None</span> =&gt; <span class="number">0</span>,
+            <span class="ident">Edge::Straight</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+            <span class="ident">Edge::SkewLeft</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+            <span class="ident">Edge::SkewRight</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Edge</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">Edge::None</span>
     }
 }
@@ -3634,24 +3635,24 @@
     <span class="doccomment">/// let terrain = Terrain::None;</span>
     <span class="doccomment">/// assert_eq!(terrain.danger_level(), 0);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">danger_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Terrain::None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="ident">Terrain::Asphalt</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-            <span class="ident">Terrain::Gravel</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
-            <span class="ident">Terrain::Snow</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>,
+            <span class="ident">Terrain::None</span> =&gt; <span class="number">0</span>,
+            <span class="ident">Terrain::Asphalt</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+            <span class="ident">Terrain::Gravel</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+            <span class="ident">Terrain::Snow</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
         }
     }
 
     <span class="doccomment">/// Surface of a tile.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns a copy of the terrain with danger level set to zero.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Terrain</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Terrain</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Terrain::None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Terrain::None</span>,
-            <span class="ident">Terrain::Asphalt</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Terrain::Asphalt</span>(<span class="number">0</span>),
-            <span class="ident">Terrain::Gravel</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Terrain::Gravel</span>(<span class="number">0</span>),
-            <span class="ident">Terrain::Snow</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Terrain::Snow</span>(<span class="number">0</span>),
+            <span class="ident">Terrain::None</span> =&gt; <span class="ident">Terrain::None</span>,
+            <span class="ident">Terrain::Asphalt</span>(<span class="kw">_</span>) =&gt; <span class="ident">Terrain::Asphalt</span>(<span class="number">0</span>),
+            <span class="ident">Terrain::Gravel</span>(<span class="kw">_</span>) =&gt; <span class="ident">Terrain::Gravel</span>(<span class="number">0</span>),
+            <span class="ident">Terrain::Snow</span>(<span class="kw">_</span>) =&gt; <span class="ident">Terrain::Snow</span>(<span class="number">0</span>),
         }
     }
 
@@ -3667,34 +3668,34 @@
     <span class="doccomment">/// let terrain = Terrain::None;</span>
     <span class="doccomment">/// assert!(!terrain.eq_surface(Terrain::Gravel(0)));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eq_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Terrain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">std::mem::discriminant</span>(<span class="self">self</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">std::mem::discriminant</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eq_surface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Terrain</span>) -&gt; <span class="ident">bool</span> {
+        <span class="ident">std::mem::discriminant</span>(<span class="self">self</span>) <span class="op">==</span> <span class="ident">std::mem::discriminant</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">Terrain::None</span>
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">let</span> <span class="ident">danger_level</span>;
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Terrain::None</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Terrain::None</span> =&gt; {
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;None&quot;</span>)<span class="question-mark">?</span>;
                 <span class="ident">danger_level</span> <span class="op">=</span> <span class="number">0</span>;
             },
-            <span class="ident">Terrain::Asphalt</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Terrain::Asphalt</span>(<span class="ident">val</span>) =&gt; {
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Asphalt&quot;</span>)<span class="question-mark">?</span>;
                 <span class="ident">danger_level</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
             },
-            <span class="ident">Terrain::Gravel</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Terrain::Gravel</span>(<span class="ident">val</span>) =&gt; {
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Gravel&quot;</span>)<span class="question-mark">?</span>;
                 <span class="ident">danger_level</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
             },
-            <span class="ident">Terrain::Snow</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Terrain::Snow</span>(<span class="ident">val</span>) =&gt; {
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Snow&quot;</span>)<span class="question-mark">?</span>;
                 <span class="ident">danger_level</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
             },
@@ -3708,7 +3709,7 @@
 
 <span class="comment">// small hack to provide the Serde string serialization as a formatter</span>
 <span class="kw">impl</span> <span class="ident">fmt::LowerHex</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="self">self</span>).<span class="ident">unwrap</span>();
         <span class="ident">text</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span>);
         <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">text</span>)
@@ -3718,7 +3719,7 @@
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseTerrainError</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Err</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span>[<span class="string">&#39; &#39;</span>, <span class="string">&#39;-&#39;</span>][..])
             .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">s</span>.<span class="ident">len</span>());
         <span class="kw">let</span> <span class="ident">surface</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="number">0</span>..<span class="ident">idx</span>];
@@ -3731,7 +3732,7 @@
         };
 
         <span class="kw">if</span> <span class="ident">surface</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;none&quot;</span>) {
-            <span class="kw">if</span> <span class="ident">level</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="ident">level</span> <span class="op">==</span> <span class="number">0</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">Terrain::None</span>)
             } <span class="kw">else</span> {
                 <span class="prelude-val">Err</span>(<span class="ident">ParseTerrainError::InvalidDangerLevel</span>(<span class="ident">level</span>.<span class="ident">to_string</span>()))
@@ -3755,11 +3756,11 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseTerrainError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseTerrainError::UnknownSurface</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ParseTerrainError::UnknownSurface</span>(<span class="ident">val</span>) =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown terrain surface token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
-            <span class="ident">ParseTerrainError::InvalidDangerLevel</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span>
+            <span class="ident">ParseTerrainError::InvalidDangerLevel</span>(<span class="ident">val</span>) =&gt;
                 <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Invalid danger level token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
         }
     }
@@ -3768,13 +3769,13 @@
 <span class="kw">impl</span> <span class="ident">std::convert::TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ParseTerrainError</span>;
 
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
         <span class="ident">Terrain::from_str</span>(<span class="ident">value</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">Terrain</span> {
-    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S::Ok</span>, <span class="ident">S::Error</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S::Ok</span>, <span class="ident">S::Error</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">Serializer</span>
     {
@@ -3817,7 +3818,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">TileInfo</span> {
-    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">count</span>: <span class="ident">usize</span>, <span class="ident">terrain</span>: <span class="ident">Terrain</span>, <span class="ident">connections</span>: [<span class="ident">Connection</span>; <span class="number">6</span>], <span class="ident">edges</span>: [<span class="ident">Edge</span>; <span class="number">6</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">count</span>: <span class="ident">usize</span>, <span class="ident">terrain</span>: <span class="ident">Terrain</span>, <span class="ident">connections</span>: [<span class="ident">Connection</span>; <span class="number">6</span>], <span class="ident">edges</span>: [<span class="ident">Edge</span>; <span class="number">6</span>]) -&gt; <span class="self">Self</span> {
         <span class="ident">TileInfo</span> { <span class="ident">id</span>, <span class="ident">count</span>, <span class="ident">terrain</span>, <span class="ident">connections</span>, <span class="ident">edges</span> }
     }
 
@@ -3836,7 +3837,7 @@
     <span class="doccomment">/// assert_eq!(info.base_id(), TileId::new(103, 1, 0));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TileId</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">TileId</span> {
         <span class="self">self</span>.<span class="ident">id</span>
     }
 
@@ -3856,27 +3857,27 @@
     <span class="doccomment">/// assert_eq!(info.full_id(), TileId::new(103, 2, 1));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">full_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TileId</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">full_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">TileId</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">count</span> {
-            <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">TileId::new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">side</span>, <span class="number">0</span>),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">TileId::new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">side</span>, <span class="number">1</span>),
+            <span class="number">1</span> =&gt; <span class="ident">TileId::new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">side</span>, <span class="number">0</span>),
+            <span class="kw">_</span> =&gt; <span class="ident">TileId::new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">side</span>, <span class="number">1</span>),
         }
     }
 
     <span class="doccomment">/// Returns an interator over all tiles in the internal list.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
         <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>()
     }
 
     <span class="doccomment">/// Lookup tile information by tile identifier. The identifier can be in base</span>
     <span class="doccomment">/// or full format (with or without graphical variant).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="ident">id</span>: <span class="ident">TileId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="ident">id</span>: <span class="ident">TileId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="self">Self</span><span class="op">&gt;</span> {
         <span class="comment">// Use of the fast binary search algorithm is allowed here as the proper</span>
         <span class="comment">// list order is checked with unit tests</span>
         <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">TILE_INFOS</span>.<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>.<span class="ident">base</span>(), <span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">id</span>);
         <span class="kw">match</span> <span class="ident">idx</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">idx</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">TILE_INFOS</span>[<span class="ident">idx</span>]),
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>
+            <span class="prelude-val">Ok</span>(<span class="ident">idx</span>) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">TILE_INFOS</span>[<span class="ident">idx</span>]),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>
         }
     }
 
@@ -3892,7 +3893,7 @@
     <span class="doccomment">/// assert_eq!(info.count(), 3);</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">count</span>
     }
 
@@ -3911,7 +3912,7 @@
     <span class="doccomment">/// assert_eq!(info.terrain(), Terrain::Gravel(2));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">terrain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Terrain</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">terrain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Terrain</span> {
         <span class="self">self</span>.<span class="ident">terrain</span>
     }
 
@@ -3931,7 +3932,7 @@
     <span class="doccomment">/// assert_eq!(info.connection(Direction::D), Connection::Right(1));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Connection</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) -&gt; <span class="ident">Connection</span> {
         <span class="self">self</span>.<span class="ident">connections</span>[<span class="ident">dir</span>]
     }
 
@@ -3956,7 +3957,7 @@
     <span class="doccomment">/// assert_eq!(info.connection_target(Direction::D), Some(Direction::B));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection_target</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">source</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Direction</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection_target</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">source</span>: <span class="ident">Direction</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Direction</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">connections</span>[<span class="ident">source</span>].<span class="ident">target</span>(<span class="ident">source</span>)
     }
 
@@ -3976,7 +3977,7 @@
     <span class="doccomment">/// assert_eq!(info.edge(Direction::D), Edge::Straight(3));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">edge</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Edge</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">edge</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) -&gt; <span class="ident">Edge</span> {
         <span class="self">self</span>.<span class="ident">edges</span>[<span class="ident">dir</span>]
     }
 
@@ -3996,8 +3997,8 @@
     <span class="doccomment">/// assert_eq!(info.series(), Series::Dirt);</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Series</span> {
-        <span class="kw">if</span> <span class="macro">matches!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">100</span>..<span class="op">=</span><span class="number">199</span>) <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span> <span class="op">=</span><span class="op">=</span> <span class="number">901</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Series</span> {
+        <span class="kw">if</span> <span class="macro">matches!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">100</span>..<span class="op">=</span><span class="number">199</span>) <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span> <span class="op">==</span> <span class="number">901</span> {
             <span class="kw">return</span> <span class="ident">Series::Gt</span>;
         }
         <span class="kw">if</span> <span class="macro">matches!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">200</span>..<span class="op">=</span><span class="number">499</span>) <span class="op">|</span><span class="op">|</span> <span class="macro">matches!</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">num</span>, <span class="number">902</span>..<span class="op">=</span><span class="number">905</span>) {
@@ -4008,7 +4009,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TileInfo</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.<span class="ident">id</span>)
     }
 }
@@ -4627,82 +4628,82 @@
         ];
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">chicane_tiles</span> {
             <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">TileInfo::get</span>(<span class="ident">tile</span>).<span class="ident">unwrap</span>();
-            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">connection</span>(<span class="ident">Direction::A</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>);
-            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">connection</span>(<span class="ident">Direction::D</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>);
+            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">connection</span>(<span class="ident">Direction::A</span>) <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>);
+            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">connection</span>(<span class="ident">Direction::D</span>) <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>);
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">connection_orientation</span>() {
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::None</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Straight</span>(<span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Straight</span>(<span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Straight</span>(<span class="op">-</span><span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Left</span>(<span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Left</span>(<span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Left</span>(<span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Right</span>(<span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Right</span>(<span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Right</span>(<span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Junction</span>(<span class="number">0</span>, <span class="op">-</span><span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Junction</span>(<span class="op">-</span><span class="number">1</span>, <span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">false</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Junction</span>(<span class="number">0</span>, <span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">Connection::Junction</span>(<span class="number">1</span>, <span class="op">-</span><span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Straight</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Left</span>, <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">conn</span> <span class="op">==</span> <span class="ident">ConnectionHint::Right</span>, <span class="bool-val">true</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -4862,10 +4863,10 @@
         <span class="kw">for</span> <span class="ident">info</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>() {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pair_id</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">base_id</span>();
             <span class="ident">pair_id</span>.<span class="ident">side</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">pair_id</span>.<span class="ident">side</span>() {
-                <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-                <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
-                <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
-                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unimplemented!</span>(),
+                <span class="number">0</span> =&gt; <span class="number">0</span>,
+                <span class="number">1</span> =&gt; <span class="number">2</span>,
+                <span class="number">2</span> =&gt; <span class="number">1</span>,
+                <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
             };
             <span class="kw">let</span> <span class="ident">pair</span> <span class="op">=</span> <span class="ident">TileInfo::get</span>(<span class="ident">pair_id</span>).<span class="ident">unwrap</span>();
             <span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">count</span>, <span class="ident">pair</span>.<span class="ident">count</span>, <span class="string">&quot;tile info {} variant count does not match the other side&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
@@ -4875,7 +4876,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">tile_info_sorted</span>() {
         <span class="kw">for</span> <span class="ident">info</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>() {
-            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">info</span>.<span class="ident">id</span>.<span class="ident">base</span>(), <span class="string">&quot;tile info is defined with non-base identifier {}&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
+            <span class="macro">assert!</span>(<span class="ident">info</span>.<span class="ident">id</span> <span class="op">==</span> <span class="ident">info</span>.<span class="ident">id</span>.<span class="ident">base</span>(), <span class="string">&quot;tile info is defined with non-base identifier {}&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
         }
         <span class="kw">for</span> <span class="ident">infos</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">windows</span>(<span class="number">2</span>) {
             <span class="macro">assert!</span>(<span class="ident">infos</span>[<span class="number">0</span>].<span class="ident">id</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">infos</span>[<span class="number">1</span>].<span class="ident">id</span>, <span class="string">&quot;tile info is not sorted strictly ({} &gt; {})&quot;</span>, <span class="ident">infos</span>[<span class="number">0</span>].<span class="ident">id</span>, <span class="ident">infos</span>[<span class="number">1</span>].<span class="ident">id</span>);
@@ -4886,7 +4887,7 @@
     <span class="kw">fn</span> <span class="ident">tile_info_terrain</span>() {
         <span class="kw">for</span> <span class="ident">info</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>() {
             <span class="kw">let</span> <span class="ident">danger_level</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">terrain</span>().<span class="ident">danger_level</span>();
-            <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">terrain</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Terrain::None</span> {
+            <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">terrain</span>() <span class="op">==</span> <span class="ident">Terrain::None</span> {
                 <span class="macro">assert_eq!</span>(<span class="ident">danger_level</span>, <span class="number">0</span>, <span class="string">&quot;tile info {} has undefined terrain with non-zero danger level&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
             } <span class="kw">else</span> {
                 <span class="macro">assert!</span>((<span class="number">1</span>..<span class="op">=</span><span class="number">3</span>).<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">danger_level</span>), <span class="string">&quot;tile info {} has unsupported danger level {}&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>, <span class="ident">danger_level</span>);
@@ -4917,7 +4918,6 @@
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
 </body></html>

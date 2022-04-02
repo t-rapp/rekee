@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;controller.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>controller.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../rekee/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;controller.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>controller.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -507,8 +509,7 @@
 <span id="507">507</span>
 <span id="508">508</span>
 <span id="509">509</span>
-</pre><pre class="rust">
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Uses the &quot;nuts&quot; library for sending events between global instances of view</span>
@@ -525,12 +526,12 @@
 
 <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::edition::Edition</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Point</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::map</span>::{<span class="ident">Map</span>, <span class="ident">PlacedTile</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::storage::Storage</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tile</span>::{<span class="ident">ConnectionHint</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::view</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition::Edition</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Point</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">Map</span>, <span class="ident">PlacedTile</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::storage::Storage</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile</span>::{<span class="ident">ConnectionHint</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::view</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
@@ -659,40 +660,40 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::drag_catalog_begin</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
         <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">update_catalog_editions</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateCatalogEditionsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_catalog_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateCatalogEditionsEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">editions</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">update_lanes_filter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateLanesFilterEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_lanes_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateLanesFilterEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_lanes_filter</span>(<span class="ident">event</span>.<span class="ident">lanes</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">update_terrain_filter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTerrainFilterEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_terrain_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTerrainFilterEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_terrain_filter</span>(<span class="ident">event</span>.<span class="ident">terrain</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileUsageEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileUsageEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tiles</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_catalog_begin</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogBeginEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_catalog_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogBeginEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_begin</span>(<span class="ident">event</span>.<span class="ident">tile</span>);
     }
 }
@@ -742,92 +743,92 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_connection_hint</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
         <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportFileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportFileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">export_file</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">insert_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">dir</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">append_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">hint</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AlignCenterEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AlignCenterEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">align_center</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ClearMapEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ClearMapEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">clear_map</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapLeftEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapLeftEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_left</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapRightEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapRightEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_right</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTitleEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTitleEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_title</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">title</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">update_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">rotate_selected_left</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedLeftEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">rotate_selected_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedLeftEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_left</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">rotate_selected_right</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedRightEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">rotate_selected_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedRightEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_right</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">remove_selected</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RemoveSelectedEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">remove_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RemoveSelectedEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">remove_selected</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_catalog_end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogEndEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_catalog_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogEndEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">Some</span>(<span class="ident">event</span>.<span class="ident">tile</span>));
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_map_begin</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapBeginEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_map_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapBeginEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_begin</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_map_move</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapMoveEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_map_move</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapMoveEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_map_end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapEndEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_map_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapEndEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">None</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_map_cancel</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapCancelEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_map_cancel</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapCancelEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_cancel</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateConnectionHintEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateConnectionHintEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_connection_hint</span>(<span class="ident">event</span>.<span class="ident">hint</span>);
     }
 }
@@ -866,14 +867,14 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogConfigController::hide</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowCatalogConfigEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowCatalogConfigEvent</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">CatalogSettings</span><span class="op">&gt;</span>() {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_editions</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">editions</span>);
         }
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideCatalogConfigEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideCatalogConfigEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
     }
 }
@@ -894,18 +895,18 @@
         <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
 
         <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="self">Self</span><span class="ident">::show</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="self">Self</span><span class="ident">::hide</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowTrackInfoEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowTrackInfoEvent</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="ident">settings</span>.<span class="ident">map</span>.<span class="ident">tiles</span>());
         }
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideTrackInfoEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideTrackInfoEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
     }
 }
@@ -934,7 +935,7 @@
         <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">ExportController::export_image</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>);
         }
@@ -974,50 +975,49 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::hide_welcome</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
         <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
         <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
         <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_catalog_end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogEndEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_catalog_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogEndEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_map_end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapEndEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">drag_map_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragMapEndEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">show_welcome</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowWelcomeEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">show_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowWelcomeEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">hide_welcome</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideWelcomeEvent</span>) {
+    <span class="kw">fn</span> <span class="ident">hide_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideWelcomeEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
     }
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
 </body></html>
