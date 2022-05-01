@@ -1,6 +1,6 @@
 [package]
 name = "rekee"
-version = "0.6.4"
+version = "0.6.5"
 authors = ["Tobias Rapp"]
 edition = "2018"
 description = "Track editor for the Rallyman:GT and Rallyman:DIRT boardgames"
@@ -16,7 +16,7 @@ default = []
 # Show Rallyman DIRT game tiles in the catalog by default
 dirt = []
 # Enables verbose log output. When compiled as a native library the output is
-# written to standard errorr (stderr), when compiled for WASM log output is
+# written to standard error (stderr), when compiled for WASM log output is
 # written to the JavaScript console.
 logger = []
 
