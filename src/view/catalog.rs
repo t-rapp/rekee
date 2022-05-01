@@ -416,6 +416,8 @@ impl CatalogView {
             config_button, config_show_cb
         };
         view.load_settings(&CatalogSettings::default());
+        parent.set_hidden(false);
+
         Ok(view)
     }
 

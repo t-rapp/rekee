@@ -124,6 +124,7 @@
             padding: 0 0.1em;
         }
     </style>
+    <script src="watchdog.js" defer></script>
     <script type="module">
         import init, { main } from './pkg/rekee.js';
         async function run() {
@@ -212,7 +213,7 @@
     </nav>
 
     <main>
-      <div id="catalog-container" class="box is-print-hidden has-background-light">
+      <div id="catalog-container" class="box is-hidden is-print-hidden has-background-light">
         <div id="lanes-filter" class="tabs is-toggle is-toggle-rounded is-fullwidth">
           <ul>
             <li class="is-active" data-value="*">
@@ -247,7 +248,7 @@
         </div>
         <!-- catalog elements added here by WASM -->
       </div>
-      <div id="map-container" class="p-2">
+      <div id="map-container" class="p-2 is-hidden">
         <article id="welcome" class="message mb-2 is-info is-hidden is-print-hidden">
           <div class="message-header">
             <p>Welcome!</p>
@@ -415,6 +416,37 @@
         </div>
       </div>
       <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <div id="watchdog-info" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <article id="progress" class="message is-warning is-print-hidden">
+          <div class="message-header">
+            <p>Oh no, engine stall!</p>
+          </div>
+          <div class="message-body">
+            <div class="content">
+              <p>
+                Something went wrong during initialization of the Rekee track
+                editor application. Required function modules could not be
+                loaded and executed by the browser.
+              </p>
+              <p>
+                Please verify that your browser supports
+                <a href="https://webassembly.org/">WebAssembly</a>
+                and a recent version of JavaScript (<a href="https://en.wikipedia.org/wiki/ECMAScript#ES2016">ECMAScript 2016</a>
+                or later should be ok). In case the problem persists there could
+                be something wrong with the configuration of this webpage and it
+                would be great if you could report the issue on
+                <a href="https://github.com/t-rapp/rekee/issues">GitHub</a>,
+                or contact the author via
+                <a href="https://boardgamegeek.com/geekmail/compose?touser=Guazzabu">BoardGameGeek</a>.
+              </p>
+            </div>
+          </div>
+        </article>
+        </div>
     </div>
 
     <div id="export-container" class="is-hidden">

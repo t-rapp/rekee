@@ -558,6 +558,8 @@ impl MapView {
             dragged_mouseleave_cb, document_title, download_button, export_button
         };
         view.update_map();
+        parent.set_hidden(false);
+
         Ok(view)
     }
 
