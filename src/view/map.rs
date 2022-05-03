@@ -503,6 +503,7 @@ impl MapView {
         }) as Box<dyn Fn(_)>);
         control.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
+        control.remove_attribute("disabled").unwrap();
 
         // add event handler(s) to file input element
         let input = document.get_element_by_id("upload").unwrap()
@@ -534,6 +535,7 @@ impl MapView {
         }) as Box<dyn Fn(_)>);
         input.add_event_listener_with_callback("change", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
+        input.remove_attribute("disabled").unwrap();
 
         let download_button = document.get_element_by_id("download-map-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();

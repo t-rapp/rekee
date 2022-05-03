@@ -409,6 +409,7 @@ impl CatalogView {
             nuts::publish(ShowCatalogConfigEvent);
         }) as Box<dyn Fn(_)>);
         config_button.add_event_listener_with_callback("click", config_show_cb.as_ref().unchecked_ref()).unwrap();
+        config_button.remove_attribute("disabled").unwrap();
 
         let mut view = CatalogView {
             catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
