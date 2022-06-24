@@ -77,9 +77,15 @@
             pointer-events: none;
             user-select: none;
         }
+        #catalog:not(.has-tile-labels) .tile .label {
+            display: none;
+        }
         #map-container {
             flex: 3 3 75%;
             overflow: auto;
+        }
+        #tiles:not(.has-tile-labels) .tile .label {
+            display: none;
         }
         #map-title {
             width: 50%;
@@ -201,6 +207,16 @@
                 </svg>
               </span>
               <span>Catalog Tiles</span>
+            </button>
+          </div>
+          <div class="control">
+            <button id="map-config-button" class="button is-light" title="Adjust the track settings" disabled>
+              <span class="icon">
+                <svg class="bi" width="16" height="16" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#sliders"/>
+                </svg>
+              </span>
+              <span>Settings</span>
             </button>
           </div>
         </div>
@@ -414,6 +430,42 @@
 
           <div class="buttons is-centered">
             <button id="close-track-info" class="button is-link">Close</button>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <div id="map-config-container" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <h2 class="title">Track Settings</h2>
+
+          <div class="field">
+            <label class="label">Background Grid</label>
+            <div class="control">
+              <label class="checkbox">
+                <input id="background-grid" type="checkbox" checked>
+                Visible
+              </label>
+            </div>
+            <p class="help">Whether to show the background grid or not.</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Tile Labels</label>
+            <div class="control">
+              <label class="checkbox">
+                <input id="tile-labels" type="checkbox" checked>
+                Visible
+              </label>
+            </div>
+            <p class="help">Whether to show tile information or not.</p>
+          </div>
+
+          <div class="buttons is-centered">
+            <button id="apply-map-config" class="button is-link">Save &amp; Close</button>
           </div>
         </div>
       </div>

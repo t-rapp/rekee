@@ -339,6 +339,8 @@ pub struct MapSettings {
     #[serde(flatten)]
     pub map: Map,
     pub selected: Option<Coordinate>,
+    pub background_grid_visible: bool,
+    pub tile_labels_visible: bool,
 }
 
 //----------------------------------------------------------------------------
@@ -348,11 +350,13 @@ pub struct MapView {
     map: Map,
     canvas: Element,
     canvas_viewbox: Rect,
+    grid: Element,
     tiles: Element,
     title: TitleInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
+    tile_labels_visible: bool,
     dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -391,25 +395,25 @@ impl MapView {
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
 
-        let group = document.create_element_ns(SVG_NS, "g")?;
-        group.set_id("grid");
-        group.set_attribute("class", "is-print-hidden")?;
+        let grid = document.create_element_ns(SVG_NS, "g")?;
+        grid.set_id("grid");
+        grid.set_attribute("class", "is-print-hidden")?;
         let map_radius = 4;
         for q in -map_radius..=map_radius {
             let r1 = i32::max(-map_radius, -q - map_radius);
             let r2 = i32::min(map_radius, -q + map_radius);
             for r in r1..=r2 {
-                group.append_child(&use_grid_hex(&document, &layout, (q, r))?.into())?;
+                grid.append_child(&use_grid_hex(&document, &layout, (q, r))?.into())?;
             }
         }
         // add some hexagon grid axis labels when compiling in development mode
         if cfg!(debug_assertions) {
-            group.append_child(&draw_label(&document, &layout, (map_radius, 0), "+q")?.into())?;
-            group.append_child(&draw_label(&document, &layout, (-map_radius, 0), "-q")?.into())?;
-            group.append_child(&draw_label(&document, &layout, (0, map_radius), "+r")?.into())?;
-            group.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (map_radius, 0), "+q")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (-map_radius, 0), "-q")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (0, map_radius), "+r")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
         }
-        canvas.append_child(&group)?;
+        canvas.append_child(&grid)?;
 
         let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
@@ -428,6 +432,7 @@ impl MapView {
         let active = ActiveHex::new(&document, &layout)?;
         canvas.append_child(active.as_ref())?;
 
+        let tile_labels_visible = true;
         let dragged = None;
 
         // add drag-n-drop event handlers to canvas element
@@ -554,9 +559,19 @@ impl MapView {
         export_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
+        let settings_button = document.get_element_by_id("map-config-button").unwrap()
+            .dyn_into::<web_sys::HtmlElement>().unwrap();
+        let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+            nuts::publish(ShowMapConfigEvent);
+        }) as Box<dyn Fn(_)>);
+        settings_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        callback.forget();
+        settings_button.remove_attribute("disabled").unwrap();
+
         let mut view = MapView {
-            layout, map, canvas, canvas_viewbox, tiles, title, selected, selected_menu,
-            active, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
+            layout, map, canvas, canvas_viewbox, grid, tiles, title, selected, selected_menu,
+            active, tile_labels_visible, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, document_title, download_button, export_button
         };
         view.update_map();
@@ -567,6 +582,8 @@ impl MapView {
 
     pub fn load_settings(&mut self, settings: &MapSettings) {
         self.map = settings.map.clone();
+        self.grid.set_hidden(!settings.background_grid_visible);
+        self.tile_labels_visible = settings.tile_labels_visible;
         self.update_map();
         self.inner_update_selected(settings.selected.unwrap_or_default());
     }
@@ -574,7 +591,9 @@ impl MapView {
     pub fn save_settings(&mut self) -> MapSettings {
         let map = self.map.clone();
         let selected = self.selected.pos();
-        MapSettings { map, selected }
+        let background_grid_visible = !self.grid.hidden();
+        let tile_labels_visible = self.tile_labels_visible;
+        MapSettings { map, selected, background_grid_visible, tile_labels_visible }
     }
 
     pub fn import_file(&mut self, map: &Map) {
@@ -694,6 +713,13 @@ impl MapView {
             self.active.set_hidden(true);
         }
 
+        // update tile label visibility
+        if self.tile_labels_visible {
+            check!(self.tiles.class_list().add_1("has-tile-labels").ok());
+        } else {
+            check!(self.tiles.class_list().remove_1("has-tile-labels").ok());
+        }
+
         // update title input control
         self.title.set_value(self.map.title());
 
@@ -728,6 +754,22 @@ impl MapView {
     pub fn update_title(&mut self, title: &str) {
         if title != self.map.title() {
             self.map.set_title(title);
+            self.update_map();
+        }
+    }
+
+    pub fn update_background_grid(&mut self, visible: bool) {
+        if visible != !self.grid.hidden() {
+            debug!("update background grid: {:?}", visible);
+            self.grid.set_hidden(!visible);
+            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+        }
+    }
+
+    pub fn update_tile_labels(&mut self, visible: bool) {
+        if visible != self.tile_labels_visible {
+            debug!("update map tile labels: {:?}", visible);
+            self.tile_labels_visible = visible;
             self.update_map();
         }
     }

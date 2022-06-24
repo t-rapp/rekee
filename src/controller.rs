@@ -60,6 +60,14 @@ pub struct UpdateTitleEvent {
     pub title: String,
 }
 
+pub struct UpdateBackgroundGridEvent {
+    pub visible: bool,
+}
+
+pub struct UpdateTileLabelsEvent {
+    pub visible: bool,
+}
+
 pub struct UpdateSelectedEvent {
     pub pos: Point,
 }
@@ -145,6 +153,7 @@ impl CatalogController {
         activity.subscribe(CatalogController::update_catalog_editions);
         activity.subscribe(CatalogController::update_lanes_filter);
         activity.subscribe(CatalogController::update_terrain_filter);
+        activity.subscribe(CatalogController::update_tile_labels);
         activity.subscribe(CatalogController::update_tile_usage);
         activity.subscribe(CatalogController::drag_catalog_begin);
     }
@@ -176,6 +185,10 @@ impl CatalogController {
 
     fn update_terrain_filter(&mut self, event: &UpdateTerrainFilterEvent) {
         self.view.update_terrain_filter(event.terrain);
+    }
+
+    fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
+        self.view.update_tile_labels(event.visible);
     }
 
     fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
@@ -220,6 +233,8 @@ impl MapController {
         activity.subscribe(MapController::rotate_map_left);
         activity.subscribe(MapController::rotate_map_right);
         activity.subscribe(MapController::update_title);
+        activity.subscribe(MapController::update_background_grid);
+        activity.subscribe(MapController::update_tile_labels);
         activity.subscribe(MapController::update_selected);
         activity.subscribe(MapController::rotate_selected_left);
         activity.subscribe(MapController::rotate_selected_right);
@@ -279,6 +294,14 @@ impl MapController {
 
     fn update_title(&mut self, event: &UpdateTitleEvent) {
         self.view.update_title(&event.title);
+    }
+
+    fn update_background_grid(&mut self, event: &UpdateBackgroundGridEvent) {
+        self.view.update_background_grid(event.visible);
+    }
+
+    fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
+        self.view.update_tile_labels(event.visible);
     }
 
     fn update_selected(&mut self, event: &UpdateSelectedEvent) {
@@ -402,6 +425,46 @@ impl TrackInfoController {
 
 //----------------------------------------------------------------------------
 
+pub struct ShowMapConfigEvent;
+
+pub struct HideMapConfigEvent;
+
+pub struct ApplyMapConfigEvent;
+
+pub struct MapConfigController {
+    view: MapConfigView,
+}
+
+impl MapConfigController {
+    pub fn init(view: MapConfigView) {
+        let controller = MapConfigController { view };
+        let activity = nuts::new_domained_activity(controller, &DefaultDomain);
+
+        // register private events
+        activity.private_channel(|controller, _event: ApplyMapConfigEvent| {
+            controller.view.apply_map_config();
+        });
+
+        // register public events
+        activity.subscribe_domained(Self::show);
+        activity.subscribe(Self::hide);
+    }
+
+    fn show(&mut self, domain: &mut DomainState, _event: &ShowMapConfigEvent) {
+        if let Some(settings) = domain.try_get::<MapSettings>() {
+            self.view.set_background_grid(settings.background_grid_visible);
+            self.view.set_tile_labels(settings.tile_labels_visible);
+        }
+        self.view.set_active(true);
+    }
+
+    fn hide(&mut self, _event: &HideMapConfigEvent) {
+        self.view.set_active(false);
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct DrawExportTileDoneEvent {
     pub tile: PlacedTile,
 }
@@ -426,7 +489,7 @@ impl ExportController {
 
     fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {
         if let Some(settings) = domain.try_get::<MapSettings>() {
-            self.view.draw_export_image(&settings.map);
+            self.view.draw_export_image(&settings.map, settings.tile_labels_visible);
         }
     }
 }

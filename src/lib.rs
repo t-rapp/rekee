@@ -10,6 +10,7 @@
 //! * `export-container` (mandatory)
 //! * `map-container` (mandatory)
 //! * `track-info-container` (optional)
+//! * `map-config-container` (optional)
 //! * `version` (optional)
 //! * `welcome` (optional)
 //!
@@ -72,6 +73,10 @@ pub fn main() -> Result<(), JsValue> {
 
     if let Some(parent) = document.get_element_by_id("track-info-container") {
         TrackInfoController::init(TrackInfoView::new(parent)?);
+    }
+
+    if let Some(parent) = document.get_element_by_id("map-config-container") {
+        MapConfigController::init(MapConfigView::new(parent)?);
     }
 
     let parent = document.get_element_by_id("export-container")

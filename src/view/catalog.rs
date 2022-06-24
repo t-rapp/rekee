@@ -301,6 +301,7 @@ pub struct CatalogView {
     filter_lanes_elements: Vec<LanesFilterElement>,
     filter_terrain: Option<Terrain>,
     filter_terrain_elements: Vec<TerrainFilterElement>,
+    tile_labels_visible: bool,
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -364,6 +365,9 @@ impl CatalogView {
         }
         let filter_terrain = None;
 
+        let tile_labels_visible = true;
+        catalog.class_list().add_1("has-tile-labels")?;
+
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
                 .and_then(|trans| trans.get_data("application/rekee").ok());
@@ -413,8 +417,8 @@ impl CatalogView {
 
         let mut view = CatalogView {
             catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
-            filter_terrain_elements, map: None, dragover_cb, dragdrop_cb, keychange_cb,
-            config_button, config_show_cb
+            filter_terrain_elements, tile_labels_visible, map: None, dragover_cb, dragdrop_cb,
+            keychange_cb, config_button, config_show_cb
         };
         view.load_settings(&CatalogSettings::default());
         parent.set_hidden(false);
@@ -561,6 +565,18 @@ impl CatalogView {
 
         self.filter_lanes = lanes;
         self.filter_terrain = terrain;
+    }
+
+    pub fn update_tile_labels(&mut self, visible: bool) {
+        if visible != self.tile_labels_visible {
+            info!("update catalog tile labels: {:?}", visible);
+            if visible {
+                check!(self.catalog.class_list().add_1("has-tile-labels").ok());
+            } else {
+                check!(self.catalog.class_list().remove_1("has-tile-labels").ok());
+            }
+            self.tile_labels_visible = visible;
+        }
     }
 
     pub fn update_tile_usage(&mut self, tiles: &[TileId]) {

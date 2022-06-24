@@ -91,7 +91,7 @@ struct TileImage {
 }
 
 impl TileImage {
-    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile) -> Result<Self> {
+    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile, label_visible: bool) -> Result<Self> {
         let pos = tile.pos.to_pixel(layout);
         let size = layout.size();
         let angle = tile.dir.to_angle(layout);
@@ -105,7 +105,9 @@ impl TileImage {
                 debug!("drawing tile image {:?}", &tile);
                 context.save();
                 check!(draw_tile_image(&context, &image, pos, size, angle).ok());
-                check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
+                if label_visible {
+                    check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
+                }
                 context.restore();
                 nuts::send_to::<ExportController, _>(DrawExportTileDoneEvent { tile: tile.clone() });
             }
@@ -119,7 +121,9 @@ impl TileImage {
                 debug!("loading of tile image {:?} failed", &tile);
                 context.save();
                 check!(draw_missing_image(&context, pos, size).ok());
-                check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
+                if label_visible {
+                    check!(draw_tile_label(&context, &tile.id().base().to_string(), pos).ok());
+                }
                 context.restore();
                 nuts::send_to::<ExportController, _>(DrawExportTileDoneEvent { tile: tile.clone() });
             }
@@ -170,7 +174,7 @@ impl ExportView {
         Ok(ExportView { layout, images, canvas, anchor })
     }
 
-    pub fn draw_export_image(&mut self, map: &Map) {
+    pub fn draw_export_image(&mut self, map: &Map, tile_labels_visible: bool) {
         debug!("start export of map image with {} tiles", map.tiles().len());
 
         // update download filename attribute
@@ -224,7 +228,7 @@ impl ExportView {
         // draw each tile image asynchronously
         self.images.clear();
         for tile in map.tiles() {
-            let image = check!(TileImage::new(&context, &layout, tile.clone()).ok());
+            let image = check!(TileImage::new(&context, &layout, tile.clone(), tile_labels_visible).ok());
             self.images.push(image);
         }
     }
