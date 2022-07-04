@@ -357,6 +357,7 @@ pub struct MapView {
     selected_menu: SelectedMenu,
     active: ActiveHex,
     tile_labels_visible: bool,
+    keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
     dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -434,6 +435,38 @@ impl MapView {
 
         let tile_labels_visible = true;
         let dragged = None;
+
+        let keychange_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            // ignore repeated keyboard events
+            if event.repeat() {
+                return;
+            }
+            // ignore keyboard events that have input controls as target
+            let target = check!(event.target()
+                .and_then(|target| target.dyn_into::<web_sys::HtmlElement>().ok()));
+            let is_text_input_target =
+                target.dyn_ref::<web_sys::HtmlInputElement>()
+                    .map_or(false, |elm| !elm.read_only()) ||
+                target.dyn_ref::<web_sys::HtmlTextAreaElement>()
+                    .map_or(false, |elm| !elm.read_only()) ||
+                target.has_type::<web_sys::HtmlSelectElement>() ||
+                target.is_content_editable();
+            if is_text_input_target {
+                return;
+            }
+            if event.key().eq_ignore_ascii_case("l") {
+                let inverted = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
+                    _ => return,
+                };
+                nuts::publish(ToggleTileLabelsEvent { inverted });
+            }
+        }) as Box<dyn Fn(_)>);
+        document.add_event_listener_with_callback("keydown",
+            keychange_cb.as_ref().unchecked_ref())?;
+        document.add_event_listener_with_callback("keyup",
+            keychange_cb.as_ref().unchecked_ref())?;
 
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
@@ -571,8 +604,9 @@ impl MapView {
 
         let mut view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, title, selected, selected_menu,
-            active, tile_labels_visible, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb, document_title, download_button, export_button
+            active, tile_labels_visible, keychange_cb, dragged, dragged_mousemove_cb,
+            dragged_mouseup_cb, dragged_mouseleave_cb, document_title, download_button,
+            export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -774,6 +808,16 @@ impl MapView {
         }
     }
 
+    pub fn toggle_tile_labels(&mut self, inverted: bool) {
+        let visible = self.tile_labels_visible ^ inverted;
+        info!("toggle map tile labels: {:?}", visible);
+        if visible {
+            check!(self.tiles.class_list().add_1("has-tile-labels").ok());
+        } else {
+            check!(self.tiles.class_list().remove_1("has-tile-labels").ok());
+        }
+    }
+
     pub fn clear_selected(&mut self) {
         self.selected.set_pos(&self.layout, None);
         self.selected.set_draggable(false);
@@ -933,6 +977,11 @@ impl MapView {
 
 impl Drop for MapView {
     fn drop(&mut self) {
+        let document = check!(self.canvas.owner_document());
+        let _ = document.remove_event_listener_with_callback("keydown",
+            self.keychange_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("keyup",
+            self.keychange_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mousemove",
             self.dragged_mousemove_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mouseup",

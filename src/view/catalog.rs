@@ -570,12 +570,22 @@ impl CatalogView {
     pub fn update_tile_labels(&mut self, visible: bool) {
         if visible != self.tile_labels_visible {
             info!("update catalog tile labels: {:?}", visible);
+            self.tile_labels_visible = visible;
             if visible {
                 check!(self.catalog.class_list().add_1("has-tile-labels").ok());
             } else {
                 check!(self.catalog.class_list().remove_1("has-tile-labels").ok());
             }
-            self.tile_labels_visible = visible;
+        }
+    }
+
+    pub fn toggle_tile_labels(&mut self, inverted: bool) {
+        let visible = self.tile_labels_visible ^ inverted;
+        info!("toggle catalog tile labels: {:?}", visible);
+        if visible {
+            check!(self.catalog.class_list().add_1("has-tile-labels").ok());
+        } else {
+            check!(self.catalog.class_list().remove_1("has-tile-labels").ok());
         }
     }
 

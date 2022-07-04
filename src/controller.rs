@@ -68,6 +68,10 @@ pub struct UpdateTileLabelsEvent {
     pub visible: bool,
 }
 
+pub struct ToggleTileLabelsEvent {
+    pub inverted: bool,
+}
+
 pub struct UpdateSelectedEvent {
     pub pos: Point,
 }
@@ -154,6 +158,7 @@ impl CatalogController {
         activity.subscribe(CatalogController::update_lanes_filter);
         activity.subscribe(CatalogController::update_terrain_filter);
         activity.subscribe(CatalogController::update_tile_labels);
+        activity.subscribe(CatalogController::toggle_tile_labels);
         activity.subscribe(CatalogController::update_tile_usage);
         activity.subscribe(CatalogController::drag_catalog_begin);
     }
@@ -189,6 +194,10 @@ impl CatalogController {
 
     fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
         self.view.update_tile_labels(event.visible);
+    }
+
+    fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
+        self.view.toggle_tile_labels(event.inverted);
     }
 
     fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
@@ -235,6 +244,7 @@ impl MapController {
         activity.subscribe(MapController::update_title);
         activity.subscribe(MapController::update_background_grid);
         activity.subscribe(MapController::update_tile_labels);
+        activity.subscribe(MapController::toggle_tile_labels);
         activity.subscribe(MapController::update_selected);
         activity.subscribe(MapController::rotate_selected_left);
         activity.subscribe(MapController::rotate_selected_right);
@@ -302,6 +312,10 @@ impl MapController {
 
     fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
         self.view.update_tile_labels(event.visible);
+    }
+
+    fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
+        self.view.toggle_tile_labels(event.inverted);
     }
 
     fn update_selected(&mut self, event: &UpdateSelectedEvent) {
