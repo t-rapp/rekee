@@ -1220,11 +1220,10 @@ impl Default for Terrain {
 
 impl fmt::Display for Terrain {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        let danger_level;
+        let mut danger_level = 0;
         match self {
             Terrain::None => {
                 write!(fmt, "None")?;
-                danger_level = 0;
             },
             Terrain::Asphalt(val) => {
                 write!(fmt, "Asphalt")?;
@@ -1260,7 +1259,7 @@ impl FromStr for Terrain {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let idx = s.find(&[' ', '-'][..])
-            .unwrap_or_else(|| s.len());
+            .unwrap_or(s.len());
         let surface = &s[0..idx];
 
         let level = if let Some(val) = s.get(idx+1..) {
