@@ -399,7 +399,7 @@ impl MapView {
         let grid = document.create_element_ns(SVG_NS, "g")?;
         grid.set_id("grid");
         grid.set_attribute("class", "is-print-hidden")?;
-        let map_radius = 4;
+        let map_radius = 8;
         for q in -map_radius..=map_radius {
             let r1 = i32::max(-map_radius, -q - map_radius);
             let r2 = i32::min(map_radius, -q + map_radius);
