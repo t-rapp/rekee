@@ -138,8 +138,7 @@ struct LanesFilterElement {
 impl LanesFilterElement {
     fn new(inner: Element) -> Result<Self> {
         let value = inner.get_attribute("data-value")
-            .map(|val| val.parse::<u8>().ok())
-            .flatten();
+            .and_then(|val| val.parse::<u8>().ok());
 
         let tiles: BTreeSet<_> = TileInfo::iter()
             .filter(|info| {
@@ -208,8 +207,7 @@ struct TerrainFilterElement {
 impl TerrainFilterElement {
     fn new(inner: Element) -> Result<Self> {
         let value = inner.get_attribute("data-value")
-            .map(|val| val.parse::<Terrain>().ok())
-            .flatten();
+            .and_then(|val| val.parse::<Terrain>().ok());
 
         let tiles: BTreeSet<_> = TileInfo::iter()
             .filter(|info| match value {
@@ -326,8 +324,7 @@ impl CatalogView {
             .collect();
 
         let mut tile_ids: Vec<TileId> = Edition::iter()
-            .map(|edition| edition.tiles())
-            .flatten()
+            .flat_map(|edition| edition.tiles())
             .collect();
         tile_ids.sort_unstable();
 
@@ -493,8 +490,7 @@ impl CatalogView {
 
         // calculate the number of available tile variants
         let mut tile_ids: Vec<TileId> = editions.iter()
-            .map(|edition| edition.tiles())
-            .flatten()
+            .flat_map(|edition| edition.tiles())
             .collect();
         tile_ids.sort_unstable();
         let mut tile_counts = HashMap::<TileId, usize>::new();
@@ -529,8 +525,7 @@ impl CatalogView {
         let terrain = terrain.map(|val| val.surface());
 
         let edition_tiles: HashSet<TileId> = self.editions.iter()
-            .map(|edition| edition.tiles())
-            .flatten()
+            .flat_map(|edition| edition.tiles())
             .map(|id| id.base())
             .collect();
 
