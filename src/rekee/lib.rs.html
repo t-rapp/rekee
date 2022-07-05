@@ -115,6 +115,11 @@
 <span id="110">110</span>
 <span id="111">111</span>
 <span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Library providing track editor functions for the Rekee web application.</span>
 <span class="doccomment">//!</span>
@@ -127,6 +132,7 @@
 <span class="doccomment">//! * `export-container` (mandatory)</span>
 <span class="doccomment">//! * `map-container` (mandatory)</span>
 <span class="doccomment">//! * `track-info-container` (optional)</span>
+<span class="doccomment">//! * `map-config-container` (optional)</span>
 <span class="doccomment">//! * `version` (optional)</span>
 <span class="doccomment">//! * `welcome` (optional)</span>
 <span class="doccomment">//!</span>
@@ -189,6 +195,10 @@
 
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;track-info-container&quot;</span>) {
         <span class="ident">TrackInfoController::init</span>(<span class="ident">TrackInfoView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    }
+
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;map-config-container&quot;</span>) {
+        <span class="ident">MapConfigController::init</span>(<span class="ident">MapConfigView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
     }
 
     <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;export-container&quot;</span>)
