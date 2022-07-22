@@ -46,6 +46,8 @@ mod storage;
 #[macro_use]
 pub mod tile;
 
+pub mod token;
+
 #[macro_use]
 mod view;
 use view::*;
