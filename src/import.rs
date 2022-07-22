@@ -6,13 +6,46 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::convert::TryInto;
+use std::fmt;
+
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 
 use crate::edition::Series;
-use crate::map::Map;
+use crate::map::{PlacedToken, Map};
 use crate::tile::*;
+use crate::token::TokenId;
 use super::*;
+
+//----------------------------------------------------------------------------
+
+type Result<T> = std::result::Result<T, ImportError>;
+
+#[derive(Debug)]
+pub enum ImportError {
+    UnknownTileId(String),
+    UnknownTokenId(String),
+    JsonError(serde_json::Error),
+}
+
+impl fmt::Display for ImportError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ImportError::UnknownTileId(val) =>
+                write!(fmt, "Unknown tile identifier \"{}\"", val),
+            ImportError::UnknownTokenId(val) =>
+                write!(fmt, "Unknown token identifier \"{}\"", val),
+            ImportError::JsonError(err) =>
+                write!(fmt, "Error processing JSON data: {}", err),
+        }
+    }
+}
+
+impl From<serde_json::Error> for ImportError {
+    fn from(error: serde_json::Error) -> Self {
+        ImportError::JsonError(error)
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -42,6 +75,38 @@ mod native {
         r: i32,
         id: String,
         dir: i32,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        tokens: Vec<ImportToken>,
+    }
+
+    #[derive(Debug, Default, Deserialize, Serialize)]
+    struct ImportToken {
+        id: String,
+        q: f32,
+        r: f32,
+        dir: f32,
+    }
+
+    impl TryInto<PlacedToken> for &ImportToken {
+        type Error = ImportError;
+
+        fn try_into(self) -> Result<PlacedToken> {
+            let id = self.id.parse::<TokenId>()
+                .map_err(|_| ImportError::UnknownTokenId(self.id.clone()))?;
+            let pos = FloatCoordinate::new(self.q, self.r);
+            let dir = self.dir;
+            Ok(PlacedToken::new(id, pos, dir))
+        }
+    }
+
+    impl From<&PlacedToken> for ImportToken {
+        fn from(value: &PlacedToken) -> ImportToken {
+            let id = value.id.to_string();
+            let q = value.pos.q();
+            let r = value.pos.r();
+            let dir = value.dir;
+            ImportToken { id, q, r, dir }
+        }
     }
 
     pub fn import(data: &str) -> Result<Map> {
@@ -54,9 +119,14 @@ mod native {
         for tile in data.tiles {
             let pos = Coordinate::new(tile.q, tile.r);
             let id = tile.id.parse::<TileId>()
-                .unwrap_or_default();
+                .map_err(|_| ImportError::UnknownTileId(tile.id.clone()));
             let dir = Direction::from(tile.dir);
-            map.insert(id, pos, dir);
+            let tokens = tile.tokens.iter()
+                .filter_map(|token| token.try_into().ok())
+                .collect();
+            if let Ok(id) = id {
+                map.insert_with_tokens(id, pos, dir, tokens);
+            }
         }
 
         Ok(map)
@@ -73,10 +143,14 @@ mod native {
             let r = tile.pos.r();
             let id = tile.id().to_string();
             let dir = i32::from(tile.dir);
-            data.tiles.push(ImportTile { q, r, id, dir });
+            let tokens = tile.tokens.iter()
+                .map(|token| token.into())
+                .collect();
+            data.tiles.push(ImportTile { q, r, id, dir, tokens });
         }
 
         serde_json::to_string(&data)
+            .map_err(|err| ImportError::JsonError(err))
     }
 }
 
@@ -185,6 +259,7 @@ mod rgt {
         }
 
         serde_json::to_string(&data)
+            .map_err(|err| ImportError::JsonError(err))
     }
 }
 
