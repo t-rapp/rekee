@@ -11,13 +11,15 @@ use std::fmt;
 use serde::{Serialize, Deserialize, Deserializer};
 use serde::de::{self, Visitor};
 
-use crate::hexagon::{Coordinate, Direction, Layout, Point};
+use crate::hexagon::{Coordinate, Direction, FloatCoordinate, Layout, Point};
 use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo};
+use crate::token::TokenId;
 
 //----------------------------------------------------------------------------
 
 /// Single tile that is part of the map. A placed tile consists of tile
-/// identifier, grid coordinates, and rotation direction.
+/// identifier, grid coordinates, rotation direction, and optionally a list
+/// of tokens.
 ///
 /// Contains some private map helper functions that apply tile information
 /// to the placed tile.
@@ -27,6 +29,8 @@ pub struct PlacedTile {
     #[serde(flatten)]
     pub pos: Coordinate,
     pub dir: Direction,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tokens: Vec<PlacedToken>,
     #[serde(skip_serializing)]
     info: Option<&'static TileInfo>,
 }
@@ -34,8 +38,15 @@ pub struct PlacedTile {
 impl PlacedTile {
     /// Creates a new tile with identifier, coordinates, and rotation.
     pub fn new(id: TileId, pos: Coordinate, dir: Direction) -> Self {
+        let tokens = Vec::new();
+        PlacedTile::with_tokens(id, pos, dir, tokens)
+    }
+
+    /// Creates a new tile with identifier, coordinates, rotation, and a list
+    /// of tokens.
+    pub fn with_tokens(id: TileId, pos: Coordinate, dir: Direction, tokens: Vec<PlacedToken>) -> Self {
         let info = TileInfo::get(id);
-        PlacedTile { id, pos, dir, info }
+        PlacedTile { id, pos, dir, tokens, info }
     }
 
     /// Tile identifier.
@@ -101,6 +112,7 @@ impl fmt::Debug for PlacedTile {
             .field("id", &self.id)
             .field("pos", &self.pos)
             .field("dir", &self.dir)
+            .field("tokens", &self.tokens)
             // skip printing cached tile info
             .finish()
     }
@@ -109,7 +121,7 @@ impl fmt::Debug for PlacedTile {
 impl PartialEq<PlacedTile> for PlacedTile {
     fn eq(&self, other: &PlacedTile) -> bool {
         // skip comparing cached tile info reference
-        self.id == other.id && self.pos == other.pos && self.dir == other.dir
+        self.id == other.id && self.pos == other.pos && self.dir == other.dir && self.tokens == other.tokens
     }
 }
 
@@ -126,7 +138,7 @@ impl<'de> Deserialize<'de> for PlacedTile {
     {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
-        enum Field { Id, Q, R, Dir }
+        enum Field { Id, Q, R, Dir, Tokens }
 
         struct PlacedTileVisitor;
 
@@ -149,7 +161,9 @@ impl<'de> Deserialize<'de> for PlacedTile {
                     .ok_or_else(|| de::Error::invalid_length(2, &self))?;
                 let dir = seq.next_element()?
                     .ok_or_else(|| de::Error::invalid_length(3, &self))?;
-                Ok(PlacedTile::new(id, (q, r).into(), dir))
+                let tokens: Vec<PlacedToken> = seq.next_element()?
+                    .unwrap_or_default();
+                Ok(PlacedTile::with_tokens(id, (q, r).into(), dir, tokens))
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<PlacedTile, V::Error>
@@ -160,6 +174,7 @@ impl<'de> Deserialize<'de> for PlacedTile {
                 let mut q = None;
                 let mut r = None;
                 let mut dir = None;
+                let mut tokens = None;
                 while let Some(key) = map.next_key()? {
                     match key {
                         Field::Id => {
@@ -186,18 +201,42 @@ impl<'de> Deserialize<'de> for PlacedTile {
                             }
                             dir = Some(map.next_value()?);
                         }
+                        Field::Tokens => {
+                            if tokens.is_some() {
+                                return Err(de::Error::duplicate_field("tokens"));
+                            }
+                            tokens = Some(map.next_value()?);
+                        }
                     }
                 }
                 let id = id.ok_or_else(|| de::Error::missing_field("id"))?;
                 let q = q.ok_or_else(|| de::Error::missing_field("q"))?;
                 let r = r.ok_or_else(|| de::Error::missing_field("r"))?;
                 let dir = dir.ok_or_else(|| de::Error::missing_field("dir"))?;
-                Ok(PlacedTile::new(id, (q, r).into(), dir))
+                let tokens = tokens.unwrap_or_default();
+                Ok(PlacedTile::with_tokens(id, (q, r).into(), dir, tokens))
             }
         }
 
-        const FIELDS: [&str; 4] = ["id", "q", "r", "dir"];
+        const FIELDS: [&str; 5] = ["id", "q", "r", "dir", "tokens"];
         deserializer.deserialize_struct("tile", &FIELDS, PlacedTileVisitor)
+    }
+}
+
+//----------------------------------------------------------------------------
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PlacedToken {
+    pub id: TokenId,
+    #[serde(flatten)]
+    pub pos: FloatCoordinate,
+    pub dir: f32,
+}
+
+impl PlacedToken {
+    /// Creates a new token with identifier, coordinates, and rotation.
+    pub fn new(id: TokenId, pos: FloatCoordinate, dir: f32) -> Self {
+        PlacedToken { id, pos, dir }
     }
 }
 
@@ -315,7 +354,14 @@ impl Map {
 
     /// Insert a new tile using the specified position and direction.
     pub fn insert(&mut self, id: TileId, pos: Coordinate, dir: Direction) {
-        // remove existing tile at insert position
+        let tokens = Vec::new();
+        self.insert_with_tokens(id, pos, dir, tokens)
+    }
+
+    /// Insert a new tile using the specified position and direction, plus some
+    /// track tokens that are part of the tile.
+    pub fn insert_with_tokens(&mut self, id: TileId, pos: Coordinate, dir: Direction, tokens: Vec<PlacedToken>) {
+        // remove any existing tile at insert position
         self.tiles.retain(|tile| tile.pos != pos);
 
         // auto-select tile id variant, if not given
@@ -332,8 +378,8 @@ impl Map {
             }
         }
 
-        debug!("insert of tile {} at pos: {}, dir: {}", id, pos, dir);
-        let tile = PlacedTile::new(id, pos, dir);
+        debug!("insert of tile {} at pos: {}, dir: {}, token count: {}", id, pos, dir, tokens.len());
+        let tile = PlacedTile::with_tokens(id, pos, dir, tokens);
         self.tiles.push(tile);
 
         // update active tile append position
@@ -634,6 +680,13 @@ mod tests {
         let text = serde_json::to_string(&tile).unwrap();
         assert_eq!(text, r#"{"id":"124a","q":2,"r":0,"dir":2}"#);
 
+        let mut tokens = Vec::new();
+        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit, (0.0, 0.0).into(), 3.0));
+        tokens.push(PlacedToken::new(TokenId::Chicane, (1.0, 0.5).into(), 0.0));
+        let tile = PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, tokens);
+        let text = serde_json::to_string(&tile).unwrap();
+        assert_eq!(text, r#"{"id":"205a","q":2,"r":-1,"dir":5,"tokens":[{"id":"chicane-limit","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane","q":1.0,"r":0.5,"dir":0.0}]}"#);
+
         let text = r#"{"id":"0","q":0,"r":0,"dir":0}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
         assert_eq!(tile, PlacedTile::new(tile!(0), (0, 0).into(), Direction::A));
@@ -645,6 +698,32 @@ mod tests {
         let text = r#"{"id": "103b-1", "q": 1, "r": -2, "dir": 1}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
         assert_eq!(tile, PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B));
+
+        let text = indoc!(r#"{
+            "id": "205a",
+            "q": 2,
+            "r": -1,
+            "dir": 5,
+            "tokens": [
+                {
+                    "id": "chicane-limit",
+                    "q": 0.0,
+                    "r": 0.0,
+                    "dir": 3.0
+                },
+                {
+                    "id": "chicane",
+                    "q": 1.0,
+                    "r": 0.5,
+                    "dir": 0.0
+                }
+            ]
+        }"#);
+        let tile: PlacedTile = serde_json::from_str(text).unwrap();
+        let mut tokens = Vec::new();
+        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit, (0.0, 0.0).into(), 3.0));
+        tokens.push(PlacedToken::new(TokenId::Chicane, (1.0, 0.5).into(), 0.0));
+        assert_eq!(tile, PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, tokens));
 
         let text = r#"{}"#;
         let result: Result<PlacedTile, _> = serde_json::from_str(text);
