@@ -1050,6 +1050,85 @@
 <span id="1045">1045</span>
 <span id="1046">1046</span>
 <span id="1047">1047</span>
+<span id="1048">1048</span>
+<span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
+<span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
+<span id="1101">1101</span>
+<span id="1102">1102</span>
+<span id="1103">1103</span>
+<span id="1104">1104</span>
+<span id="1105">1105</span>
+<span id="1106">1106</span>
+<span id="1107">1107</span>
+<span id="1108">1108</span>
+<span id="1109">1109</span>
+<span id="1110">1110</span>
+<span id="1111">1111</span>
+<span id="1112">1112</span>
+<span id="1113">1113</span>
+<span id="1114">1114</span>
+<span id="1115">1115</span>
+<span id="1116">1116</span>
+<span id="1117">1117</span>
+<span id="1118">1118</span>
+<span id="1119">1119</span>
+<span id="1120">1120</span>
+<span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Map of tiles within a hexagon grid.</span>
 <span class="comment">//</span>
@@ -1063,13 +1142,15 @@
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>};
 <span class="kw">use</span> <span class="ident">serde::de</span>::{<span class="self">self</span>, <span class="ident">Visitor</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Layout</span>, <span class="ident">Point</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">FloatCoordinate</span>, <span class="ident">Layout</span>, <span class="ident">Point</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile</span>::{<span class="ident">Connection</span>, <span class="ident">ConnectionHint</span>, <span class="ident">Edge</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>, <span class="ident">TileInfo</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::token::TokenId</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="doccomment">/// Single tile that is part of the map. A placed tile consists of tile</span>
-<span class="doccomment">/// identifier, grid coordinates, and rotation direction.</span>
+<span class="doccomment">/// identifier, grid coordinates, rotation direction, and optionally a list</span>
+<span class="doccomment">/// of tokens.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Contains some private map helper functions that apply tile information</span>
 <span class="doccomment">/// to the placed tile.</span>
@@ -1079,6 +1160,8 @@
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
     <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Coordinate</span>,
     <span class="kw">pub</span> <span class="ident">dir</span>: <span class="ident">Direction</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>, <span class="ident">skip_serializing_if</span> <span class="op">=</span> <span class="string">&quot;Vec::is_empty&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">skip_serializing</span>)]</span>
     <span class="ident">info</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">TileInfo</span><span class="op">&gt;</span>,
 }
@@ -1086,8 +1169,15 @@
 <span class="kw">impl</span> <span class="ident">PlacedTile</span> {
     <span class="doccomment">/// Creates a new tile with identifier, coordinates, and rotation.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) -&gt; <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>)
+    }
+
+    <span class="doccomment">/// Creates a new tile with identifier, coordinates, rotation, and a list</span>
+    <span class="doccomment">/// of tokens.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_tokens</span>(<span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>, <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">TileInfo::get</span>(<span class="ident">id</span>);
-        <span class="ident">PlacedTile</span> { <span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">info</span> }
+        <span class="ident">PlacedTile</span> { <span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>, <span class="ident">info</span> }
     }
 
     <span class="doccomment">/// Tile identifier.</span>
@@ -1153,6 +1243,7 @@
             .<span class="ident">field</span>(<span class="string">&quot;id&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">id</span>)
             .<span class="ident">field</span>(<span class="string">&quot;pos&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pos</span>)
             .<span class="ident">field</span>(<span class="string">&quot;dir&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dir</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;tokens&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tokens</span>)
             <span class="comment">// skip printing cached tile info</span>
             .<span class="ident">finish</span>()
     }
@@ -1161,7 +1252,7 @@
 <span class="kw">impl</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">PlacedTile</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PlacedTile</span> {
     <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="ident">bool</span> {
         <span class="comment">// skip comparing cached tile info reference</span>
-        <span class="self">self</span>.<span class="ident">id</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">id</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">pos</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">dir</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">dir</span>
+        <span class="self">self</span>.<span class="ident">id</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">id</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">pos</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">dir</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">dir</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">tokens</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">tokens</span>
     }
 }
 
@@ -1178,7 +1269,7 @@
     {
         <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>)]</span>
         <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">field_identifier</span>, <span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;lowercase&quot;</span>)]</span>
-        <span class="kw">enum</span> <span class="ident">Field</span> { <span class="ident">Id</span>, <span class="ident">Q</span>, <span class="ident">R</span>, <span class="ident">Dir</span> }
+        <span class="kw">enum</span> <span class="ident">Field</span> { <span class="ident">Id</span>, <span class="ident">Q</span>, <span class="ident">R</span>, <span class="ident">Dir</span>, <span class="ident">Tokens</span> }
 
         <span class="kw">struct</span> <span class="ident">PlacedTileVisitor</span>;
 
@@ -1201,7 +1292,9 @@
                     .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::invalid_length</span>(<span class="number">2</span>, <span class="kw-2">&amp;</span><span class="self">self</span>))<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">seq</span>.<span class="ident">next_element</span>()<span class="question-mark">?</span>
                     .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::invalid_length</span>(<span class="number">3</span>, <span class="kw-2">&amp;</span><span class="self">self</span>))<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">PlacedTile::new</span>(<span class="ident">id</span>, (<span class="ident">q</span>, <span class="ident">r</span>).<span class="ident">into</span>(), <span class="ident">dir</span>))
+                <span class="kw">let</span> <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">seq</span>.<span class="ident">next_element</span>()<span class="question-mark">?</span>
+                    .<span class="ident">unwrap_or_default</span>();
+                <span class="prelude-val">Ok</span>(<span class="ident">PlacedTile::with_tokens</span>(<span class="ident">id</span>, (<span class="ident">q</span>, <span class="ident">r</span>).<span class="ident">into</span>(), <span class="ident">dir</span>, <span class="ident">tokens</span>))
             }
 
             <span class="kw">fn</span> <span class="ident">visit_map</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">map</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PlacedTile</span>, <span class="ident">V::Error</span><span class="op">&gt;</span>
@@ -1212,6 +1305,7 @@
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">q</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dir</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                 <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">key</span>) <span class="op">=</span> <span class="ident">map</span>.<span class="ident">next_key</span>()<span class="question-mark">?</span> {
                     <span class="kw">match</span> <span class="ident">key</span> {
                         <span class="ident">Field::Id</span> =&gt; {
@@ -1238,18 +1332,42 @@
                             }
                             <span class="ident">dir</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>.<span class="ident">next_value</span>()<span class="question-mark">?</span>);
                         }
+                        <span class="ident">Field::Tokens</span> =&gt; {
+                            <span class="kw">if</span> <span class="ident">tokens</span>.<span class="ident">is_some</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">de::Error::duplicate_field</span>(<span class="string">&quot;tokens&quot;</span>));
+                            }
+                            <span class="ident">tokens</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>.<span class="ident">next_value</span>()<span class="question-mark">?</span>);
+                        }
                     }
                 }
                 <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">id</span>.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::missing_field</span>(<span class="string">&quot;id&quot;</span>))<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">q</span>.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::missing_field</span>(<span class="string">&quot;q&quot;</span>))<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::missing_field</span>(<span class="string">&quot;r&quot;</span>))<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">de::Error::missing_field</span>(<span class="string">&quot;dir&quot;</span>))<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">PlacedTile::new</span>(<span class="ident">id</span>, (<span class="ident">q</span>, <span class="ident">r</span>).<span class="ident">into</span>(), <span class="ident">dir</span>))
+                <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">tokens</span>.<span class="ident">unwrap_or_default</span>();
+                <span class="prelude-val">Ok</span>(<span class="ident">PlacedTile::with_tokens</span>(<span class="ident">id</span>, (<span class="ident">q</span>, <span class="ident">r</span>).<span class="ident">into</span>(), <span class="ident">dir</span>, <span class="ident">tokens</span>))
             }
         }
 
-        <span class="kw">const</span> <span class="ident">FIELDS</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">4</span>] <span class="op">=</span> [<span class="string">&quot;id&quot;</span>, <span class="string">&quot;q&quot;</span>, <span class="string">&quot;r&quot;</span>, <span class="string">&quot;dir&quot;</span>];
+        <span class="kw">const</span> <span class="ident">FIELDS</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">5</span>] <span class="op">=</span> [<span class="string">&quot;id&quot;</span>, <span class="string">&quot;q&quot;</span>, <span class="string">&quot;r&quot;</span>, <span class="string">&quot;dir&quot;</span>, <span class="string">&quot;tokens&quot;</span>];
         <span class="ident">deserializer</span>.<span class="ident">deserialize_struct</span>(<span class="string">&quot;tile&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">FIELDS</span>, <span class="ident">PlacedTileVisitor</span>)
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlacedToken</span> {
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">TokenId</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">FloatCoordinate</span>,
+    <span class="kw">pub</span> <span class="ident">dir</span>: <span class="ident">f32</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">PlacedToken</span> {
+    <span class="doccomment">/// Creates a new token with identifier, coordinates, and rotation.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">TokenId</span>, <span class="ident">pos</span>: <span class="ident">FloatCoordinate</span>, <span class="ident">dir</span>: <span class="ident">f32</span>) -&gt; <span class="self">Self</span> {
+        <span class="ident">PlacedToken</span> { <span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span> }
     }
 }
 
@@ -1367,7 +1485,14 @@
 
     <span class="doccomment">/// Insert a new tile using the specified position and direction.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>) {
-        <span class="comment">// remove existing tile at insert position</span>
+        <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="self">self</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>)
+    }
+
+    <span class="doccomment">/// Insert a new tile using the specified position and direction, plus some</span>
+    <span class="doccomment">/// track tokens that are part of the tile.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_with_tokens</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">TileId</span>, <span class="ident">pos</span>: <span class="ident">Coordinate</span>, <span class="ident">dir</span>: <span class="ident">Direction</span>, <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span>) {
+        <span class="comment">// remove any existing tile at insert position</span>
         <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">tile</span><span class="op">|</span> <span class="ident">tile</span>.<span class="ident">pos</span> <span class="op">!</span><span class="op">=</span> <span class="ident">pos</span>);
 
         <span class="comment">// auto-select tile id variant, if not given</span>
@@ -1384,8 +1509,8 @@
             }
         }
 
-        <span class="macro">debug!</span>(<span class="string">&quot;insert of tile {} at pos: {}, dir: {}&quot;</span>, <span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>);
-        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::new</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>);
+        <span class="macro">debug!</span>(<span class="string">&quot;insert of tile {} at pos: {}, dir: {}, token count: {}&quot;</span>, <span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>);
         <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">tile</span>);
 
         <span class="comment">// update active tile append position</span>
@@ -1686,6 +1811,13 @@
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;{&quot;id&quot;:&quot;124a&quot;,&quot;q&quot;:2,&quot;r&quot;:0,&quot;dir&quot;:2}&quot;#</span>);
 
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>, (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">3.0</span>));
+        <span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>, (<span class="number">1.0</span>, <span class="number">0.5</span>).<span class="ident">into</span>(), <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::with_tokens</span>(<span class="macro">tile!</span>(<span class="number">205</span>, <span class="ident">a</span>), (<span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="ident">tokens</span>);
+        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;{&quot;id&quot;:&quot;205a&quot;,&quot;q&quot;:2,&quot;r&quot;:-1,&quot;dir&quot;:5,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane&quot;,&quot;q&quot;:1.0,&quot;r&quot;:0.5,&quot;dir&quot;:0.0}]}&quot;#</span>);
+
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;{&quot;id&quot;:&quot;0&quot;,&quot;q&quot;:0,&quot;r&quot;:0,&quot;dir&quot;:0}&quot;#</span>;
         <span class="kw">let</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">tile</span>, <span class="ident">PlacedTile::new</span>(<span class="macro">tile!</span>(<span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>));
@@ -1697,6 +1829,32 @@
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;{&quot;id&quot;: &quot;103b-1&quot;, &quot;q&quot;: 1, &quot;r&quot;: -2, &quot;dir&quot;: 1}&quot;#</span>;
         <span class="kw">let</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">tile</span>, <span class="ident">PlacedTile::new</span>(<span class="macro">tile!</span>(<span class="number">103</span>, <span class="ident">b</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="op">-</span><span class="number">2</span>).<span class="ident">into</span>(), <span class="ident">Direction::B</span>));
+
+        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">indoc!</span>(<span class="string">r#&quot;{
+            &quot;id&quot;: &quot;205a&quot;,
+            &quot;q&quot;: 2,
+            &quot;r&quot;: -1,
+            &quot;dir&quot;: 5,
+            &quot;tokens&quot;: [
+                {
+                    &quot;id&quot;: &quot;chicane-limit&quot;,
+                    &quot;q&quot;: 0.0,
+                    &quot;r&quot;: 0.0,
+                    &quot;dir&quot;: 3.0
+                },
+                {
+                    &quot;id&quot;: &quot;chicane&quot;,
+                    &quot;q&quot;: 1.0,
+                    &quot;r&quot;: 0.5,
+                    &quot;dir&quot;: 0.0
+                }
+            ]
+        }&quot;#</span>);
+        <span class="kw">let</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>, (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">3.0</span>));
+        <span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>, (<span class="number">1.0</span>, <span class="number">0.5</span>).<span class="ident">into</span>(), <span class="number">0.0</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">tile</span>, <span class="ident">PlacedTile::with_tokens</span>(<span class="macro">tile!</span>(<span class="number">205</span>, <span class="ident">a</span>), (<span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="ident">tokens</span>));
 
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;{}&quot;#</span>;
         <span class="kw">let</span> <span class="ident">result</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PlacedTile</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>);
@@ -2098,5 +2256,5 @@
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0 (a8314ef7d 2022-06-27)" ></div>
 </body></html>
