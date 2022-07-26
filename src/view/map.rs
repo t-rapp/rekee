@@ -409,10 +409,11 @@ impl MapView {
         }
         // add some hexagon grid axis labels when compiling in development mode
         if cfg!(debug_assertions) {
-            grid.append_child(&draw_label(&document, &layout, (map_radius, 0), "+q")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (-map_radius, 0), "-q")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (0, map_radius), "+r")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (0, -map_radius), "-r")?.into())?;
+            let label_radius = 4;
+            grid.append_child(&draw_label(&document, &layout, (label_radius, 0), "+q")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (-label_radius, 0), "-q")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (0, label_radius), "+r")?.into())?;
+            grid.append_child(&draw_label(&document, &layout, (0, -label_radius), "-r")?.into())?;
         }
         canvas.append_child(&grid)?;
 
