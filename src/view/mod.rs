@@ -13,6 +13,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
 use crate::hexagon::*;
+use crate::map::PlacedTile;
 use crate::tile::*;
 
 mod catalog;
@@ -55,33 +56,57 @@ const TILE_STYLE: &str = include_str!("tile.css");
 
 //----------------------------------------------------------------------------
 
-fn draw_tile<C, D>(document: &Document, layout: &Layout, id: TileId, pos: C, dir: D) -> Result<Element>
-    where C: Into<Coordinate>, D: Into<Direction>
-{
+fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
+    let pos = tile.pos.to_pixel(layout);
+    let parent = document.create_element_ns(SVG_NS, "g")?;
+    parent.set_attribute("class", "tile")?;
+    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+
     let size = layout.size();
-    let angle = dir.into().to_angle(layout);
+    let angle = tile.dir.to_angle(layout);
     let img = document.create_element_ns(SVG_NS, "image")?;
-    img.set_attribute("href", &format!("tiles/thumb-{}.png", id))?;
+    img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
     img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
     img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
     img.set_attribute("image-rendering", "optimizeQuality")?;
     img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
+    parent.append_child(&img)?;
+
+    Ok(parent)
+}
+
+fn draw_tile_with_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
+    let parent = draw_tile(document, layout, tile)?;
 
     let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
     label.set_attribute("x", "0")?;
     label.set_attribute("y", "0")?;
-    let text = id.base().to_string();
+    let text = tile.id().base().to_string();
     label.append_child(&document.create_text_node(&text))?;
+    parent.append_child(&label)?;
 
-    let pos = pos.into().to_pixel(layout);
-    let tile = document.create_element_ns(SVG_NS, "g")?;
-    tile.set_attribute("class", "tile")?;
-    tile.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-    tile.append_child(&img)?;
-    tile.append_child(&label)?;
-    Ok(tile)
+    Ok(parent)
 }
+
+fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
+    let pos = tile.pos.to_pixel(layout);
+    let parent = document.create_element_ns(SVG_NS, "g")?;
+    parent.set_attribute("class", "tile")?;
+    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+
+    let label = document.create_element_ns(SVG_NS, "text")?;
+    label.set_attribute("class", "label")?;
+    label.set_attribute("x", "0")?;
+    label.set_attribute("y", "0")?;
+    let text = tile.id().base().to_string();
+    label.append_child(&document.create_text_node(&text))?;
+    parent.append_child(&label)?;
+
+    Ok(parent)
+}
+
+//----------------------------------------------------------------------------
 
 fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()

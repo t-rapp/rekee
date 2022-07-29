@@ -352,6 +352,7 @@ pub struct MapView {
     canvas_viewbox: Rect,
     grid: Element,
     tiles: Element,
+    labels: Element,
     title: TitleInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
@@ -420,6 +421,10 @@ impl MapView {
         let tiles = document.create_element_ns(SVG_NS, "g")?;
         tiles.set_id("tiles");
         canvas.append_child(&tiles)?;
+
+        let labels = document.create_element_ns(SVG_NS, "g")?;
+        labels.set_id("labels");
+        canvas.append_child(&labels)?;
 
         let title = TitleInput::new(&document)?;
         title.set_value(map.title());
@@ -604,7 +609,7 @@ impl MapView {
         settings_button.remove_attribute("disabled").unwrap();
 
         let mut view = MapView {
-            layout, map, canvas, canvas_viewbox, grid, tiles, title, selected, selected_menu,
+            layout, map, canvas, canvas_viewbox, grid, tiles, labels, title, selected, selected_menu,
             active, tile_labels_visible, keychange_cb, dragged, dragged_mousemove_cb,
             dragged_mouseup_cb, dragged_mouseleave_cb, document_title, download_button,
             export_button
@@ -728,15 +733,20 @@ impl MapView {
             canvas_viewbox.width as i32, canvas_viewbox.height as i32)).ok());
         self.canvas_viewbox = canvas_viewbox;
 
-        // remove all existing tiles
+        // remove all existing tiles and labels
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
+        check!(range.delete_contents().ok());
+        check!(range.select_node_contents(&self.labels).ok());
         check!(range.delete_contents().ok());
 
         // then add updated tiles
         for tile in self.map.tiles() {
-            if let Ok(el) = draw_tile(&document, &self.layout, tile.id(), tile.pos, tile.dir) {
+            if let Ok(el) = draw_tile(&document, &self.layout, tile) {
                 self.tiles.append_child(&el).unwrap();
+            }
+            if let Ok(el) = draw_tile_label(&document, &self.layout, tile) {
+                self.labels.append_child(&el).unwrap();
             }
         }
 
@@ -749,11 +759,7 @@ impl MapView {
         }
 
         // update tile label visibility
-        if self.tile_labels_visible {
-            check!(self.tiles.class_list().add_1("has-tile-labels").ok());
-        } else {
-            check!(self.tiles.class_list().remove_1("has-tile-labels").ok());
-        }
+        self.labels.set_hidden(!self.tile_labels_visible);
 
         // update title input control
         self.title.set_value(self.map.title());
@@ -812,11 +818,7 @@ impl MapView {
     pub fn toggle_tile_labels(&mut self, inverted: bool) {
         let visible = self.tile_labels_visible ^ inverted;
         info!("toggle map tile labels: {:?}", visible);
-        if visible {
-            check!(self.tiles.class_list().add_1("has-tile-labels").ok());
-        } else {
-            check!(self.tiles.class_list().remove_1("has-tile-labels").ok());
-        }
+        self.labels.set_hidden(!visible);
     }
 
     pub fn clear_selected(&mut self) {

@@ -44,7 +44,8 @@ impl CatalogTile {
         let style = document.create_element_ns(SVG_NS, "style")?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
-        canvas.append_child(&draw_tile(document, layout, id, (0, 0), Direction::A)?.into())?;
+        let tile = PlacedTile::new(id, (0, 0).into(), Direction::A);
+        canvas.append_child(&draw_tile_with_label(document, layout, &tile)?.into())?;
 
         let tile = document.create_element("div")?;
         tile.set_attribute("class", "tile")?;
@@ -363,7 +364,6 @@ impl CatalogView {
         let filter_terrain = None;
 
         let tile_labels_visible = true;
-        catalog.class_list().add_1("has-tile-labels")?;
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -567,9 +567,9 @@ impl CatalogView {
             info!("update catalog tile labels: {:?}", visible);
             self.tile_labels_visible = visible;
             if visible {
-                check!(self.catalog.class_list().add_1("has-tile-labels").ok());
+                check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
             } else {
-                check!(self.catalog.class_list().remove_1("has-tile-labels").ok());
+                check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
             }
         }
     }
@@ -578,9 +578,9 @@ impl CatalogView {
         let visible = self.tile_labels_visible ^ inverted;
         info!("toggle catalog tile labels: {:?}", visible);
         if visible {
-            check!(self.catalog.class_list().add_1("has-tile-labels").ok());
+            check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
         } else {
-            check!(self.catalog.class_list().remove_1("has-tile-labels").ok());
+            check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
         }
     }
 
