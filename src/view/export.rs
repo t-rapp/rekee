@@ -94,7 +94,7 @@ impl TileImage {
     fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile, label_visible: bool) -> Result<Self> {
         let pos = tile.pos.to_pixel(layout);
         let size = layout.size();
-        let angle = tile.dir.to_angle(layout);
+        let angle = layout.direction_to_angle(tile.dir);
         let image = HtmlImageElement::new()?;
 
         let load_cb = Closure::wrap(Box::new({

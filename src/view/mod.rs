@@ -63,7 +63,7 @@ fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<
     parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
 
     let size = layout.size();
-    let angle = tile.dir.to_angle(layout);
+    let angle = layout.direction_to_angle(tile.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
     img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;

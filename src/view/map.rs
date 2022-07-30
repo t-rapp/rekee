@@ -250,7 +250,7 @@ impl ActiveHex {
         inner.set_id("active");
         inner.set_attribute("class", "is-print-hidden")?;
         let inner_pos = pos.to_pixel(layout);
-        let angle = dir.to_angle(layout);
+        let angle = layout.direction_to_angle(dir);
         let transform = format!("translate({:.3} {:.3}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
         inner.set_attribute("transform", &transform)?;
         inner.append_child(&img)?;
@@ -261,7 +261,7 @@ impl ActiveHex {
     fn update(&mut self, layout: &Layout, pos: Coordinate, dir: Direction) {
         if pos != self.pos || dir != self.dir {
             let pos = pos.to_pixel(layout);
-            let angle = dir.to_angle(layout);
+            let angle = layout.direction_to_angle(dir);
             let transform = format!("translate({:.3} {:.3}) rotate({:.0})", pos.x(), pos.y(), angle);
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
@@ -298,7 +298,7 @@ struct DraggedTile {
 impl DraggedTile {
     fn new(document: &Document, layout: &Layout, tile: PlacedTile) -> Result<Self> {
         let size = layout.size();
-        let angle = tile.dir.to_angle(layout);
+        let angle = layout.direction_to_angle(tile.dir);
         let img = document.create_element_ns(SVG_NS, "image")?;
         img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;

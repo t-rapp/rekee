@@ -355,32 +355,25 @@ impl Direction {
 
     /// Convert this hexagon grid direction into an angle in degrees.
     ///
-    /// Applies `start_angle` of the given layout. The retuned value is wrapped
-    /// within the range of [0 .. 360) degrees.
-    ///
     /// # Examples
     ///
     /// ```
     /// # use rekee::hexagon::*;
-    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
-    ///
     /// let dir = Direction::A;
-    /// assert_eq!(dir.to_angle(&layout), 90.0);
+    /// assert_eq!(dir.to_angle(), 0.0);
     ///
     /// let dir = Direction::B;
-    /// assert_eq!(dir.to_angle(&layout), 150.0);
+    /// assert_eq!(dir.to_angle(), 60.0);
     /// ```
-    pub fn to_angle(self, layout: &Layout) -> f32 {
-        let start_angle = layout.orientation.start_angle * 60.0;
-        let angle = match self {
-            Direction::A => start_angle + 0.0,
-            Direction::B => start_angle + 60.0,
-            Direction::C => start_angle + 120.0,
-            Direction::D => start_angle + 180.0,
-            Direction::E => start_angle + 240.0,
-            Direction::F => start_angle + 300.0,
-        };
-        angle.rem_euclid(360.0)
+    pub fn to_angle(&self) -> f32 {
+        match self {
+            Direction::A => 0.0,
+            Direction::B => 60.0,
+            Direction::C => 120.0,
+            Direction::D => 180.0,
+            Direction::E => 240.0,
+            Direction::F => 300.0,
+        }
     }
 }
 
@@ -828,6 +821,28 @@ impl Layout {
         }
         Rect { left: x_min, top: y_min, width: x_max - x_min, height: y_max - y_min }
     }
+
+    /// Convert a hexagon grid direction into an angle in degrees.
+    ///
+    /// Applies the layout `start_angle`. The retuned value is wrapped
+    /// within the range of [0 .. 360] degrees.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+    ///
+    /// let dir = Direction::A;
+    /// assert_eq!(layout.direction_to_angle(dir), 90.0);
+    ///
+    /// let dir = Direction::B;
+    /// assert_eq!(layout.direction_to_angle(dir), 150.0);
+    /// ```
+    pub fn direction_to_angle(&self, dir: Direction) -> f32 {
+        let angle = dir.to_angle() + self.orientation.start_angle * 60.0;
+        angle.rem_euclid(360.0)
+    }
 }
 
 impl Default for Layout {
@@ -1073,31 +1088,38 @@ mod tests {
             assert!((left - right).abs() < EPS, "left = {}, right = {}", left, right);
         }
 
+        assert_approx_eq(Direction::A.to_angle(), 0.0);
+        assert_approx_eq(Direction::B.to_angle(), 60.0);
+        assert_approx_eq(Direction::C.to_angle(), 120.0);
+        assert_approx_eq(Direction::D.to_angle(), 180.0);
+        assert_approx_eq(Direction::E.to_angle(), 240.0);
+        assert_approx_eq(Direction::F.to_angle(), 300.0);
+
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        assert_approx_eq(Direction::A.to_angle(&layout), 90.0);
-        assert_approx_eq(Direction::B.to_angle(&layout), 150.0);
-        assert_approx_eq(Direction::C.to_angle(&layout), 210.0);
-        assert_approx_eq(Direction::D.to_angle(&layout), 270.0);
-        assert_approx_eq(Direction::E.to_angle(&layout), 330.0);
-        assert_approx_eq(Direction::F.to_angle(&layout), 30.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::A), 90.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::B), 150.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::C), 210.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::D), 270.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::E), 330.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::F), 30.0);
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        assert_approx_eq(Direction::from(-1).to_angle(&layout), 30.0);
-        assert_approx_eq(Direction::from(0).to_angle(&layout), 90.0);
-        assert_approx_eq(Direction::from(1).to_angle(&layout), 150.0);
-        assert_approx_eq(Direction::from(2).to_angle(&layout), 210.0);
-        assert_approx_eq(Direction::from(3).to_angle(&layout), 270.0);
-        assert_approx_eq(Direction::from(4).to_angle(&layout), 330.0);
-        assert_approx_eq(Direction::from(5).to_angle(&layout), 30.0);
-        assert_approx_eq(Direction::from(6).to_angle(&layout), 90.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(-1)), 30.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(0)), 90.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(1)), 150.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(2)), 210.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(3)), 270.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(4)), 330.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(5)), 30.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::from(6)), 90.0);
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        assert_approx_eq(Direction::A.to_angle(&layout), 0.0);
-        assert_approx_eq(Direction::B.to_angle(&layout), 60.0);
-        assert_approx_eq(Direction::C.to_angle(&layout), 120.0);
-        assert_approx_eq(Direction::D.to_angle(&layout), 180.0);
-        assert_approx_eq(Direction::E.to_angle(&layout), 240.0);
-        assert_approx_eq(Direction::F.to_angle(&layout), 300.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::A), 0.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::B), 60.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::C), 120.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::D), 180.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::E), 240.0);
+        assert_approx_eq(layout.direction_to_angle(Direction::F), 300.0);
     }
 
     #[test]
