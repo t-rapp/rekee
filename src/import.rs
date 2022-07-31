@@ -94,7 +94,7 @@ mod native {
             let id = self.id.parse::<TokenId>()
                 .map_err(|_| ImportError::UnknownTokenId(self.id.clone()))?;
             let pos = FloatCoordinate::new(self.q, self.r);
-            let dir = self.dir;
+            let dir = FloatDirection(self.dir);
             Ok(PlacedToken::new(id, pos, dir))
         }
     }
@@ -104,7 +104,7 @@ mod native {
             let id = value.id.to_string();
             let q = value.pos.q();
             let r = value.pos.r();
-            let dir = value.dir;
+            let dir = f32::from(value.dir);
             ImportToken { id, q, r, dir }
         }
     }

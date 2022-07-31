@@ -479,6 +479,60 @@ impl From<Direction> for i32 {
 
 //----------------------------------------------------------------------------
 
+/// Floating-point variant of a hexagon [`Direction`].
+///
+/// Represents a grid direction value as a float number in multiples of 60°.
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize)]
+pub struct FloatDirection(pub f32);
+
+impl FloatDirection {
+    /// Convert this hexagon grid direction into an angle in degrees.
+    ///
+    /// The retuned value is wrapped within a range of 0° to 360°.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let dir = FloatDirection(0.0);
+    /// assert_eq!(dir.to_angle(), 0.0);
+    ///
+    /// let dir = FloatDirection(1.0);
+    /// assert_eq!(dir.to_angle(), 60.0);
+    /// ```
+    pub fn to_angle(&self) -> f32 {
+        let angle = self.0 * 60.0;
+        angle.rem_euclid(360.0)
+    }
+}
+
+impl fmt::Display for FloatDirection {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        write!(fmt, "{}", self.0)
+    }
+}
+
+impl From<f32> for FloatDirection {
+    fn from(value: f32) -> FloatDirection {
+        FloatDirection(value)
+    }
+}
+
+impl From<FloatDirection> for f32 {
+    fn from(value: FloatDirection) -> f32 {
+        value.0
+    }
+}
+
+impl From<Direction> for FloatDirection {
+    fn from(value: Direction) -> FloatDirection {
+        FloatDirection(u8::from(value) as f32)
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Position within a grid of rectangular pixels.
 ///
 /// # Examples
@@ -720,7 +774,8 @@ pub struct Orientation {
     b1: f32,
     b2: f32,
     b3: f32,
-    start_angle: f32,  // in multiples of 60°
+    // base direction of the hex grid (in multiples of 60°)
+    start_angle: FloatDirection,
 }
 
 #[allow(clippy::excessive_precision)]
@@ -729,13 +784,13 @@ const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
 const LAYOUT_POINTY: Orientation = Orientation {
     f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
     b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
-    start_angle: 1.5,
+    start_angle: FloatDirection(1.5),
 };
 
 const LAYOUT_FLAT: Orientation = Orientation {
     f0: 0.0, f1: 3.0 / 2.0, f2: -SQRT_3, f3: -SQRT_3 / 2.0,
     b0: -1.0 / 3.0, b1: -SQRT_3 / 3.0, b2: 2.0 / 3.0, b3: 0.0,
-    start_angle: 0.0,
+    start_angle: FloatDirection(0.0),
 };
 
 impl Orientation {
@@ -785,12 +840,12 @@ impl Layout {
 
     /// Returns whether the hexagon orientation is "pointy top" or not.
     pub fn is_pointy(&self) -> bool {
-        (self.orientation.start_angle - 1.5).abs() <= 0.1
+        (f32::from(self.orientation.start_angle) - 1.5).abs() <= 0.1
     }
 
     /// Returns whether the hexagon orientation is "flat top" or not.
     pub fn is_flat(&self) -> bool {
-        self.orientation.start_angle.abs() <= 0.1
+        f32::from(self.orientation.start_angle).abs() <= 0.1
     }
 
     /// Calculates the corners of a hexagon with the given coordinate.
@@ -799,7 +854,7 @@ impl Layout {
         let mut corners = [Point::default(); 6];
         for (i, corner) in corners.iter_mut().enumerate() {
             use std::f32::consts::PI;
-            let angle = 2.0 * PI * (self.orientation.start_angle + f32::from(i as u8)) / 6.0;
+            let angle = 2.0 * PI * (f32::from(self.orientation.start_angle) + f32::from(i as u8)) / 6.0;
             let offset_x = self.size.0 * angle.cos();
             let offset_y = self.size.1 * angle.sin();
             *corner = center + Point(offset_x, offset_y);
@@ -824,8 +879,8 @@ impl Layout {
 
     /// Convert a hexagon grid direction into an angle in degrees.
     ///
-    /// Applies the layout `start_angle`. The retuned value is wrapped
-    /// within the range of [0 .. 360] degrees.
+    /// Applies the layout `start_angle` to the given direction. The retuned
+    /// value is wrapped within a range of 0° to 360°.
     ///
     /// # Examples
     ///
@@ -838,9 +893,14 @@ impl Layout {
     ///
     /// let dir = Direction::B;
     /// assert_eq!(layout.direction_to_angle(dir), 150.0);
+    ///
+    /// let dir = FloatDirection(1.5);
+    /// assert_eq!(layout.direction_to_angle(dir), 180.0);
     /// ```
-    pub fn direction_to_angle(&self, dir: Direction) -> f32 {
-        let angle = dir.to_angle() + self.orientation.start_angle * 60.0;
+    pub fn direction_to_angle<D>(&self, dir: D) -> f32
+        where D: Into<FloatDirection>
+    {
+        let angle = dir.into().to_angle() + self.orientation.start_angle.to_angle();
         angle.rem_euclid(360.0)
     }
 }
