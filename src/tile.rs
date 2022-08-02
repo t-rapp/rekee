@@ -2026,6 +2026,23 @@ mod tests {
         assert_eq!(summary, vec![
             EditionSummary::new(None, 1, 1),
         ]);
+
+        let tiles: Vec<TileId> = TileInfo::iter()
+            .map(|info| info.full_id())
+            .collect();
+        let summary = tiles.edition_summary();
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 2, 39),
+            EditionSummary::new(Some(Edition::GtChampionship), 2, 17),
+            EditionSummary::new(Some(Edition::GtWorldTour), 2, 19),
+            EditionSummary::new(Some(Edition::GtTeamChallenge), 2, 24),
+            EditionSummary::new(Some(Edition::GtAdrenalinePack), 2, 10),
+            EditionSummary::new(Some(Edition::DirtCoreBox), 2, 64),
+            EditionSummary::new(Some(Edition::Dirt110Percent), 2, 48),
+            EditionSummary::new(Some(Edition::DirtRx), 2, 30),
+            EditionSummary::new(Some(Edition::DirtClimb), 2, 8),
+            EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 12),
+        ]);
     }
 
     #[test]
@@ -2079,6 +2096,17 @@ mod tests {
         assert_eq!(summary, vec![
             SurfaceSummary::new(Some(Terrain::None), 1),
             SurfaceSummary::new(None, 1),
+        ]);
+
+        let tiles: Vec<TileId> = TileInfo::iter()
+            .map(|info| info.full_id())
+            .collect();
+        let summary = tiles.surface_summary();
+        assert_eq!(summary, vec![
+            SurfaceSummary::new(Some(Terrain::None), 13),
+            SurfaceSummary::new(Some(Terrain::Asphalt(0)), 152),
+            SurfaceSummary::new(Some(Terrain::Gravel(0)), 80),
+            SurfaceSummary::new(Some(Terrain::Snow(0)), 26),
         ]);
     }
 
@@ -2134,6 +2162,17 @@ mod tests {
         assert_eq!(summary, vec![
             DangerLevelSummary::new(Some(0), 1),
             DangerLevelSummary::new(None, 1),
+        ]);
+
+        let tiles: Vec<TileId> = TileInfo::iter()
+            .map(|info| info.full_id())
+            .collect();
+        let summary = tiles.danger_level_summary();
+        assert_eq!(summary, vec![
+            DangerLevelSummary::new(Some(0), 13),
+            DangerLevelSummary::new(Some(1), 83),
+            DangerLevelSummary::new(Some(2), 113),
+            DangerLevelSummary::new(Some(3), 62),
         ]);
     }
 
