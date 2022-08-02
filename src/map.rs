@@ -68,10 +68,10 @@ impl PlacedTile {
     /// # use rekee::tile::{Terrain, TileId};
     ///
     /// let tile = PlacedTile::new(tile!(301, a), Coordinate::new(0, 0), Direction::A);
-    /// assert_eq!(tile.terrain(), Some(Terrain::Asphalt(1)));
+    /// assert_eq!(tile.terrain(), Some(Terrain::Asphalt));
     ///
     /// let tile = PlacedTile::new(tile!(302, b), Coordinate::new(0, 0), Direction::A);
-    /// assert_eq!(tile.terrain(), Some(Terrain::Snow(2)));
+    /// assert_eq!(tile.terrain(), Some(Terrain::Snow));
     ///
     /// let tile = PlacedTile::new(tile!(999, a), Coordinate::new(0, 0), Direction::A);
     /// assert_eq!(tile.terrain(), None);

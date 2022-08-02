@@ -376,53 +376,53 @@ impl Iterator for GroupByEdition {
 /// An iterator that yields the terrain surfaces that are included in a list of
 /// tiles.
 ///
-/// This struct is created by the [`group_by_surface`] method on [`TileList`].
+/// This struct is created by the [`group_by_terrain`] method on [`TileList`].
 /// See its documentation for more.
 ///
-/// [`group_by_surface`]: TileList::group_by_surface
-pub struct GroupBySurface {
-    surfaces: Vec<Option<Terrain>>,
+/// [`group_by_terrain`]: TileList::group_by_terrain
+pub struct GroupByTerrain {
+    terrains: Vec<Option<Terrain>>,
     tiles: Vec<TileId>,
     index: usize,
     next_index: usize,
 }
 
-impl GroupBySurface {
+impl GroupByTerrain {
     fn new<T: AsRef<TileId> + Clone>(list: &[T]) -> Self {
         // collect terrain surface information for all tiles
-        let mut surface_tiles: Vec<_> = list.iter()
+        let mut terrain_tiles: Vec<_> = list.iter()
             .map(|item| {
                 let tile_id = *item.as_ref();
-                let surface = TileInfo::get(tile_id)
-                    .map(|info| info.terrain().surface());
-                (surface, tile_id)
+                let terrain = TileInfo::get(tile_id)
+                    .map(|info| info.terrain());
+                (terrain, tile_id)
             })
             .collect();
         // when sorting make sure the tile count for unknown tiles appears at the end
-        surface_tiles.sort_by_key(|(surface, _)| (surface.is_none(), *surface));
+        terrain_tiles.sort_by_key(|(terrain, _)| (terrain.is_none(), *terrain));
 
         // split the combined list into two separate lists once, for less
         // overhead in the tiles() function implementation
-        let mut surfaces = Vec::with_capacity(surface_tiles.len());
-        let mut tiles = Vec::with_capacity(surface_tiles.len());
-        for (surface, tile_id) in surface_tiles {
-            surfaces.push(surface);
+        let mut terrains = Vec::with_capacity(terrain_tiles.len());
+        let mut tiles = Vec::with_capacity(terrain_tiles.len());
+        for (terrain, tile_id) in terrain_tiles {
+            terrains.push(terrain);
             tiles.push(tile_id);
         }
 
-        GroupBySurface { surfaces, tiles, index: 0, next_index: 0 }
+        GroupByTerrain { terrains, tiles, index: 0, next_index: 0 }
     }
 
     fn find_next_index(&self) -> Option<usize> {
-        let surface = self.surfaces.get(self.index)?;
+        let terrain = self.terrains.get(self.index)?;
         let mut index = self.index;
         loop {
             index += 1;
-            let next_surface = match self.surfaces.get(index) {
+            let next_surface = match self.terrains.get(index) {
                 Some(val) => val,
                 None => break,
             };
-            if next_surface != surface {
+            if next_surface != terrain {
                 break;
             }
         }
@@ -440,12 +440,12 @@ impl GroupBySurface {
     /// implementation. There is no guarantee that the order of the returned
     /// subset matches the original order of the tile list.
     ///
-    /// See [`group_by_surface`] for some code examples.
+    /// See [`group_by_terrain`] for some code examples.
     ///
     /// [`next`]: Iterator::next
-    /// [`group_by_surface`]: TileList::group_by_surface
+    /// [`group_by_terrain`]: TileList::group_by_terrain
     pub fn tiles(&self) -> &[TileId] {
-        debug_assert_eq!(self.surfaces.len(), self.tiles.len());
+        debug_assert_eq!(self.terrains.len(), self.tiles.len());
         assert!(self.index <= self.next_index);
         if self.index < self.tiles.len() {
             &self.tiles[self.index..self.next_index]
@@ -455,14 +455,14 @@ impl GroupBySurface {
     }
 }
 
-impl Iterator for GroupBySurface {
+impl Iterator for GroupByTerrain {
     type Item = Terrain;
 
     fn next(&mut self) -> Option<Terrain> {
         self.index = self.next_index;
-        if let Some(surface) = self.surfaces.get(self.index) {
+        if let Some(terrain) = self.terrains.get(self.index) {
             self.next_index = self.find_next_index().unwrap_or(self.index);
-            *surface
+            *terrain
         } else {
             None
         }
@@ -471,15 +471,15 @@ impl Iterator for GroupBySurface {
 
 //----------------------------------------------------------------------------
 
-/// An iterator that yields the terrain danger levels that are included in a
-/// list of tiles.
+/// An iterator that yields the danger levels that are included in a list of
+/// tiles.
 ///
 /// This struct is created by the [`group_by_danger_level`] method on
 /// [`TileList`].  See its documentation for more.
 ///
 /// [`group_by_danger_level`]: TileList::group_by_danger_level
 pub struct GroupByDangerLevel {
-    danger_levels: Vec<Option<u8>>,
+    danger_levels: Vec<Option<DangerLevel>>,
     tiles: Vec<TileId>,
     index: usize,
     next_index: usize,
@@ -492,7 +492,7 @@ impl GroupByDangerLevel {
             .map(|item| {
                 let tile_id = *item.as_ref();
                 let danger_level = TileInfo::get(tile_id)
-                    .map(|info| info.terrain().danger_level());
+                    .map(|info| info.danger_level());
                 (danger_level, tile_id)
             })
             .collect();
@@ -527,12 +527,12 @@ impl GroupByDangerLevel {
         Some(index)
     }
 
-    /// Returns the subset of tiles that share the same terrain danger level.
+    /// Returns the subset of tiles that share the same danger level.
     ///
     /// The result of this method is updated upon each call to [`next`]. Each
-    /// time the iterator yields `Some(u8)` the according tiles are returned.
-    /// Tiles where no internal terrain information exists are returned once the
-    /// iterator yields `None`.
+    /// time the iterator yields `Some(DangerLevel)` the according tiles are
+    /// returned. Tiles where no internal terrain information exists are
+    /// returned once the iterator yields `None`.
     ///
     /// Note that the order of tiles returned by this method depends on internal
     /// implementation. There is no guarantee that the order of the returned
@@ -554,9 +554,9 @@ impl GroupByDangerLevel {
 }
 
 impl Iterator for GroupByDangerLevel {
-    type Item = u8;
+    type Item = DangerLevel;
 
-    fn next(&mut self) -> Option<u8> {
+    fn next(&mut self) -> Option<DangerLevel> {
         self.index = self.next_index;
         if let Some(danger_level) = self.danger_levels.get(self.index) {
             self.next_index = self.find_next_index().unwrap_or(self.index);
@@ -592,18 +592,18 @@ impl EditionSummary {
 
 /// Tile count information for a specific terrain surface.
 ///
-/// This struct is created by the [`surface_summary`] method on [`TileList`].
+/// This struct is created by the [`terrain_summary`] method on [`TileList`].
 ///
-/// [`surface_summary`]: TileList::surface_summary
+/// [`terrain_summary`]: TileList::terrain_summary
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SurfaceSummary {
-    pub surface: Option<Terrain>,
+pub struct TerrainSummary {
+    pub terrain: Option<Terrain>,
     pub tile_count: u32,
 }
 
-impl SurfaceSummary {
-    const fn new(surface: Option<Terrain>, tile_count: u32) -> Self {
-        SurfaceSummary { surface, tile_count }
+impl TerrainSummary {
+    const fn new(terrain: Option<Terrain>, tile_count: u32) -> Self {
+        TerrainSummary { terrain, tile_count }
     }
 }
 
@@ -616,12 +616,12 @@ impl SurfaceSummary {
 /// [`danger_level_summary`]: TileList::danger_level_summary
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DangerLevelSummary {
-    pub danger_level: Option<u8>,
+    pub danger_level: Option<DangerLevel>,
     pub tile_count: u32,
 }
 
 impl DangerLevelSummary {
-    const fn new(danger_level: Option<u8>, tile_count: u32) -> Self {
+    const fn new(danger_level: Option<DangerLevel>, tile_count: u32) -> Self {
         DangerLevelSummary { danger_level, tile_count }
     }
 }
@@ -685,13 +685,11 @@ pub trait TileList {
     /// Returns an iterator over the terrain surfaces that are included in the
     /// current list of tiles.
     ///
-    /// Only the tile terrain [`surface`](Terrain::surface) value is relevant
-    /// for grouping of tiles, the [`danger_level`](Terrain::danger_level) is
-    /// ignored. The order of terrain surfaces returned by the iterator depends
-    /// on the internal implementation.
+    /// The order of terrain surfaces returned by the iterator depends on the
+    /// internal implementation.
     ///
     /// Upon each step of the iterator the group of tiles that belong to the
-    /// current surface is available in [`tiles`](GroupBySurface::tiles).
+    /// current terrain is available in [`tiles`](GroupByTerrain::tiles).
     ///
     /// # Examples
     ///
@@ -699,11 +697,11 @@ pub trait TileList {
     /// # #[macro_use] extern crate rekee;
     /// # use rekee::tile::{Terrain, TileId, TileList};
     /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
-    /// let mut iter = tiles.group_by_surface();
+    /// let mut iter = tiles.group_by_terrain();
     ///
-    /// assert_eq!(iter.next(), Some(Terrain::Asphalt(0)));
+    /// assert_eq!(iter.next(), Some(Terrain::Asphalt));
     /// assert_eq!(iter.tiles(), &[tile!(301, a), tile!(418, a)][..]);
-    /// assert_eq!(iter.next(), Some(Terrain::Gravel(0)));
+    /// assert_eq!(iter.next(), Some(Terrain::Gravel));
     /// assert_eq!(iter.tiles(), &[tile!(220, b), tile!(419, b)][..]);
     /// assert_eq!(iter.next(), None);
     /// ```
@@ -715,22 +713,20 @@ pub trait TileList {
     /// # #[macro_use] extern crate rekee;
     /// # use rekee::tile::{Terrain, TileId, TileList};
     /// let tiles = vec![tile!(101), tile!(999, a)];
-    /// let mut iter = tiles.group_by_surface();
+    /// let mut iter = tiles.group_by_terrain();
     ///
     /// assert_eq!(iter.next(), Some(Terrain::None));
     /// assert_eq!(iter.tiles(), &[tile!(101)][..]);
     /// assert_eq!(iter.next(), None);
     /// assert_eq!(iter.tiles(), &[tile!(999, a)][..]);
     /// ```
-    fn group_by_surface(&self) -> GroupBySurface;
+    fn group_by_terrain(&self) -> GroupByTerrain;
 
-    /// Returns an iterator over the terrain danger levels that occur in the
-    /// current list of tiles.
+    /// Returns an iterator over the danger levels that occur in the current
+    /// list of tiles.
     ///
-    /// Only the tile terrain [`danger_level`](Terrain::danger_level) value is
-    /// relevant for the grouping of tiles, the [`surface`](Terrain::surface) is
-    /// ignored. The order of danger levels returned by the iterator depends on
-    /// the internal implementation.
+    /// The order of danger levels returned by the iterator depends on the
+    /// internal implementation.
     ///
     /// Upon each step of the iterator the group of tiles that belong to the
     /// current danger level is available in
@@ -740,15 +736,15 @@ pub trait TileList {
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
-    /// # use rekee::tile::{TileId, TileList};
+    /// # use rekee::tile::{DangerLevel, TileId, TileList};
     /// let tiles = vec![tile!(301, a), tile!(221, b), tile!(418, a), tile!(119, b)];
     /// let mut iter = tiles.group_by_danger_level();
     ///
-    /// assert_eq!(iter.next(), Some(1));
+    /// assert_eq!(iter.next(), Some(DangerLevel::Low));
     /// assert_eq!(iter.tiles(), &[tile!(301, a), tile!(221, b)][..]);
-    /// assert_eq!(iter.next(), Some(2));
+    /// assert_eq!(iter.next(), Some(DangerLevel::Medium));
     /// assert_eq!(iter.tiles(), &[tile!(119, b)][..]);
-    /// assert_eq!(iter.next(), Some(3));
+    /// assert_eq!(iter.next(), Some(DangerLevel::High));
     /// assert_eq!(iter.tiles(), &[tile!(418, a)][..]);
     /// assert_eq!(iter.next(), None);
     /// ```
@@ -758,11 +754,11 @@ pub trait TileList {
     ///
     /// ```
     /// # #[macro_use] extern crate rekee;
-    /// # use rekee::tile::{TileId, TileList};
+    /// # use rekee::tile::{DangerLevel, TileId, TileList};
     /// let tiles = vec![tile!(101), tile!(999, a)];
     /// let mut iter = tiles.group_by_danger_level();
     ///
-    /// assert_eq!(iter.next(), Some(0));
+    /// assert_eq!(iter.next(), Some(DangerLevel::None));
     /// assert_eq!(iter.tiles(), &[tile!(101)][..]);
     /// assert_eq!(iter.next(), None);
     /// assert_eq!(iter.tiles(), &[tile!(999, a)][..]);
@@ -828,13 +824,13 @@ pub trait TileList {
     /// For each terrain surface the entry contains the number of matching
     /// tiles.
     ///
-    /// This method is a convenience wrapper around the [`group_by_surface`]
-    /// method. Different from [`group_by_surface`] the returned array is always
+    /// This method is a convenience wrapper around the [`group_by_terrain`]
+    /// method. Different from [`group_by_terrain`] the returned array is always
     /// sorted by terrain. If the tile list contains unknown tiles an entry with
-    /// [`surface`] set to `None` is put at the end of the summary.
+    /// [`terrain`] set to `None` is put at the end of the summary.
     ///
-    /// [`group_by_surface`]: TileList::group_by_surface
-    /// [`surface`]: SurfaceSummary::surface
+    /// [`group_by_terrain`]: TileList::group_by_terrain
+    /// [`terrain`]: TerrainSummary::terrain
     ///
     /// # Examples
     ///
@@ -842,31 +838,31 @@ pub trait TileList {
     /// # #[macro_use] extern crate rekee;
     /// # use rekee::tile::{TileId, TileList};
     /// let tiles = vec![tile!(301, a), tile!(220, b), tile!(418, a), tile!(419, b)];
-    /// for row in tiles.surface_summary() {
-    ///     let label = match row.surface {
+    /// for row in tiles.terrain_summary() {
+    ///     let label = match row.terrain {
     ///         Some(val) => val.to_string(),
     ///         None => "Unknown".to_string(),
     ///     };
     ///     println!("{}: {} tiles", label, row.tile_count);
     /// }
     /// ```
-    fn surface_summary(&self) -> Vec<SurfaceSummary> {
+    fn terrain_summary(&self) -> Vec<TerrainSummary> {
         let mut summary = Vec::with_capacity(4);
-        let mut iter = self.group_by_surface();
+        let mut iter = self.group_by_terrain();
         let mut tile_count;
         loop {
-            let surface = iter.next();
+            let terrain = iter.next();
             tile_count = iter.tiles().len() as u32;
-            if surface.is_none() {
+            if terrain.is_none() {
                 break;
             } else if tile_count > 0 {
-                summary.push(SurfaceSummary::new(surface, tile_count));
+                summary.push(TerrainSummary::new(terrain, tile_count));
             }
         }
-        summary.sort_unstable_by_key(|item| item.surface);
+        summary.sort_unstable_by_key(|item| item.terrain);
         // insert tile count for unknown tiles at the end
         if tile_count > 0 {
-            summary.push(SurfaceSummary::new(None, tile_count));
+            summary.push(TerrainSummary::new(None, tile_count));
         }
         summary
     }
@@ -926,8 +922,8 @@ impl<T: AsRef<TileId> + Clone> TileList for [T] {
         GroupByEdition::new(self)
     }
 
-    fn group_by_surface(&self) -> GroupBySurface {
-        GroupBySurface::new(self)
+    fn group_by_terrain(&self) -> GroupByTerrain {
+        GroupByTerrain::new(self)
     }
 
     fn group_by_danger_level(&self) -> GroupByDangerLevel {
@@ -1141,75 +1137,59 @@ impl Default for Edge {
 
 //----------------------------------------------------------------------------
 
-/// Tile terrain information. Describes the track surface of a tile together
-/// with the danger level.
+/// Danger level information for a tile.
 ///
-/// The meaning of the danger level value is:
-///  * `0`: tile has no danger level assigned
-///  * `1`: tile has danger level "yellow" (low)
-///  * `2`: tile has danger level "orange" (medium)
-///  * `3`: tile has danger level "red" (high)
+/// Use [`TileInfo::danger_level()`] to get the danger level data of a specific tile.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum DangerLevel {
+    /// Tile has no danger level assigned.
+    None,
+    /// Tile has danger level low (yellow).
+    Low,
+    /// Tile has danger level medium (orange).
+    Medium,
+    /// Tile has danger level high (red).
+    High,
+}
+
+impl Default for DangerLevel {
+    fn default() -> Self {
+        DangerLevel::None
+    }
+}
+
+impl fmt::Display for DangerLevel {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DangerLevel::None =>
+                write!(fmt, "None"),
+            DangerLevel::Low =>
+                write!(fmt, "Low"),
+            DangerLevel::Medium =>
+                write!(fmt, "Medium"),
+            DangerLevel::High =>
+                write!(fmt, "High"),
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Terrain surface information for a tile.
 ///
-/// Use [`TileInfo::terrain()`] to get the terrain data of a specific tile.
+/// Use [`TileInfo::terrain()`] to get the terrain surface data of a specific tile.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Deserialize)]
 #[serde(try_from = "&str")]
 pub enum Terrain {
+    /// Tile has no terrain surface assigned.
     None,
-    Asphalt(u8),
-    Gravel(u8),
-    Snow(u8),
-}
-
-impl Terrain {
-    /// Danger level of a tile.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use rekee::tile::Terrain;
-    /// let terrain = Terrain::Asphalt(3);
-    /// assert_eq!(terrain.danger_level(), 3);
-    ///
-    /// let terrain = Terrain::None;
-    /// assert_eq!(terrain.danger_level(), 0);
-    /// ```
-    pub fn danger_level(&self) -> u8 {
-        match *self {
-            Terrain::None => 0,
-            Terrain::Asphalt(val) => val,
-            Terrain::Gravel(val) => val,
-            Terrain::Snow(val) => val,
-        }
-    }
-
-    /// Surface of a tile.
-    ///
-    /// Returns a copy of the terrain with danger level set to zero.
-    pub fn surface(&self) -> Terrain {
-        match *self {
-            Terrain::None => Terrain::None,
-            Terrain::Asphalt(_) => Terrain::Asphalt(0),
-            Terrain::Gravel(_) => Terrain::Gravel(0),
-            Terrain::Snow(_) => Terrain::Snow(0),
-        }
-    }
-
-    /// Compares the surface of two tiles and ignores the danger level.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use rekee::tile::Terrain;
-    /// let terrain = Terrain::Asphalt(3);
-    /// assert!(terrain.eq_surface(Terrain::Asphalt(1)));
-    ///
-    /// let terrain = Terrain::None;
-    /// assert!(!terrain.eq_surface(Terrain::Gravel(0)));
-    /// ```
-    pub fn eq_surface(&self, other: Terrain) -> bool {
-        std::mem::discriminant(self) == std::mem::discriminant(&other)
-    }
+    /// Tile has asphalt terrain surface.
+    Asphalt,
+    /// Tile has gravel terrain surface.
+    Gravel,
+    /// Tile has snow terrain surface.
+    Snow,
 }
 
 impl Default for Terrain {
@@ -1220,28 +1200,16 @@ impl Default for Terrain {
 
 impl fmt::Display for Terrain {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        let mut danger_level = 0;
         match self {
-            Terrain::None => {
-                write!(fmt, "None")?;
-            },
-            Terrain::Asphalt(val) => {
-                write!(fmt, "Asphalt")?;
-                danger_level = *val;
-            },
-            Terrain::Gravel(val) => {
-                write!(fmt, "Gravel")?;
-                danger_level = *val;
-            },
-            Terrain::Snow(val) => {
-                write!(fmt, "Snow")?;
-                danger_level = *val;
-            },
-        };
-        if danger_level > 0 {
-            write!(fmt, "-{}", danger_level)?;
+            Terrain::None =>
+                write!(fmt, "None"),
+            Terrain::Asphalt =>
+                write!(fmt, "Asphalt"),
+            Terrain::Gravel =>
+                write!(fmt, "Gravel"),
+            Terrain::Snow =>
+                write!(fmt, "Snow"),
         }
-        Ok(())
     }
 }
 
@@ -1258,48 +1226,30 @@ impl FromStr for Terrain {
     type Err = ParseTerrainError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let idx = s.find(&[' ', '-'][..])
-            .unwrap_or(s.len());
-        let surface = &s[0..idx];
-
-        let level = if let Some(val) = s.get(idx+1..) {
-            val.parse::<u8>()
-                .map_err(|_| ParseTerrainError::InvalidDangerLevel(val.to_string()))?
+        if s.eq_ignore_ascii_case("none") {
+            Ok(Terrain::None)
+        } else if s.eq_ignore_ascii_case("asphalt") {
+            Ok(Terrain::Asphalt)
+        } else if s.eq_ignore_ascii_case("gravel") {
+            Ok(Terrain::Gravel)
+        } else if s.eq_ignore_ascii_case("snow") {
+            Ok(Terrain::Snow)
         } else {
-            0
-        };
-
-        if surface.eq_ignore_ascii_case("none") {
-            if level == 0 {
-                Ok(Terrain::None)
-            } else {
-                Err(ParseTerrainError::InvalidDangerLevel(level.to_string()))
-            }
-        } else if surface.eq_ignore_ascii_case("asphalt") {
-            Ok(Terrain::Asphalt(level))
-        } else if surface.eq_ignore_ascii_case("gravel") {
-            Ok(Terrain::Gravel(level))
-        } else if surface.eq_ignore_ascii_case("snow") {
-            Ok(Terrain::Snow(level))
-        } else {
-            Err(ParseTerrainError::UnknownSurface(surface.to_string()))
+            Err(ParseTerrainError::UnknownTerrain(s.to_string()))
         }
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub enum ParseTerrainError {
-    UnknownSurface(String),
-    InvalidDangerLevel(String),
+    UnknownTerrain(String),
 }
 
 impl fmt::Display for ParseTerrainError {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ParseTerrainError::UnknownSurface(val) =>
-                write!(fmt, "Unknown terrain surface token \"{}\"", val),
-            ParseTerrainError::InvalidDangerLevel(val) =>
-                write!(fmt, "Invalid danger level token \"{}\"", val),
+            ParseTerrainError::UnknownTerrain(val) =>
+                write!(fmt, "Unknown terrain name \"{}\"", val),
         }
     }
 }
@@ -1351,13 +1301,14 @@ pub struct TileInfo {
     id: TileId,
     count: usize,
     terrain: Terrain,
+    danger_level: DangerLevel,
     connections: [Connection; 6],
     edges: [Edge; 6],
 }
 
 impl TileInfo {
-    const fn new(id: TileId, count: usize, terrain: Terrain, connections: [Connection; 6], edges: [Edge; 6]) -> Self {
-        TileInfo { id, count, terrain, connections, edges }
+    const fn new(id: TileId, count: usize, terrain: Terrain, danger_level: DangerLevel, connections: [Connection; 6], edges: [Edge; 6]) -> Self {
+        TileInfo { id, count, terrain, danger_level, connections, edges }
     }
 
     /// Base identifier of the corresponding game tile.
@@ -1444,14 +1395,33 @@ impl TileInfo {
     /// # use rekee::tile::{Terrain, TileInfo};
     /// # fn main() {
     /// let info = TileInfo::get(tile!(103, a)).unwrap();
-    /// assert_eq!(info.terrain(), Terrain::Asphalt(1));
+    /// assert_eq!(info.terrain(), Terrain::Asphalt);
     ///
     /// let info = TileInfo::get(tile!(205, b)).unwrap();
-    /// assert_eq!(info.terrain(), Terrain::Gravel(2));
+    /// assert_eq!(info.terrain(), Terrain::Gravel);
     /// # }
     /// ```
     pub fn terrain(&self) -> Terrain {
         self.terrain
+    }
+
+    /// Danger level information for a tile.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{DangerLevel, TileInfo};
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, a)).unwrap();
+    /// assert_eq!(info.danger_level(), DangerLevel::Low);
+    ///
+    /// let info = TileInfo::get(tile!(205, b)).unwrap();
+    /// assert_eq!(info.danger_level(), DangerLevel::Medium);
+    /// # }
+    /// ```
+    pub fn danger_level(&self) -> DangerLevel {
+        self.danger_level
     }
 
     /// Connection information for one of the six directions of a tile.
@@ -1555,15 +1525,14 @@ impl fmt::Display for TileInfo {
 //----------------------------------------------------------------------------
 
 const TN: Terrain = Terrain::None;
-const TA1: Terrain = Terrain::Asphalt(1);
-const TA2: Terrain = Terrain::Asphalt(2);
-const TA3: Terrain = Terrain::Asphalt(3);
-const TG1: Terrain = Terrain::Gravel(1);
-const TG2: Terrain = Terrain::Gravel(2);
-const TG3: Terrain = Terrain::Gravel(3);
-const TS1: Terrain = Terrain::Snow(1);
-const TS2: Terrain = Terrain::Snow(2);
-const TS3: Terrain = Terrain::Snow(3);
+const TA: Terrain = Terrain::Asphalt;
+const TG: Terrain = Terrain::Gravel;
+const TS: Terrain = Terrain::Snow;
+
+const DN: DangerLevel = DangerLevel::None;
+const DL: DangerLevel = DangerLevel::Low;
+const DM: DangerLevel = DangerLevel::Medium;
+const DH: DangerLevel = DangerLevel::High;
 
 const CN: Connection = Connection::None;
 const CS0: Connection = Connection::Straight(0);
@@ -1599,282 +1568,282 @@ const ER3: Edge = Edge::SkewRight(3);
 
 const TILE_INFOS: [TileInfo; 271] = [
     // Rallyman GT core box
-    TileInfo::new(tile!(101), 1, TN, [CN; 6], [EN; 6]),
-    TileInfo::new(tile!(102, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(102, b), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(103, a), 3, TA1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(103, b), 3, TA2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(104, a), 3, TA2, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(104, b), 3, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(105, a), 2, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(105, b), 2, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(106, a), 2, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(106, b), 2, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(107, a), 2, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(107, b), 2, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(108, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(108, b), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(109, a), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(109, b), 1, TA3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(110, a), 1, TA1, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(110, b), 1, TA2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(111, a), 2, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(111, b), 2, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(112, a), 2, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(112, b), 2, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(113, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(113, b), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(114, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(114, b), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(115, a), 2, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(115, b), 2, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(116, a), 2, TA2, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(116, b), 2, TA3, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(117, a), 2, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(117, b), 2, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(118, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(118, b), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(119, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(119, b), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(120, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(120, b), 1, TA2, [CN, CN, CN, CL1, CN, CR1], [EN, EN, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!(101), 1, TN, DN, [CN; 6], [EN; 6]),
+    TileInfo::new(tile!(102, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(102, b), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(103, a), 3, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(103, b), 3, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(104, a), 3, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(104, b), 3, TA, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(105, a), 2, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(105, b), 2, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(106, a), 2, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(106, b), 2, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(107, a), 2, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(107, b), 2, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(108, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(108, b), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(109, a), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(109, b), 1, TA, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(110, a), 1, TA, DL, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(110, b), 1, TA, DM, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(111, a), 2, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(111, b), 2, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(112, a), 2, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(112, b), 2, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(113, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(113, b), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(114, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(114, b), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(115, a), 2, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(115, b), 2, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(116, a), 2, TA, DM, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(116, b), 2, TA, DH, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(117, a), 2, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(117, b), 2, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(118, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(118, b), 1, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(119, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(119, b), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(120, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(120, b), 1, TA, DM, [CN, CN, CN, CL1, CN, CR1], [EN, EN, EN, ES3, EN, ES2]),
     // Rallyman GT expansions
-    TileInfo::new(tile!(121, a), 2, TA1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!(121, b), 2, TA2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!(122, a), 2, TA1, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, ES3]),
-    TileInfo::new(tile!(122, b), 2, TA2, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, ES2]),
-    TileInfo::new(tile!(123, a), 1, TA1, [CN, CL2, CR2, CN, CN, CN], [EN, ES3, EL3, EN, EN, EN]),
-    TileInfo::new(tile!(123, b), 1, TA2, [CN, CL2, CR2, CN, CN, CN], [EN, ES2, EL2, EN, EN, EN]),
-    TileInfo::new(tile!(124, a), 2, TA2, [CL1, CN, CR1, CN, CN, CN], [ES3, EN, EL3, EN, EN, EN]),
-    TileInfo::new(tile!(124, b), 2, TA3, [CL1, CN, CR1, CN, CN, CN], [ES2, EN, EL2, EN, EN, EN]),
-    TileInfo::new(tile!(125, a), 2, TA1, [CR1, CN, CN, CN, CL1, CN], [ES3, EN, EN, EN, ER3, EN]),
-    TileInfo::new(tile!(125, b), 2, TA2, [CR1, CN, CN, CN, CL1, CN], [ES2, EN, EN, EN, ER2, EN]),
-    TileInfo::new(tile!(126, a), 1, TA2, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES3, ER3, EN]),
-    TileInfo::new(tile!(126, b), 1, TA3, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES2, ER2, EN]),
-    TileInfo::new(tile!(127, a), 2, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL3, ES3, EN, EN]),
-    TileInfo::new(tile!(127, b), 2, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL2, ES2, EN, EN]),
-    TileInfo::new(tile!(128, a), 1, TA2, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, EL3]),
-    TileInfo::new(tile!(128, b), 1, TA3, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, EL2]),
-    TileInfo::new(tile!(129, a), 1, TA1, [CN, CR0, CN, CN, CL0, CN], [EN, ES3, EN, EN, ER3, EN]),
-    TileInfo::new(tile!(129, b), 1, TA2, [CN, CR0, CN, CN, CL0, CN], [EN, ES2, EN, EN, ER2, EN]),
-    TileInfo::new(tile!(130, a), 1, TA1, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL3, EN, EN, ES3]),
-    TileInfo::new(tile!(130, b), 1, TA2, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL2, EN, EN, ES2]),
-    TileInfo::new(tile!(131, a), 1, TA1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!(131, b), 1, TA2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!(132, a), 1, TA1, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
-    TileInfo::new(tile!(132, b), 1, TA2, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
-    TileInfo::new(tile!(133, a), 1, TA2, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!(133, b), 1, TA3, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!(134, a), 1, TA1, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL3, EN, EN, EL3]),
-    TileInfo::new(tile!(134, b), 1, TA2, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL2, EN, EN, EL2]),
-    TileInfo::new(tile!(135, a), 1, TA2, [CN, CL0, CN, CN, CL0, CN], [EN, ER3, EN, EN, ER3, EN]),
-    TileInfo::new(tile!(135, b), 1, TA3, [CN, CL0, CN, CN, CL0, CN], [EN, ER2, EN, EN, ER2, EN]),
-    TileInfo::new(tile!(136, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(136, b), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(137, a), 1, TA2, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES3, EN, ER3, EN]),
-    TileInfo::new(tile!(137, b), 1, TA3, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES2, EN, ER2, EN]),
-    TileInfo::new(tile!(138, a), 2, TA1, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL3, EN, ES3, EN]),
-    TileInfo::new(tile!(138, b), 2, TA2, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL2, EN, ES2, EN]),
-    TileInfo::new(tile!(139, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(139, b), 1, TA1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!(140, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(140, b), 1, TA1, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
-    TileInfo::new(tile!(141, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(141, b), 1, TA1, [CS0, CN, CS0, CS0, CN, CS0], [ES3, EN, ES3, ES3, EN, ES3]),
-    TileInfo::new(tile!(142, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(142, b), 1, TA1, [CS0, CN, CS1M, CS0, CS1P, CN], [ES3, EN, EL3, ES3, ER3, EN]),
-    TileInfo::new(tile!(143, a), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(143, b), 1, TA2, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!(144, a), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(144, b), 1, TA2, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
-    TileInfo::new(tile!(145, a), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(145, b), 1, TA3, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!(146, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(146, b), 1, TA1, [CS0, CN, CS1M, CS0, CS1P, CN], [ES2, EN, EL2, ES2, ER2, EN]),
-    TileInfo::new(tile!(147, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(147, b), 1, TA3, [CN, CS1P, CN, CL2, CR2, CS1M], [EN, ER3, EN, ES3, ER3, EL3]),
-    TileInfo::new(tile!(148, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(148, b), 1, TA3, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, EL3, ES3, EN, EL3]),
-    TileInfo::new(tile!(149, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
-    TileInfo::new(tile!(149, b), 1, TA2, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, ES3, ES3, EN, EL3]),
-    TileInfo::new(tile!(150, a), 1, TA2, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
-    TileInfo::new(tile!(150, b), 1, TA3, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
-    TileInfo::new(tile!(151, a), 1, TA1, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES3, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(151, b), 1, TA3, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(152, a), 1, TA1, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES3]),
-    TileInfo::new(tile!(152, b), 1, TA3, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!(153, a), 1, TA3, [CS0, CS0, CN, CS0, CS0, CN], [ES3, ES2, EN, ES3, ES2, EN]),
-    TileInfo::new(tile!(153, b), 1, TA3, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!(154, a), 1, TA3, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES3, ES2, ES3]),
-    TileInfo::new(tile!(154, b), 1, TA3, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(121, a), 2, TA, DL, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!(121, b), 2, TA, DM, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!(122, a), 2, TA, DL, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, ES3]),
+    TileInfo::new(tile!(122, b), 2, TA, DM, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, ES2]),
+    TileInfo::new(tile!(123, a), 1, TA, DL, [CN, CL2, CR2, CN, CN, CN], [EN, ES3, EL3, EN, EN, EN]),
+    TileInfo::new(tile!(123, b), 1, TA, DM, [CN, CL2, CR2, CN, CN, CN], [EN, ES2, EL2, EN, EN, EN]),
+    TileInfo::new(tile!(124, a), 2, TA, DM, [CL1, CN, CR1, CN, CN, CN], [ES3, EN, EL3, EN, EN, EN]),
+    TileInfo::new(tile!(124, b), 2, TA, DH, [CL1, CN, CR1, CN, CN, CN], [ES2, EN, EL2, EN, EN, EN]),
+    TileInfo::new(tile!(125, a), 2, TA, DL, [CR1, CN, CN, CN, CL1, CN], [ES3, EN, EN, EN, ER3, EN]),
+    TileInfo::new(tile!(125, b), 2, TA, DM, [CR1, CN, CN, CN, CL1, CN], [ES2, EN, EN, EN, ER2, EN]),
+    TileInfo::new(tile!(126, a), 1, TA, DM, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES3, ER3, EN]),
+    TileInfo::new(tile!(126, b), 1, TA, DH, [CN, CN, CN, CL2, CR2, CN], [EN, EN, EN, ES2, ER2, EN]),
+    TileInfo::new(tile!(127, a), 2, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL3, ES3, EN, EN]),
+    TileInfo::new(tile!(127, b), 2, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, EL2, ES2, EN, EN]),
+    TileInfo::new(tile!(128, a), 1, TA, DM, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER3, EL3]),
+    TileInfo::new(tile!(128, b), 1, TA, DH, [CN, CN, CN, CN, CL2, CR2], [EN, EN, EN, EN, ER2, EL2]),
+    TileInfo::new(tile!(129, a), 1, TA, DL, [CN, CR0, CN, CN, CL0, CN], [EN, ES3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!(129, b), 1, TA, DM, [CN, CR0, CN, CN, CL0, CN], [EN, ES2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!(130, a), 1, TA, DL, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL3, EN, EN, ES3]),
+    TileInfo::new(tile!(130, b), 1, TA, DM, [CN, CN, CR0, CN, CN, CL0], [EN, EN, EL2, EN, EN, ES2]),
+    TileInfo::new(tile!(131, a), 1, TA, DL, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!(131, b), 1, TA, DM, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!(132, a), 1, TA, DL, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL3, EN, ER3, EN]),
+    TileInfo::new(tile!(132, b), 1, TA, DM, [CN, CN, CS1M, CN, CS1P, CN], [EN, EN, EL2, EN, ER2, EN]),
+    TileInfo::new(tile!(133, a), 1, TA, DM, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!(133, b), 1, TA, DH, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!(134, a), 1, TA, DL, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL3, EN, EN, EL3]),
+    TileInfo::new(tile!(134, b), 1, TA, DM, [CN, CN, CR0, CN, CN, CR0], [EN, EN, EL2, EN, EN, EL2]),
+    TileInfo::new(tile!(135, a), 1, TA, DM, [CN, CL0, CN, CN, CL0, CN], [EN, ER3, EN, EN, ER3, EN]),
+    TileInfo::new(tile!(135, b), 1, TA, DH, [CN, CL0, CN, CN, CL0, CN], [EN, ER2, EN, EN, ER2, EN]),
+    TileInfo::new(tile!(136, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(136, b), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(137, a), 1, TA, DM, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES3, EN, ER3, EN]),
+    TileInfo::new(tile!(137, b), 1, TA, DH, [CN, CN, CL1, CN, CR1, CN], [EN, EN, ES2, EN, ER2, EN]),
+    TileInfo::new(tile!(138, a), 2, TA, DL, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL3, EN, ES3, EN]),
+    TileInfo::new(tile!(138, b), 2, TA, DM, [CN, CN, CL1, CN, CR1, CN], [EN, EN, EL2, EN, ES2, EN]),
+    TileInfo::new(tile!(139, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(139, b), 1, TA, DL, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!(140, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(140, b), 1, TA, DL, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER3, EL3, EN, ER3, EL3]),
+    TileInfo::new(tile!(141, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(141, b), 1, TA, DL, [CS0, CN, CS0, CS0, CN, CS0], [ES3, EN, ES3, ES3, EN, ES3]),
+    TileInfo::new(tile!(142, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(142, b), 1, TA, DL, [CS0, CN, CS1M, CS0, CS1P, CN], [ES3, EN, EL3, ES3, ER3, EN]),
+    TileInfo::new(tile!(143, a), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(143, b), 1, TA, DM, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!(144, a), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(144, b), 1, TA, DM, [CN, CS1P, CS1M, CN, CS1P, CS1M], [EN, ER2, EL2, EN, ER2, EL2]),
+    TileInfo::new(tile!(145, a), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES4, EN, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(145, b), 1, TA, DH, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(146, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(146, b), 1, TA, DL, [CS0, CN, CS1M, CS0, CS1P, CN], [ES2, EN, EL2, ES2, ER2, EN]),
+    TileInfo::new(tile!(147, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(147, b), 1, TA, DH, [CN, CS1P, CN, CL2, CR2, CS1M], [EN, ER3, EN, ES3, ER3, EL3]),
+    TileInfo::new(tile!(148, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(148, b), 1, TA, DH, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, EL3, ES3, EN, EL3]),
+    TileInfo::new(tile!(149, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES4, EN, ES4, EN, EN]),
+    TileInfo::new(tile!(149, b), 1, TA, DM, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, ES3, ES3, EN, EL3]),
+    TileInfo::new(tile!(150, a), 1, TA, DM, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
+    TileInfo::new(tile!(150, b), 1, TA, DH, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
+    TileInfo::new(tile!(151, a), 1, TA, DL, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(151, b), 1, TA, DH, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(152, a), 1, TA, DL, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES3]),
+    TileInfo::new(tile!(152, b), 1, TA, DH, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(153, a), 1, TA, DH, [CS0, CS0, CN, CS0, CS0, CN], [ES3, ES2, EN, ES3, ES2, EN]),
+    TileInfo::new(tile!(153, b), 1, TA, DH, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(154, a), 1, TA, DH, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES3, ES2, ES3]),
+    TileInfo::new(tile!(154, b), 1, TA, DH, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
     // Rallyman DIRT core box
-    TileInfo::new(tile!(201, a), 1, TN, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(201, b), 1, TN, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(202, a), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(202, b), 1, TG2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(203, a), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(203, b), 1, TG3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(204, a), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(204, b), 1, TG2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(205, a), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(205, b), 1, TG2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(206, a), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(206, b), 1, TG1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(207, a), 1, TG2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(207, b), 1, TG2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(208, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(208, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(209, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(209, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(210, a), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(210, b), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(211, a), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(211, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(212, a), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(212, b), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(213, a), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(213, b), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(214, a), 1, TG1, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(214, b), 1, TG2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(215, a), 1, TG2, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(215, b), 1, TG1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(216, a), 1, TG1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(216, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(217, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(217, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(218, a), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(218, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(219, a), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(219, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(220, a), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(220, b), 1, TG3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(221, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(221, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(222, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(222, b), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(223, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(223, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(224, a), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(224, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(225, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(225, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(226, a), 1, TG3, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(226, b), 1, TG1, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(227, a), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(227, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(228, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(228, b), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(229, a), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(229, b), 1, TG1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(230, a), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(230, b), 1, TG2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(231, a), 1, TG1, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(231, b), 1, TG2, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(232, a), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(232, b), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(201, a), 1, TN, DN, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(201, b), 1, TN, DN, [CN, CN, CN, CS3, CN, CN], [EN, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(202, a), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(202, b), 1, TG, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(203, a), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(203, b), 1, TG, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(204, a), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(204, b), 1, TG, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(205, a), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(205, b), 1, TG, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(206, a), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(206, b), 1, TG, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(207, a), 1, TG, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(207, b), 1, TG, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(208, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(208, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(209, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(209, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(210, a), 1, TG, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(210, b), 1, TG, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(211, a), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(211, b), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(212, a), 1, TG, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(212, b), 1, TG, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(213, a), 1, TG, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(213, b), 1, TG, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(214, a), 1, TG, DL, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(214, b), 1, TG, DM, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, a), 1, TG, DM, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(215, b), 1, TG, DL, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(216, a), 1, TG, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(216, b), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(217, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(217, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(218, a), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(218, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(219, a), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(219, b), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(220, a), 1, TG, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(220, b), 1, TG, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(221, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(221, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(222, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(222, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(223, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(223, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(224, a), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(224, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(225, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(225, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, a), 1, TG, DH, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(226, b), 1, TG, DL, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(227, a), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(227, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(228, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(228, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(229, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(229, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(230, a), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(230, b), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(231, a), 1, TG, DL, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(231, b), 1, TG, DM, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(232, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(232, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     // Rallyman DIRT 110% expansion
-    TileInfo::new(tile!(301, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(301, b), 1, TS2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(302, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(302, b), 1, TS2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(303, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(303, b), 1, TS1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(304, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(304, b), 1, TS3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(305, a), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(305, b), 1, TS2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(306, a), 1, TA2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(306, b), 1, TS2, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(307, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(307, b), 1, TS3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(308, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(308, b), 1, TS1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(309, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(309, b), 1, TS3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(310, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(310, b), 1, TS1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(311, a), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(311, b), 1, TS2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(312, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(312, b), 1, TS1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(313, a), 1, TA1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(313, b), 1, TS1, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(314, a), 1, TA3, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(314, b), 1, TS3, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(315, a), 1, TA3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(315, b), 1, TS3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(316, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(316, b), 1, TS1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(317, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(317, b), 1, TS2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(318, a), 1, TA3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(318, b), 1, TS3, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(319, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(319, b), 1, TS2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(320, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(320, b), 1, TS1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(321, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(321, b), 1, TS2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(322, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(322, b), 1, TS3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(323, a), 1, TA1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(323, b), 1, TS1, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(324, a), 1, TA2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(324, b), 1, TS2, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(325, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(325, b), 1, TS3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(326, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(326, b), 1, TS3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(301, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(301, b), 1, TS, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(302, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(302, b), 1, TS, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(303, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(303, b), 1, TS, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(304, a), 1, TA, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(304, b), 1, TS, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(305, a), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(305, b), 1, TS, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(306, a), 1, TA, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(306, b), 1, TS, DM, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(307, a), 1, TA, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(307, b), 1, TS, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(308, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(308, b), 1, TS, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(309, a), 1, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(309, b), 1, TS, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(310, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(310, b), 1, TS, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(311, a), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(311, b), 1, TS, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(312, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(312, b), 1, TS, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(313, a), 1, TA, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(313, b), 1, TS, DL, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(314, a), 1, TA, DH, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(314, b), 1, TS, DH, [CR0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(315, a), 1, TA, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(315, b), 1, TS, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(316, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(316, b), 1, TS, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(317, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(317, b), 1, TS, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(318, a), 1, TA, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(318, b), 1, TS, DH, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(319, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(319, b), 1, TS, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(320, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(320, b), 1, TS, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(321, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(321, b), 1, TS, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(322, a), 1, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(322, b), 1, TS, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(323, a), 1, TA, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(323, b), 1, TS, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(324, a), 1, TA, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(324, b), 1, TS, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(325, a), 1, TA, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(325, b), 1, TS, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(326, a), 1, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(326, b), 1, TS, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     // Rallyman DIRT RX expansion
-    TileInfo::new(tile!(401, a), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(401, b), 1, TA1, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(402, a), 1, TA2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!(402, b), 1, TG2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!(403, a), 1, TA2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES2]),
-    TileInfo::new(tile!(403, b), 1, TG2, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!(404, a), 1, TA2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(404, b), 1, TG2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(405, a), 1, TA2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES2, EN, ES3, EN, EN]),
-    TileInfo::new(tile!(405, b), 1, TG2, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(406, a), 1, TA2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(406, b), 1, TG2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(407, a), 1, TA2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES3, ES3, EN, EN]),
-    TileInfo::new(tile!(407, b), 1, TG2, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(408, a), 1, TA2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
-    TileInfo::new(tile!(408, b), 1, TG2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
-    TileInfo::new(tile!(409, a), 1, TA2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES3, ES3, ES2]),
-    TileInfo::new(tile!(409, b), 1, TG2, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
-    TileInfo::new(tile!(410, a), 1, TA2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(410, b), 1, TG2, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
-    TileInfo::new(tile!(411, a), 1, TA2, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(411, b), 1, TG2, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(412, a), 1, TA2, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
-    TileInfo::new(tile!(412, b), 1, TG2, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
-    TileInfo::new(tile!(413, a), 1, TA2, [CL1, CN, CR1, CN, CL2, CR2], [ES2, EN, ES2, EN, ES2, ES2]),
-    TileInfo::new(tile!(413, b), 1, TG2, [CN, CL1, CN, CR1, CL2, CR2], [EN, ES2, EN, ES2, ES2, ES2]),
-    TileInfo::new(tile!(414, a), 1, TA2, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES3, EN, ES3]),
-    TileInfo::new(tile!(414, b), 1, TG2, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!(415, a), 1, TA2, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES3, EN, ES2]),
-    TileInfo::new(tile!(415, b), 1, TG2, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES2, EN, ES2]),
-    TileInfo::new(tile!(416, a), 1, TA3, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!(416, b), 1, TG3, [CN, CS0, CS0, CN, CS0, CS0], [EN, ES2, ES2, EN, ES2, ES2]),
-    TileInfo::new(tile!(417, a), 1, TA3, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
-    TileInfo::new(tile!(417, b), 1, TG3, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES2, ES2, ES2]),
-    TileInfo::new(tile!(418, a), 1, TA3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(418, b), 1, TG3, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(419, a), 1, TA3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(419, b), 1, TG3, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(401, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(401, b), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(402, a), 1, TA, DM, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(402, b), 1, TG, DM, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(403, a), 1, TA, DM, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!(403, b), 1, TG, DM, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(404, a), 1, TA, DM, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(404, b), 1, TG, DM, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(405, a), 1, TA, DM, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES2, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(405, b), 1, TG, DM, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(406, a), 1, TA, DM, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(406, b), 1, TG, DM, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(407, a), 1, TA, DM, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES3, ES3, EN, EN]),
+    TileInfo::new(tile!(407, b), 1, TG, DM, [CN, CJL1L2, CJL2R2, CJR1R2, CN, CN], [EN, ES2, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(408, a), 1, TA, DM, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(408, b), 1, TG, DM, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(409, a), 1, TA, DM, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES3, ES3, ES2]),
+    TileInfo::new(tile!(409, b), 1, TG, DM, [CN, CN, CN, CJL1L2, CJR2L2, CJR1R2], [EN, EN, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(410, a), 1, TA, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(410, b), 1, TG, DM, [CN, CN, CL2, CR2, CN, CN], [EN, EN, ES2, ES2, EN, EN]),
+    TileInfo::new(tile!(411, a), 1, TA, DM, [CL0, CN, CN, CR0, CN, CN], [ES3, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(411, b), 1, TG, DM, [CL0, CN, CN, CR0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(412, a), 1, TA, DM, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
+    TileInfo::new(tile!(412, b), 1, TG, DM, [CN, CS0, CL2, CR2, CS0, CN], [EN, ES2, ES2, ES2, ES2, EN]),
+    TileInfo::new(tile!(413, a), 1, TA, DM, [CL1, CN, CR1, CN, CL2, CR2], [ES2, EN, ES2, EN, ES2, ES2]),
+    TileInfo::new(tile!(413, b), 1, TG, DM, [CN, CL1, CN, CR1, CL2, CR2], [EN, ES2, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(414, a), 1, TA, DM, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES3, EN, ES3]),
+    TileInfo::new(tile!(414, b), 1, TG, DM, [CS1M, CN, CS1P, CS1M, CN, CS1P], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(415, a), 1, TA, DM, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES3, EN, ES2]),
+    TileInfo::new(tile!(415, b), 1, TG, DM, [CN, CJL1R1, CN, CJL1R1, CN, CJL1R1], [EN, ES2, EN, ES2, EN, ES2]),
+    TileInfo::new(tile!(416, a), 1, TA, DH, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(416, b), 1, TG, DH, [CN, CS0, CS0, CN, CS0, CS0], [EN, ES2, ES2, EN, ES2, ES2]),
+    TileInfo::new(tile!(417, a), 1, TA, DH, [CN, CL1, CS0, CR1, CN, CS0], [EN, ES2, ES2, ES2, EN, ES2]),
+    TileInfo::new(tile!(417, b), 1, TG, DH, [CN, CS0, CN, CL1, CS0, CR1], [EN, ES2, EN, ES2, ES2, ES2]),
+    TileInfo::new(tile!(418, a), 1, TA, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(418, b), 1, TG, DH, [CS0, CN, CN, CS0, CN, CN], [ES2, EN, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(419, a), 1, TA, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
+    TileInfo::new(tile!(419, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN]),
     // Unnumbered fillers
-    TileInfo::new(tile!(901, a), 1, TN, [CN; 6], [EN; 6]), // Sheep Summer
-    TileInfo::new(tile!(901, b), 1, TN, [CN; 6], [EN; 6]), // People City
-    TileInfo::new(tile!(902, a), 1, TN, [CN; 6], [EN; 6]), // Barbecue Summer
-    TileInfo::new(tile!(902, b), 1, TN, [CN; 6], [EN; 6]), // Glühwein Winter
-    TileInfo::new(tile!(903, a), 1, TN, [CN; 6], [EN; 6]), // Lake
-    TileInfo::new(tile!(903, b), 1, TN, [CN; 6], [EN; 6]), // Lake with Accident
-    TileInfo::new(tile!(904, a), 1, TN, [CN; 6], [EN; 6]), // Rocks
-    TileInfo::new(tile!(904, b), 1, TN, [CN; 6], [EN; 6]), // Sheep Winter
-    TileInfo::new(tile!(905, a), 1, TN, [CN; 6], [EN; 6]), // Podium
-    TileInfo::new(tile!(905, b), 1, TN, [CN; 6], [EN; 6]), // Podium
+    TileInfo::new(tile!(901, a), 1, TN, DN, [CN; 6], [EN; 6]), // Sheep Summer
+    TileInfo::new(tile!(901, b), 1, TN, DN, [CN; 6], [EN; 6]), // People City
+    TileInfo::new(tile!(902, a), 1, TN, DN, [CN; 6], [EN; 6]), // Barbecue Summer
+    TileInfo::new(tile!(902, b), 1, TN, DN, [CN; 6], [EN; 6]), // Glühwein Winter
+    TileInfo::new(tile!(903, a), 1, TN, DN, [CN; 6], [EN; 6]), // Lake
+    TileInfo::new(tile!(903, b), 1, TN, DN, [CN; 6], [EN; 6]), // Lake with Accident
+    TileInfo::new(tile!(904, a), 1, TN, DN, [CN; 6], [EN; 6]), // Rocks
+    TileInfo::new(tile!(904, b), 1, TN, DN, [CN; 6], [EN; 6]), // Sheep Winter
+    TileInfo::new(tile!(905, a), 1, TN, DN, [CN; 6], [EN; 6]), // Podium
+    TileInfo::new(tile!(905, b), 1, TN, DN, [CN; 6], [EN; 6]), // Podium
 ];
 
 //----------------------------------------------------------------------------
@@ -2046,23 +2015,23 @@ mod tests {
     }
 
     #[test]
-    fn tile_list_group_by_surface() {
+    fn tile_list_group_by_terrain() {
         let tiles = vec![
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
         ];
-        let mut iter = tiles.group_by_surface();
-        assert_eq!(iter.next(), Some(Terrain::Asphalt(0)));
+        let mut iter = tiles.group_by_terrain();
+        assert_eq!(iter.next(), Some(Terrain::Asphalt));
         assert_eq!(iter.tiles(), &[
             tile!(301, a), tile!(418, a),
         ]);
-        assert_eq!(iter.next(), Some(Terrain::Gravel(0)));
+        assert_eq!(iter.next(), Some(Terrain::Gravel));
         assert_eq!(iter.tiles(), &[
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(219, a),
             tile!(419, b), tile!(208, a), tile!(232, a),
         ]);
-        assert_eq!(iter.next(), Some(Terrain::Snow(0)));
+        assert_eq!(iter.next(), Some(Terrain::Snow));
         assert_eq!(iter.tiles(), &[
             tile!(311, b), tile!(326, b), tile!(302, b),
         ]);
@@ -2070,7 +2039,7 @@ mod tests {
         assert_eq!(iter.tiles(), &[][..]);
 
         let tiles = vec![tile!(101), tile!(999, a)];
-        let mut iter = tiles.group_by_surface();
+        let mut iter = tiles.group_by_terrain();
         assert_eq!(iter.next(), Some(Terrain::None));
         assert_eq!(iter.tiles(), &[tile!(101)]);
         assert_eq!(iter.next(), None);
@@ -2078,35 +2047,35 @@ mod tests {
     }
 
     #[test]
-    fn tile_list_surface_summary() {
+    fn tile_list_terrain_summary() {
         let tiles = vec![
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
         ];
-        let summary = tiles.surface_summary();
+        let summary = tiles.terrain_summary();
         assert_eq!(summary, vec![
-            SurfaceSummary::new(Some(Terrain::Asphalt(0)), 2),
-            SurfaceSummary::new(Some(Terrain::Gravel(0)), 7),
-            SurfaceSummary::new(Some(Terrain::Snow(0)), 3),
+            TerrainSummary::new(Some(Terrain::Asphalt), 2),
+            TerrainSummary::new(Some(Terrain::Gravel), 7),
+            TerrainSummary::new(Some(Terrain::Snow), 3),
         ]);
 
         let tiles = vec![tile!(101), tile!(999, a)];
-        let summary = tiles.surface_summary();
+        let summary = tiles.terrain_summary();
         assert_eq!(summary, vec![
-            SurfaceSummary::new(Some(Terrain::None), 1),
-            SurfaceSummary::new(None, 1),
+            TerrainSummary::new(Some(Terrain::None), 1),
+            TerrainSummary::new(None, 1),
         ]);
 
         let tiles: Vec<TileId> = TileInfo::iter()
             .map(|info| info.full_id())
             .collect();
-        let summary = tiles.surface_summary();
+        let summary = tiles.terrain_summary();
         assert_eq!(summary, vec![
-            SurfaceSummary::new(Some(Terrain::None), 13),
-            SurfaceSummary::new(Some(Terrain::Asphalt(0)), 152),
-            SurfaceSummary::new(Some(Terrain::Gravel(0)), 80),
-            SurfaceSummary::new(Some(Terrain::Snow(0)), 26),
+            TerrainSummary::new(Some(Terrain::None), 13),
+            TerrainSummary::new(Some(Terrain::Asphalt), 152),
+            TerrainSummary::new(Some(Terrain::Gravel), 80),
+            TerrainSummary::new(Some(Terrain::Snow), 26),
         ]);
     }
 
@@ -2118,16 +2087,16 @@ mod tests {
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
         ];
         let mut iter = tiles.group_by_danger_level();
-        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), Some(DangerLevel::Low));
         assert_eq!(iter.tiles(), &[
             tile!(301, a), tile!(208, a),
         ]);
-        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next(), Some(DangerLevel::Medium));
         assert_eq!(iter.tiles(), &[
             tile!(231, b), tile!(211, b), tile!(219, a), tile!(311, b),
             tile!(302, b),
         ]);
-        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.next(), Some(DangerLevel::High));
         assert_eq!(iter.tiles(), &[
             tile!(220, a), tile!(418, a), tile!(419, b), tile!(232, a),
             tile!(326, b),
@@ -2137,7 +2106,7 @@ mod tests {
 
         let tiles = vec![tile!(101), tile!(999, a)];
         let mut iter = tiles.group_by_danger_level();
-        assert_eq!(iter.next(), Some(0));
+        assert_eq!(iter.next(), Some(DangerLevel::None));
         assert_eq!(iter.tiles(), &[tile!(101)]);
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[tile!(999, a)]);
@@ -2152,15 +2121,15 @@ mod tests {
         ];
         let summary = tiles.danger_level_summary();
         assert_eq!(summary, vec![
-            DangerLevelSummary::new(Some(1), 2),
-            DangerLevelSummary::new(Some(2), 5),
-            DangerLevelSummary::new(Some(3), 5),
+            DangerLevelSummary::new(Some(DangerLevel::Low), 2),
+            DangerLevelSummary::new(Some(DangerLevel::Medium), 5),
+            DangerLevelSummary::new(Some(DangerLevel::High), 5),
         ]);
 
         let tiles = vec![tile!(101), tile!(999, a)];
         let summary = tiles.danger_level_summary();
         assert_eq!(summary, vec![
-            DangerLevelSummary::new(Some(0), 1),
+            DangerLevelSummary::new(Some(DangerLevel::None), 1),
             DangerLevelSummary::new(None, 1),
         ]);
 
@@ -2169,10 +2138,10 @@ mod tests {
             .collect();
         let summary = tiles.danger_level_summary();
         assert_eq!(summary, vec![
-            DangerLevelSummary::new(Some(0), 13),
-            DangerLevelSummary::new(Some(1), 83),
-            DangerLevelSummary::new(Some(2), 113),
-            DangerLevelSummary::new(Some(3), 62),
+            DangerLevelSummary::new(Some(DangerLevel::None), 13),
+            DangerLevelSummary::new(Some(DangerLevel::Low), 83),
+            DangerLevelSummary::new(Some(DangerLevel::Medium), 113),
+            DangerLevelSummary::new(Some(DangerLevel::High), 62),
         ]);
     }
 
@@ -2369,24 +2338,22 @@ mod tests {
     #[test]
     fn terrain_to_str() {
         assert_eq!(Terrain::None.to_string(), "None");
-        assert_eq!(Terrain::Asphalt(0).to_string(), "Asphalt");
-        assert_eq!(Terrain::Asphalt(1).to_string(), "Asphalt-1");
-        assert_eq!(Terrain::Gravel(2).to_string(), "Gravel-2");
-        assert_eq!(Terrain::Snow(3).to_string(), "Snow-3");
+        assert_eq!(Terrain::Asphalt.to_string(), "Asphalt");
+        assert_eq!(Terrain::Gravel.to_string(), "Gravel");
+        assert_eq!(Terrain::Snow.to_string(), "Snow");
 
-        let text = format!("{:x}", Terrain::Gravel(0));
+        let text = format!("{:x}", Terrain::Gravel);
         assert_eq!(text, "gravel");
-        let text = format!("{:x}", Terrain::Snow(1));
-        assert_eq!(text, "snow-1");
+        let text = format!("{:x}", Terrain::Snow);
+        assert_eq!(text, "snow");
     }
 
     #[test]
     fn terrain_from_str() {
         assert_eq!("None".parse::<Terrain>(), Ok(Terrain::None));
-        assert_eq!("asphalt".parse::<Terrain>(), Ok(Terrain::Asphalt(0)));
-        assert_eq!("asphalt-1".parse::<Terrain>(), Ok(Terrain::Asphalt(1)));
-        assert_eq!("Gravel-2".parse::<Terrain>(), Ok(Terrain::Gravel(2)));
-        assert_eq!("SNOW 3".parse::<Terrain>(), Ok(Terrain::Snow(3)));
+        assert_eq!("asphalt".parse::<Terrain>(), Ok(Terrain::Asphalt));
+        assert_eq!("Gravel".parse::<Terrain>(), Ok(Terrain::Gravel));
+        assert_eq!("SNOW".parse::<Terrain>(), Ok(Terrain::Snow));
 
         assert!("".parse::<Terrain>().is_err());
         assert!("x".parse::<Terrain>().is_err());
@@ -2400,17 +2367,17 @@ mod tests {
         let text = serde_json::to_string(&terrain).unwrap();
         assert_eq!(text, r#""none""#);
 
-        let terrain = Terrain::Asphalt(0);
+        let terrain = Terrain::Asphalt;
         let text = serde_json::to_string(&terrain).unwrap();
         assert_eq!(text, r#""asphalt""#);
 
-        let terrain = Terrain::Gravel(2);
+        let terrain = Terrain::Gravel;
         let text = serde_json::to_string(&terrain).unwrap();
-        assert_eq!(text, r#""gravel-2""#);
+        assert_eq!(text, r#""gravel""#);
 
-        let text = r#""snow-3""#;
+        let text = r#""snow""#;
         let terrain: Terrain = serde_json::from_str(text).unwrap();
-        assert_eq!(terrain, Terrain::Snow(3));
+        assert_eq!(terrain, Terrain::Snow);
 
         let text = r#""#;
         let result: Result<Terrain, _> = serde_json::from_str(text);
@@ -2463,11 +2430,9 @@ mod tests {
     #[test]
     fn tile_info_terrain() {
         for info in TILE_INFOS.iter() {
-            let danger_level = info.terrain().danger_level();
+            let danger_level = info.danger_level();
             if info.terrain() == Terrain::None {
-                assert_eq!(danger_level, 0, "tile info {} has undefined terrain with non-zero danger level", info.id);
-            } else {
-                assert!((1..=3).contains(&danger_level), "tile info {} has unsupported danger level {}", info.id, danger_level);
+                assert_eq!(danger_level, DangerLevel::None, "tile info {} has undefined terrain with non-zero danger level", info.id);
             }
         }
     }

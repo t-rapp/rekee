@@ -212,7 +212,7 @@ impl TerrainFilterElement {
 
         let tiles: BTreeSet<_> = TileInfo::iter()
             .filter(|info| match value {
-                Some(val) => info.terrain().eq_surface(val),
+                Some(val) => info.terrain() == val,
                 None => true,
             })
             .map(|info| info.base_id())
@@ -522,7 +522,6 @@ impl CatalogView {
 
     fn inner_update_filter(&mut self, lanes: Option<u8>, terrain: Option<Terrain>) {
         info!("update filter: lanes={:?}, terrain={:?}", lanes, terrain);
-        let terrain = terrain.map(|val| val.surface());
 
         let edition_tiles: HashSet<TileId> = self.editions.iter()
             .flat_map(|edition| edition.tiles())

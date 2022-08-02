@@ -133,7 +133,7 @@ impl TrackInfoView {
         }
 
 
-        if let Some(parent) = self.inner.query_selector("#track-info-surface-data").ok().flatten() {
+        if let Some(parent) = self.inner.query_selector("#track-info-terrain-data").ok().flatten() {
             // remove all previous data
             let range = check!(document.create_range().ok());
             check!(range.select_node_contents(&parent).ok());
@@ -143,9 +143,9 @@ impl TrackInfoView {
             check!(parent.append_child(&list).ok());
 
             let total_count = track_tiles.len() as u32;
-            let summary = track_tiles.surface_summary();
+            let summary = track_tiles.terrain_summary();
             for row in summary {
-                let mut text = match row.surface {
+                let mut text = match row.terrain {
                     Some(val) => val.to_string(),
                     None => "Unknown".to_string(),
                 };
@@ -181,9 +181,6 @@ impl TrackInfoView {
             let summary = track_tiles.danger_level_summary();
             for row in summary {
                 let mut text = match row.danger_level {
-                    Some(1) => "Low".to_string(),
-                    Some(2) => "Medium".to_string(),
-                    Some(3) => "High".to_string(),
                     Some(val) => val.to_string(),
                     None => "Unknown".to_string(),
                 };
