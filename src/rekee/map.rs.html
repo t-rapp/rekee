@@ -1199,10 +1199,10 @@
     <span class="doccomment">/// # use rekee::tile::{Terrain, TileId};</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let tile = PlacedTile::new(tile!(301, a), Coordinate::new(0, 0), Direction::A);</span>
-    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Asphalt(1)));</span>
+    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Asphalt));</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let tile = PlacedTile::new(tile!(302, b), Coordinate::new(0, 0), Direction::A);</span>
-    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Snow(2)));</span>
+    <span class="doccomment">/// assert_eq!(tile.terrain(), Some(Terrain::Snow));</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let tile = PlacedTile::new(tile!(999, a), Coordinate::new(0, 0), Direction::A);</span>
     <span class="doccomment">/// assert_eq!(tile.terrain(), None);</span>

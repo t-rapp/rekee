@@ -24,10 +24,10 @@ information, otherwise returns <code>None</code>.</p>
 <h5 id="examples"><a href="#examples">Examples</a></h5>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>
 <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::new</span>(<span class="macro">tile!</span>(<span class="number">301</span>, <span class="ident">a</span>), <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="ident">Direction::A</span>);
-<span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">terrain</span>(), <span class="prelude-val">Some</span>(<span class="ident">Terrain::Asphalt</span>(<span class="number">1</span>)));
+<span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">terrain</span>(), <span class="prelude-val">Some</span>(<span class="ident">Terrain::Asphalt</span>));
 
 <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::new</span>(<span class="macro">tile!</span>(<span class="number">302</span>, <span class="ident">b</span>), <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="ident">Direction::A</span>);
-<span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">terrain</span>(), <span class="prelude-val">Some</span>(<span class="ident">Terrain::Snow</span>(<span class="number">2</span>)));
+<span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">terrain</span>(), <span class="prelude-val">Some</span>(<span class="ident">Terrain::Snow</span>));
 
 <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::new</span>(<span class="macro">tile!</span>(<span class="number">999</span>, <span class="ident">a</span>), <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="ident">Direction::A</span>);
 <span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">terrain</span>(), <span class="prelude-val">None</span>);</code></pre></div>

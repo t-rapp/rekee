@@ -632,7 +632,6 @@
 <span id="627">627</span>
 <span id="628">628</span>
 <span id="629">629</span>
-<span id="630">630</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the tile catalog and according event handlers.</span>
 <span class="comment">//</span>
@@ -847,7 +846,7 @@
 
         <span class="kw">let</span> <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TileInfo::iter</span>()
             .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">value</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">info</span>.<span class="ident">terrain</span>().<span class="ident">eq_surface</span>(<span class="ident">val</span>),
+                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">info</span>.<span class="ident">terrain</span>() <span class="op">==</span> <span class="ident">val</span>,
                 <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
             })
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">base_id</span>())
@@ -1157,7 +1156,6 @@
 
     <span class="kw">fn</span> <span class="ident">inner_update_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>) {
         <span class="macro">info!</span>(<span class="string">&quot;update filter: lanes={:?}, terrain={:?}&quot;</span>, <span class="ident">lanes</span>, <span class="ident">terrain</span>);
-        <span class="kw">let</span> <span class="ident">terrain</span> <span class="op">=</span> <span class="ident">terrain</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">surface</span>());
 
         <span class="kw">let</span> <span class="ident">edition_tiles</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
             .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">edition</span>.<span class="ident">tiles</span>())
