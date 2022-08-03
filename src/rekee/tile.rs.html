@@ -4537,12 +4537,12 @@
         <span class="kw">let</span> <span class="ident">tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TileInfo::iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">full_id</span>())
             .<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">surface_summary</span>();
+        <span class="kw">let</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">terrain_summary</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">summary</span>, <span class="macro">vec!</span>[
-            <span class="ident">SurfaceSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::None</span>), <span class="number">13</span>),
-            <span class="ident">SurfaceSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Asphalt</span>(<span class="number">0</span>)), <span class="number">152</span>),
-            <span class="ident">SurfaceSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Gravel</span>(<span class="number">0</span>)), <span class="number">80</span>),
-            <span class="ident">SurfaceSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Snow</span>(<span class="number">0</span>)), <span class="number">26</span>),
+            <span class="ident">TerrainSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::None</span>), <span class="number">13</span>),
+            <span class="ident">TerrainSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Asphalt</span>), <span class="number">152</span>),
+            <span class="ident">TerrainSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Gravel</span>), <span class="number">80</span>),
+            <span class="ident">TerrainSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">Terrain::Snow</span>), <span class="number">26</span>),
         ]);
     }
 
@@ -4605,10 +4605,10 @@
             .<span class="ident">collect</span>();
         <span class="kw">let</span> <span class="ident">summary</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">danger_level_summary</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">summary</span>, <span class="macro">vec!</span>[
-            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="number">0</span>), <span class="number">13</span>),
-            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="number">1</span>), <span class="number">83</span>),
-            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="number">2</span>), <span class="number">113</span>),
-            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="number">3</span>), <span class="number">62</span>),
+            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">DangerLevel::None</span>), <span class="number">13</span>),
+            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">DangerLevel::Low</span>), <span class="number">83</span>),
+            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">DangerLevel::Medium</span>), <span class="number">113</span>),
+            <span class="ident">DangerLevelSummary::new</span>(<span class="prelude-val">Some</span>(<span class="ident">DangerLevel::High</span>), <span class="number">62</span>),
         ]);
     }
 
