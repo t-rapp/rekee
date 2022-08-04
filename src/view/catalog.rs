@@ -312,7 +312,7 @@ pub struct CatalogView {
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
         // create layout instance without map offset
-        let layout = Layout::new(layout.orientation(), layout.size(), layout.size());
+        let layout = layout.with_origin(layout.size());
 
         let document = parent.owner_document().unwrap();
 

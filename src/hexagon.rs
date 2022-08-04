@@ -906,6 +906,21 @@ impl Layout {
         f32::from(self.orientation.start_angle).abs() <= 0.1
     }
 
+    /// Creates a copy of this layout with new grid orientation parameters.
+    pub fn with_orientation(&self, orientation: &Orientation) -> Self {
+        Layout { orientation: orientation.clone(), size: self.size, origin: self.origin }
+    }
+
+    /// Creates a copy of this layout with new hexagon size parameters.
+    pub fn with_size(&self, size: Point) -> Self {
+        Layout { orientation: self.orientation.clone(), size, origin: self.origin }
+    }
+
+    /// Creates a copy of this layout with new grid origin point.
+    pub fn with_origin(&self, origin: Point) -> Self {
+        Layout { orientation: self.orientation.clone(), size: self.size, origin }
+    }
+
     /// Calculates the corners of a hexagon with the given coordinate.
     pub fn hexagon_corners(&self, hex: Coordinate) -> [Point; 6] {
         let center = hex.to_pixel(self);

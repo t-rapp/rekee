@@ -207,7 +207,7 @@ impl ExportView {
         if has_title {
             origin = origin + Point(0.0, (TITLE_HEIGHT + PADDING) as f32);
         }
-        let layout = Layout::new(self.layout.orientation(), self.layout.size(), origin);
+        let layout = self.layout.with_origin(origin);
         let context = check!(self.canvas.get_context("2d").ok().flatten()
             .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
 
