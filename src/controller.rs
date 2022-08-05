@@ -492,6 +492,11 @@ pub struct DrawExportTileDoneEvent {
     pub tile: PlacedTile,
 }
 
+pub struct DrawExportTokenDoneEvent {
+    pub tile: PlacedTile,
+    pub token: PlacedToken,
+}
+
 pub struct ExportController {
     view: ExportView,
 }
@@ -504,6 +509,9 @@ impl ExportController {
         // register private events
         activity.private_channel(|controller, event: DrawExportTileDoneEvent| {
             controller.view.draw_export_tile_done(&event.tile);
+        });
+        activity.private_channel(|controller, event: DrawExportTokenDoneEvent| {
+            controller.view.draw_export_token_done(&event.tile, &event.token);
         });
 
         // register public events

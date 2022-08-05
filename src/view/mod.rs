@@ -58,20 +58,53 @@ const TILE_STYLE: &str = include_str!("tile.css");
 
 //----------------------------------------------------------------------------
 
+fn tile_image_size(layout: &Layout) -> Point {
+    let rect = layout.with_orientation(Orientation::flat())
+        .hexagon_rect(Coordinate::new(0, 0));
+    Point(rect.width, rect.height)
+}
+
+fn tile_image_center(layout: &Layout) -> Point {
+    let size = tile_image_size(layout);
+    Point(0.5 * size.x(), 0.5 * size.y())
+}
+
+fn token_image_size(layout: &Layout, token: &PlacedToken) -> Point {
+    match token.id {
+        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
+            Point(0.41 * layout.size().x(), 0.28 * layout.size().y()),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
+            Point(0.82 * layout.size().x(), 0.40 * layout.size().y()),
+    }
+}
+
+fn token_image_center(layout: &Layout, token: &PlacedToken) -> Point {
+    let size = token_image_size(layout, token);
+    match token.id {
+        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
+            Point(0.5 * size.x(), 0.5 * size.y()),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
+            Point(0.5 * size.x(), size.y()),
+    }
+}
+
+//----------------------------------------------------------------------------
+
 fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
     let pos = tile.pos.to_pixel(layout);
     let parent = document.create_element_ns(SVG_NS, "g")?;
     parent.set_attribute("class", "tile")?;
     parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
 
-    let size = layout.size();
+    let size = tile_image_size(layout);
+    let center = tile_image_center(layout);
     let angle = layout.direction_to_angle(tile.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
-    img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
-    img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
+    img.set_attribute("width", &format!("{}", size.x()))?;
+    img.set_attribute("height", &format!("{}", size.y()))?;
     img.set_attribute("image-rendering", "optimizeQuality")?;
-    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
+    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -center.x(), -center.y()))?;
     parent.append_child(&img)?;
 
     Ok(parent)
@@ -120,18 +153,8 @@ fn draw_tile_token(document: &Document, layout: &Layout, tile: &PlacedTile, toke
     parent.set_attribute("class", "token")?;
     parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
 
-    let size = match token.id {
-        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
-            Point(0.41 * layout.size().x(), 0.28 * layout.size().y()),
-        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
-            Point(0.82 * layout.size().x(), 0.40 * layout.size().y()),
-    };
-    let center = match token.id {
-        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
-            Point(size.x() / 2.0, size.y() / 2.0),
-        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
-            Point(size.x() / 2.0, size.y()),
-    };
+    let size = token_image_size(layout, token);
+    let center = token_image_center(layout, token);
     let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
     img.set_attribute("href", &format!("tokens/{:x}.png", token.id))?;
