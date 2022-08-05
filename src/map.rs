@@ -681,11 +681,11 @@ mod tests {
         assert_eq!(text, r#"{"id":"124a","q":2,"r":0,"dir":2}"#);
 
         let mut tokens = Vec::new();
-        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit, (0.0, 0.0).into(), 3.0.into()));
-        tokens.push(PlacedToken::new(TokenId::Chicane, (1.0, 0.5).into(), 0.0.into()));
+        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), 3.0.into()));
+        tokens.push(PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (1.0, 0.5).into(), 0.0.into()));
         let tile = PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, tokens);
         let text = serde_json::to_string(&tile).unwrap();
-        assert_eq!(text, r#"{"id":"205a","q":2,"r":-1,"dir":5,"tokens":[{"id":"chicane-limit","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane","q":1.0,"r":0.5,"dir":0.0}]}"#);
+        assert_eq!(text, r#"{"id":"205a","q":2,"r":-1,"dir":5,"tokens":[{"id":"chicane-limit-gravel","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane-gravel","q":1.0,"r":0.5,"dir":0.0}]}"#);
 
         let text = r#"{"id":"0","q":0,"r":0,"dir":0}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
@@ -706,13 +706,13 @@ mod tests {
             "dir": 5,
             "tokens": [
                 {
-                    "id": "chicane-limit",
+                    "id": "chicane-limit-gravel",
                     "q": 0.0,
                     "r": 0.0,
                     "dir": 3.0
                 },
                 {
-                    "id": "chicane",
+                    "id": "chicane-gravel",
                     "q": 1.0,
                     "r": 0.5,
                     "dir": 0.0
@@ -721,8 +721,8 @@ mod tests {
         }"#);
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
         let mut tokens = Vec::new();
-        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit, (0.0, 0.0).into(), 3.0.into()));
-        tokens.push(PlacedToken::new(TokenId::Chicane, (1.0, 0.5).into(), 0.0.into()));
+        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), 3.0.into()));
+        tokens.push(PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (1.0, 0.5).into(), 0.0.into()));
         assert_eq!(tile, PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, tokens));
 
         let text = r#"{}"#;

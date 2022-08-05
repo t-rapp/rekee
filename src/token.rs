@@ -13,6 +13,8 @@ use std::str::FromStr;
 
 use serde::{Serialize, Serializer, Deserialize};
 
+use crate::tile::Terrain;
+
 //----------------------------------------------------------------------------
 
 /// Identifier for a token which can be placed on tiles.
@@ -21,24 +23,25 @@ use serde::{Serialize, Serializer, Deserialize};
 ///
 /// ```
 /// # use rekee::token::*;
+/// # use rekee::tile::Terrain;
 /// let token: TokenId = "chicane".parse().unwrap();
-/// assert_eq!(token, TokenId::Chicane);
+/// assert_eq!(token, TokenId::Chicane(Terrain::None));
 ///
-/// let token = TokenId::Jump;
-/// assert_eq!(token.to_string(), "Jump");
+/// let token = TokenId::Jump(Terrain::Gravel);
+/// assert_eq!(token.to_string(), "Jump-Gravel");
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Deserialize)]
 #[serde(try_from = "&str")]
 pub enum TokenId {
     /// Chicane token without a speed limit, part of the Rallyman DIRT Copilot Pack.
-    Chicane,
+    Chicane(Terrain),
     /// Chicane token with a speed limit, part of the Rallyman DIRT Copilot Pack.
-    ChicaneWithLimit,
+    ChicaneWithLimit(Terrain),
     /// Jump token, part of the Rallyman DIRT Copilot Pack.
-    Jump,
+    Jump(Terrain),
     /// Water token, part of the Rallyman DIRT Copilot Pack.
-    Water,
+    Water(Terrain),
     /// Joker entrance arch, part of the RX expansion for Rallyman DIRT.
     JokerEntrance,
     /// Joker exit arch, part of the RX expansion for Rallyman DIRT.
@@ -47,24 +50,70 @@ pub enum TokenId {
     Finish,
 }
 
+impl TokenId {
+    /// Creates a copy of the current token with inner terrain changed to a
+    /// given value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::token::*;
+    /// # use rekee::tile::Terrain;
+    /// let token = TokenId::Chicane(Terrain::Asphalt);
+    /// let other_token = token.with_terrain(Terrain::Snow);
+    /// assert_eq!(other_token, TokenId::Chicane(Terrain::Snow));
+    /// ```
+    pub fn with_terrain(&self, terrain: Terrain) -> Self {
+        match self {
+            TokenId::Chicane(_) =>
+                TokenId::Chicane(terrain),
+            TokenId::ChicaneWithLimit(_) =>
+                TokenId::ChicaneWithLimit(terrain),
+            TokenId::Jump(_) =>
+                TokenId::Jump(terrain),
+            TokenId::Water(_) =>
+                TokenId::Water(terrain),
+            TokenId::JokerEntrance =>
+                TokenId::JokerEntrance,
+            TokenId::JokerExit =>
+                TokenId::JokerExit,
+            TokenId::Finish =>
+                TokenId::Finish,
+        }
+    }
+}
+
 impl fmt::Display for TokenId {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut terrain = Terrain::None;
         match self {
-            TokenId::Chicane =>
-                write!(fmt, "Chicane"),
-            TokenId::ChicaneWithLimit =>
-                write!(fmt, "Chicane-Limit"),
-            TokenId::Jump =>
-                write!(fmt, "Jump"),
-            TokenId::Water =>
-                write!(fmt, "Water"),
+            TokenId::Chicane(val) => {
+                terrain = *val;
+                write!(fmt, "Chicane")?;
+            },
+            TokenId::ChicaneWithLimit(val) => {
+                terrain = *val;
+                write!(fmt, "Chicane-Limit")?;
+            },
+            TokenId::Jump(val) => {
+                terrain = *val;
+                write!(fmt, "Jump")?;
+            },
+            TokenId::Water(val) => {
+                terrain = *val;
+                write!(fmt, "Water")?;
+            },
             TokenId::JokerEntrance =>
-                write!(fmt, "Joker-Entrance"),
+                write!(fmt, "Joker-Entrance")?,
             TokenId::JokerExit =>
-                write!(fmt, "Joker-Exit"),
+                write!(fmt, "Joker-Exit")?,
             TokenId::Finish =>
-                write!(fmt, "Finish")
+                write!(fmt, "Finish")?,
+        };
+        if terrain != Terrain::None {
+            write!(fmt, "-{}", terrain)?;
         }
+        Ok(())
     }
 }
 
@@ -81,15 +130,22 @@ impl FromStr for TokenId {
     type Err = ParseTokenError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let name = s;
+        let mut terrain = Terrain::None;
+        let mut name = s;
+        if let Some((prefix, suffix)) = s.rsplit_once('-') {
+            if let Ok(val) = suffix.parse() {
+                terrain = val;
+                name = prefix;
+            }
+        }
         if name.eq_ignore_ascii_case("chicane") {
-            Ok(TokenId::Chicane)
+            Ok(TokenId::Chicane(terrain))
         } else if name.eq_ignore_ascii_case("chicane-limit") {
-            Ok(TokenId::ChicaneWithLimit)
+            Ok(TokenId::ChicaneWithLimit(terrain))
         } else if name.eq_ignore_ascii_case("jump") {
-            Ok(TokenId::Jump)
+            Ok(TokenId::Jump(terrain))
         } else if name.eq_ignore_ascii_case("water") {
-            Ok(TokenId::Water)
+            Ok(TokenId::Water(terrain))
         } else if name.eq_ignore_ascii_case("joker-entrance") {
             Ok(TokenId::JokerEntrance)
         } else if name.eq_ignore_ascii_case("joker-exit") {
@@ -143,17 +199,17 @@ mod tests {
 
     #[test]
     fn token_to_str() {
-        assert_eq!(TokenId::Chicane.to_string(), "Chicane");
-        assert_eq!(TokenId::ChicaneWithLimit.to_string(), "Chicane-Limit");
-        assert_eq!(TokenId::Jump.to_string(), "Jump");
-        assert_eq!(TokenId::Water.to_string(), "Water");
+        assert_eq!(TokenId::Chicane(Terrain::None).to_string(), "Chicane");
+        assert_eq!(TokenId::ChicaneWithLimit(Terrain::Asphalt).to_string(), "Chicane-Limit-Asphalt");
+        assert_eq!(TokenId::Jump(Terrain::Gravel).to_string(), "Jump-Gravel");
+        assert_eq!(TokenId::Water(Terrain::Snow).to_string(), "Water-Snow");
         assert_eq!(TokenId::JokerEntrance.to_string(), "Joker-Entrance");
         assert_eq!(TokenId::JokerExit.to_string(), "Joker-Exit");
         assert_eq!(TokenId::Finish.to_string(), "Finish");
 
-        let text = format!("{:x}", TokenId::Chicane);
-        assert_eq!(text, "chicane");
-        let text = format!("{:x}", TokenId::Jump);
+        let text = format!("{:x}", TokenId::Chicane(Terrain::Gravel));
+        assert_eq!(text, "chicane-gravel");
+        let text = format!("{:x}", TokenId::Jump(Terrain::None));
         assert_eq!(text, "jump");
         let text = format!("{:x}", TokenId::JokerExit);
         assert_eq!(text, "joker-exit");
@@ -161,10 +217,10 @@ mod tests {
 
     #[test]
     fn token_from_str() {
-        assert_eq!("chicane".parse::<TokenId>(), Ok(TokenId::Chicane));
-        assert_eq!("chicane-limit".parse::<TokenId>(), Ok(TokenId::ChicaneWithLimit));
-        assert_eq!("Jump".parse::<TokenId>(), Ok(TokenId::Jump));
-        assert_eq!("WATER".parse::<TokenId>(), Ok(TokenId::Water));
+        assert_eq!("chicane".parse::<TokenId>(), Ok(TokenId::Chicane(Terrain::None)));
+        assert_eq!("chicane-limit-asphalt".parse::<TokenId>(), Ok(TokenId::ChicaneWithLimit(Terrain::Asphalt)));
+        assert_eq!("Jump-Gravel".parse::<TokenId>(), Ok(TokenId::Jump(Terrain::Gravel)));
+        assert_eq!("WATER-SNOW".parse::<TokenId>(), Ok(TokenId::Water(Terrain::Snow)));
         assert_eq!("Joker-Entrance".parse::<TokenId>(), Ok(TokenId::JokerEntrance));
         assert_eq!("jOKER-eXIT".parse::<TokenId>(), Ok(TokenId::JokerExit));
         assert_eq!("FiNiSh".parse::<TokenId>(), Ok(TokenId::Finish));
@@ -172,25 +228,26 @@ mod tests {
         assert!("".parse::<TokenId>().is_err());
         assert!("jump-4".parse::<TokenId>().is_err());
         assert!("joker".parse::<TokenId>().is_err());
+        assert!("Asphalt".parse::<TokenId>().is_err());
     }
 
     #[test]
     fn token_serde() {
-        let token = TokenId::Chicane;
+        let token = TokenId::Chicane(Terrain::Gravel);
         let text = serde_json::to_string(&token).unwrap();
-        assert_eq!(text, r#""chicane""#);
+        assert_eq!(text, r#""chicane-gravel""#);
 
-        let token = TokenId::ChicaneWithLimit;
+        let token = TokenId::ChicaneWithLimit(Terrain::None);
         let text = serde_json::to_string(&token).unwrap();
         assert_eq!(text, r#""chicane-limit""#);
 
-        let token = TokenId::Jump;
+        let token = TokenId::Jump(Terrain::Asphalt);
         let text = serde_json::to_string(&token).unwrap();
-        assert_eq!(text, r#""jump""#);
+        assert_eq!(text, r#""jump-asphalt""#);
 
-        let text = r#""water""#;
+        let text = r#""water-snow""#;
         let token: TokenId = serde_json::from_str(text).unwrap();
-        assert_eq!(token, TokenId::Water);
+        assert_eq!(token, TokenId::Water(Terrain::Snow));
 
         let text = r#""joker-exit""#;
         let token: TokenId = serde_json::from_str(text).unwrap();
