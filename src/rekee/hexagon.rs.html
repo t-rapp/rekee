@@ -1310,6 +1310,57 @@
 <span id="1305">1305</span>
 <span id="1306">1306</span>
 <span id="1307">1307</span>
+<span id="1308">1308</span>
+<span id="1309">1309</span>
+<span id="1310">1310</span>
+<span id="1311">1311</span>
+<span id="1312">1312</span>
+<span id="1313">1313</span>
+<span id="1314">1314</span>
+<span id="1315">1315</span>
+<span id="1316">1316</span>
+<span id="1317">1317</span>
+<span id="1318">1318</span>
+<span id="1319">1319</span>
+<span id="1320">1320</span>
+<span id="1321">1321</span>
+<span id="1322">1322</span>
+<span id="1323">1323</span>
+<span id="1324">1324</span>
+<span id="1325">1325</span>
+<span id="1326">1326</span>
+<span id="1327">1327</span>
+<span id="1328">1328</span>
+<span id="1329">1329</span>
+<span id="1330">1330</span>
+<span id="1331">1331</span>
+<span id="1332">1332</span>
+<span id="1333">1333</span>
+<span id="1334">1334</span>
+<span id="1335">1335</span>
+<span id="1336">1336</span>
+<span id="1337">1337</span>
+<span id="1338">1338</span>
+<span id="1339">1339</span>
+<span id="1340">1340</span>
+<span id="1341">1341</span>
+<span id="1342">1342</span>
+<span id="1343">1343</span>
+<span id="1344">1344</span>
+<span id="1345">1345</span>
+<span id="1346">1346</span>
+<span id="1347">1347</span>
+<span id="1348">1348</span>
+<span id="1349">1349</span>
+<span id="1350">1350</span>
+<span id="1351">1351</span>
+<span id="1352">1352</span>
+<span id="1353">1353</span>
+<span id="1354">1354</span>
+<span id="1355">1355</span>
+<span id="1356">1356</span>
+<span id="1357">1357</span>
+<span id="1358">1358</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Types and methods for working with a hexagon grid.</span>
 <span class="doccomment">//!</span>
@@ -1507,6 +1558,32 @@
         <span class="kw">let</span> <span class="ident">dr</span> <span class="op">=</span> (<span class="ident">other</span>.<span class="ident">r</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">r</span>()).<span class="ident">abs</span>();
         <span class="kw">let</span> <span class="ident">ds</span> <span class="op">=</span> (<span class="ident">other</span>.<span class="ident">s</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">s</span>()).<span class="ident">abs</span>();
         <span class="ident">dq</span>.<span class="ident">max</span>(<span class="ident">dr</span>.<span class="ident">max</span>(<span class="ident">ds</span>))
+    }
+
+    <span class="doccomment">/// Rotate this hexagon grid coordinate by the given floating-point direction.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use rekee::hexagon::*;</span>
+    <span class="doccomment">/// let pos = FloatCoordinate::new(1.0, 0.0)</span>
+    <span class="doccomment">///     .rotate(FloatDirection(-1.0));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let check = FloatCoordinate::new(1.0, -1.0);</span>
+    <span class="doccomment">/// assert!((pos.q() - check.q()).abs() &lt; 1e-6);</span>
+    <span class="doccomment">/// assert!((pos.r() - check.r()).abs() &lt; 1e-6);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rotate</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">D</span>) -&gt; <span class="self">Self</span>
+        <span class="kw">where</span> <span class="ident">D</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">FloatDirection</span><span class="op">&gt;</span>
+    {
+        <span class="kw">let</span> <span class="ident">phi</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">into</span>().<span class="ident">to_angle</span>().<span class="ident">to_radians</span>();
+        <span class="kw">let</span> <span class="ident">c0</span> <span class="op">=</span> <span class="ident">phi</span>.<span class="ident">cos</span>() <span class="op">-</span> <span class="ident">SQRT_3</span> <span class="op">/</span> <span class="number">3.0</span> <span class="op">*</span> <span class="ident">phi</span>.<span class="ident">sin</span>();
+        <span class="kw">let</span> <span class="ident">c1</span> <span class="op">=</span> <span class="op">-</span><span class="number">2.0</span> <span class="op">*</span> <span class="ident">SQRT_3</span> <span class="op">/</span> <span class="number">3.0</span> <span class="op">*</span> <span class="ident">phi</span>.<span class="ident">sin</span>();
+        <span class="kw">let</span> <span class="ident">c2</span> <span class="op">=</span> <span class="number">2.0</span> <span class="op">*</span> <span class="ident">SQRT_3</span> <span class="op">/</span> <span class="number">3.0</span> <span class="op">*</span> <span class="ident">phi</span>.<span class="ident">sin</span>();
+        <span class="kw">let</span> <span class="ident">c3</span> <span class="op">=</span> <span class="ident">phi</span>.<span class="ident">cos</span>() <span class="op">+</span> <span class="ident">SQRT_3</span> <span class="op">/</span> <span class="number">3.0</span> <span class="op">*</span> <span class="ident">phi</span>.<span class="ident">sin</span>();
+        <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">c0</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">q</span> <span class="op">+</span> <span class="ident">c1</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">r</span>;
+        <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">c2</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">q</span> <span class="op">+</span> <span class="ident">c3</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">r</span>;
+        <span class="ident">FloatCoordinate</span> { <span class="ident">q</span>, <span class="ident">r</span> }
     }
 
     <span class="doccomment">/// Convert this floating-point grid coordinate into x/y pixel positions.</span>
@@ -2334,6 +2411,31 @@
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;{&quot;q&quot;: 1, &quot;r&quot;: -2}&quot;#</span>;
         <span class="kw">let</span> <span class="ident">pos</span>: <span class="ident">Coordinate</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">pos</span>, <span class="ident">Coordinate::new</span>(<span class="number">1</span>, <span class="op">-</span><span class="number">2</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">float_coordinate_rotate</span>() {
+        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">FloatCoordinate</span>, <span class="ident">right</span>: <span class="ident">FloatCoordinate</span>) {
+            <span class="macro">assert!</span>(<span class="ident">left</span>.<span class="ident">distance</span>(<span class="ident">right</span>) <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
+        }
+
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
+
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="op">-</span><span class="number">1.0</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="ident">Direction::F</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="number">3.5</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="op">-</span><span class="number">2.5</span>);
+        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

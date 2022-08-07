@@ -213,6 +213,63 @@
 <span id="208">208</span>
 <span id="209">209</span>
 <span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Token which can be added to tiles. Can be used to add effects like a jump or</span>
 <span class="doccomment">//! water hazard area to a track tile. They are also used to indicate entrance</span>
@@ -228,6 +285,8 @@
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Serializer</span>, <span class="ident">Deserialize</span>};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile::Terrain</span>;
+
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="doccomment">/// Identifier for a token which can be placed on tiles.</span>
@@ -236,24 +295,25 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// # use rekee::token::*;</span>
+<span class="doccomment">/// # use rekee::tile::Terrain;</span>
 <span class="doccomment">/// let token: TokenId = &quot;chicane&quot;.parse().unwrap();</span>
-<span class="doccomment">/// assert_eq!(token, TokenId::Chicane);</span>
+<span class="doccomment">/// assert_eq!(token, TokenId::Chicane(Terrain::None));</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// let token = TokenId::Jump;</span>
-<span class="doccomment">/// assert_eq!(token.to_string(), &quot;Jump&quot;);</span>
+<span class="doccomment">/// let token = TokenId::Jump(Terrain::Gravel);</span>
+<span class="doccomment">/// assert_eq!(token.to_string(), &quot;Jump-Gravel&quot;);</span>
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">try_from</span> <span class="op">=</span> <span class="string">&quot;&amp;str&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TokenId</span> {
     <span class="doccomment">/// Chicane token without a speed limit, part of the Rallyman DIRT Copilot Pack.</span>
-    <span class="ident">Chicane</span>,
+    <span class="ident">Chicane</span>(<span class="ident">Terrain</span>),
     <span class="doccomment">/// Chicane token with a speed limit, part of the Rallyman DIRT Copilot Pack.</span>
-    <span class="ident">ChicaneWithLimit</span>,
+    <span class="ident">ChicaneWithLimit</span>(<span class="ident">Terrain</span>),
     <span class="doccomment">/// Jump token, part of the Rallyman DIRT Copilot Pack.</span>
-    <span class="ident">Jump</span>,
+    <span class="ident">Jump</span>(<span class="ident">Terrain</span>),
     <span class="doccomment">/// Water token, part of the Rallyman DIRT Copilot Pack.</span>
-    <span class="ident">Water</span>,
+    <span class="ident">Water</span>(<span class="ident">Terrain</span>),
     <span class="doccomment">/// Joker entrance arch, part of the RX expansion for Rallyman DIRT.</span>
     <span class="ident">JokerEntrance</span>,
     <span class="doccomment">/// Joker exit arch, part of the RX expansion for Rallyman DIRT.</span>
@@ -262,24 +322,70 @@
     <span class="ident">Finish</span>,
 }
 
+<span class="kw">impl</span> <span class="ident">TokenId</span> {
+    <span class="doccomment">/// Creates a copy of the current token with inner terrain changed to a</span>
+    <span class="doccomment">/// given value.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use rekee::token::*;</span>
+    <span class="doccomment">/// # use rekee::tile::Terrain;</span>
+    <span class="doccomment">/// let token = TokenId::Chicane(Terrain::Asphalt);</span>
+    <span class="doccomment">/// let other_token = token.with_terrain(Terrain::Snow);</span>
+    <span class="doccomment">/// assert_eq!(other_token, TokenId::Chicane(Terrain::Snow));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_terrain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">terrain</span>: <span class="ident">Terrain</span>) -&gt; <span class="self">Self</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) =&gt;
+                <span class="ident">TokenId::Chicane</span>(<span class="ident">terrain</span>),
+            <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) =&gt;
+                <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">terrain</span>),
+            <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) =&gt;
+                <span class="ident">TokenId::Jump</span>(<span class="ident">terrain</span>),
+            <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
+                <span class="ident">TokenId::Water</span>(<span class="ident">terrain</span>),
+            <span class="ident">TokenId::JokerEntrance</span> =&gt;
+                <span class="ident">TokenId::JokerEntrance</span>,
+            <span class="ident">TokenId::JokerExit</span> =&gt;
+                <span class="ident">TokenId::JokerExit</span>,
+            <span class="ident">TokenId::Finish</span> =&gt;
+                <span class="ident">TokenId::Finish</span>,
+        }
+    }
+}
+
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TokenId</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">terrain</span> <span class="op">=</span> <span class="ident">Terrain::None</span>;
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">TokenId::Chicane</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Chicane&quot;</span>),
-            <span class="ident">TokenId::ChicaneWithLimit</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Chicane-Limit&quot;</span>),
-            <span class="ident">TokenId::Jump</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Jump&quot;</span>),
-            <span class="ident">TokenId::Water</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Water&quot;</span>),
+            <span class="ident">TokenId::Chicane</span>(<span class="ident">val</span>) =&gt; {
+                <span class="ident">terrain</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Chicane&quot;</span>)<span class="question-mark">?</span>;
+            },
+            <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">val</span>) =&gt; {
+                <span class="ident">terrain</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Chicane-Limit&quot;</span>)<span class="question-mark">?</span>;
+            },
+            <span class="ident">TokenId::Jump</span>(<span class="ident">val</span>) =&gt; {
+                <span class="ident">terrain</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Jump&quot;</span>)<span class="question-mark">?</span>;
+            },
+            <span class="ident">TokenId::Water</span>(<span class="ident">val</span>) =&gt; {
+                <span class="ident">terrain</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">val</span>;
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Water&quot;</span>)<span class="question-mark">?</span>;
+            },
             <span class="ident">TokenId::JokerEntrance</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Joker-Entrance&quot;</span>),
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Joker-Entrance&quot;</span>)<span class="question-mark">?</span>,
             <span class="ident">TokenId::JokerExit</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Joker-Exit&quot;</span>),
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Joker-Exit&quot;</span>)<span class="question-mark">?</span>,
             <span class="ident">TokenId::Finish</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Finish&quot;</span>)
+                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Finish&quot;</span>)<span class="question-mark">?</span>,
+        };
+        <span class="kw">if</span> <span class="ident">terrain</span> <span class="op">!</span><span class="op">=</span> <span class="ident">Terrain::None</span> {
+            <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;-{}&quot;</span>, <span class="ident">terrain</span>)<span class="question-mark">?</span>;
         }
+        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -296,15 +402,22 @@
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseTokenError</span>;
 
     <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">s</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">terrain</span> <span class="op">=</span> <span class="ident">Terrain::None</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">s</span>;
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">prefix</span>, <span class="ident">suffix</span>)) <span class="op">=</span> <span class="ident">s</span>.<span class="ident">rsplit_once</span>(<span class="string">&#39;-&#39;</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">val</span>) <span class="op">=</span> <span class="ident">suffix</span>.<span class="ident">parse</span>() {
+                <span class="ident">terrain</span> <span class="op">=</span> <span class="ident">val</span>;
+                <span class="ident">name</span> <span class="op">=</span> <span class="ident">prefix</span>;
+            }
+        }
         <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;chicane&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">terrain</span>))
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;chicane-limit&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">terrain</span>))
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;jump&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">terrain</span>))
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;water&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>(<span class="ident">terrain</span>))
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;joker-entrance&quot;</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">TokenId::JokerEntrance</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;joker-exit&quot;</span>) {
@@ -358,17 +471,17 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">token_to_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Chicane</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Chicane&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::ChicaneWithLimit</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Chicane-Limit&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Jump</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Jump&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Water</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Water&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::None</span>).<span class="ident">to_string</span>(), <span class="string">&quot;Chicane&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Asphalt</span>).<span class="ident">to_string</span>(), <span class="string">&quot;Chicane-Limit-Asphalt&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Gravel</span>).<span class="ident">to_string</span>(), <span class="string">&quot;Jump-Gravel&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Snow</span>).<span class="ident">to_string</span>(), <span class="string">&quot;Water-Snow&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">TokenId::JokerEntrance</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Joker-Entrance&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">TokenId::JokerExit</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Joker-Exit&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">TokenId::Finish</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Finish&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">TokenId::Chicane</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;chicane&quot;</span>);
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">TokenId::Jump</span>);
+        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;chicane-gravel&quot;</span>);
+        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::None</span>));
         <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;jump&quot;</span>);
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">TokenId::JokerExit</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;joker-exit&quot;</span>);
@@ -376,10 +489,10 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">token_from_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;chicane&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;chicane-limit&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Jump&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;WATER&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;chicane&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::None</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;chicane-limit-asphalt&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Asphalt</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Jump-Gravel&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Gravel</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;WATER-SNOW&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Snow</span>)));
         <span class="macro">assert_eq!</span>(<span class="string">&quot;Joker-Entrance&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::JokerEntrance</span>));
         <span class="macro">assert_eq!</span>(<span class="string">&quot;jOKER-eXIT&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::JokerExit</span>));
         <span class="macro">assert_eq!</span>(<span class="string">&quot;FiNiSh&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Finish</span>));
@@ -387,25 +500,26 @@
         <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
         <span class="macro">assert!</span>(<span class="string">&quot;jump-4&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
         <span class="macro">assert!</span>(<span class="string">&quot;joker&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
+        <span class="macro">assert!</span>(<span class="string">&quot;Asphalt&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">token_serde</span>() {
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::Chicane</span>;
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>);
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">token</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;chicane&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;chicane-gravel&quot;&quot;#</span>);
 
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::ChicaneWithLimit</span>;
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::None</span>);
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">token</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;chicane-limit&quot;&quot;#</span>);
 
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::Jump</span>;
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Asphalt</span>);
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">token</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;jump&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;jump-asphalt&quot;&quot;#</span>);
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;water&quot;&quot;#</span>;
+        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;water-snow&quot;&quot;#</span>;
         <span class="kw">let</span> <span class="ident">token</span>: <span class="ident">TokenId</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">token</span>, <span class="ident">TokenId::Water</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>, <span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Snow</span>));
 
         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;joker-exit&quot;&quot;#</span>;
         <span class="kw">let</span> <span class="ident">token</span>: <span class="ident">TokenId</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
