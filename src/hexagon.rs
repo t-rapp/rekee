@@ -197,6 +197,32 @@ impl FloatCoordinate {
         dq.max(dr.max(ds))
     }
 
+    /// Rotate this hexagon grid coordinate by the given floating-point direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let pos = FloatCoordinate::new(1.0, 0.0)
+    ///     .rotate(FloatDirection(-1.0));
+    ///
+    /// let check = FloatCoordinate::new(1.0, -1.0);
+    /// assert!((pos.q() - check.q()).abs() < 1e-6);
+    /// assert!((pos.r() - check.r()).abs() < 1e-6);
+    /// ```
+    pub fn rotate<D>(self, dir: D) -> Self
+        where D: Into<FloatDirection>
+    {
+        let phi = dir.into().to_angle().to_radians();
+        let c0 = phi.cos() - SQRT_3 / 3.0 * phi.sin();
+        let c1 = -2.0 * SQRT_3 / 3.0 * phi.sin();
+        let c2 = 2.0 * SQRT_3 / 3.0 * phi.sin();
+        let c3 = phi.cos() + SQRT_3 / 3.0 * phi.sin();
+        let q = c0 * self.q + c1 * self.r;
+        let r = c2 * self.q + c3 * self.r;
+        FloatCoordinate { q, r }
+    }
+
     /// Convert this floating-point grid coordinate into x/y pixel positions.
     pub fn to_pixel(self, layout: &Layout) -> Point {
         let o = &layout.orientation;
@@ -1022,6 +1048,31 @@ mod tests {
         let text = r#"{"q": 1, "r": -2}"#;
         let pos: Coordinate = serde_json::from_str(text).unwrap();
         assert_eq!(pos, Coordinate::new(1, -2));
+    }
+
+    #[test]
+    fn float_coordinate_rotate() {
+        fn assert_approx_eq(left: FloatCoordinate, right: FloatCoordinate) {
+            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
+        }
+
+        let pos = FloatCoordinate::new(0.0, 0.0).rotate(0.0);
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::new(0.0, 1.5).rotate(0.0);
+        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
+        let pos = FloatCoordinate::new(1.5, 0.0).rotate(0.0);
+        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).rotate(0.0);
+        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+
+        let pos = FloatCoordinate::new(2.0, -1.0).rotate(-1.0);
+        assert_approx_eq(pos, FloatCoordinate::new(1.0, -2.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).rotate(Direction::F);
+        assert_approx_eq(pos, FloatCoordinate::new(1.0, -2.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).rotate(3.5);
+        assert_approx_eq(pos, FloatCoordinate::new(-SQRT_3, 0.0));
+        let pos = FloatCoordinate::new(2.0, -1.0).rotate(-2.5);
+        assert_approx_eq(pos, FloatCoordinate::new(-SQRT_3, 0.0));
     }
 
     #[test]
