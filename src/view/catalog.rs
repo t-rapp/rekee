@@ -34,8 +34,8 @@ struct CatalogTile {
 impl CatalogTile {
     fn new(document: &Document, layout: &Layout, id: TileId) -> Result<Self> {
         let canvas = document.create_element_ns(SVG_NS, "svg")?;
-        let width = (2.0 * layout.size().x()).round() as i32;
-        let height = (2.0 * layout.size().y()).round() as i32;
+        let width = (2.0 * layout.origin().x()).round() as i32;
+        let height = (2.0 * layout.origin().y()).round() as i32;
         canvas.set_attribute("width", &format!("{}px", width))?;
         canvas.set_attribute("height", &format!("{}px", height))?;
         canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height))?;
@@ -311,8 +311,15 @@ pub struct CatalogView {
 
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        // create layout instance without map offset
-        let layout = layout.with_origin(layout.size());
+        // optimize the tile element area for known orientations, otherwise fall back to square
+        let origin = if layout.is_pointy() {
+            Point((layout.size().x() * 0.9).round(), layout.size().y())
+        } else if layout.is_flat() {
+            Point(layout.size().x(), (layout.size().y() * 0.9).round())
+        } else {
+            layout.size()
+        };
+        let layout = layout.with_origin(origin);
 
         let document = parent.owner_document().unwrap();
 
