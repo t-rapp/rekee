@@ -462,7 +462,7 @@
         <span class="kw">if</span> <span class="ident">has_title</span> {
             <span class="ident">origin</span> <span class="op">=</span> <span class="ident">origin</span> <span class="op">+</span> <span class="ident">Point</span>(<span class="number">0.0</span>, (<span class="ident">TITLE_HEIGHT</span> <span class="op">+</span> <span class="ident">PADDING</span>) <span class="kw">as</span> <span class="ident">f32</span>);
         }
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="self">self</span>.<span class="ident">layout</span>.<span class="ident">orientation</span>(), <span class="self">self</span>.<span class="ident">layout</span>.<span class="ident">size</span>(), <span class="ident">origin</span>);
+        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">layout</span>.<span class="ident">with_origin</span>(<span class="ident">origin</span>);
         <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">get_context</span>(<span class="string">&quot;2d&quot;</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>()
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">obj</span><span class="op">|</span> <span class="ident">obj</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::CanvasRenderingContext2d</span><span class="op">&gt;</span>().<span class="ident">ok</span>()));
 

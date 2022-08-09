@@ -589,6 +589,15 @@
 <span id="584">584</span>
 <span id="585">585</span>
 <span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
 <span class="doccomment">//!</span>
@@ -608,7 +617,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition::Edition</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Point</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">Map</span>, <span class="ident">PlacedTile</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">Map</span>, <span class="ident">PlacedTile</span>, <span class="ident">PlacedToken</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::storage::Storage</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile</span>::{<span class="ident">ConnectionHint</span>, <span class="ident">Terrain</span>, <span class="ident">TileId</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::view</span>::<span class="kw-2">*</span>;
@@ -665,6 +674,10 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateSelectedEvent</span> {
     <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AddSelectedTileTokenEvent</span> {
+    <span class="kw">pub</span> <span class="ident">token</span>: <span class="ident">PlacedToken</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RotateSelectedLeftEvent</span>;
@@ -837,6 +850,7 @@
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_tile_labels</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::toggle_tile_labels</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_selected</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::add_selected_tile_token</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_left</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_right</span>);
         <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::remove_selected</span>);
@@ -911,6 +925,10 @@
 
     <span class="kw">fn</span> <span class="ident">update_selected</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+    }
+
+    <span class="kw">fn</span> <span class="ident">add_selected_tile_token</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AddSelectedTileTokenEvent</span>) {
+        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">add_selected_tile_token</span>(<span class="ident">event</span>.<span class="ident">token</span>.<span class="ident">clone</span>());
     }
 
     <span class="kw">fn</span> <span class="ident">rotate_selected_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedLeftEvent</span>) {
