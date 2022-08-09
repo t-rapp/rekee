@@ -1,6 +1,6 @@
 #hex {
-    fill: gray;
-    fill-opacity: 0.02;
+    fill: none;
+    pointer-events: visible;
     stroke: gray;
     stroke-width: 0.4;
 }
@@ -12,8 +12,8 @@
     fill-opacity: 0.6;
 }
 #selected {
-    fill: white;
-    fill-opacity: 0.02;
+    fill: none;
+    pointer-events: visible;
     stroke: #3273dc;
     stroke-width: 1.2;
 }
