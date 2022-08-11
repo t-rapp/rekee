@@ -880,7 +880,7 @@ impl MapView {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
-            self.map.insert(tile.id(), tile.pos, tile.dir.rotated_left());
+            self.map.insert_with_tokens(tile.id(), tile.pos, tile.dir.rotated_left(), tile.tokens);
             self.update_map();
         }
     }
@@ -889,7 +889,7 @@ impl MapView {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
-            self.map.insert(tile.id(), tile.pos, tile.dir.rotated_right());
+            self.map.insert_with_tokens(tile.id(), tile.pos, tile.dir.rotated_right(), tile.tokens);
             self.update_map();
         }
     }
