@@ -253,6 +253,118 @@
 <span id="248">248</span>
 <span id="249">249</span>
 <span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Supports export of maps as an image.</span>
 <span class="doccomment">//!</span>
@@ -273,7 +385,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::import</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">Map</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">PlacedToken</span>, <span class="ident">Map</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
@@ -284,24 +396,30 @@
 <span class="kw">fn</span> <span class="ident">draw_tile_image</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">image</span>: <span class="kw-2">&amp;</span><span class="ident">HtmlImageElement</span>,
     <span class="ident">pos</span>: <span class="ident">Point</span>, <span class="ident">size</span>: <span class="ident">Point</span>, <span class="ident">angle</span>: <span class="ident">f32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 {
+    <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>());
+    <span class="ident">draw_token_image</span>(<span class="ident">context</span>, <span class="ident">image</span>, <span class="ident">pos</span>, <span class="ident">size</span>, <span class="ident">center</span>, <span class="ident">angle</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">draw_token_image</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">image</span>: <span class="kw-2">&amp;</span><span class="ident">HtmlImageElement</span>,
+    <span class="ident">pos</span>: <span class="ident">Point</span>, <span class="ident">size</span>: <span class="ident">Point</span>, <span class="ident">center</span>: <span class="ident">Point</span>, <span class="ident">angle</span>: <span class="ident">f32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+{
     <span class="kw">let</span> <span class="ident">pos_x</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">x</span>());
     <span class="kw">let</span> <span class="ident">pos_y</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">y</span>());
-    <span class="kw">let</span> <span class="ident">size_x</span> <span class="op">=</span> <span class="number">2.0</span> <span class="op">*</span> <span class="ident">f64::from</span>(<span class="ident">size</span>.<span class="ident">x</span>());
-    <span class="kw">let</span> <span class="ident">size_y</span> <span class="op">=</span> <span class="number">2.0</span> <span class="op">*</span> <span class="ident">f64::from</span>(<span class="ident">size</span>.<span class="ident">y</span>());
-    <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">angle</span> <span class="op">*</span> <span class="ident">std::f32::consts::PI</span> <span class="op">/</span> <span class="number">180.0</span>);
-    <span class="kw">let</span> <span class="ident">scale</span> <span class="op">=</span> <span class="ident">f64::min</span>(
-        <span class="ident">size_x</span> <span class="op">/</span> <span class="ident">image</span>.<span class="ident">natural_width</span>() <span class="kw">as</span> <span class="ident">f64</span>,
-        <span class="ident">size_y</span> <span class="op">/</span> <span class="ident">image</span>.<span class="ident">natural_height</span>() <span class="kw">as</span> <span class="ident">f64</span>
-    );
-    <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="ident">scale</span> <span class="op">*</span> <span class="ident">image</span>.<span class="ident">natural_width</span>() <span class="kw">as</span> <span class="ident">f64</span>;
-    <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="ident">scale</span> <span class="op">*</span> <span class="ident">image</span>.<span class="ident">natural_height</span>() <span class="kw">as</span> <span class="ident">f64</span>;
+    <span class="kw">let</span> <span class="ident">size_x</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">size</span>.<span class="ident">x</span>());
+    <span class="kw">let</span> <span class="ident">size_y</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">size</span>.<span class="ident">y</span>());
+    <span class="kw">let</span> <span class="ident">center_x</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">center</span>.<span class="ident">x</span>());
+    <span class="kw">let</span> <span class="ident">center_y</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">center</span>.<span class="ident">y</span>());
+    <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">angle</span>.<span class="ident">to_radians</span>());
 
+    <span class="ident">context</span>.<span class="ident">save</span>();
     <span class="ident">context</span>.<span class="ident">translate</span>(<span class="ident">pos_x</span>, <span class="ident">pos_y</span>)<span class="question-mark">?</span>;
     <span class="ident">context</span>.<span class="ident">rotate</span>(<span class="ident">angle</span>)<span class="question-mark">?</span>;
     <span class="ident">context</span>.<span class="ident">translate</span>(<span class="op">-</span><span class="ident">pos_x</span>, <span class="op">-</span><span class="ident">pos_y</span>)<span class="question-mark">?</span>;
     <span class="ident">context</span>.<span class="ident">draw_image_with_html_image_element_and_dw_and_dh</span>(<span class="ident">image</span>,
-        <span class="ident">pos_x</span> <span class="op">-</span> <span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">pos_y</span> <span class="op">-</span> <span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">width</span>, <span class="ident">height</span>)<span class="question-mark">?</span>;
+        <span class="ident">pos_x</span> <span class="op">-</span> <span class="ident">center_x</span>, <span class="ident">pos_y</span> <span class="op">-</span> <span class="ident">center_y</span>, <span class="ident">size_x</span>, <span class="ident">size_y</span>)<span class="question-mark">?</span>;
+    <span class="comment">// reset current transformation matrix to the identity matrix</span>
     <span class="ident">context</span>.<span class="ident">set_transform</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>)<span class="question-mark">?</span>;
+    <span class="ident">context</span>.<span class="ident">restore</span>();
 
     <span class="prelude-val">Ok</span>(())
 }
@@ -309,13 +427,15 @@
 <span class="kw">fn</span> <span class="ident">draw_missing_image</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">pos</span>: <span class="ident">Point</span>, <span class="ident">size</span>: <span class="ident">Point</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">pos_x</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">x</span>());
     <span class="kw">let</span> <span class="ident">pos_y</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">y</span>());
-    <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="number">1.6</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>();
+    <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="number">0.8</span> <span class="op">*</span> <span class="ident">f32::max</span>(<span class="ident">size</span>.<span class="ident">x</span>(), <span class="ident">size</span>.<span class="ident">y</span>());
 
+    <span class="ident">context</span>.<span class="ident">save</span>();
     <span class="ident">context</span>.<span class="ident">set_font</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {:.0}px sans-serif&quot;</span>, <span class="ident">height</span>));
     <span class="ident">context</span>.<span class="ident">set_text_align</span>(<span class="string">&quot;center&quot;</span>);
     <span class="ident">context</span>.<span class="ident">set_text_baseline</span>(<span class="string">&quot;middle&quot;</span>);
     <span class="ident">context</span>.<span class="ident">set_fill_style</span>(<span class="kw-2">&amp;</span><span class="ident">JsValue::from_str</span>(<span class="string">&quot;#EEE&quot;</span>));
     <span class="ident">context</span>.<span class="ident">fill_text</span>(<span class="string">&quot;?&quot;</span>, <span class="ident">pos_x</span>, <span class="ident">pos_y</span>)<span class="question-mark">?</span>;
+    <span class="ident">context</span>.<span class="ident">restore</span>();
 
     <span class="prelude-val">Ok</span>(())
 }
@@ -324,6 +444,7 @@
     <span class="kw">let</span> <span class="ident">pos_x</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">x</span>());
     <span class="kw">let</span> <span class="ident">pos_y</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">pos</span>.<span class="ident">y</span>());
 
+    <span class="ident">context</span>.<span class="ident">save</span>();
     <span class="ident">context</span>.<span class="ident">set_font</span>(<span class="string">&quot;bold 14px sans-serif&quot;</span>);
     <span class="ident">context</span>.<span class="ident">set_text_align</span>(<span class="string">&quot;center&quot;</span>);
     <span class="ident">context</span>.<span class="ident">set_text_baseline</span>(<span class="string">&quot;middle&quot;</span>);
@@ -332,6 +453,7 @@
     <span class="ident">context</span>.<span class="ident">stroke_text</span>(<span class="ident">text</span>, <span class="ident">pos_x</span>, <span class="ident">pos_y</span>)<span class="question-mark">?</span>;
     <span class="ident">context</span>.<span class="ident">set_fill_style</span>(<span class="kw-2">&amp;</span><span class="ident">JsValue::from_str</span>(<span class="string">&quot;#444&quot;</span>));
     <span class="ident">context</span>.<span class="ident">fill_text</span>(<span class="ident">text</span>, <span class="ident">pos_x</span>, <span class="ident">pos_y</span>)<span class="question-mark">?</span>;
+    <span class="ident">context</span>.<span class="ident">restore</span>();
 
     <span class="prelude-val">Ok</span>(())
 }
@@ -346,9 +468,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">TileImage</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>, <span class="ident">label_visible</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">size</span>();
+        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>);
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
         <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">HtmlImageElement::new</span>()<span class="question-mark">?</span>;
 
@@ -357,13 +479,8 @@
             <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">image</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">clone</span>();
             <span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-                <span class="macro">debug!</span>(<span class="string">&quot;drawing tile image {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>);
-                <span class="ident">context</span>.<span class="ident">save</span>();
+                <span class="macro">debug!</span>(<span class="string">&quot;drawing tile image {} at {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">pos</span>);
                 <span class="macro">check!</span>(<span class="ident">draw_tile_image</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">image</span>, <span class="ident">pos</span>, <span class="ident">size</span>, <span class="ident">angle</span>).<span class="ident">ok</span>());
-                <span class="kw">if</span> <span class="ident">label_visible</span> {
-                    <span class="macro">check!</span>(<span class="ident">draw_tile_label</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">base</span>().<span class="ident">to_string</span>(), <span class="ident">pos</span>).<span class="ident">ok</span>());
-                }
-                <span class="ident">context</span>.<span class="ident">restore</span>();
                 <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">DrawExportTileDoneEvent</span> { <span class="ident">tile</span>: <span class="ident">tile</span>.<span class="ident">clone</span>() });
             }
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
@@ -373,13 +490,8 @@
             <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">clone</span>();
             <span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-                <span class="macro">debug!</span>(<span class="string">&quot;loading of tile image {:?} failed&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>);
-                <span class="ident">context</span>.<span class="ident">save</span>();
+                <span class="macro">debug!</span>(<span class="string">&quot;loading of tile image {} failed&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>());
                 <span class="macro">check!</span>(<span class="ident">draw_missing_image</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="ident">pos</span>, <span class="ident">size</span>).<span class="ident">ok</span>());
-                <span class="kw">if</span> <span class="ident">label_visible</span> {
-                    <span class="macro">check!</span>(<span class="ident">draw_tile_label</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">base</span>().<span class="ident">to_string</span>(), <span class="ident">pos</span>).<span class="ident">ok</span>());
-                }
-                <span class="ident">context</span>.<span class="ident">restore</span>();
                 <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">DrawExportTileDoneEvent</span> { <span class="ident">tile</span>: <span class="ident">tile</span>.<span class="ident">clone</span>() });
             }
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
@@ -404,9 +516,73 @@
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
+<span class="kw">struct</span> <span class="ident">TokenImage</span> {
+    <span class="ident">image</span>: <span class="ident">HtmlImageElement</span>,
+    <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
+    <span class="ident">token</span>: <span class="ident">PlacedToken</span>,
+    <span class="ident">load_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+    <span class="ident">error_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">TokenImage</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::CanvasRenderingContext2d</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>, <span class="ident">token</span>: <span class="ident">PlacedToken</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> (<span class="ident">FloatCoordinate::from</span>(<span class="ident">tile</span>.<span class="ident">pos</span>) <span class="op">+</span> <span class="ident">token</span>.<span class="ident">pos</span>.<span class="ident">rotate</span>(<span class="ident">tile</span>.<span class="ident">dir</span>))
+            .<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
+        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>);
+        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>);
+        <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">FloatDirection::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>) <span class="op">+</span> <span class="ident">token</span>.<span class="ident">dir</span>);
+        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">HtmlImageElement::new</span>()<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> <span class="ident">load_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>({
+            <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">clone</span>();
+            <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">clone</span>();
+            <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">image</span>.<span class="ident">clone</span>();
+            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">clone</span>();
+            <span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
+                <span class="macro">debug!</span>(<span class="string">&quot;drawing token image {} at tile {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">pos</span>);
+                <span class="macro">check!</span>(<span class="ident">draw_token_image</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">image</span>, <span class="ident">pos</span>, <span class="ident">size</span>, <span class="ident">center</span>, <span class="ident">angle</span>).<span class="ident">ok</span>());
+                <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">DrawExportTokenDoneEvent</span> { <span class="ident">tile</span>: <span class="ident">tile</span>.<span class="ident">clone</span>(), <span class="ident">token</span>: <span class="ident">token</span>.<span class="ident">clone</span>() });
+            }
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="ident">image</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;load&quot;</span>, <span class="ident">load_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> <span class="ident">error_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>({
+            <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">clone</span>();
+            <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">clone</span>();
+            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">clone</span>();
+            <span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
+                <span class="macro">debug!</span>(<span class="string">&quot;loading of token image {} failed&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>.<span class="ident">id</span>);
+                <span class="macro">check!</span>(<span class="ident">draw_missing_image</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="ident">pos</span>, <span class="ident">size</span>).<span class="ident">ok</span>());
+                <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">DrawExportTokenDoneEvent</span> { <span class="ident">tile</span>: <span class="ident">tile</span>.<span class="ident">clone</span>(), <span class="ident">token</span>: <span class="ident">token</span>.<span class="ident">clone</span>() });
+            }
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="ident">image</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;error&quot;</span>, <span class="ident">error_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+
+        <span class="comment">// start loading the tile image</span>
+        <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.png&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>);
+        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">url</span>)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(<span class="ident">TokenImage</span> { <span class="ident">image</span>, <span class="ident">tile</span>, <span class="ident">token</span>, <span class="ident">load_cb</span>, <span class="ident">error_cb</span> })
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">TokenImage</span> {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;load&quot;</span>,
+            <span class="self">self</span>.<span class="ident">load_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;error&quot;</span>,
+            <span class="self">self</span>.<span class="ident">error_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportView</span> {
     <span class="ident">layout</span>: <span class="ident">Layout</span>,
-    <span class="ident">images</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileImage</span><span class="op">&gt;</span>,
+    <span class="ident">map</span>: <span class="ident">Map</span>,
+    <span class="ident">tile_labels_visible</span>: <span class="ident">bool</span>,
+    <span class="ident">tile_images</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileImage</span><span class="op">&gt;</span>,
+    <span class="ident">token_images</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TokenImage</span><span class="op">&gt;</span>,
     <span class="ident">canvas</span>: <span class="ident">HtmlCanvasElement</span>,
     <span class="ident">anchor</span>: <span class="ident">HtmlElement</span>,
 }
@@ -414,7 +590,10 @@
 <span class="kw">impl</span> <span class="ident">ExportView</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">clone</span>();
-        <span class="kw">let</span> <span class="ident">images</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
+        <span class="kw">let</span> <span class="ident">tile_labels_visible</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="kw">let</span> <span class="ident">tile_images</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="ident">token_images</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">canvas</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;canvas&quot;</span>)<span class="question-mark">?</span>
@@ -426,11 +605,13 @@
         <span class="ident">anchor</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
         <span class="ident">parent</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">anchor</span>)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">ExportView</span> { <span class="ident">layout</span>, <span class="ident">images</span>, <span class="ident">canvas</span>, <span class="ident">anchor</span> })
+        <span class="prelude-val">Ok</span>(<span class="ident">ExportView</span> { <span class="ident">layout</span>, <span class="ident">map</span>, <span class="ident">tile_labels_visible</span>, <span class="ident">tile_images</span>, <span class="ident">token_images</span>, <span class="ident">canvas</span>, <span class="ident">anchor</span> })
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">draw_export_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>, <span class="ident">tile_labels_visible</span>: <span class="ident">bool</span>) {
         <span class="macro">debug!</span>(<span class="string">&quot;start export of map image with {} tiles&quot;</span>, <span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">len</span>());
+        <span class="self">self</span>.<span class="ident">map</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">clone</span>();
+        <span class="self">self</span>.<span class="ident">tile_labels_visible</span> <span class="op">=</span> <span class="ident">tile_labels_visible</span>;
 
         <span class="comment">// update download filename attribute</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file_name</span> <span class="op">=</span> <span class="ident">import::build_file_name</span>(<span class="ident">map</span>.<span class="ident">title</span>());
@@ -481,24 +662,67 @@
         <span class="ident">context</span>.<span class="ident">restore</span>();
 
         <span class="comment">// draw each tile image asynchronously</span>
-        <span class="self">self</span>.<span class="ident">images</span>.<span class="ident">clear</span>();
+        <span class="self">self</span>.<span class="ident">tile_images</span>.<span class="ident">clear</span>();
         <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>() {
-            <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">TileImage::new</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">tile</span>.<span class="ident">clone</span>(), <span class="ident">tile_labels_visible</span>).<span class="ident">ok</span>());
-            <span class="self">self</span>.<span class="ident">images</span>.<span class="ident">push</span>(<span class="ident">image</span>);
+            <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">TileImage::new</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">tile</span>.<span class="ident">clone</span>()).<span class="ident">ok</span>());
+            <span class="self">self</span>.<span class="ident">tile_images</span>.<span class="ident">push</span>(<span class="ident">image</span>);
         }
+
+        <span class="self">self</span>.<span class="ident">layout</span> <span class="op">=</span> <span class="ident">layout</span>;
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">draw_export_tile_done</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) {
         <span class="macro">debug!</span>(<span class="string">&quot;export of tile image at {} is finished&quot;</span>, <span class="ident">tile</span>.<span class="ident">pos</span>);
         <span class="comment">// remove tile from todo list</span>
-        <span class="self">self</span>.<span class="ident">images</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">img</span><span class="op">|</span> <span class="ident">img</span>.<span class="ident">tile</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">tile</span>);
+        <span class="self">self</span>.<span class="ident">tile_images</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">img</span><span class="op">|</span> <span class="ident">img</span>.<span class="ident">tile</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">tile</span>);
 
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">images</span>.<span class="ident">is_empty</span>() {
-            <span class="macro">debug!</span>(<span class="string">&quot;export of all tile images is completed&quot;</span>);
-            <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">to_data_url_with_type</span>(<span class="string">&quot;image/png&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">url</span>).<span class="ident">ok</span>());
-            <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">click</span>();
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">tile_images</span>.<span class="ident">is_empty</span>() {
+            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">get_context</span>(<span class="string">&quot;2d&quot;</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>()
+                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">obj</span><span class="op">|</span> <span class="ident">obj</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::CanvasRenderingContext2d</span><span class="op">&gt;</span>().<span class="ident">ok</span>()));
+
+            <span class="comment">// draw each token image asynchronously</span>
+            <span class="self">self</span>.<span class="ident">token_images</span>.<span class="ident">clear</span>();
+            <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">tiles</span>() {
+                <span class="macro">debug!</span>(<span class="string">&quot;adding tokens for tile {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>);
+                <span class="kw">for</span> <span class="ident">token</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">tokens</span> {
+                    <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">TokenImage::new</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="ident">tile</span>.<span class="ident">clone</span>(), <span class="ident">token</span>.<span class="ident">clone</span>()).<span class="ident">ok</span>());
+                    <span class="self">self</span>.<span class="ident">token_images</span>.<span class="ident">push</span>(<span class="ident">image</span>);
+                }
+            }
+
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">token_images</span>.<span class="ident">is_empty</span>() {
+                <span class="self">self</span>.<span class="ident">draw_export_image_completed</span>();
+            }
         }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">draw_export_token_done</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>, <span class="ident">token</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) {
+        <span class="macro">debug!</span>(<span class="string">&quot;export of token image {} at {} is finished&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>, <span class="ident">tile</span>.<span class="ident">pos</span>);
+        <span class="comment">// remove token image from todo list</span>
+        <span class="self">self</span>.<span class="ident">token_images</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">img</span><span class="op">|</span> <span class="ident">img</span>.<span class="ident">tile</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">tile</span> <span class="op">|</span><span class="op">|</span> <span class="ident">img</span>.<span class="ident">token</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">token</span>);
+
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">token_images</span>.<span class="ident">is_empty</span>() {
+            <span class="self">self</span>.<span class="ident">draw_export_image_completed</span>();
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">draw_export_image_completed</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="comment">// finally draw tile labels on top of everything other</span>
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">tile_labels_visible</span> {
+            <span class="macro">debug!</span>(<span class="string">&quot;drawing tile labels&quot;</span>);
+            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">get_context</span>(<span class="string">&quot;2d&quot;</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>()
+                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">obj</span><span class="op">|</span> <span class="ident">obj</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::CanvasRenderingContext2d</span><span class="op">&gt;</span>().<span class="ident">ok</span>()));
+            <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">tiles</span>() {
+                <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>);
+                <span class="macro">check!</span>(<span class="ident">draw_tile_label</span>(<span class="kw-2">&amp;</span><span class="ident">context</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">base</span>().<span class="ident">to_string</span>(), <span class="ident">pos</span>).<span class="ident">ok</span>());
+            }
+        }
+
+        <span class="comment">// trigger download of canvas image data</span>
+        <span class="macro">debug!</span>(<span class="string">&quot;export of all tile images is completed&quot;</span>);
+        <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">to_data_url_with_type</span>(<span class="string">&quot;image/png&quot;</span>).<span class="ident">ok</span>());
+        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">url</span>).<span class="ident">ok</span>());
+        <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">click</span>();
     }
 }
 

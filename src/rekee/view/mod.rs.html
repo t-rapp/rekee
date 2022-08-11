@@ -196,6 +196,29 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of objects and common functions.</span>
 <span class="comment">//</span>
@@ -256,20 +279,53 @@
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
+<span class="kw">fn</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="ident">Point</span> {
+    <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">with_orientation</span>(<span class="ident">Orientation::flat</span>())
+        .<span class="ident">hexagon_rect</span>(<span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>));
+    <span class="ident">Point</span>(<span class="ident">rect</span>.<span class="ident">width</span>, <span class="ident">rect</span>.<span class="ident">height</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">tile_image_center</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="ident">Point</span> {
+    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>);
+    <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>())
+}
+
+<span class="kw">fn</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">token</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) -&gt; <span class="ident">Point</span> {
+    <span class="kw">match</span> <span class="ident">token</span>.<span class="ident">id</span> {
+        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
+            <span class="ident">Point</span>(<span class="number">0.41</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.28</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
+        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
+            <span class="ident">Point</span>(<span class="number">0.82</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.40</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
+    }
+}
+
+<span class="kw">fn</span> <span class="ident">token_image_center</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">token</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) -&gt; <span class="ident">Point</span> {
+    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>, <span class="ident">token</span>);
+    <span class="kw">match</span> <span class="ident">token</span>.<span class="ident">id</span> {
+        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
+            <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>()),
+        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
+            <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="ident">size</span>.<span class="ident">y</span>()),
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
 <span class="kw">fn</span> <span class="ident">draw_tile</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
     <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">parent</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">parent</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
 
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">size</span>();
+    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>);
+    <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">tile_image_center</span>(<span class="ident">layout</span>);
     <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
     <span class="kw">let</span> <span class="ident">img</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumb-{}.png&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="number">2.0</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="number">2.0</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
+    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
+    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.3} {:.3})&quot;</span>, <span class="ident">angle</span>, <span class="op">-</span><span class="ident">size</span>.<span class="ident">x</span>(), <span class="op">-</span><span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
+    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.3} {:.3})&quot;</span>, <span class="ident">angle</span>, <span class="op">-</span><span class="ident">center</span>.<span class="ident">x</span>(), <span class="op">-</span><span class="ident">center</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
     <span class="ident">parent</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">img</span>)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="ident">parent</span>)
@@ -318,18 +374,8 @@
     <span class="ident">parent</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;token&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">parent</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
 
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span>.<span class="ident">id</span> {
-        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="number">0.41</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.28</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
-        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
-            <span class="ident">Point</span>(<span class="number">0.82</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.40</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
-    };
-    <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span>.<span class="ident">id</span> {
-        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="ident">size</span>.<span class="ident">x</span>() <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">size</span>.<span class="ident">y</span>() <span class="op">/</span> <span class="number">2.0</span>),
-        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
-            <span class="ident">Point</span>(<span class="ident">size</span>.<span class="ident">x</span>() <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">size</span>.<span class="ident">y</span>()),
-    };
+    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>, <span class="ident">token</span>);
+    <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="ident">layout</span>, <span class="ident">token</span>);
     <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">FloatDirection::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>) <span class="op">+</span> <span class="ident">token</span>.<span class="ident">dir</span>);
     <span class="kw">let</span> <span class="ident">img</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.png&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>))<span class="question-mark">?</span>;
