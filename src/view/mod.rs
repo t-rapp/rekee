@@ -59,9 +59,10 @@ const TILE_STYLE: &str = include_str!("tile.css");
 //----------------------------------------------------------------------------
 
 fn tile_image_size(layout: &Layout) -> Point {
+    // use flat layout orientation as we confine us to the image size without rotation applied yet
     let rect = layout.with_orientation(Orientation::flat())
         .hexagon_rect(Coordinate::new(0, 0));
-    Point(rect.width, rect.height)
+    Point(rect.width.round(), rect.height.round())
 }
 
 fn tile_image_center(layout: &Layout) -> Point {
@@ -94,7 +95,7 @@ fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<
     let pos = tile.pos.to_pixel(layout);
     let parent = document.create_element_ns(SVG_NS, "g")?;
     parent.set_attribute("class", "tile")?;
-    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    parent.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
 
     let size = tile_image_size(layout);
     let center = tile_image_center(layout);
@@ -104,7 +105,7 @@ fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<
     img.set_attribute("width", &format!("{}", size.x()))?;
     img.set_attribute("height", &format!("{}", size.y()))?;
     img.set_attribute("image-rendering", "optimizeQuality")?;
-    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -center.x(), -center.y()))?;
+    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.1} {:.1})", angle, -center.x(), -center.y()))?;
     parent.append_child(&img)?;
 
     Ok(parent)
@@ -131,7 +132,7 @@ fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> R
     let pos = tile.pos.to_pixel(layout);
     let parent = document.create_element_ns(SVG_NS, "g")?;
     parent.set_attribute("class", "tile")?;
-    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
+    parent.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
 
     let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
@@ -210,6 +211,67 @@ impl<T: AsRef<Element>> ElementHidden for T {
         } else {
             check!(elm.class_list().remove_1("is-hidden").ok());
         }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tile_image_size_and_center() {
+        let point_to_string = |point: Point| -> String {
+            format!("({:.3}, {:.3})", point.x(), point.y())
+        };
+
+        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let size = tile_image_size(&layout);
+        assert_eq!(point_to_string(size), "(120.000, 104.000)");
+        let center = tile_image_center(&layout);
+        assert_eq!(point_to_string(center), "(60.000, 52.000)");
+
+        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let size = tile_image_size(&layout);
+        assert_eq!(point_to_string(size), "(120.000, 104.000)");
+        let center = tile_image_center(&layout);
+        assert_eq!(point_to_string(center), "(60.000, 52.000)");
+    }
+
+    #[test]
+    fn token_image_size_and_center() {
+        let point_to_string = |point: Point| -> String {
+            format!("({:.3}, {:.3})", point.x(), point.y())
+        };
+
+        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
+
+        let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(0.0));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(24.600, 16.800)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(12.300, 8.400)");
+
+        let token = PlacedToken::new(TokenId::JokerEntrance, (0.0, 0.0).into(), FloatDirection(0.0));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(49.200, 24.000)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(24.600, 24.000)");
+
+        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
+
+        let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(1.5));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(24.600, 16.800)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(12.300, 8.400)");
+
+        let token = PlacedToken::new(TokenId::JokerExit, (0.0, 0.0).into(), FloatDirection(1.5));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(49.200, 24.000)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(24.600, 24.000)");
     }
 }
 

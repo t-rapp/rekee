@@ -53,6 +53,7 @@
             flex-wrap: wrap;
             align-content: flex-start;
             align-items: flex-start;
+            justify-content: space-evenly;
         }
         #catalog .tile {
             display: flex;
@@ -63,6 +64,12 @@
         }
         #catalog .tile.is-disabled svg {
             opacity: 0.6;
+        }
+        #catalog.is-flat .tile {
+            margin-bottom: 0.25rem;
+        }
+        #catalog.is-pointy .tile {
+            margin-right: 0.1rem;
         }
         #catalog .counter {
             font-weight: 600;

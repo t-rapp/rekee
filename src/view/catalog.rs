@@ -311,14 +311,9 @@ pub struct CatalogView {
 
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        // optimize the tile element area for known orientations, otherwise fall back to square
-        let origin = if layout.is_pointy() {
-            Point((layout.size().x() * 0.9).round(), layout.size().y())
-        } else if layout.is_flat() {
-            Point(layout.size().x(), (layout.size().y() * 0.9).round())
-        } else {
-            layout.size()
-        };
+        // optimize tile element area using the layout orientation
+        let rect = layout.hexagon_rect(Coordinate::new(0, 0));
+        let origin = Point(0.5 * rect.width.round(), 0.5 * rect.height.round());
         let layout = layout.with_origin(origin);
 
         let document = parent.owner_document().unwrap();
@@ -326,6 +321,11 @@ impl CatalogView {
         let catalog = document.create_element("ul")?;
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
+        if layout.is_pointy() {
+            catalog.class_list().add_1("is-pointy")?;
+        } else if layout.is_flat() {
+            catalog.class_list().add_1("is-flat")?;
+        }
 
         let editions: Vec<_> = Series::Gt.editions()
             .cloned()
