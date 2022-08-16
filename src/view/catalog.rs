@@ -561,7 +561,13 @@ impl CatalogView {
             if let Some(filter) = terrain_element {
                 hidden |= !filter.contains(tile.id);
             }
-            tile.set_hidden(hidden);
+            // hide the parent list item element when found for consistent
+            // item spacing via CSS flexbox attributes
+            if let Some(item) = tile.as_ref().parent_element() {
+                item.set_hidden(hidden);
+            } else {
+                tile.set_hidden(hidden);
+            }
         }
 
         self.filter_lanes = lanes;
