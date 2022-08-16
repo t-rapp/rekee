@@ -22,27 +22,16 @@ use super::*;
 const MAP_STYLE: &str = include_str!("map.css");
 const MAP_PADDING: f32 = 15.0;
 
-fn define_grid_hex(document: &Document, layout: &Layout) -> Result<Element>
-{
-    let corners = layout.hexagon_corners((0, 0).into());
-    let points: Vec<String> = corners.iter()
-        .map(|p| *p - layout.origin())
-        .map(|p| format!("{},{}", p.x(), p.y()))
-        .collect();
-    let hex = document.create_element_ns(SVG_NS, "polygon")?;
-    hex.set_id("hex");
-    hex.set_attribute("points", &points.join(" "))?;
-    Ok(hex)
-}
-
-fn use_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
+fn draw_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
     where C: Into<Coordinate>
 {
-    let pos = pos.into().to_pixel(layout);
-    let hex = document.create_element_ns(SVG_NS, "use")?;
-    hex.set_attribute("href", "#hex")?;
-    hex.set_attribute("x", &pos.x().to_string())?;
-    hex.set_attribute("y", &pos.y().to_string())?;
+    let corners = layout.hexagon_corners(pos.into());
+    let points: Vec<String> = corners.iter()
+        .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
+        .collect();
+    let hex = document.create_element_ns(SVG_NS, "polygon")?;
+    hex.set_attribute("class", "hex")?;
+    hex.set_attribute("points", &points.join(" "))?;
     Ok(hex)
 }
 
@@ -113,14 +102,13 @@ impl SelectedHex {
         let corners = layout.hexagon_corners((0, 0).into());
         let points: Vec<String> = corners.iter()
             .map(|p| *p - layout.origin())
-            .map(|p| format!("{},{}", p.x(), p.y()))
+            .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
             .collect();
         let poly = document.create_element_ns(SVG_NS, "polygon")?;
         poly.set_attribute("points", &points.join(" "))?;
 
         let hex = document.create_element_ns(SVG_NS, "g")?;
-        hex.set_id("selected");
-        hex.set_attribute("class", "is-print-hidden")?;
+        hex.set_attribute("class", "selected-hex is-print-hidden")?;
         hex.set_hidden(true);
         hex.append_child(&poly)?;
 
@@ -135,7 +123,7 @@ impl SelectedHex {
     fn set_pos(&mut self, layout: &Layout, pos: Option<Coordinate>) {
         if pos.is_some() && pos != self.pos {
             let pos = pos.unwrap().to_pixel(layout);
-            let transform = format!("translate({:.3} {:.3})", pos.x(), pos.y());
+            let transform = format!("translate({:.1} {:.1})", pos.x(), pos.y());
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
         self.set_hidden(pos.is_none());
@@ -244,14 +232,13 @@ impl ActiveHex {
         let size = Point(16.0, 16.0);
         img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
         img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
-        img.set_attribute("transform", &format!("translate({:.3} {:.3})", -size.x(), -size.y()))?;
+        img.set_attribute("transform", &format!("translate({:.1} {:.1})", -size.x(), -size.y()))?;
 
         let inner = document.create_element_ns(SVG_NS, "g")?;
-        inner.set_id("active");
-        inner.set_attribute("class", "is-print-hidden")?;
+        inner.set_attribute("class", "active-hex is-print-hidden")?;
         let inner_pos = pos.to_pixel(layout);
         let angle = layout.direction_to_angle(dir);
-        let transform = format!("translate({:.3} {:.3}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
+        let transform = format!("translate({:.1} {:.1}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
         inner.set_attribute("transform", &transform)?;
         inner.append_child(&img)?;
 
@@ -262,7 +249,7 @@ impl ActiveHex {
         if pos != self.pos || dir != self.dir {
             let pos = pos.to_pixel(layout);
             let angle = layout.direction_to_angle(dir);
-            let transform = format!("translate({:.3} {:.3}) rotate({:.0})", pos.x(), pos.y(), angle);
+            let transform = format!("translate({:.1} {:.1}) rotate({:.0})", pos.x(), pos.y(), angle);
             check!(self.inner.set_attribute("transform", &transform).ok());
         }
         self.pos = pos;
@@ -297,20 +284,8 @@ struct DraggedTile {
 
 impl DraggedTile {
     fn new(document: &Document, layout: &Layout, tile: PlacedTile) -> Result<Self> {
-        let size = layout.size();
-        let angle = layout.direction_to_angle(tile.dir);
-        let img = document.create_element_ns(SVG_NS, "image")?;
-        img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
-        img.set_attribute("width", &format!("{}", 2.0 * size.x()))?;
-        img.set_attribute("height", &format!("{}", 2.0 * size.y()))?;
-        img.set_attribute("transform", &format!("rotate({:.0}) translate({:.3} {:.3})", angle, -size.x(), -size.y()))?;
-
-        let pos = tile.pos.to_pixel(layout);
-        let inner = document.create_element_ns(SVG_NS, "g")?;
+        let inner = draw_tile(document, layout, &tile)?;
         inner.set_id("dragged");
-        inner.set_attribute("class", "tile")?;
-        inner.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-        inner.append_child(&img)?;
 
         Ok(DraggedTile{ inner, tile })
     }
@@ -321,7 +296,7 @@ impl DraggedTile {
 
     fn set_pos(&self, pos: Point) {
         check!(self.inner.set_attribute("transform",
-            &format!("translate({:.3} {:.3})", pos.x(), pos.y())).ok());
+            &format!("translate({:.1} {:.1})", pos.x(), pos.y())).ok());
     }
 }
 
@@ -389,24 +364,19 @@ impl MapView {
         canvas.set_attribute("xmlns", SVG_NS_STR)?;
         parent.append_child(&canvas)?;
 
-        let defs = document.create_element_ns(SVG_NS, "defs")?;
-        defs.append_child(&define_grid_hex(&document, &layout)?.into())?;
-        canvas.append_child(&defs)?;
-
         let style = document.create_element_ns(SVG_NS, "style")?;
         style.append_child(&document.create_text_node(MAP_STYLE))?;
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
 
         let grid = document.create_element_ns(SVG_NS, "g")?;
-        grid.set_id("grid");
-        grid.set_attribute("class", "is-print-hidden")?;
+        grid.set_attribute("class", "grid is-print-hidden")?;
         let map_radius = 8;
         for q in -map_radius..=map_radius {
             let r1 = i32::max(-map_radius, -q - map_radius);
             let r2 = i32::min(map_radius, -q + map_radius);
             for r in r1..=r2 {
-                grid.append_child(&use_grid_hex(&document, &layout, (q, r))?.into())?;
+                grid.append_child(&draw_grid_hex(&document, &layout, (q, r))?.into())?;
             }
         }
         // add some hexagon grid axis labels when compiling in development mode
@@ -420,15 +390,15 @@ impl MapView {
         canvas.append_child(&grid)?;
 
         let tiles = document.create_element_ns(SVG_NS, "g")?;
-        tiles.set_id("tiles");
+        tiles.set_attribute("class", "tiles")?;
         canvas.append_child(&tiles)?;
 
         let tokens = document.create_element_ns(SVG_NS, "g")?;
-        tokens.set_id("tokens");
+        tokens.set_attribute("class", "tokens")?;
         canvas.append_child(&tokens)?;
 
         let labels = document.create_element_ns(SVG_NS, "g")?;
-        labels.set_id("labels");
+        labels.set_attribute("class", "labels")?;
         canvas.append_child(&labels)?;
 
         let title = TitleInput::new(&document)?;
