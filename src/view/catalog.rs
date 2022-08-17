@@ -67,16 +67,20 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 
-        let drag_img = canvas;
-        let dragstart_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
-            if let Some(trans) = event.data_transfer() {
-                let data = id.base().to_string();
-                trans.set_data("application/rekee", &data).unwrap();
-                trans.set_data("text/plain", &data).unwrap();
-                trans.set_effect_allowed("copy");
-                trans.set_drag_image(&drag_img, 50, 50);
+        let dragstart_cb = Closure::wrap(Box::new({
+            let drag_img = canvas;
+            let offset_x = layout.origin().x().round() as i32;
+            let offset_y = layout.origin().y().round() as i32;
+            move |event: web_sys::DragEvent| {
+                if let Some(trans) = event.data_transfer() {
+                    let data = id.base().to_string();
+                    trans.set_data("application/rekee", &data).unwrap();
+                    trans.set_data("text/plain", &data).unwrap();
+                    trans.set_effect_allowed("copy");
+                    trans.set_drag_image(&drag_img, offset_x, offset_y);
+                }
+                nuts::publish(DragCatalogBeginEvent { tile: id.base() });
             }
-            nuts::publish(DragCatalogBeginEvent { tile: id.base() });
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
