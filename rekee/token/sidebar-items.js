@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ParseTokenError",""],["TokenId","Identifier for a token which can be placed on tiles."]]});
+window.SIDEBAR_ITEMS = {"enum":[["ParseTokenError",""],["TokenId","Identifier for a token which can be placed on tiles."]]};
