@@ -102,9 +102,13 @@ fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<
     let center = tile_image_center(layout);
     let angle = layout.direction_to_angle(tile.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
-    img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
-    img.set_attribute("width", &format!("{}", size.x()))?;
-    img.set_attribute("height", &format!("{}", size.y()))?;
+    if size.x() >= 300.0 || size.y() >= 300.0 {
+        img.set_attribute("href", &format!("tiles/tile-{}.webp", tile.id()))?;
+    } else {
+        img.set_attribute("href", &format!("tiles/thumb-{}.png", tile.id()))?;
+    }
+    img.set_attribute("width", &format!("{:.0}", size.x()))?;
+    img.set_attribute("height", &format!("{:.0}", size.y()))?;
     img.set_attribute("image-rendering", "optimizeQuality")?;
     img.set_attribute("transform", &format!("rotate({:.0}) translate({:.1} {:.1})", angle, -center.x(), -center.y()))?;
     parent.append_child(&img)?;
