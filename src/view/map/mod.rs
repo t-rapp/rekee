@@ -17,9 +17,11 @@ use crate::import;
 use crate::map::{Map, PlacedTile, PlacedToken};
 use super::*;
 
+pub mod config;
+
 //----------------------------------------------------------------------------
 
-const MAP_STYLE: &str = include_str!("map.css");
+const MAP_STYLE: &str = include_str!("style.css");
 const MAP_PADDING: f32 = 15.0;
 
 fn draw_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
