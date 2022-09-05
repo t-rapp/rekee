@@ -28,7 +28,7 @@ use crate::tile::Terrain;
 /// assert_eq!(token, TokenId::Chicane(Terrain::None));
 ///
 /// let token = TokenId::Jump(Terrain::Gravel);
-/// assert_eq!(token.to_string(), "Jump-Gravel");
+/// assert_eq!(token.to_string(), "Jump Gravel");
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Deserialize)]
@@ -93,7 +93,7 @@ impl fmt::Display for TokenId {
             },
             TokenId::ChicaneWithLimit(val) => {
                 terrain = *val;
-                write!(fmt, "Chicane-Limit")?;
+                write!(fmt, "Chicane Limit")?;
             },
             TokenId::Jump(val) => {
                 terrain = *val;
@@ -104,14 +104,14 @@ impl fmt::Display for TokenId {
                 write!(fmt, "Water")?;
             },
             TokenId::JokerEntrance =>
-                write!(fmt, "Joker-Entrance")?,
+                write!(fmt, "Joker Entrance")?,
             TokenId::JokerExit =>
-                write!(fmt, "Joker-Exit")?,
+                write!(fmt, "Joker Exit")?,
             TokenId::Finish =>
                 write!(fmt, "Finish")?,
         };
         if terrain != Terrain::None {
-            write!(fmt, "-{}", terrain)?;
+            write!(fmt, " {}", terrain)?;
         }
         Ok(())
     }
@@ -129,31 +129,36 @@ impl fmt::LowerHex for TokenId {
 impl FromStr for TokenId {
     type Err = ParseTokenError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(val: &str) -> Result<Self, Self::Err> {
+        // match strings from both trait implementations, std::fmt::Display and serde::Serialize
+        let mut s = val.replace(char::is_whitespace, "-");
+        s.make_ascii_lowercase();
+
         let mut terrain = Terrain::None;
-        let mut name = s;
+        let mut name = s.as_ref();
         if let Some((prefix, suffix)) = s.rsplit_once('-') {
             if let Ok(val) = suffix.parse() {
                 terrain = val;
                 name = prefix;
             }
         }
-        if name.eq_ignore_ascii_case("chicane") {
-            Ok(TokenId::Chicane(terrain))
-        } else if name.eq_ignore_ascii_case("chicane-limit") {
-            Ok(TokenId::ChicaneWithLimit(terrain))
-        } else if name.eq_ignore_ascii_case("jump") {
-            Ok(TokenId::Jump(terrain))
-        } else if name.eq_ignore_ascii_case("water") {
-            Ok(TokenId::Water(terrain))
-        } else if name.eq_ignore_ascii_case("joker-entrance") {
-            Ok(TokenId::JokerEntrance)
-        } else if name.eq_ignore_ascii_case("joker-exit") {
-            Ok(TokenId::JokerExit)
-        } else if name.eq_ignore_ascii_case("finish") {
-            Ok(TokenId::Finish)
-        } else {
-            Err(ParseTokenError::UnknownName(name.to_string()))
+        match name {
+            "chicane" =>
+                Ok(TokenId::Chicane(terrain)),
+            "chicane-limit" =>
+                Ok(TokenId::ChicaneWithLimit(terrain)),
+            "jump" =>
+                Ok(TokenId::Jump(terrain)),
+            "water" =>
+                Ok(TokenId::Water(terrain)),
+            "joker-entrance" =>
+                Ok(TokenId::JokerEntrance),
+            "joker-exit" =>
+                Ok(TokenId::JokerExit),
+            "finish" =>
+                Ok(TokenId::Finish),
+            _ =>
+                Err(ParseTokenError::UnknownName(name.to_string())),
         }
     }
 }
@@ -185,7 +190,8 @@ impl Serialize for TokenId {
     where
         S: Serializer
     {
-        let mut data = self.to_string();
+        let mut data = self.to_string()
+            .replace(char::is_whitespace, "-");
         data.make_ascii_lowercase();
         serializer.serialize_str(&data)
     }
@@ -200,11 +206,11 @@ mod tests {
     #[test]
     fn token_to_str() {
         assert_eq!(TokenId::Chicane(Terrain::None).to_string(), "Chicane");
-        assert_eq!(TokenId::ChicaneWithLimit(Terrain::Asphalt).to_string(), "Chicane-Limit-Asphalt");
-        assert_eq!(TokenId::Jump(Terrain::Gravel).to_string(), "Jump-Gravel");
-        assert_eq!(TokenId::Water(Terrain::Snow).to_string(), "Water-Snow");
-        assert_eq!(TokenId::JokerEntrance.to_string(), "Joker-Entrance");
-        assert_eq!(TokenId::JokerExit.to_string(), "Joker-Exit");
+        assert_eq!(TokenId::ChicaneWithLimit(Terrain::Asphalt).to_string(), "Chicane Limit Asphalt");
+        assert_eq!(TokenId::Jump(Terrain::Gravel).to_string(), "Jump Gravel");
+        assert_eq!(TokenId::Water(Terrain::Snow).to_string(), "Water Snow");
+        assert_eq!(TokenId::JokerEntrance.to_string(), "Joker Entrance");
+        assert_eq!(TokenId::JokerExit.to_string(), "Joker Exit");
         assert_eq!(TokenId::Finish.to_string(), "Finish");
 
         let text = format!("{:x}", TokenId::Chicane(Terrain::Gravel));
@@ -219,8 +225,8 @@ mod tests {
     fn token_from_str() {
         assert_eq!("chicane".parse::<TokenId>(), Ok(TokenId::Chicane(Terrain::None)));
         assert_eq!("chicane-limit-asphalt".parse::<TokenId>(), Ok(TokenId::ChicaneWithLimit(Terrain::Asphalt)));
-        assert_eq!("Jump-Gravel".parse::<TokenId>(), Ok(TokenId::Jump(Terrain::Gravel)));
-        assert_eq!("WATER-SNOW".parse::<TokenId>(), Ok(TokenId::Water(Terrain::Snow)));
+        assert_eq!("Jump Gravel".parse::<TokenId>(), Ok(TokenId::Jump(Terrain::Gravel)));
+        assert_eq!("WATER SNOW".parse::<TokenId>(), Ok(TokenId::Water(Terrain::Snow)));
         assert_eq!("Joker-Entrance".parse::<TokenId>(), Ok(TokenId::JokerEntrance));
         assert_eq!("jOKER-eXIT".parse::<TokenId>(), Ok(TokenId::JokerExit));
         assert_eq!("FiNiSh".parse::<TokenId>(), Ok(TokenId::Finish));
