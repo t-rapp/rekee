@@ -282,6 +282,11 @@
 <span id="276">276</span>
 <span id="277">277</span>
 <span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of objects and common functions.</span>
 <span class="comment">//</span>
@@ -306,7 +311,6 @@
 <span class="kw">mod</span> <span class="ident">catalog_config</span>;
 <span class="kw">mod</span> <span class="ident">export</span>;
 <span class="kw">mod</span> <span class="ident">map</span>;
-<span class="kw">mod</span> <span class="ident">map_config</span>;
 <span class="kw">mod</span> <span class="ident">track_info</span>;
 <span class="kw">mod</span> <span class="ident">version</span>;
 <span class="kw">mod</span> <span class="ident">welcome</span>;
@@ -323,7 +327,9 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapSettings</span> <span class="op">=</span> <span class="ident">map::MapSettings</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapView</span> <span class="op">=</span> <span class="ident">map::MapView</span>;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapConfigView</span> <span class="op">=</span> <span class="ident">map_config::MapConfigView</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapConfigView</span> <span class="op">=</span> <span class="ident">map::config::MapConfigView</span>;
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapDetailView</span> <span class="op">=</span> <span class="ident">map::detail::MapDetailView</span>;
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TrackInfoView</span> <span class="op">=</span> <span class="ident">track_info::TrackInfoView</span>;
 
@@ -385,9 +391,13 @@
     <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">tile_image_center</span>(<span class="ident">layout</span>);
     <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
     <span class="kw">let</span> <span class="ident">img</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumb-{}.png&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
-    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
+    <span class="kw">if</span> <span class="ident">size</span>.<span class="ident">x</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">300.0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">size</span>.<span class="ident">y</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">300.0</span> {
+        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
+    } <span class="kw">else</span> {
+        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumb-{}.png&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
+    }
+    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
+    <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.1} {:.1})&quot;</span>, <span class="ident">angle</span>, <span class="op">-</span><span class="ident">center</span>.<span class="ident">x</span>(), <span class="op">-</span><span class="ident">center</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
     <span class="ident">parent</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">img</span>)<span class="question-mark">?</span>;

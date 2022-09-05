@@ -607,6 +607,40 @@
 <span id="601">601</span>
 <span id="602">602</span>
 <span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
 <span class="doccomment">//!</span>
@@ -1091,6 +1125,40 @@
     }
 
     <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapConfigEvent</span>) {
+        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowMapDetailEvent</span>;
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideMapDetailEvent</span>;
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapDetailController</span> {
+    <span class="ident">view</span>: <span class="ident">MapDetailView</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">MapDetailController</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapDetailView</span>) {
+        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapDetailController</span> { <span class="ident">view</span> };
+        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+        <span class="comment">// register public events</span>
+        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
+        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
+    }
+
+    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapDetailEvent</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+            <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">settings</span>.<span class="ident">selected</span>.<span class="ident">unwrap_or_default</span>();
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">center</span>);
+        }
+        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
+    }
+
+    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapDetailEvent</span>) {
         <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
     }
 }

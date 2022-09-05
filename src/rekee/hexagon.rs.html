@@ -1409,6 +1409,14 @@
 <span id="1403">1403</span>
 <span id="1404">1404</span>
 <span id="1405">1405</span>
+<span id="1406">1406</span>
+<span id="1407">1407</span>
+<span id="1408">1408</span>
+<span id="1409">1409</span>
+<span id="1410">1410</span>
+<span id="1411">1411</span>
+<span id="1412">1412</span>
+<span id="1413">1413</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Types and methods for working with a hexagon grid.</span>
 <span class="doccomment">//!</span>
@@ -1422,7 +1430,7 @@
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">Index</span>, <span class="ident">IndexMut</span>};
+<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">Mul</span>, <span class="ident">Index</span>, <span class="ident">IndexMut</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
 
@@ -2054,6 +2062,14 @@
 
     <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Point</span>) -&gt; <span class="ident">Point</span> {
         <span class="ident">Point</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">-</span> <span class="ident">other</span>.<span class="number">0</span>, <span class="self">self</span>.<span class="number">1</span> <span class="op">-</span> <span class="ident">other</span>.<span class="number">1</span>)
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Point</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
+
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">f32</span>) -&gt; <span class="ident">Point</span> {
+        <span class="ident">Point</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">*</span> <span class="ident">other</span>, <span class="self">self</span>.<span class="number">1</span> <span class="op">*</span> <span class="ident">other</span>)
     }
 }
 
