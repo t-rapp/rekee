@@ -4,7 +4,7 @@
     stroke: gray;
     stroke-width: 0.4;
 }
-.grid .hex:hover {
+#map .grid .hex:hover {
     fill: #444;
     fill-opacity: 0.06;
 }

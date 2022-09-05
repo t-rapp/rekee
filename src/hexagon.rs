@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------------
 
 use std::fmt;
-use std::ops::{Add, Sub, Index, IndexMut};
+use std::ops::{Add, Sub, Mul, Index, IndexMut};
 
 use serde::{Serialize, Deserialize};
 
@@ -643,6 +643,14 @@ impl Sub for Point {
 
     fn sub(self, other: Point) -> Point {
         Point(self.0 - other.0, self.1 - other.1)
+    }
+}
+
+impl Mul<f32> for Point {
+    type Output = Self;
+
+    fn mul(self, other: f32) -> Point {
+        Point(self.0 * other, self.1 * other)
     }
 }
 

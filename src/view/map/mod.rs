@@ -18,6 +18,7 @@ use crate::map::{Map, PlacedTile, PlacedToken};
 use super::*;
 
 pub mod config;
+pub mod detail;
 
 //----------------------------------------------------------------------------
 
@@ -178,6 +179,17 @@ impl SelectedMenu {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RotateSelectedRightEvent);
+            }) as Box<dyn Fn(_)>);
+            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            callback.forget();
+        }
+
+        if let Some(btn) = document.get_element_by_id("show-map-detail-button") {
+            let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+                nuts::publish(ShowMapDetailEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();

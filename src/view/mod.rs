@@ -40,6 +40,8 @@ pub type MapView = map::MapView;
 
 pub type MapConfigView = map::config::MapConfigView;
 
+pub type MapDetailView = map::detail::MapDetailView;
+
 pub type TrackInfoView = track_info::TrackInfoView;
 
 pub type VersionView = version::VersionView;

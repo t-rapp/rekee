@@ -483,6 +483,24 @@
       <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
+    <div id="map-detail-container" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <h2 class="title">Tile Details</h2>
+
+          <div class="columns">
+            <!-- map detail elements added here by WASM -->
+          </div>
+
+          <div class="buttons is-centered">
+            <button id="apply-map-detail" class="button is-link">Close</button>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
     <div id="watchdog-info" class="modal">
       <div class="modal-background"></div>
       <div class="modal-content">
@@ -531,6 +549,13 @@
           <span class="icon">
             <svg class="bi" width="16" height="16" fill="currentColor">
               <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
+            </svg>
+          </span>
+        </button>
+        <button id="show-map-detail-button" class="button" title="Show tile details">
+          <span class="icon">
+            <svg class="bi" width="16" height="16" fill="currentColor">
+              <use xlink:href="bootstrap-icons.svg#zoom-in"/>
             </svg>
           </span>
         </button>
