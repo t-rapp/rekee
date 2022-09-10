@@ -1940,7 +1940,7 @@
             <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_child</span>(<span class="ident">dragged</span>.<span class="ident">as_ref</span>()).<span class="ident">ok</span>());
             <span class="kw">if</span> <span class="ident">pos</span> <span class="op">!</span><span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span> {
                 <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">remove</span>(<span class="ident">tile</span>.<span class="ident">pos</span>);
-                <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">tile</span>.<span class="ident">id</span>(), <span class="ident">pos</span>, <span class="ident">tile</span>.<span class="ident">dir</span>);
+                <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">tile</span>.<span class="ident">id</span>(), <span class="ident">pos</span>, <span class="ident">tile</span>.<span class="ident">dir</span>, <span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">clone</span>());
                 <span class="self">self</span>.<span class="ident">update_map</span>();
             }
         }
