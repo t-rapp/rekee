@@ -81,6 +81,39 @@ impl TokenId {
                 TokenId::Finish,
         }
     }
+
+    /// Iterator over all track tokens.
+    ///
+    /// Tokens with terrain use the neutral `Terrain::None` value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::token::*;
+    /// let tokens: Vec<String> = TokenId::iter()
+    ///     .map(|val| val.to_string())
+    ///     .collect();
+    /// assert_eq!(tokens, vec![
+    ///     "Chicane",
+    ///     "Chicane Limit",
+    ///     "Jump",
+    ///     "Water",
+    ///     "Joker Entrance",
+    ///     "Joker Exit",
+    ///     "Finish"]);
+    /// ```
+    pub fn iter() -> std::slice::Iter<'static, Self> {
+        const TOKENS: [TokenId; 7] = [
+            TokenId::Chicane(Terrain::None),
+            TokenId::ChicaneWithLimit(Terrain::None),
+            TokenId::Jump(Terrain::None),
+            TokenId::Water(Terrain::None),
+            TokenId::JokerEntrance,
+            TokenId::JokerExit,
+            TokenId::Finish,
+        ];
+        TOKENS.iter()
+    }
 }
 
 impl fmt::Display for TokenId {
