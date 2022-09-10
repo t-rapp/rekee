@@ -934,7 +934,7 @@ impl MapView {
             check!(self.canvas.remove_child(dragged.as_ref()).ok());
             if pos != tile.pos {
                 self.map.remove(tile.pos);
-                self.map.insert(tile.id(), pos, tile.dir);
+                self.map.insert_with_tokens(tile.id(), pos, tile.dir, tile.tokens.clone());
                 self.update_map();
             }
         }
