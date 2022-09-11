@@ -939,7 +939,7 @@ impl<T: AsRef<TileId> + Clone> TileList for [T] {
 /// Represents the track characteristics of a single tile's edge-to-edge
 /// connection, simplified to one of three possible values: Straight, Left, or
 /// Right.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ConnectionHint {
     Straight,
     Left,
@@ -977,7 +977,7 @@ impl FromStr for ConnectionHint {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseHintError {
     Unknown(String),
 }
@@ -1028,7 +1028,7 @@ impl fmt::Display for ParseHintError {
 /// let conn = Connection::Right(2);
 /// assert_eq!(conn.target(Direction::A), Some(Direction::F));
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Connection {
     None,
     Straight(i8),
@@ -1101,7 +1101,7 @@ impl PartialEq<ConnectionHint> for Connection {
 /// Additional to the space type edges have a lane count value.
 ///
 /// Use [`TileInfo::edge()`] to get the edge data of a specific tile.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Edge {
     None,
     Straight(u8),
@@ -1240,7 +1240,7 @@ impl FromStr for Terrain {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseTerrainError {
     UnknownTerrain(String),
 }

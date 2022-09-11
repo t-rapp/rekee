@@ -315,7 +315,7 @@ impl FromStr for Edition {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseEditionError {
     Unknown(String),
 }
@@ -595,7 +595,7 @@ impl FromStr for Series {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseSeriesError {
     Unknown(String),
 }

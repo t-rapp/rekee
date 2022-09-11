@@ -196,7 +196,7 @@ impl FromStr for TokenId {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseTokenError {
     UnknownName(String),
 }
