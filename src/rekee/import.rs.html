@@ -586,7 +586,7 @@
         }
 
         <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">ImportError::JsonError</span>(<span class="ident">err</span>))
+            .<span class="ident">map_err</span>(<span class="ident">ImportError::JsonError</span>)
     }
 }
 
@@ -695,7 +695,7 @@
         }
 
         <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">ImportError::JsonError</span>(<span class="ident">err</span>))
+            .<span class="ident">map_err</span>(<span class="ident">ImportError::JsonError</span>)
     }
 }
 

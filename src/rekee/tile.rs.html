@@ -3407,7 +3407,7 @@
 <span class="doccomment">/// Represents the track characteristics of a single tile&#39;s edge-to-edge</span>
 <span class="doccomment">/// connection, simplified to one of three possible values: Straight, Left, or</span>
 <span class="doccomment">/// Right.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ConnectionHint</span> {
     <span class="ident">Straight</span>,
     <span class="ident">Left</span>,
@@ -3445,7 +3445,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseHintError</span> {
     <span class="ident">Unknown</span>(<span class="ident">String</span>),
 }
@@ -3496,7 +3496,7 @@
 <span class="doccomment">/// let conn = Connection::Right(2);</span>
 <span class="doccomment">/// assert_eq!(conn.target(Direction::A), Some(Direction::F));</span>
 <span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Connection</span> {
     <span class="prelude-val">None</span>,
     <span class="ident">Straight</span>(<span class="ident">i8</span>),
@@ -3569,7 +3569,7 @@
 <span class="doccomment">/// Additional to the space type edges have a lane count value.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Use [`TileInfo::edge()`] to get the edge data of a specific tile.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Edge</span> {
     <span class="prelude-val">None</span>,
     <span class="ident">Straight</span>(<span class="ident">u8</span>),
@@ -3708,7 +3708,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseTerrainError</span> {
     <span class="ident">UnknownTerrain</span>(<span class="ident">String</span>),
 }
