@@ -150,7 +150,7 @@ mod native {
         }
 
         serde_json::to_string(&data)
-            .map_err(|err| ImportError::JsonError(err))
+            .map_err(ImportError::JsonError)
     }
 }
 
@@ -259,7 +259,7 @@ mod rgt {
         }
 
         serde_json::to_string(&data)
-            .map_err(|err| ImportError::JsonError(err))
+            .map_err(ImportError::JsonError)
     }
 }
 
