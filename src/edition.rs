@@ -167,9 +167,14 @@ impl Edition {
         tiles
     }
 
-    /// Check whether a specific game edition contains the given tile.
+    /// Check whether the edition contains a specific tile.
     ///
     /// Returns `true` when the identifier is found in the list of tiles.
+    ///
+    /// Compares the full tile identifier, including the graphical variant. To
+    /// compare the base identifier only use [`Edition::contains_base()`]
+    /// instead. See [`TileId::base()`] for more information on the difference
+    /// between base and full tile identifiers.
     ///
     /// # Examples
     ///
@@ -183,12 +188,51 @@ impl Edition {
     /// let edition = Edition::DirtClimb;
     /// assert_eq!(edition.contains(tile!(201, a)), false);
     /// assert_eq!(edition.contains(tile!(325, b)), true);
+    ///
+    /// let edition = Edition::GtWorldTour;
+    /// assert_eq!(edition.contains(tile!(124, a, 1)), false);
+    /// assert_eq!(edition.contains(tile!(124, a, 2)), true);
     /// ```
     pub fn contains(&self, tile: TileId) -> bool {
         // clear side, any edition contains both sides of a tile
         let tile = TileId::new(tile.num(), 0, tile.var());
         // can use fast binary search as the list order is checked with unit tests
         self.internal_tiles().binary_search(&tile).is_ok()
+    }
+
+    /// Check whether the edition matches a given base tile identifier.
+    ///
+    /// Returns `true` when a tile with matching base identifier is found in the
+    /// list of tiles.
+    ///
+    /// Compares the base tile identifier, with graphical variant excluded. To
+    /// compare the full identifier use [`Edition::contains()`] instead. See
+    /// [`TileId::base()`] for more information on the difference between base
+    /// and full tile identifiers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let edition = Edition::DirtCoreBox;
+    /// assert_eq!(edition.contains_base(tile!(201, a)), true);
+    /// assert_eq!(edition.contains_base(tile!(325, b)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains_base(tile!(201, a)), false);
+    /// assert_eq!(edition.contains_base(tile!(325, b)), true);
+    ///
+    /// let edition = Edition::GtWorldTour;
+    /// assert_eq!(edition.contains_base(tile!(124, a, 1).base()), true);
+    /// assert_eq!(edition.contains_base(tile!(124, a, 2).base()), true);
+    /// ```
+    pub fn contains_base(&self, tile: TileId) -> bool {
+        // Ignore side as any edition contains both sides of a tile, and ignore
+        // graphical variant as we care for the base identifier only
+        let tile_num = tile.num();
+        // can use fast binary search as the list order is checked with unit tests
+        self.internal_tiles().binary_search_by_key(&tile_num, |tile| tile.num()).is_ok()
     }
 
     /// Check whether the edition is a stand-alone game, or an expansion module.

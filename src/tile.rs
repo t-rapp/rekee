@@ -1514,6 +1514,34 @@ impl TileInfo {
         }
         unimplemented!();
     }
+
+    /// List of editions which contain this tile.
+    ///
+    /// Ignores the graphical tile variant as `TileInfo` uses identifiers in
+    /// [`TileId::base()`] format. The returned list will contain a single
+    /// edition entry for most tiles, but an additional entry for some rare
+    /// cases.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::TileInfo;
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(103, a)).unwrap();
+    /// assert_eq!(info.editions(), vec![Edition::GtCoreBox]);
+    ///
+    /// let info = TileInfo::get(tile!(124, b, 1)).unwrap();
+    /// assert_eq!(info.editions(), vec![Edition::GtChampionship, Edition::GtWorldTour]);
+    /// # }
+    /// ```
+    pub fn editions(&self) -> Vec<Edition> {
+        Edition::iter()
+            .filter(|edition| edition.contains_base(self.id))
+            .copied()
+            .collect()
+    }
 }
 
 impl fmt::Display for TileInfo {
@@ -2455,6 +2483,23 @@ mod tests {
                         "tile {}, direction {}: side without connection cannot have lanes", tile, dir);
                 }
             }
+        }
+    }
+
+    #[test]
+    fn tile_info_series() {
+        for info in TILE_INFOS.iter() {
+            // will panic if not defined
+            let _series = info.series();
+        }
+    }
+
+    #[test]
+    fn tile_info_editions() {
+        for info in TILE_INFOS.iter() {
+            let editions = info.editions();
+            assert!(!editions.is_empty(), "tile info {} has no editions", info.id);
+            assert!(editions.len() <= 2, "tile info {} has more than two editions", info.id);
         }
     }
 }
