@@ -758,6 +758,50 @@
 <span id="752">752</span>
 <span id="753">753</span>
 <span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).</span>
 <span class="doccomment">//!</span>
@@ -927,9 +971,14 @@
         <span class="ident">tiles</span>
     }
 
-    <span class="doccomment">/// Check whether a specific game edition contains the given tile.</span>
+    <span class="doccomment">/// Check whether the edition contains a specific tile.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `true` when the identifier is found in the list of tiles.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Compares the full tile identifier, including the graphical variant. To</span>
+    <span class="doccomment">/// compare the base identifier only use [`Edition::contains_base()`]</span>
+    <span class="doccomment">/// instead. See [`TileId::base()`] for more information on the difference</span>
+    <span class="doccomment">/// between base and full tile identifiers.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -943,12 +992,51 @@
     <span class="doccomment">/// let edition = Edition::DirtClimb;</span>
     <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), false);</span>
     <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), true);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let edition = Edition::GtWorldTour;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(124, a, 1)), false);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains(tile!(124, a, 2)), true);</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
         <span class="comment">// clear side, any edition contains both sides of a tile</span>
         <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">0</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
         <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
         <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">binary_search</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>).<span class="ident">is_ok</span>()
+    }
+
+    <span class="doccomment">/// Check whether the edition matches a given base tile identifier.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `true` when a tile with matching base identifier is found in the</span>
+    <span class="doccomment">/// list of tiles.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Compares the base tile identifier, with graphical variant excluded. To</span>
+    <span class="doccomment">/// compare the full identifier use [`Edition::contains()`] instead. See</span>
+    <span class="doccomment">/// [`TileId::base()`] for more information on the difference between base</span>
+    <span class="doccomment">/// and full tile identifiers.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use rekee::edition::*;</span>
+    <span class="doccomment">/// # use rekee::tile;</span>
+    <span class="doccomment">/// let edition = Edition::DirtCoreBox;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(201, a)), true);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(325, b)), false);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let edition = Edition::DirtClimb;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(201, a)), false);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(325, b)), true);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let edition = Edition::GtWorldTour;</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(124, a, 1).base()), true);</span>
+    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(124, a, 2).base()), true);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
+        <span class="comment">// Ignore side as any edition contains both sides of a tile, and ignore</span>
+        <span class="comment">// graphical variant as we care for the base identifier only</span>
+        <span class="kw">let</span> <span class="ident">tile_num</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">num</span>();
+        <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
+        <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">tile_num</span>, <span class="op">|</span><span class="ident">tile</span><span class="op">|</span> <span class="ident">tile</span>.<span class="ident">num</span>()).<span class="ident">is_ok</span>()
     }
 
     <span class="doccomment">/// Check whether the edition is a stand-alone game, or an expansion module.</span>

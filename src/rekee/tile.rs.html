@@ -2466,6 +2466,51 @@
 <span id="2460">2460</span>
 <span id="2461">2461</span>
 <span id="2462">2462</span>
+<span id="2463">2463</span>
+<span id="2464">2464</span>
+<span id="2465">2465</span>
+<span id="2466">2466</span>
+<span id="2467">2467</span>
+<span id="2468">2468</span>
+<span id="2469">2469</span>
+<span id="2470">2470</span>
+<span id="2471">2471</span>
+<span id="2472">2472</span>
+<span id="2473">2473</span>
+<span id="2474">2474</span>
+<span id="2475">2475</span>
+<span id="2476">2476</span>
+<span id="2477">2477</span>
+<span id="2478">2478</span>
+<span id="2479">2479</span>
+<span id="2480">2480</span>
+<span id="2481">2481</span>
+<span id="2482">2482</span>
+<span id="2483">2483</span>
+<span id="2484">2484</span>
+<span id="2485">2485</span>
+<span id="2486">2486</span>
+<span id="2487">2487</span>
+<span id="2488">2488</span>
+<span id="2489">2489</span>
+<span id="2490">2490</span>
+<span id="2491">2491</span>
+<span id="2492">2492</span>
+<span id="2493">2493</span>
+<span id="2494">2494</span>
+<span id="2495">2495</span>
+<span id="2496">2496</span>
+<span id="2497">2497</span>
+<span id="2498">2498</span>
+<span id="2499">2499</span>
+<span id="2500">2500</span>
+<span id="2501">2501</span>
+<span id="2502">2502</span>
+<span id="2503">2503</span>
+<span id="2504">2504</span>
+<span id="2505">2505</span>
+<span id="2506">2506</span>
+<span id="2507">2507</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Tile identifier and characteristics.</span>
 <span class="comment">//</span>
@@ -3982,6 +4027,34 @@
         }
         <span class="macro">unimplemented!</span>();
     }
+
+    <span class="doccomment">/// List of editions which contain this tile.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Ignores the graphical tile variant as `TileInfo` uses identifiers in</span>
+    <span class="doccomment">/// [`TileId::base()`] format. The returned list will contain a single</span>
+    <span class="doccomment">/// edition entry for most tiles, but an additional entry for some rare</span>
+    <span class="doccomment">/// cases.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # #[macro_use] extern crate rekee;</span>
+    <span class="doccomment">/// # use rekee::edition::Edition;</span>
+    <span class="doccomment">/// # use rekee::tile::TileInfo;</span>
+    <span class="doccomment">/// # fn main() {</span>
+    <span class="doccomment">/// let info = TileInfo::get(tile!(103, a)).unwrap();</span>
+    <span class="doccomment">/// assert_eq!(info.editions(), vec![Edition::GtCoreBox]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let info = TileInfo::get(tile!(124, b, 1)).unwrap();</span>
+    <span class="doccomment">/// assert_eq!(info.editions(), vec![Edition::GtChampionship, Edition::GtWorldTour]);</span>
+    <span class="doccomment">/// # }</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span> {
+        <span class="ident">Edition::iter</span>()
+            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">edition</span>.<span class="ident">contains_base</span>(<span class="self">self</span>.<span class="ident">id</span>))
+            .<span class="ident">copied</span>()
+            .<span class="ident">collect</span>()
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TileInfo</span> {
@@ -4923,6 +4996,23 @@
                         <span class="string">&quot;tile {}, direction {}: side without connection cannot have lanes&quot;</span>, <span class="ident">tile</span>, <span class="ident">dir</span>);
                 }
             }
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">tile_info_series</span>() {
+        <span class="kw">for</span> <span class="ident">info</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>() {
+            <span class="comment">// will panic if not defined</span>
+            <span class="kw">let</span> <span class="ident">_series</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">series</span>();
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">tile_info_editions</span>() {
+        <span class="kw">for</span> <span class="ident">info</span> <span class="kw">in</span> <span class="ident">TILE_INFOS</span>.<span class="ident">iter</span>() {
+            <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">editions</span>();
+            <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">editions</span>.<span class="ident">is_empty</span>(), <span class="string">&quot;tile info {} has no editions&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
+            <span class="macro">assert!</span>(<span class="ident">editions</span>.<span class="ident">len</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">2</span>, <span class="string">&quot;tile info {} has more than two editions&quot;</span>, <span class="ident">info</span>.<span class="ident">id</span>);
         }
     }
 }
