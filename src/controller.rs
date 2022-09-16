@@ -64,6 +64,10 @@ pub struct UpdateBackgroundGridEvent {
     pub visible: bool,
 }
 
+pub struct UpdateExportScaleEvent {
+    pub scale: Option<ExportScale>,
+}
+
 pub struct UpdateTileLabelsEvent {
     pub visible: bool,
 }
@@ -464,6 +468,9 @@ impl MapConfigController {
         let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
+        activity.private_channel(|controller, event: UpdateExportScaleEvent| {
+            controller.view.set_export_scale(event.scale);
+        });
         activity.private_channel(|controller, _event: ApplyMapConfigEvent| {
             controller.view.apply_map_config();
         });
@@ -477,6 +484,9 @@ impl MapConfigController {
         if let Some(settings) = domain.try_get::<MapSettings>() {
             self.view.set_background_grid(settings.background_grid_visible);
             self.view.set_tile_labels(settings.tile_labels_visible);
+        }
+        if let Some(settings) = domain.try_get::<ExportSettings>() {
+            self.view.set_export_scale(settings.export_scale);
         }
         self.view.set_active(true);
     }
@@ -533,14 +543,22 @@ pub struct DrawExportTokenDoneEvent {
 
 pub struct ExportController {
     view: ExportView,
+    storage: Storage,
 }
 
 impl ExportController {
     pub fn init(view: ExportView) {
-        let controller = ExportController { view };
+        let storage = Storage::new("export");
+        let controller = ExportController { view, storage };
         let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
+        activity.private_channel(|controller, event| {
+            controller.load_settings(&event);
+        });
+        activity.private_channel(|controller, event| {
+            controller.save_settings(&event);
+        });
         activity.private_channel(|controller, event: DrawExportTileDoneEvent| {
             controller.view.draw_export_tile_done(&event.tile);
         });
@@ -549,7 +567,27 @@ impl ExportController {
         });
 
         // register public events
+        activity.subscribe(ExportController::load_settings);
+        activity.subscribe(ExportController::save_settings);
+        activity.subscribe(ExportController::update_export_scale);
         activity.subscribe_domained(ExportController::export_image);
+    }
+
+    fn load_settings(&mut self, _event: &LoadSettingsEvent) {
+        let settings = self.storage.get();
+        if let Some(settings) = settings {
+            self.view.load_settings(&settings);
+        }
+    }
+
+    fn save_settings(&mut self, _event: &SaveSettingsEvent) {
+        let settings = self.view.save_settings();
+        self.storage.set(&settings);
+        nuts::store_to_domain(&DefaultDomain, settings);
+    }
+
+    fn update_export_scale(&mut self, event: &UpdateExportScaleEvent) {
+        self.view.update_export_scale(event.scale);
     }
 
     fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {
