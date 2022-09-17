@@ -131,7 +131,7 @@ impl TileImage {
         image.add_event_listener_with_callback("error", error_cb.as_ref().unchecked_ref())?;
 
         // start loading the tile image
-        let url = format!("tiles/thumb-{}.png", tile.id());
+        let url = format!("tiles/thumbs/tile-{:x}.webp", tile.id());
         image.set_attribute("src", &url)?;
 
         Ok(TileImage { image, tile, load_cb, error_cb })

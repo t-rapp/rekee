@@ -106,6 +106,15 @@ impl fmt::Display for TileId {
     }
 }
 
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for TileId {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
 impl FromStr for TileId {
     type Err = ParseIntError;
 
