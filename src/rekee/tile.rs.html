@@ -2511,6 +2511,15 @@
 <span id="2505">2505</span>
 <span id="2506">2506</span>
 <span id="2507">2507</span>
+<span id="2508">2508</span>
+<span id="2509">2509</span>
+<span id="2510">2510</span>
+<span id="2511">2511</span>
+<span id="2512">2512</span>
+<span id="2513">2513</span>
+<span id="2514">2514</span>
+<span id="2515">2515</span>
+<span id="2516">2516</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Tile identifier and characteristics.</span>
 <span class="comment">//</span>
@@ -2616,6 +2625,15 @@
             <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;-{}&quot;</span>, <span class="self">self</span>.<span class="ident">var</span>)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="comment">// small hack to provide the Serde string serialization as a formatter</span>
+<span class="kw">impl</span> <span class="ident">fmt::LowerHex</span> <span class="kw">for</span> <span class="ident">TileId</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="self">self</span>).<span class="ident">unwrap</span>();
+        <span class="ident">text</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span>);
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">text</span>)
     }
 }
 

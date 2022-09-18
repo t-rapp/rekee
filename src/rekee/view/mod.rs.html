@@ -287,6 +287,8 @@
 <span id="281">281</span>
 <span id="282">282</span>
 <span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of objects and common functions.</span>
 <span class="comment">//</span>
@@ -322,6 +324,8 @@
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CatalogConfigView</span> <span class="op">=</span> <span class="ident">catalog_config::CatalogConfigView</span>;
 
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportScale</span> <span class="op">=</span> <span class="ident">export::ExportScale</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportSettings</span> <span class="op">=</span> <span class="ident">export::ExportSettings</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportView</span> <span class="op">=</span> <span class="ident">export::ExportView</span>;
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapSettings</span> <span class="op">=</span> <span class="ident">map::MapSettings</span>;
@@ -392,9 +396,9 @@
     <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
     <span class="kw">let</span> <span class="ident">img</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
     <span class="kw">if</span> <span class="ident">size</span>.<span class="ident">x</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">300.0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">size</span>.<span class="ident">y</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">300.0</span> {
-        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
+        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{:x}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
     } <span class="kw">else</span> {
-        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumb-{}.png&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
+        <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumbs/tile-{:x}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
     }
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
     <span class="ident">img</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
