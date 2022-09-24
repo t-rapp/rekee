@@ -877,7 +877,7 @@
         <span class="ident">image</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;error&quot;</span>, <span class="ident">error_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
 
         <span class="comment">// start loading the tile image</span>
-        <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.png&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;tokens/thumbs/{:x}.webp&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>);
         <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">url</span>)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">TokenImage</span> { <span class="ident">image</span>, <span class="ident">tile</span>, <span class="ident">token</span>, <span class="ident">load_cb</span>, <span class="ident">error_cb</span> })
