@@ -42,6 +42,14 @@ pub enum TokenId {
     Jump(Terrain),
     /// Water token, part of the Rallyman DIRT Copilot Pack.
     Water(Terrain),
+    /// Ascent tile modifier, part of the Climb expansion for Rallyman DIRT.
+    ClimbAscent,
+    /// Descent tile modifier, part of the Climb expansion for Rallyman DIRT.
+    ClimbDescent,
+    /// Cloud tile modifier, part of the Climb expansion for Rallyman DIRT.
+    Cloud,
+    /// Oxygen tile modifier, part of the Climb expansion for Rallyman DIRT.
+    Oxygen(u8),
     /// Joker entrance arch, part of the RX expansion for Rallyman DIRT.
     JokerEntrance,
     /// Joker exit arch, part of the RX expansion for Rallyman DIRT.
@@ -73,12 +81,8 @@ impl TokenId {
                 TokenId::Jump(terrain),
             TokenId::Water(_) =>
                 TokenId::Water(terrain),
-            TokenId::JokerEntrance =>
-                TokenId::JokerEntrance,
-            TokenId::JokerExit =>
-                TokenId::JokerExit,
-            TokenId::Finish =>
-                TokenId::Finish,
+            _ =>
+                *self
         }
     }
 
@@ -98,16 +102,24 @@ impl TokenId {
     ///     "Chicane Limit",
     ///     "Jump",
     ///     "Water",
+    ///     "Climb Ascent",
+    ///     "Climb Descent",
+    ///     "Cloud",
+    ///     "Oxygen",
     ///     "Joker Entrance",
     ///     "Joker Exit",
     ///     "Finish"]);
     /// ```
     pub fn iter() -> std::slice::Iter<'static, Self> {
-        const TOKENS: [TokenId; 7] = [
+        const TOKENS: [TokenId; 11] = [
             TokenId::Chicane(Terrain::None),
             TokenId::ChicaneWithLimit(Terrain::None),
             TokenId::Jump(Terrain::None),
             TokenId::Water(Terrain::None),
+            TokenId::ClimbAscent,
+            TokenId::ClimbDescent,
+            TokenId::Cloud,
+            TokenId::Oxygen(0),
             TokenId::JokerEntrance,
             TokenId::JokerExit,
             TokenId::Finish,
@@ -136,6 +148,18 @@ impl fmt::Display for TokenId {
                 terrain = *val;
                 write!(fmt, "Water")?;
             },
+            TokenId::ClimbAscent =>
+                write!(fmt, "Climb Ascent")?,
+            TokenId::ClimbDescent =>
+                write!(fmt, "Climb Descent")?,
+            TokenId::Cloud =>
+                write!(fmt, "Cloud")?,
+            TokenId::Oxygen(val) => {
+                write!(fmt, "Oxygen")?;
+                if *val > 0 {
+                    write!(fmt, " {}", val)?;
+                }
+            }
             TokenId::JokerEntrance =>
                 write!(fmt, "Joker Entrance")?,
             TokenId::JokerExit =>
@@ -167,14 +191,20 @@ impl FromStr for TokenId {
         let mut s = val.replace(char::is_whitespace, "-");
         s.make_ascii_lowercase();
 
-        let mut terrain = Terrain::None;
         let mut name = s.as_ref();
+        let mut terrain = Terrain::None;
+        let mut number = 0_u8;
         if let Some((prefix, suffix)) = s.rsplit_once('-') {
             if let Ok(val) = suffix.parse() {
                 terrain = val;
                 name = prefix;
             }
+            if let Ok(val) = suffix.parse() {
+                number = val;
+                name = prefix;
+            }
         }
+
         match name {
             "chicane" =>
                 Ok(TokenId::Chicane(terrain)),
@@ -184,6 +214,14 @@ impl FromStr for TokenId {
                 Ok(TokenId::Jump(terrain)),
             "water" =>
                 Ok(TokenId::Water(terrain)),
+            "climb-ascent" =>
+                Ok(TokenId::ClimbAscent),
+            "climb-descent" =>
+                Ok(TokenId::ClimbDescent),
+            "cloud" =>
+                Ok(TokenId::Cloud),
+            "oxygen" =>
+                Ok(TokenId::Oxygen(number)),
             "joker-entrance" =>
                 Ok(TokenId::JokerEntrance),
             "joker-exit" =>
@@ -242,6 +280,10 @@ mod tests {
         assert_eq!(TokenId::ChicaneWithLimit(Terrain::Asphalt).to_string(), "Chicane Limit Asphalt");
         assert_eq!(TokenId::Jump(Terrain::Gravel).to_string(), "Jump Gravel");
         assert_eq!(TokenId::Water(Terrain::Snow).to_string(), "Water Snow");
+        assert_eq!(TokenId::ClimbAscent.to_string(), "Climb Ascent");
+        assert_eq!(TokenId::ClimbDescent.to_string(), "Climb Descent");
+        assert_eq!(TokenId::Cloud.to_string(), "Cloud");
+        assert_eq!(TokenId::Oxygen(1).to_string(), "Oxygen 1");
         assert_eq!(TokenId::JokerEntrance.to_string(), "Joker Entrance");
         assert_eq!(TokenId::JokerExit.to_string(), "Joker Exit");
         assert_eq!(TokenId::Finish.to_string(), "Finish");
@@ -250,6 +292,8 @@ mod tests {
         assert_eq!(text, "chicane-gravel");
         let text = format!("{:x}", TokenId::Jump(Terrain::None));
         assert_eq!(text, "jump");
+        let text = format!("{:x}", TokenId::Oxygen(1));
+        assert_eq!(text, "oxygen-1");
         let text = format!("{:x}", TokenId::JokerExit);
         assert_eq!(text, "joker-exit");
     }
@@ -260,12 +304,18 @@ mod tests {
         assert_eq!("chicane-limit-asphalt".parse::<TokenId>(), Ok(TokenId::ChicaneWithLimit(Terrain::Asphalt)));
         assert_eq!("Jump Gravel".parse::<TokenId>(), Ok(TokenId::Jump(Terrain::Gravel)));
         assert_eq!("WATER SNOW".parse::<TokenId>(), Ok(TokenId::Water(Terrain::Snow)));
+        assert_eq!("climb-ascent".parse::<TokenId>(), Ok(TokenId::ClimbAscent));
+        assert_eq!("Climb Descent".parse::<TokenId>(), Ok(TokenId::ClimbDescent));
+        assert_eq!("cLoUd".parse::<TokenId>(), Ok(TokenId::Cloud));
+        assert_eq!("Oxygen".parse::<TokenId>(), Ok(TokenId::Oxygen(0)));
+        assert_eq!("Oxygen 1".parse::<TokenId>(), Ok(TokenId::Oxygen(1)));
         assert_eq!("Joker-Entrance".parse::<TokenId>(), Ok(TokenId::JokerEntrance));
         assert_eq!("jOKER-eXIT".parse::<TokenId>(), Ok(TokenId::JokerExit));
         assert_eq!("FiNiSh".parse::<TokenId>(), Ok(TokenId::Finish));
 
         assert!("".parse::<TokenId>().is_err());
-        assert!("jump-4".parse::<TokenId>().is_err());
+        assert!("jump-*".parse::<TokenId>().is_err());
+        assert!("Oxygen X".parse::<TokenId>().is_err());
         assert!("joker".parse::<TokenId>().is_err());
         assert!("Asphalt".parse::<TokenId>().is_err());
     }
@@ -284,9 +334,21 @@ mod tests {
         let text = serde_json::to_string(&token).unwrap();
         assert_eq!(text, r#""jump-asphalt""#);
 
+        let token = TokenId::Oxygen(0);
+        let text = serde_json::to_string(&token).unwrap();
+        assert_eq!(text, r#""oxygen""#);
+
+        let token = TokenId::Oxygen(2);
+        let text = serde_json::to_string(&token).unwrap();
+        assert_eq!(text, r#""oxygen-2""#);
+
         let text = r#""water-snow""#;
         let token: TokenId = serde_json::from_str(text).unwrap();
         assert_eq!(token, TokenId::Water(Terrain::Snow));
+
+        let text = r#""oxygen-3""#;
+        let token: TokenId = serde_json::from_str(text).unwrap();
+        assert_eq!(token, TokenId::Oxygen(3));
 
         let text = r#""joker-exit""#;
         let token: TokenId = serde_json::from_str(text).unwrap();
@@ -296,7 +358,7 @@ mod tests {
         let result: Result<TokenId, _> = serde_json::from_str(text);
         assert!(result.is_err());
 
-        let text = r#""water-1""#;
+        let text = r#""water-x""#;
         let result: Result<TokenId, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }

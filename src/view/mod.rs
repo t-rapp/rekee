@@ -77,6 +77,8 @@ fn token_image_size(layout: &Layout, token: &PlacedToken) -> Point {
     match token.id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
             Point(0.41 * layout.size().x(), 0.28 * layout.size().y()),
+        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
+            Point(0.28 * layout.size().x(), 0.28 * layout.size().y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
             Point(0.82 * layout.size().x(), 0.40 * layout.size().y()),
     }
@@ -86,6 +88,8 @@ fn token_image_center(layout: &Layout, token: &PlacedToken) -> Point {
     let size = token_image_size(layout, token);
     match token.id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
+            Point(0.5 * size.x(), 0.5 * size.y()),
+        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
             Point(0.5 * size.x(), 0.5 * size.y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
             Point(0.5 * size.x(), size.y()),
