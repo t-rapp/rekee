@@ -309,7 +309,7 @@ impl TokenImage {
         image.add_event_listener_with_callback("error", error_cb.as_ref().unchecked_ref())?;
 
         // start loading the tile image
-        let url = format!("tokens/{:x}.png", token.id);
+        let url = format!("tokens/thumbs/{:x}.webp", token.id);
         image.set_attribute("src", &url)?;
 
         Ok(TokenImage { image, tile, token, load_cb, error_cb })

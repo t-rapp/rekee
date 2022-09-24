@@ -76,11 +76,11 @@ fn tile_image_center(layout: &Layout) -> Point {
 fn token_image_size(layout: &Layout, token: &PlacedToken) -> Point {
     match token.id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
-            Point(0.41 * layout.size().x(), 0.28 * layout.size().y()),
+            Point(0.500 * layout.size().x(), 0.350 * layout.size().y()),
         TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
-            Point(0.28 * layout.size().x(), 0.28 * layout.size().y()),
+            Point(0.315 * layout.size().x(), 0.315 * layout.size().y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
-            Point(0.82 * layout.size().x(), 0.40 * layout.size().y()),
+            Point(1.200 * layout.size().x(), 0.585 * layout.size().y()),
     }
 }
 
@@ -108,7 +108,7 @@ fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<
     let center = tile_image_center(layout);
     let angle = layout.direction_to_angle(tile.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
-    if size.x() >= 300.0 || size.y() >= 300.0 {
+    if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
         img.set_attribute("href", &format!("tiles/tile-{:x}.webp", tile.id()))?;
     } else {
         img.set_attribute("href", &format!("tiles/thumbs/tile-{:x}.webp", tile.id()))?;
@@ -169,7 +169,11 @@ fn draw_tile_token(document: &Document, layout: &Layout, tile: &PlacedTile, toke
     let center = token_image_center(layout, token);
     let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
     let img = document.create_element_ns(SVG_NS, "image")?;
-    img.set_attribute("href", &format!("tokens/{:x}.png", token.id))?;
+    if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
+        img.set_attribute("href", &format!("tokens/{:x}.webp", token.id))?;
+    } else {
+        img.set_attribute("href", &format!("tokens/thumbs/{:x}.webp", token.id))?;
+    }
     img.set_attribute("width", &format!("{}", size.x()))?;
     img.set_attribute("height", &format!("{}", size.y()))?;
     img.set_attribute("image-rendering", "optimizeQuality")?;
@@ -260,29 +264,41 @@ mod tests {
 
         let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(0.0));
         let size = token_image_size(&layout, &token);
-        assert_eq!(point_to_string(size), "(24.600, 16.800)");
+        assert_eq!(point_to_string(size), "(30.000, 21.000)");
         let center = token_image_center(&layout, &token);
-        assert_eq!(point_to_string(center), "(12.300, 8.400)");
+        assert_eq!(point_to_string(center), "(15.000, 10.500)");
+
+        let token = PlacedToken::new(TokenId::ClimbAscent, (0.0, 0.0).into(), FloatDirection(0.0));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(18.900, 18.900)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(9.450, 9.450)");
 
         let token = PlacedToken::new(TokenId::JokerEntrance, (0.0, 0.0).into(), FloatDirection(0.0));
         let size = token_image_size(&layout, &token);
-        assert_eq!(point_to_string(size), "(49.200, 24.000)");
+        assert_eq!(point_to_string(size), "(72.000, 35.100)");
         let center = token_image_center(&layout, &token);
-        assert_eq!(point_to_string(center), "(24.600, 24.000)");
+        assert_eq!(point_to_string(center), "(36.000, 35.100)");
 
         let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
 
         let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(1.5));
         let size = token_image_size(&layout, &token);
-        assert_eq!(point_to_string(size), "(24.600, 16.800)");
+        assert_eq!(point_to_string(size), "(30.000, 21.000)");
         let center = token_image_center(&layout, &token);
-        assert_eq!(point_to_string(center), "(12.300, 8.400)");
+        assert_eq!(point_to_string(center), "(15.000, 10.500)");
+
+        let token = PlacedToken::new(TokenId::ClimbAscent, (0.0, 0.0).into(), FloatDirection(0.0));
+        let size = token_image_size(&layout, &token);
+        assert_eq!(point_to_string(size), "(18.900, 18.900)");
+        let center = token_image_center(&layout, &token);
+        assert_eq!(point_to_string(center), "(9.450, 9.450)");
 
         let token = PlacedToken::new(TokenId::JokerExit, (0.0, 0.0).into(), FloatDirection(1.5));
         let size = token_image_size(&layout, &token);
-        assert_eq!(point_to_string(size), "(49.200, 24.000)");
+        assert_eq!(point_to_string(size), "(72.000, 35.100)");
         let center = token_image_center(&layout, &token);
-        assert_eq!(point_to_string(center), "(24.600, 24.000)");
+        assert_eq!(point_to_string(center), "(36.000, 35.100)");
     }
 }
 
