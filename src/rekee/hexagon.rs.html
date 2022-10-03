@@ -1411,6 +1411,23 @@
 <span id="1411">1411</span>
 <span id="1412">1412</span>
 <span id="1413">1413</span>
+<span id="1414">1414</span>
+<span id="1415">1415</span>
+<span id="1416">1416</span>
+<span id="1417">1417</span>
+<span id="1418">1418</span>
+<span id="1419">1419</span>
+<span id="1420">1420</span>
+<span id="1421">1421</span>
+<span id="1422">1422</span>
+<span id="1423">1423</span>
+<span id="1424">1424</span>
+<span id="1425">1425</span>
+<span id="1426">1426</span>
+<span id="1427">1427</span>
+<span id="1428">1428</span>
+<span id="1429">1429</span>
+<span id="1430">1430</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Types and methods for working with a hexagon grid.</span>
 <span class="doccomment">//!</span>
@@ -1959,6 +1976,23 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_angle</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f32</span> {
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span> <span class="op">*</span> <span class="number">60.0</span>;
         <span class="ident">angle</span>.<span class="ident">rem_euclid</span>(<span class="number">360.0</span>)
+    }
+
+    <span class="doccomment">/// Create a hexagon grid direction from an angle in degrees.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use rekee::hexagon::*;</span>
+    <span class="doccomment">/// let dir = FloatDirection::from_angle(30.0);</span>
+    <span class="doccomment">/// assert_eq!(dir, FloatDirection(0.5));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let dir = FloatDirection::from_angle(-30.0);</span>
+    <span class="doccomment">/// assert_eq!(dir, FloatDirection(5.5));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_angle</span>(<span class="ident">value</span>: <span class="ident">f32</span>) -&gt; <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">rem_euclid</span>(<span class="number">360.0</span>);
+        <span class="ident">FloatDirection</span>(<span class="ident">angle</span> <span class="op">/</span> <span class="number">60.0</span>)
     }
 }
 
