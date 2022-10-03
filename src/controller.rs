@@ -20,6 +20,7 @@ use crate::hexagon::{Coordinate, Direction, Point};
 use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::storage::Storage;
 use crate::tile::{ConnectionHint, Terrain, TileId};
+use crate::token::TokenId;
 use crate::view::*;
 
 //----------------------------------------------------------------------------
@@ -82,6 +83,10 @@ pub struct UpdateSelectedEvent {
 
 pub struct AddSelectedTileTokenEvent {
     pub token: PlacedToken,
+}
+
+pub struct UpdateSelectedTileTokensEvent {
+    pub tokens: Vec<PlacedToken>,
 }
 
 pub struct RotateSelectedLeftEvent;
@@ -255,6 +260,7 @@ impl MapController {
         activity.subscribe(MapController::toggle_tile_labels);
         activity.subscribe(MapController::update_selected);
         activity.subscribe(MapController::add_selected_tile_token);
+        activity.subscribe(MapController::update_selected_tile_tokens);
         activity.subscribe(MapController::rotate_selected_left);
         activity.subscribe(MapController::rotate_selected_right);
         activity.subscribe(MapController::remove_selected);
@@ -333,6 +339,10 @@ impl MapController {
 
     fn add_selected_tile_token(&mut self, event: &AddSelectedTileTokenEvent) {
         self.view.add_selected_tile_token(event.token.clone());
+    }
+
+    fn update_selected_tile_tokens(&mut self, event: &UpdateSelectedTileTokensEvent) {
+        self.view.update_selected_tile_tokens(&event.tokens);
     }
 
     fn rotate_selected_left(&mut self, _event: &RotateSelectedLeftEvent) {
@@ -502,6 +512,37 @@ pub struct ShowMapDetailEvent;
 
 pub struct HideMapDetailEvent;
 
+pub struct ToggleTokenPropertiesEvent {
+    pub index: u32,
+}
+
+pub struct UpdateTokenTypeEvent {
+    pub index: u32,
+    pub token_id: TokenId,
+}
+
+pub struct UpdateOxygenVariantEvent {
+    pub index: u32,
+    pub number: u8,
+}
+
+pub struct UpdateTokenDistanceEvent {
+    pub index: u32,
+    pub value: f32,
+}
+
+pub struct UpdateTokenAngleEvent {
+    pub index: u32,
+    pub value: f32,
+}
+
+pub struct UpdateTokenOrientationEvent {
+    pub index: u32,
+    pub value: f32,
+}
+
+pub struct ApplyMapDetailEvent;
+
 pub struct MapDetailController {
     view: MapDetailView,
 }
@@ -510,6 +551,29 @@ impl MapDetailController {
     pub fn init(view: MapDetailView) {
         let controller = MapDetailController { view };
         let activity = nuts::new_domained_activity(controller, &DefaultDomain);
+
+        // register private events
+        activity.private_channel(|controller, event: ToggleTokenPropertiesEvent| {
+            controller.view.toggle_token_properties(event.index);
+        });
+        activity.private_channel(|controller, event: UpdateTokenTypeEvent| {
+            controller.view.update_token_type(event.index, event.token_id);
+        });
+        activity.private_channel(|controller, event: UpdateOxygenVariantEvent| {
+            controller.view.update_oxygen_variant(event.index, event.number);
+        });
+        activity.private_channel(|controller, event: UpdateTokenDistanceEvent| {
+            controller.view.update_token_distance(event.index, event.value);
+        });
+        activity.private_channel(|controller, event: UpdateTokenAngleEvent| {
+            controller.view.update_token_angle(event.index, event.value);
+        });
+        activity.private_channel(|controller, event: UpdateTokenOrientationEvent| {
+            controller.view.update_token_orientation(event.index, event.value);
+        });
+        activity.private_channel(|controller, _event: ApplyMapDetailEvent| {
+            controller.view.apply_map_detail();
+        });
 
         // register public events
         activity.subscribe_domained(Self::show);

@@ -512,6 +512,13 @@ impl Map {
         };
     }
 
+    /// Updates all tokens of the tile at the given position.
+    pub fn update_tile_tokens(&mut self, pos: Coordinate, tokens: &[PlacedToken]) {
+        if let Some(tile) = self.get_mut(pos) {
+            tile.tokens = tokens.to_vec();
+        }
+    }
+
     /// Re-align all tiles around the map center.
     pub fn align_center(&mut self) {
         if self.tiles.is_empty() {

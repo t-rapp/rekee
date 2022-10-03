@@ -86,6 +86,40 @@ impl TokenId {
         }
     }
 
+    #[deprecated(note = "Please use TokenId::base() instead")]
+    pub fn without_terrain(&self) -> Self {
+        self.with_terrain(Terrain::None)
+    }
+
+    /// Creates a copy of the current token with inner oxygen number changed to
+    /// the given value.
+    pub(crate) fn with_number(&self, number: u8) -> Self {
+        match self {
+            TokenId::Oxygen(_) =>
+                TokenId::Oxygen(number),
+            _ =>
+                *self
+        }
+    }
+
+    /// Creates a copy of the current token without terrain info or oxygen level.
+    pub fn base(&self) -> Self {
+        match self {
+            TokenId::Chicane(_) =>
+                TokenId::Chicane(Terrain::None),
+            TokenId::ChicaneWithLimit(_) =>
+                TokenId::ChicaneWithLimit(Terrain::None),
+            TokenId::Jump(_) =>
+                TokenId::Jump(Terrain::None),
+            TokenId::Water(_) =>
+                TokenId::Water(Terrain::None),
+            TokenId::Oxygen(_) =>
+                TokenId::Oxygen(0),
+            _ =>
+                *self
+        }
+    }
+
     /// Iterator over all track tokens.
     ///
     /// Tokens with terrain use the neutral `Terrain::None` value.

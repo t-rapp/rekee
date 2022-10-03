@@ -19,6 +19,7 @@ use super::*;
 
 pub mod config;
 pub mod detail;
+mod polar;
 
 //----------------------------------------------------------------------------
 
@@ -856,6 +857,13 @@ impl MapView {
     pub fn add_selected_tile_token(&mut self, token: PlacedToken) {
         if let Some(pos) = self.selected.pos() {
             self.map.add_tile_token(pos, token);
+            self.update_map();
+        }
+    }
+
+    pub fn update_selected_tile_tokens(&mut self, tokens: &[PlacedToken]) {
+        if let Some(pos) = self.selected.pos() {
+            self.map.update_tile_tokens(pos, tokens);
             self.update_map();
         }
     }

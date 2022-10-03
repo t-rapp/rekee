@@ -99,6 +99,9 @@
             border-color: transparent;
             box-shadow: none;
         }
+        #map-detail-container .modal-content {
+            min-width: 960px;
+        }
         #dragged {
             opacity: 0.6;
         }
@@ -124,6 +127,35 @@
             list-style-position: inside;
             margin-left: .25rem;
             margin-top: .5rem;
+        }
+        .radio {
+            margin-left: .5rem;
+        }
+        .radio input[type="radio"] {
+            margin-right: .25rem;
+        }
+        .slider {
+            display: grid;
+            grid-template-columns: 1fr auto;
+        }
+        .slider input[type="range"] {
+            grid-row: 2/3;
+            grid-column: 1/3;
+        }
+        .slider input[type="number"] {
+            border: none;
+            grid-row: 1/2;
+            grid-column: 2/3;
+            text-align: right;
+            width: 4em;
+        }
+        .slider input[type="number"]::-webkit-outer-spin-button,
+        .slider input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .slider input[type="number"] {
+            -moz-appearance: textfield;
         }
         .tile {
             image-rendering: -webkit-optimize-contrast;
@@ -508,7 +540,7 @@
           </div>
 
           <div class="buttons is-centered">
-            <button id="apply-map-detail" class="button is-link">Close</button>
+            <button id="apply-map-detail" class="button is-link">Save &amp; Close</button>
           </div>
         </div>
       </div>

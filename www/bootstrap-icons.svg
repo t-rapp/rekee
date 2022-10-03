@@ -21,6 +21,12 @@
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-chevron-bar-contract" fill="currentColor" id="chevron-bar-contract">
     <path fill-rule="evenodd" d="M3.646 14.854a.5.5 0 00.708 0L8 11.207l3.646 3.647a.5.5 0 00.708-.708l-4-4a.5.5 0 00-.708 0l-4 4a.5.5 0 000 .708zm0-13.708a.5.5 0 01.708 0L8 4.793l3.646-3.647a.5.5 0 01.708.708l-4 4a.5.5 0 01-.708 0l-4-4a.5.5 0 010-.708zM1 8a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13A.5.5 0 011 8z"/>
   </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" id="chevron-down">
+    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-chevron-up" fill="currentColor" id="chevron-up">
+    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 01.708 0l6 6a.5.5 0 01-.708.708L8 5.707l-5.646 5.647a.5.5 0 01-.708-.708l6-6z"/>
+  </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="bi bi-circle" fill="currentColor" id="circle">
     <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/>
   </symbol>

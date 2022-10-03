@@ -547,6 +547,23 @@ impl FloatDirection {
         let angle = self.0 * 60.0;
         angle.rem_euclid(360.0)
     }
+
+    /// Create a hexagon grid direction from an angle in degrees.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let dir = FloatDirection::from_angle(30.0);
+    /// assert_eq!(dir, FloatDirection(0.5));
+    ///
+    /// let dir = FloatDirection::from_angle(-30.0);
+    /// assert_eq!(dir, FloatDirection(5.5));
+    /// ```
+    pub fn from_angle(value: f32) -> Self {
+        let angle = value.rem_euclid(360.0);
+        FloatDirection(angle / 60.0)
+    }
 }
 
 impl fmt::Display for FloatDirection {
