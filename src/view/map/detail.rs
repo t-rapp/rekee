@@ -375,7 +375,7 @@ impl TokenImageProperties {
         image_parent.append_child(&image)?;
 
         let card = document.create_element("div")?;
-        card.set_attribute("class", "card mb-2")?;
+        card.set_attribute("class", "card")?;
 
         let card_header = document.create_element("header")?;
         card_header.set_attribute("class", "card-header is-clickable")?;

@@ -27,3 +27,12 @@ $tabs-link-padding: 0.5em;
 @import "node_modules/bulma/sass/components/tabs.sass";
 @import "node_modules/bulma/sass/grid/columns.sass";
 @import "node_modules/bulma/sass/helpers/_all.sass";
+
+// Update and extend the Bulma card component
+.card {
+  @include block(0.5rem);
+  .title, .subtitle {
+    color: inherit;
+  }
+}
+@import "card-footer-colors.sass";

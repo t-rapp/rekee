@@ -1,0 +1,30 @@
+@import "node_modules/bulma/sass/components/card"
+@import "node_modules/bulma/sass/elements/button"
+
+a.card-footer-item
+  @extend %unselectable
+  border-radius: $card-radius
+  color: $button-text-color
+  // States
+  &:hover
+    background-color: $button-text-hover-background-color
+    color: $button-hover-color
+  &:focus
+    background-color: $button-text-hover-background-color
+    color: $button-focus-color
+  &:active
+    background-color: bulmaDarken($button-text-hover-background-color, 5%)
+    color: $button-active-color
+  // Colors
+  @each $name, $pair in $button-colors
+    $color: nth($pair, 1)
+    $color-invert: nth($pair, 2)
+    &.is-#{$name}
+      background-color: $color-invert
+      color: $color
+      &:hover
+        background-color: bulmaDarken($color, 2.5%)
+        color: $color-invert
+      &:active
+        background-color: bulmaDarken($color, 5%)
+        color: $color-invert
