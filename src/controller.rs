@@ -512,6 +512,14 @@ pub struct ShowMapDetailEvent;
 
 pub struct HideMapDetailEvent;
 
+pub struct AddTokenPropertiesEvent {
+    pub token_id: TokenId,
+}
+
+pub struct DeleteTokenPropertiesEvent {
+    pub index: u32,
+}
+
 pub struct ToggleTokenPropertiesEvent {
     pub index: u32,
 }
@@ -553,6 +561,12 @@ impl MapDetailController {
         let activity = nuts::new_domained_activity(controller, &DefaultDomain);
 
         // register private events
+        activity.private_channel(|controller, event: AddTokenPropertiesEvent| {
+            controller.view.add_token_properties(event.token_id);
+        });
+        activity.private_channel(|controller, event: DeleteTokenPropertiesEvent| {
+            controller.view.delete_token_properties(event.index);
+        });
         activity.private_channel(|controller, event: ToggleTokenPropertiesEvent| {
             controller.view.toggle_token_properties(event.index);
         });

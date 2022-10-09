@@ -162,6 +162,12 @@ impl TokenId {
     }
 }
 
+impl Default for TokenId {
+    fn default() -> Self {
+        TokenId::Chicane(Terrain::None)
+    }
+}
+
 impl fmt::Display for TokenId {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         let mut terrain = Terrain::None;

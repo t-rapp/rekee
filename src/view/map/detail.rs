@@ -8,7 +8,7 @@
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, Document, Element};
+use web_sys::{self, Document, Element, Node};
 
 use crate::check;
 use crate::controller::*;
@@ -357,6 +357,7 @@ struct TokenImageProperties {
     card_header: Element,
     card_header_title: Element,
     card_content: Element,
+    card_footer: Element,
     token_type: TokenTypeField,
     oxygen_variant: OxygenVariantField,
     token_distance: TokenSliderInputField,
@@ -365,10 +366,12 @@ struct TokenImageProperties {
     image: Element,
     toggle_icon: Element,
     toggle_cb: Closure<dyn Fn(web_sys::Event)>,
+    delete: Element,
+    delete_cb: Closure<dyn Fn(web_sys::Event)>,
 }
 
 impl TokenImageProperties {
-    fn new(document: &Document, layout: Layout, tile: PlacedTile, token: PlacedToken, index: u32, image_parent: Element) -> Result<Self> {
+    fn new(document: &Document, layout: Layout, tile: PlacedTile, token: PlacedToken, index: u32, image_parent: &Element) -> Result<Self> {
         let active = index == 0;
 
         let image = draw_tile_token(document, &layout, &tile, &token)?;
@@ -383,7 +386,7 @@ impl TokenImageProperties {
 
         let card_header_title = document.create_element("p")?;
         card_header_title.set_attribute("class", "card-header-title")?;
-        let text = format!("Token #{}: {}", index + 1, token.id.base());
+        let text = format!("Token: {}", token.id.base());
         card_header_title.append_child(&document.create_text_node(&text))?;
         card_header.append_child(&card_header_title)?;
 
@@ -429,17 +432,32 @@ impl TokenImageProperties {
         let token_orientation = TokenSliderInputField::new_token_orientation(document, orientation, index)?;
         card_content.append_child(token_orientation.as_ref())?;
 
+        let card_footer = document.create_element("footer")?;
+        card_footer.set_attribute("class", "card-footer")?;
+        card.append_child(&card_footer)?;
+
+        let delete = document.create_element("a")?;
+        delete.set_attribute("class", "card-footer-item is-danger")?;
+        delete.append_child(&document.create_text_node("Delete Token"))?;
+        card_footer.append_child(&delete)?;
+
         let toggle_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::send_to::<MapDetailController, _>(ToggleTokenPropertiesEvent { index });
         }) as Box<dyn Fn(_)>);
         card_header.add_event_listener_with_callback("click",
             toggle_cb.as_ref().unchecked_ref())?;
 
+        let delete_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<MapDetailController, _>(DeleteTokenPropertiesEvent { index });
+        }) as Box<dyn Fn(_)>);
+        delete.add_event_listener_with_callback("click",
+            delete_cb.as_ref().unchecked_ref())?;
+
         let mut item = TokenImageProperties {
             inner: card, layout, tile, token, index, active, image, card_header,
-            card_header_title, card_content, token_type, oxygen_variant,
-            token_distance, token_angle, token_orientation, toggle_icon,
-            toggle_cb
+            card_header_title, card_content, card_footer, token_type,
+            oxygen_variant, token_distance, token_angle, token_orientation,
+            toggle_icon, toggle_cb, delete, delete_cb
         };
         item.set_active(active);
         Ok(item)
@@ -447,15 +465,9 @@ impl TokenImageProperties {
 
     pub fn set_active(&mut self, value: bool) {
         debug!("token properties #{} set active={}", self.index, value);
-        let icon_use = check!(self.toggle_icon.query_selector("use").ok().flatten());
-        if value {
-            check!(self.inner.class_list().remove_1("has-background-light").ok());
-            check!(icon_use.set_attribute("href", "bootstrap-icons.svg#chevron-up").ok());
-        } else {
-            check!(self.inner.class_list().add_1("has-background-light").ok());
-            check!(icon_use.set_attribute("href", "bootstrap-icons.svg#chevron-down").ok());
-        }
         self.card_content.set_hidden(!value);
+        self.card_footer.set_hidden(!value);
+        self.toggle_icon.set_hidden(value);
         self.active = value;
     }
 
@@ -470,7 +482,7 @@ impl TokenImageProperties {
         };
         if token_id != self.token.id {
             self.token.id = token_id;
-            let text = format!("Token #{}: {}", self.index + 1, token_id.base());
+            let text = format!("Token: {}", token_id.base());
             self.card_header_title.set_inner_html(&text);
             self.token_type.set_value(token_id);
             match token_id {
@@ -491,7 +503,7 @@ impl TokenImageProperties {
         let token_id = self.token.id.with_number(number);
         if token_id != self.token.id {
             self.token.id = token_id;
-            let text = format!("Token #{}: {}", self.index + 1, token_id.base());
+            let text = format!("Token: {}", token_id.base());
             self.card_header_title.set_inner_html(&text);
             self.oxygen_variant.set_value(number);
             self.update_image();
@@ -542,6 +554,73 @@ impl Drop for TokenImageProperties {
     fn drop(&mut self) {
         let _ = self.card_header.remove_event_listener_with_callback("click",
             self.toggle_cb.as_ref().unchecked_ref());
+        let _ = self.delete.remove_event_listener_with_callback("click",
+            self.delete_cb.as_ref().unchecked_ref());
+        self.image.remove();
+        self.inner.remove();
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct TokenImagePropertiesAdder {
+    inner: Element,
+    add: Element,
+    add_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl TokenImagePropertiesAdder {
+    fn new(document: &Document, index: u32) -> Result<Self> {
+        let card = document.create_element("div")?;
+        card.set_attribute("class", "card")?;
+
+        let card_content = document.create_element("div")?;
+        card_content.set_attribute("class", "card-content")?;
+        card.append_child(&card_content)?;
+
+        let token_type = TokenTypeField::new(document, TokenId::default(), index)?;
+        card_content.append_child(token_type.as_ref())?;
+
+        let card_footer = document.create_element("footer")?;
+        card_footer.set_attribute("class", "card-footer")?;
+        card.append_child(&card_footer)?;
+
+        let add = document.create_element("a")?;
+        add.set_attribute("class", "card-footer-item is-link")?;
+        add.append_child(&document.create_text_node("Add Token"))?;
+        card_footer.append_child(&add)?;
+
+        let add_cb = Closure::wrap(Box::new({
+            let input = token_type.input.clone();
+            move |_event: web_sys::Event| {
+                let token_id: TokenId = check!(input.value().parse().ok());
+                nuts::send_to::<MapDetailController, _>(AddTokenPropertiesEvent { token_id });
+            }
+        }) as Box<dyn Fn(_)>);
+        add.add_event_listener_with_callback("click",
+            add_cb.as_ref().unchecked_ref())?;
+
+        Ok(TokenImagePropertiesAdder { inner: card, add, add_cb })
+    }
+}
+
+impl AsRef<Element> for TokenImagePropertiesAdder {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl AsRef<Node> for TokenImagePropertiesAdder {
+    fn as_ref(&self) -> &Node {
+        &self.inner
+    }
+}
+
+impl Drop for TokenImagePropertiesAdder {
+    fn drop(&mut self) {
+        let _ = self.add.remove_event_listener_with_callback("click",
+            self.add_cb.as_ref().unchecked_ref());
+        self.inner.remove();
     }
 }
 
@@ -550,10 +629,13 @@ impl Drop for TokenImageProperties {
 pub struct MapDetailView {
     inner: Element,
     layout: Layout,
+    tile_layout: Layout,
+    center_tile: Option<PlacedTile>,
     grid: Element,
     tiles: Element,
     tokens: Element,
     token_properties: Vec<TokenImageProperties>,
+    token_properties_adder: TokenImagePropertiesAdder,
     token_properties_column: Element,
     apply: Element,
     apply_cb: Closure<dyn Fn(web_sys::Event)>,
@@ -570,6 +652,8 @@ impl MapDetailView {
         let detail_size = layout.size() * 3.0;
         let detail_origin = detail_size * 1.5;
         let layout = Layout::new(layout.orientation(), detail_size, detail_origin);
+        let tile_layout = layout.clone();
+        let center_tile = None;
 
         let token_properties = Vec::new();
 
@@ -583,6 +667,9 @@ impl MapDetailView {
         let token_properties_column = document.create_element("div")?;
         token_properties_column.set_attribute("class", "column")?;
         columns.append_child(&token_properties_column)?;
+
+        let token_properties_adder = TokenImagePropertiesAdder::new(&document, 0)?;
+        token_properties_column.append_child(token_properties_adder.as_ref())?;
 
         let canvas_size = layout.origin() * 2.0;
         let canvas_viewbox = Rect::new(0.0, 0.0, canvas_size.x(), canvas_size.y());
@@ -650,7 +737,8 @@ impl MapDetailView {
         document.add_event_listener_with_callback("keydown", keydown_cb.as_ref().unchecked_ref())?;
 
         Ok(MapDetailView {
-            inner, layout, grid, tiles, tokens, token_properties, token_properties_column,
+            inner, layout, tile_layout, center_tile, grid, tiles, tokens,
+            token_properties, token_properties_adder, token_properties_column,
             apply, apply_cb, close, close_cb, keydown_cb
         })
     }
@@ -678,41 +766,52 @@ impl MapDetailView {
         check!(range.delete_contents().ok());
         check!(range.select_node_contents(&self.tokens).ok());
         check!(range.delete_contents().ok());
-        check!(range.select_node_contents(&self.token_properties_column).ok());
-        check!(range.delete_contents().ok());
         self.token_properties.clear();
 
         let offset = self.layout.origin() - center.to_pixel(&self.layout);
-        let tile_layout = self.layout.with_origin(self.layout.origin() + offset);
+        self.tile_layout = self.layout.with_origin(self.layout.origin() + offset);
 
         // draw selected tile
         if let Some(tile) = map.get(center) {
-            if let Ok(el) = draw_tile(&document, &tile_layout, tile) {
+            if let Ok(el) = draw_tile(&document, &self.tile_layout, tile) {
                 self.tiles.append_child(&el).unwrap();
             }
-            let mut index = 0;
+            let mut index = 1;
             for token in &tile.tokens {
-                if let Ok(item) = TokenImageProperties::new(&document, tile_layout.clone(), tile.clone(), token.clone(), index, self.tokens.clone()) {
+                if let Ok(item) = TokenImageProperties::new(&document, self.tile_layout.clone(), tile.clone(), token.clone(), index, &self.tokens) {
                     self.token_properties_column.append_child(item.as_ref()).unwrap();
                     self.token_properties.push(item);
                     index += 1;
                 }
             }
+            self.center_tile = Some(tile.clone());
+        } else {
+            self.center_tile = None;
+        }
+
+        // move token properties adder at the end of the column
+        if let Some(item) = self.token_properties.last() {
+            let item: &Element = item.as_ref();
+            check!(item.after_with_node_1(self.token_properties_adder.as_ref()).ok());
         }
 
         // draw tiles around the selected tile
         for &dir in Direction::iter() {
             let pos = center.neighbor(dir);
             if let Some(tile) = map.get(pos) {
-                if let Ok(el) = draw_tile(&document, &tile_layout, tile) {
+                if let Ok(el) = draw_tile(&document, &self.tile_layout, tile) {
                     self.tiles.append_child(&el).unwrap();
                 }
                 for token in &tile.tokens {
-                    if let Ok(el) = draw_tile_token(&document, &tile_layout, tile, token) {
+                    if let Ok(el) = draw_tile_token(&document, &self.tile_layout, tile, token) {
                         self.tokens.append_child(&el).unwrap();
                     }
                 }
             }
+        }
+
+        if let Some(item) = self.token_properties.first() {
+            self.toggle_token_properties(item.index);
         }
     }
 
@@ -750,9 +849,35 @@ impl MapDetailView {
         }
     }
 
+    pub fn add_token_properties(&mut self, token_id: TokenId) {
+        let document = self.tokens.owner_document().unwrap();
+        let tile = check!(self.center_tile.clone());
+        let token_id = if token_id == TokenId::Oxygen(0) {
+            TokenId::Oxygen(1)
+        } else {
+            let terrain = tile.terrain().unwrap_or_default();
+            token_id.with_terrain(terrain)
+        };
+        let token = PlacedToken::new(token_id, FloatCoordinate::default(), FloatDirection::default());
+        let index = self.token_properties.iter()
+            .map(|item| item.index)
+            .max()
+            .unwrap_or(0) + 1;
+
+        let item = check!(TokenImageProperties::new(&document, self.tile_layout.clone(), tile, token, index, &self.tokens).ok());
+        let token_properties_adder: &Element = self.token_properties_adder.as_ref();
+        check!(token_properties_adder.before_with_node_1(item.as_ref()).ok());
+        self.token_properties.push(item);
+        self.toggle_token_properties(index);
+    }
+
+    pub fn delete_token_properties(&mut self, index: u32) {
+        self.token_properties.retain(|item| item.index != index);
+    }
+
     pub fn toggle_token_properties(&mut self, index: u32) {
-        for (i, item) in self.token_properties.iter_mut().enumerate() {
-            item.set_active(i == index as usize);
+        for item in self.token_properties.iter_mut() {
+            item.set_active(item.index == index);
         }
     }
 
