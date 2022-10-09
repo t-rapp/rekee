@@ -400,6 +400,12 @@
 <span id="400">400</span>
 <span id="401">401</span>
 <span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Token which can be added to tiles. Can be used to add effects like a jump or</span>
 <span class="doccomment">//! water hazard area to a track tile. They are also used to indicate entrance</span>
@@ -561,6 +567,12 @@
             <span class="ident">TokenId::Finish</span>,
         ];
         <span class="ident">TOKENS</span>.<span class="ident">iter</span>()
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">TokenId</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+        <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::None</span>)
     }
 }
 
