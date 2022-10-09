@@ -11,6 +11,7 @@
 //! * `map-container` (mandatory)
 //! * `track-info-container` (optional)
 //! * `map-config-container` (optional)
+//! * `map-detail-container` (optional)
 //! * `version` (optional)
 //! * `welcome` (optional)
 //!
