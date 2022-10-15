@@ -101,7 +101,7 @@ mod native {
 
     impl From<&PlacedToken> for ImportToken {
         fn from(value: &PlacedToken) -> ImportToken {
-            let id = value.id.to_string();
+            let id = format!("{:x}", value.id);
             let q = value.pos.q();
             let r = value.pos.r();
             let dir = f32::from(value.dir);
@@ -122,6 +122,7 @@ mod native {
                 .map_err(|_| ImportError::UnknownTileId(tile.id.clone()));
             let dir = Direction::from(tile.dir);
             let tokens = tile.tokens.iter()
+                // tokens that have no corresponding import identifier will be silently dropped here
                 .filter_map(|token| token.try_into().ok())
                 .collect();
             if let Ok(id) = id {
@@ -141,7 +142,7 @@ mod native {
         for tile in map.tiles() {
             let q = tile.pos.q();
             let r = tile.pos.r();
-            let id = tile.id().to_string();
+            let id = format!("{:x}", tile.id());
             let dir = i32::from(tile.dir);
             let tokens = tile.tokens.iter()
                 .map(|token| token.into())
@@ -303,6 +304,58 @@ pub fn build_file_name(name: &str) -> String {
 mod tests {
     use crate::map::PlacedTile;
     use super::*;
+
+    #[test]
+    fn import_native_chicane_example() {
+        let data = include_str!("tests/chicane-example1.json");
+        let map = import_native(data)
+            .expect("Cannot parse import file data");
+        assert_eq!(map.title(), "Chicane Example 01");
+        let mut tiles = map.tiles().iter();
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(202, 1, 0), (1, 0).into(), Direction::A)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ])));
+        assert_eq!(tiles.next(), None);
+
+        let data = include_str!("tests/chicane-example2.json");
+        let map = import_native(data)
+            .expect("Cannot parse import file data");
+        assert_eq!(map.title(), "Chicane Example 02");
+        let mut tiles = map.tiles().iter();
+        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(202, 1, 0), (1, -1).into(), Direction::F)));
+        assert_eq!(tiles.next(), Some(&PlacedTile::with_tokens(TileId::new(205, 1, 0), (0,  0).into(), Direction::F, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ])));
+        assert_eq!(tiles.next(), None);
+    }
+
+    #[test]
+    fn export_native_chicane_example() {
+        let mut map = Map::new();
+        map.set_title("Chicane Example 01");
+        map.insert(TileId::new(202, 1, 0), (1, 0).into(), Direction::A);
+        map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ]);
+        let data = export_native(&map)
+            .expect("Cannot export track data");
+        assert_eq!(data, r#"{"title":"Chicane Example 01","tiles":[{"q":1,"r":0,"id":"202a","dir":0},{"q":0,"r":0,"id":"205a","dir":0,"tokens":[{"id":"chicane-limit-gravel","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane-gravel","q":0.33,"r":0.0,"dir":0.0}]}]}"#);
+
+        let mut map = Map::new();
+        map.set_title("Chicane Example 02");
+        map.insert(TileId::new(202, 1, 0), (1, -1).into(), Direction::F);
+        map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::F, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ]);
+        let data = export_native(&map)
+            .expect("Cannot export track data");
+        assert_eq!(data, r#"{"title":"Chicane Example 02","tiles":[{"q":1,"r":-1,"id":"202a","dir":5},{"q":0,"r":0,"id":"205a","dir":5,"tokens":[{"id":"chicane-limit-gravel","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane-gravel","q":0.33,"r":0.0,"dir":0.0}]}]}"#);
+        }
 
     #[test]
     fn import_native_short_track() {

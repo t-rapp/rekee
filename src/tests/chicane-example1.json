@@ -1,0 +1,31 @@
+{
+   "title": "Chicane Example 01",
+   "tiles": [
+      {
+         "q": 1,
+         "r": 0,
+         "id": "202a",
+         "dir": 0
+      },
+      {
+         "q": 0,
+         "r": 0,
+         "id": "205a",
+         "dir": 0,
+         "tokens": [
+            {
+               "id": "chicane-limit-gravel",
+               "q": 0.0,
+               "r": 0.0,
+               "dir": 3.0
+            },
+            {
+               "id": "chicane-gravel",
+               "q": 0.33,
+               "r": 0.0,
+               "dir": 0.0
+            }
+         ]
+      }
+   ]
+}
