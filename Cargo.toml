@@ -61,6 +61,7 @@ features = [
 ]
 
 [dev-dependencies]
+approx = "0.5.1"
 indoc = "1.0.3"
 
 [profile.release]

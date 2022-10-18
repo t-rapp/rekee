@@ -189,14 +189,6 @@ impl FloatCoordinate {
         -self.q - self.r
     }
 
-    #[cfg(test)]
-    fn distance(&self, other: FloatCoordinate) -> f32 {
-        let dq = (other.q() - self.q()).abs();
-        let dr = (other.r() - self.r()).abs();
-        let ds = (other.s() - self.s()).abs();
-        dq.max(dr.max(ds))
-    }
-
     /// Rotate this hexagon grid coordinate by the given floating-point direction.
     ///
     /// # Examples
@@ -291,6 +283,20 @@ impl From<(f32, f32)> for FloatCoordinate {
 impl From<Coordinate> for FloatCoordinate {
     fn from(value: Coordinate) -> FloatCoordinate {
         FloatCoordinate { q: value.q as f32, r: value.r as f32 }
+    }
+}
+
+#[cfg(test)]
+impl approx::AbsDiffEq for FloatCoordinate {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        f32::abs_diff_eq(&self.q, &other.q, epsilon) &&
+        f32::abs_diff_eq(&self.r, &other.r, epsilon)
     }
 }
 
@@ -606,6 +612,19 @@ impl From<Direction> for FloatDirection {
     }
 }
 
+#[cfg(test)]
+impl approx::AbsDiffEq for FloatDirection {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        f32::abs_diff_eq(&self.0, &other.0, epsilon)
+    }
+}
+
 //----------------------------------------------------------------------------
 
 /// Position within a grid of rectangular pixels.
@@ -631,13 +650,6 @@ impl Point {
     /// Position on the `y` axis.
     pub fn y(&self) -> f32 {
         self.1
-    }
-
-    #[cfg(test)]
-    fn distance(&self, other: Point) -> f32 {
-        let dx = other.0 - self.0;
-        let dy = other.1 - self.1;
-        (dx * dx + dy * dy).sqrt()
     }
 }
 
@@ -674,6 +686,20 @@ impl Mul<f32> for Point {
 impl From<(f32, f32)> for Point {
     fn from(value: (f32, f32)) -> Point {
         Point(value.0, value.1)
+    }
+}
+
+#[cfg(test)]
+impl approx::AbsDiffEq for Point {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        f32::abs_diff_eq(&self.0, &other.0, epsilon) &&
+        f32::abs_diff_eq(&self.1, &other.1, epsilon)
     }
 }
 
@@ -839,6 +865,22 @@ impl Rect {
             -self.height
         };
         Rect { left, top, width, height }
+    }
+}
+
+#[cfg(test)]
+impl approx::AbsDiffEq for Rect {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        f32::abs_diff_eq(&self.left, &other.left, epsilon) &&
+        f32::abs_diff_eq(&self.top, &other.top, epsilon) &&
+        f32::abs_diff_eq(&self.width, &other.width, epsilon) &&
+        f32::abs_diff_eq(&self.height, &other.height, epsilon)
     }
 }
 
@@ -1014,8 +1056,9 @@ impl Default for Layout {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_abs_diff_eq;
 
-    const EPS: f32 = 0.001;
+    pub const EPSILON: f32 = 1e-6;
 
     #[test]
     fn coordinate_add() {
@@ -1041,39 +1084,35 @@ mod tests {
 
     #[test]
     fn coordinate_to_pixel() {
-        fn assert_approx_eq(left: Point, right: Point) {
-            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
-        }
-
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(0.0, 0.0));
+        assert_abs_diff_eq!(pos, Point(0.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(8.660, 15.0));
+        assert_abs_diff_eq!(pos, Point(8.660254, 15.0));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(17.321, 0.0));
+        assert_abs_diff_eq!(pos, Point(17.320507, 0.0));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(25.981, -15.0));
+        assert_abs_diff_eq!(pos, Point(25.98076, -15.0));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(0.0, 10.0));
+        assert_abs_diff_eq!(pos, Point(0.0, 10.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(17.321, -20.0));
+        assert_abs_diff_eq!(pos, Point(17.320507, -20.0));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(34.641, 10.0));
+        assert_abs_diff_eq!(pos, Point(34.641014, 10.0));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(51.962, 40.0));
+        assert_abs_diff_eq!(pos, Point(51.96152, 40.0));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(10.0, 0.0));
+        assert_abs_diff_eq!(pos, Point(10.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(55.0, -17.321));
+        assert_abs_diff_eq!(pos, Point(55.0, -17.320507));
         let pos = Coordinate::new(1, 0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(10.0, -34.641));
+        assert_abs_diff_eq!(pos, Point(10.0, -34.641014));
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
-        assert_approx_eq(pos, Point(-35.0, -51.962));
+        assert_abs_diff_eq!(pos, Point(-35.0, -51.96152));
     }
 
     #[test]
@@ -1124,103 +1163,91 @@ mod tests {
 
     #[test]
     fn float_coordinate_rotate() {
-        fn assert_approx_eq(left: FloatCoordinate, right: FloatCoordinate) {
-            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
-        }
-
         let pos = FloatCoordinate::new(0.0, 0.0).rotate(0.0);
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 1.5).rotate(0.0);
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 1.5));
         let pos = FloatCoordinate::new(1.5, 0.0).rotate(0.0);
-        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
         let pos = FloatCoordinate::new(2.0, -1.0).rotate(0.0);
-        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
         let pos = FloatCoordinate::new(2.0, -1.0).rotate(-1.0);
-        assert_approx_eq(pos, FloatCoordinate::new(1.0, -2.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.0, -2.0));
         let pos = FloatCoordinate::new(2.0, -1.0).rotate(Direction::F);
-        assert_approx_eq(pos, FloatCoordinate::new(1.0, -2.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.0, -2.0));
         let pos = FloatCoordinate::new(2.0, -1.0).rotate(3.5);
-        assert_approx_eq(pos, FloatCoordinate::new(-SQRT_3, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(-SQRT_3, 0.0));
         let pos = FloatCoordinate::new(2.0, -1.0).rotate(-2.5);
-        assert_approx_eq(pos, FloatCoordinate::new(-SQRT_3, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(-SQRT_3, 0.0));
     }
 
     #[test]
     fn float_coordinate_to_pixel() {
-        fn assert_approx_eq(left: Point, right: Point) {
-            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
-        }
-
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(0.0, 0.0));
+        assert_abs_diff_eq!(pos, Point(0.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
-        assert_approx_eq(pos, Point(12.990, 22.5));
+        assert_abs_diff_eq!(pos, Point(12.99038, 22.5));
         let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(25.981, 0.0));
+        assert_abs_diff_eq!(pos, Point(25.98076, 0.0));
         let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(25.981, -15.0));
+        assert_abs_diff_eq!(pos, Point(25.98076, -15.0));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(0.0, 10.0));
+        assert_abs_diff_eq!(pos, Point(0.0, 10.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
-        assert_approx_eq(pos, Point(25.981, -35.0));
+        assert_abs_diff_eq!(pos, Point(25.98076, -35.0));
         let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(51.962, 10.0));
+        assert_abs_diff_eq!(pos, Point(51.96152, 10.0));
         let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(51.962, 40.0));
+        assert_abs_diff_eq!(pos, Point(51.96152, 40.0));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(10.0, 0.0));
+        assert_abs_diff_eq!(pos, Point(10.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
-        assert_approx_eq(pos, Point(77.5, -25.981));
+        assert_abs_diff_eq!(pos, Point(77.5, -25.98076));
         let pos = FloatCoordinate::new(1.5, 0.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(10.0, -51.962));
+        assert_abs_diff_eq!(pos, Point(10.0, -51.96152));
         let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
-        assert_approx_eq(pos, Point(-35.0, -51.962));
+        assert_abs_diff_eq!(pos, Point(-35.0, -51.96152));
     }
 
     #[test]
     fn float_coordinate_from_pixel() {
-        fn assert_approx_eq(left: FloatCoordinate, right: FloatCoordinate) {
-            assert!(left.distance(right) < EPS, "left = {}, right = {}", left, right);
-        }
-
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 0.0));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(5.0, -5.0));
-        assert_approx_eq(pos, FloatCoordinate::new(0.455, -0.333));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(12.990, 22.5));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, 0.0));
-        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, -15.0));
-        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.455342, -0.333333));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(12.99038, 22.5));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(-0.000001, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, 0.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -15.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 10.0));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(25.981, -35.0));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(51.962, 10.0));
-        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(51.962, 40.0));
-        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -35.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(-0.000001, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(51.96152, 10.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(51.96152, 40.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, 0.0));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 0.0));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(77.5, -25.981));
-        assert_approx_eq(pos, FloatCoordinate::new(0.0, 1.5));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, -51.962));
-        assert_approx_eq(pos, FloatCoordinate::new(1.5, 0.0));
-        let pos = FloatCoordinate::from_pixel(&layout, Point(-35.0, -51.962));
-        assert_approx_eq(pos, FloatCoordinate::new(2.0, -1.0));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(77.5, -25.98076));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 1.5));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, -51.96152));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
+        let pos = FloatCoordinate::from_pixel(&layout, Point(-35.0, -51.96152));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
     }
 
     #[test]
@@ -1267,42 +1294,38 @@ mod tests {
 
     #[test]
     fn direction_to_angle() {
-        fn assert_approx_eq(left: f32, right: f32) {
-            assert!((left - right).abs() < EPS, "left = {}, right = {}", left, right);
-        }
-
-        assert_approx_eq(Direction::A.to_angle(), 0.0);
-        assert_approx_eq(Direction::B.to_angle(), 60.0);
-        assert_approx_eq(Direction::C.to_angle(), 120.0);
-        assert_approx_eq(Direction::D.to_angle(), 180.0);
-        assert_approx_eq(Direction::E.to_angle(), 240.0);
-        assert_approx_eq(Direction::F.to_angle(), 300.0);
+        assert_abs_diff_eq!(Direction::A.to_angle(), 0.0);
+        assert_abs_diff_eq!(Direction::B.to_angle(), 60.0);
+        assert_abs_diff_eq!(Direction::C.to_angle(), 120.0);
+        assert_abs_diff_eq!(Direction::D.to_angle(), 180.0);
+        assert_abs_diff_eq!(Direction::E.to_angle(), 240.0);
+        assert_abs_diff_eq!(Direction::F.to_angle(), 300.0);
 
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        assert_approx_eq(layout.direction_to_angle(Direction::A), 90.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::B), 150.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::C), 210.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::D), 270.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::E), 330.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::F), 30.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::A), 90.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::B), 150.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::C), 210.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::D), 270.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::E), 330.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::F), 30.0);
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        assert_approx_eq(layout.direction_to_angle(Direction::from(-1)), 30.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(0)), 90.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(1)), 150.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(2)), 210.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(3)), 270.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(4)), 330.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(5)), 30.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::from(6)), 90.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(-1)), 30.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(0)), 90.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(1)), 150.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(2)), 210.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(3)), 270.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(4)), 330.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(5)), 30.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(6)), 90.0);
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        assert_approx_eq(layout.direction_to_angle(Direction::A), 0.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::B), 60.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::C), 120.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::D), 180.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::E), 240.0);
-        assert_approx_eq(layout.direction_to_angle(Direction::F), 300.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::A), 0.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::B), 60.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::C), 120.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::D), 180.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::E), 240.0);
+        assert_abs_diff_eq!(layout.direction_to_angle(Direction::F), 300.0);
     }
 
     #[test]
