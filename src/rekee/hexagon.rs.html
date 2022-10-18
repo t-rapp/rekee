@@ -1428,6 +1428,29 @@
 <span id="1428">1428</span>
 <span id="1429">1429</span>
 <span id="1430">1430</span>
+<span id="1431">1431</span>
+<span id="1432">1432</span>
+<span id="1433">1433</span>
+<span id="1434">1434</span>
+<span id="1435">1435</span>
+<span id="1436">1436</span>
+<span id="1437">1437</span>
+<span id="1438">1438</span>
+<span id="1439">1439</span>
+<span id="1440">1440</span>
+<span id="1441">1441</span>
+<span id="1442">1442</span>
+<span id="1443">1443</span>
+<span id="1444">1444</span>
+<span id="1445">1445</span>
+<span id="1446">1446</span>
+<span id="1447">1447</span>
+<span id="1448">1448</span>
+<span id="1449">1449</span>
+<span id="1450">1450</span>
+<span id="1451">1451</span>
+<span id="1452">1452</span>
+<span id="1453">1453</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Types and methods for working with a hexagon grid.</span>
 <span class="doccomment">//!</span>
@@ -1619,14 +1642,6 @@
         <span class="op">-</span><span class="self">self</span>.<span class="ident">q</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">r</span>
     }
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">distance</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="ident">FloatCoordinate</span>) -&gt; <span class="ident">f32</span> {
-        <span class="kw">let</span> <span class="ident">dq</span> <span class="op">=</span> (<span class="ident">other</span>.<span class="ident">q</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">q</span>()).<span class="ident">abs</span>();
-        <span class="kw">let</span> <span class="ident">dr</span> <span class="op">=</span> (<span class="ident">other</span>.<span class="ident">r</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">r</span>()).<span class="ident">abs</span>();
-        <span class="kw">let</span> <span class="ident">ds</span> <span class="op">=</span> (<span class="ident">other</span>.<span class="ident">s</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">s</span>()).<span class="ident">abs</span>();
-        <span class="ident">dq</span>.<span class="ident">max</span>(<span class="ident">dr</span>.<span class="ident">max</span>(<span class="ident">ds</span>))
-    }
-
     <span class="doccomment">/// Rotate this hexagon grid coordinate by the given floating-point direction.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
@@ -1721,6 +1736,20 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Coordinate</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FloatCoordinate</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">value</span>: <span class="ident">Coordinate</span>) -&gt; <span class="ident">FloatCoordinate</span> {
         <span class="ident">FloatCoordinate</span> { <span class="ident">q</span>: <span class="ident">value</span>.<span class="ident">q</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">r</span>: <span class="ident">value</span>.<span class="ident">r</span> <span class="kw">as</span> <span class="ident">f32</span> }
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">impl</span> <span class="ident">approx::AbsDiffEq</span> <span class="kw">for</span> <span class="ident">FloatCoordinate</span> {
+    <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">f32</span>;
+
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() -&gt; <span class="ident">f32</span> {
+        <span class="ident">tests::EPSILON</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">f32</span>) -&gt; <span class="ident">bool</span> {
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">q</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">q</span>, <span class="ident">epsilon</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">r</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">r</span>, <span class="ident">epsilon</span>)
     }
 }
 
@@ -2036,6 +2065,19 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">impl</span> <span class="ident">approx::AbsDiffEq</span> <span class="kw">for</span> <span class="ident">FloatDirection</span> {
+    <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">f32</span>;
+
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() -&gt; <span class="ident">f32</span> {
+        <span class="ident">tests::EPSILON</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">f32</span>) -&gt; <span class="ident">bool</span> {
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="number">0</span>, <span class="ident">epsilon</span>)
+    }
+}
+
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="doccomment">/// Position within a grid of rectangular pixels.</span>
@@ -2061,13 +2103,6 @@
     <span class="doccomment">/// Position on the `y` axis.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">y</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f32</span> {
         <span class="self">self</span>.<span class="number">1</span>
-    }
-
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">distance</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Point</span>) -&gt; <span class="ident">f32</span> {
-        <span class="kw">let</span> <span class="ident">dx</span> <span class="op">=</span> <span class="ident">other</span>.<span class="number">0</span> <span class="op">-</span> <span class="self">self</span>.<span class="number">0</span>;
-        <span class="kw">let</span> <span class="ident">dy</span> <span class="op">=</span> <span class="ident">other</span>.<span class="number">1</span> <span class="op">-</span> <span class="self">self</span>.<span class="number">1</span>;
-        (<span class="ident">dx</span> <span class="op">*</span> <span class="ident">dx</span> <span class="op">+</span> <span class="ident">dy</span> <span class="op">*</span> <span class="ident">dy</span>).<span class="ident">sqrt</span>()
     }
 }
 
@@ -2104,6 +2139,20 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">f32</span>, <span class="ident">f32</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Point</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">value</span>: (<span class="ident">f32</span>, <span class="ident">f32</span>)) -&gt; <span class="ident">Point</span> {
         <span class="ident">Point</span>(<span class="ident">value</span>.<span class="number">0</span>, <span class="ident">value</span>.<span class="number">1</span>)
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">impl</span> <span class="ident">approx::AbsDiffEq</span> <span class="kw">for</span> <span class="ident">Point</span> {
+    <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">f32</span>;
+
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() -&gt; <span class="ident">f32</span> {
+        <span class="ident">tests::EPSILON</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">f32</span>) -&gt; <span class="ident">bool</span> {
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="number">0</span>, <span class="ident">epsilon</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="number">1</span>, <span class="ident">epsilon</span>)
     }
 }
 
@@ -2269,6 +2318,22 @@
             <span class="op">-</span><span class="self">self</span>.<span class="ident">height</span>
         };
         <span class="ident">Rect</span> { <span class="ident">left</span>, <span class="ident">top</span>, <span class="ident">width</span>, <span class="ident">height</span> }
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">impl</span> <span class="ident">approx::AbsDiffEq</span> <span class="kw">for</span> <span class="ident">Rect</span> {
+    <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">f32</span>;
+
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() -&gt; <span class="ident">f32</span> {
+        <span class="ident">tests::EPSILON</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">f32</span>) -&gt; <span class="ident">bool</span> {
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">left</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">left</span>, <span class="ident">epsilon</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">top</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">top</span>, <span class="ident">epsilon</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">width</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">width</span>, <span class="ident">epsilon</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">f32::abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">height</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">height</span>, <span class="ident">epsilon</span>)
     }
 }
 
@@ -2444,8 +2509,9 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">approx::assert_abs_diff_eq</span>;
 
-    <span class="kw">const</span> <span class="ident">EPS</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">0.001</span>;
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EPSILON</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">1e-6</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">coordinate_add</span>() {
@@ -2471,39 +2537,35 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">coordinate_to_pixel</span>() {
-        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">Point</span>, <span class="ident">right</span>: <span class="ident">Point</span>) {
-            <span class="macro">assert!</span>(<span class="ident">left</span>.<span class="ident">distance</span>(<span class="ident">right</span>) <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
-        }
-
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">10.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">8.660</span>, <span class="number">15.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">8.660254</span>, <span class="number">15.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">1</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">17.321</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">17.320507</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="op">-</span><span class="number">15.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="op">-</span><span class="number">15.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">20.0</span>, <span class="op">-</span><span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">17.321</span>, <span class="op">-</span><span class="number">20.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">17.320507</span>, <span class="op">-</span><span class="number">20.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">1</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">34.641</span>, <span class="number">10.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">34.641014</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.962</span>, <span class="number">40.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.96152</span>, <span class="number">40.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">55.0</span>, <span class="op">-</span><span class="number">17.321</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">55.0</span>, <span class="op">-</span><span class="number">17.320507</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">1</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">34.641</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">34.641014</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.962</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.96152</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -2554,103 +2616,91 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">float_coordinate_rotate</span>() {
-        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">FloatCoordinate</span>, <span class="ident">right</span>: <span class="ident">FloatCoordinate</span>) {
-            <span class="macro">assert!</span>(<span class="ident">left</span>.<span class="ident">distance</span>(<span class="ident">right</span>) <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
-        }
-
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
 
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="op">-</span><span class="number">1.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="ident">Direction::F</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">2.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="number">3.5</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">rotate</span>(<span class="op">-</span><span class="number">2.5</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="ident">SQRT_3</span>, <span class="number">0.0</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">float_coordinate_to_pixel</span>() {
-        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">Point</span>, <span class="ident">right</span>: <span class="ident">Point</span>) {
-            <span class="macro">assert!</span>(<span class="ident">left</span>.<span class="ident">distance</span>(<span class="ident">right</span>) <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
-        }
-
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">10.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">12.990</span>, <span class="number">22.5</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">12.99038</span>, <span class="number">22.5</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="op">-</span><span class="number">15.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="op">-</span><span class="number">15.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">20.0</span>, <span class="op">-</span><span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="op">-</span><span class="number">35.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="op">-</span><span class="number">35.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.962</span>, <span class="number">10.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.96152</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.962</span>, <span class="number">40.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">51.96152</span>, <span class="number">40.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">77.5</span>, <span class="op">-</span><span class="number">25.981</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">77.5</span>, <span class="op">-</span><span class="number">25.98076</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">51.962</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">51.96152</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.962</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.96152</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">float_coordinate_from_pixel</span>() {
-        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">FloatCoordinate</span>, <span class="ident">right</span>: <span class="ident">FloatCoordinate</span>) {
-            <span class="macro">assert!</span>(<span class="ident">left</span>.<span class="ident">distance</span>(<span class="ident">right</span>) <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
-        }
-
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">10.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">5.0</span>, <span class="op">-</span><span class="number">5.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.455</span>, <span class="op">-</span><span class="number">0.333</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">12.990</span>, <span class="number">22.5</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="number">0.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="op">-</span><span class="number">15.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.455342</span>, <span class="op">-</span><span class="number">0.333333</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">12.99038</span>, <span class="number">22.5</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="number">0.000001</span>, <span class="number">1.5</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="number">0.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="op">-</span><span class="number">15.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">20.0</span>, <span class="op">-</span><span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.981</span>, <span class="op">-</span><span class="number">35.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">51.962</span>, <span class="number">10.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">51.962</span>, <span class="number">40.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">25.98076</span>, <span class="op">-</span><span class="number">35.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="op">-</span><span class="number">0.000001</span>, <span class="number">1.5</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">51.96152</span>, <span class="number">10.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">51.96152</span>, <span class="number">40.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">77.5</span>, <span class="op">-</span><span class="number">25.981</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">51.962</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.962</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">77.5</span>, <span class="op">-</span><span class="number">25.98076</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">0.0</span>, <span class="number">1.5</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="op">-</span><span class="number">51.96152</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">1.5</span>, <span class="number">0.0</span>));
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">Point</span>(<span class="op">-</span><span class="number">35.0</span>, <span class="op">-</span><span class="number">51.96152</span>));
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">pos</span>, <span class="ident">FloatCoordinate::new</span>(<span class="number">2.0</span>, <span class="op">-</span><span class="number">1.0</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -2697,42 +2747,38 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">direction_to_angle</span>() {
-        <span class="kw">fn</span> <span class="ident">assert_approx_eq</span>(<span class="ident">left</span>: <span class="ident">f32</span>, <span class="ident">right</span>: <span class="ident">f32</span>) {
-            <span class="macro">assert!</span>((<span class="ident">left</span> <span class="op">-</span> <span class="ident">right</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">EPS</span>, <span class="string">&quot;left = {}, right = {}&quot;</span>, <span class="ident">left</span>, <span class="ident">right</span>);
-        }
-
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::A</span>.<span class="ident">to_angle</span>(), <span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::B</span>.<span class="ident">to_angle</span>(), <span class="number">60.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::C</span>.<span class="ident">to_angle</span>(), <span class="number">120.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::D</span>.<span class="ident">to_angle</span>(), <span class="number">180.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::E</span>.<span class="ident">to_angle</span>(), <span class="number">240.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">Direction::F</span>.<span class="ident">to_angle</span>(), <span class="number">300.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::A</span>.<span class="ident">to_angle</span>(), <span class="number">0.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::B</span>.<span class="ident">to_angle</span>(), <span class="number">60.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::C</span>.<span class="ident">to_angle</span>(), <span class="number">120.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::D</span>.<span class="ident">to_angle</span>(), <span class="number">180.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::E</span>.<span class="ident">to_angle</span>(), <span class="number">240.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">Direction::F</span>.<span class="ident">to_angle</span>(), <span class="number">300.0</span>);
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">10.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::A</span>), <span class="number">90.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::B</span>), <span class="number">150.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::C</span>), <span class="number">210.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::D</span>), <span class="number">270.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::E</span>), <span class="number">330.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::F</span>), <span class="number">30.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::A</span>), <span class="number">90.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::B</span>), <span class="number">150.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::C</span>), <span class="number">210.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::D</span>), <span class="number">270.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::E</span>), <span class="number">330.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::F</span>), <span class="number">30.0</span>);
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">20.0</span>, <span class="op">-</span><span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">10.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="op">-</span><span class="number">1</span>)), <span class="number">30.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">0</span>)), <span class="number">90.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">1</span>)), <span class="number">150.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">2</span>)), <span class="number">210.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">3</span>)), <span class="number">270.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">4</span>)), <span class="number">330.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">5</span>)), <span class="number">30.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">6</span>)), <span class="number">90.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="op">-</span><span class="number">1</span>)), <span class="number">30.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">0</span>)), <span class="number">90.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">1</span>)), <span class="number">150.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">2</span>)), <span class="number">210.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">3</span>)), <span class="number">270.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">4</span>)), <span class="number">330.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">5</span>)), <span class="number">30.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::from</span>(<span class="number">6</span>)), <span class="number">90.0</span>);
 
         <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">20.0</span>), <span class="ident">Point</span>(<span class="number">10.0</span>, <span class="number">0.0</span>));
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::A</span>), <span class="number">0.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::B</span>), <span class="number">60.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::C</span>), <span class="number">120.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::D</span>), <span class="number">180.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::E</span>), <span class="number">240.0</span>);
-        <span class="ident">assert_approx_eq</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::F</span>), <span class="number">300.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::A</span>), <span class="number">0.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::B</span>), <span class="number">60.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::C</span>), <span class="number">120.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::D</span>), <span class="number">180.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::E</span>), <span class="number">240.0</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">Direction::F</span>), <span class="number">300.0</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
