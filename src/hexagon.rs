@@ -1055,10 +1055,10 @@ impl Default for Layout {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use approx::assert_abs_diff_eq;
+    use super::*;
 
-    pub const EPSILON: f32 = 1e-6;
+    pub const EPSILON: f32 = 1e-5;
 
     #[test]
     fn coordinate_add() {
@@ -1223,7 +1223,7 @@ mod tests {
         let pos = FloatCoordinate::from_pixel(&layout, Point(5.0, -5.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(0.455342, -0.333333));
         let pos = FloatCoordinate::from_pixel(&layout, Point(12.99038, 22.5));
-        assert_abs_diff_eq!(pos, FloatCoordinate::new(-0.000001, 1.5));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 1.5));
         let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, 0.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -15.0));
@@ -1233,7 +1233,7 @@ mod tests {
         let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 10.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -35.0));
-        assert_abs_diff_eq!(pos, FloatCoordinate::new(-0.000001, 1.5));
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 1.5));
         let pos = FloatCoordinate::from_pixel(&layout, Point(51.96152, 10.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(1.5, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(51.96152, 40.0));
@@ -1353,100 +1353,113 @@ mod tests {
 
     #[test]
     fn layout_hexagon_corners() {
-        let points_to_string = |points: &[Point]| -> String {
-            let s: Vec<String> = points.iter()
-                .map(|p| format!("({:.1}, {:.1})", p.x(), p.y()))
-                .collect();
-            s.join(", ")
-        };
-
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         assert_eq!(layout.is_pointy(), true);
         assert_eq!(layout.is_flat(), false);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!(points_to_string(&corners), "(-0.0, 10.0), (-8.7, 5.0), (-8.7, -5.0), (0.0, -10.0), (8.7, -5.0), (8.7, 5.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(0.0, 10.0), Point(-8.660255, 5.0), Point(-8.660255, -5.0),
+            Point(0.0, -10.0), Point(8.660255, -5.0), Point(8.660255, 5.0)][..]);
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!(points_to_string(&corners), "(8.7, 25.0), (-0.0, 20.0), (0.0, 10.0), (8.7, 5.0), (17.3, 10.0), (17.3, 20.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(8.660255, 25.0), Point(0.0, 20.0), Point(0.0, 10.0),
+            Point(8.660255, 5.0), Point(17.32051, 10.0), Point(17.32051, 20.0)][..]);
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!(points_to_string(&corners), "(17.3, 10.0), (8.7, 5.0), (8.7, -5.0), (17.3, -10.0), (26.0, -5.0), (26.0, 5.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(17.32051, 10.0), Point(8.660255, 5.0), Point(8.660255, -5.0),
+            Point(17.32051, -10.0), Point(25.98076, -5.0), Point(25.98076, 5.0)][..]);
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!(points_to_string(&corners), "(26.0, -5.0), (17.3, -10.0), (17.3, -20.0), (26.0, -25.0), (34.6, -20.0), (34.6, -10.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(25.98076, -5.0), Point(17.32051, -10.0), Point(17.32051, -20.0),
+            Point(25.98076, -25.0), Point(34.64102, -20.0), Point(34.64102, -10.0)][..]);
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         assert_eq!(layout.is_pointy(), true);
         assert_eq!(layout.is_flat(), false);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!(points_to_string(&corners), "(-0.0, -10.0), (-17.3, 0.0), (-17.3, 20.0), (0.0, 30.0), (17.3, 20.0), (17.3, -0.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(0.0, -10.0), Point(-17.32051, 0.0), Point(-17.32051, 20.0),
+            Point(0.0, 30.0), Point(17.32051, 20.0), Point(17.32051, 0.0)][..]);
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!(points_to_string(&corners), "(17.3, -40.0), (-0.0, -30.0), (0.0, -10.0), (17.3, 0.0), (34.6, -10.0), (34.6, -30.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(17.32051, -40.0), Point(0.0, -30.0), Point(0.0, -10.0),
+            Point(17.32051, 0.0), Point(34.64102, -10.0), Point(34.64102, -30.0)][..]);
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!(points_to_string(&corners), "(34.6, -10.0), (17.3, 0.0), (17.3, 20.0), (34.6, 30.0), (52.0, 20.0), (52.0, -0.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(34.64102, -10.0), Point(17.32051, 0.0), Point(17.32051, 20.0),
+            Point(34.64102, 30.0), Point(51.96153, 20.0), Point(51.96153, 0.0)][..]);
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!(points_to_string(&corners), "(52.0, 20.0), (34.6, 30.0), (34.6, 50.0), (52.0, 60.0), (69.3, 50.0), (69.3, 30.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(51.96152, 20.0), Point(34.64101, 30.0), Point(34.64101, 50.0),
+            Point(51.96152, 60.0), Point(69.28203, 50.0), Point(69.28203, 30.0)][..]);
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         assert_eq!(layout.is_pointy(), false);
         assert_eq!(layout.is_flat(), true);
         let corners = layout.hexagon_corners((0, 0).into());
-        assert_eq!(points_to_string(&corners), "(40.0, 0.0), (25.0, 17.3), (-5.0, 17.3), (-20.0, -0.0), (-5.0, -17.3), (25.0, -17.3)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(40.0, 0.0), Point(25.0, 17.32051), Point(-5.0, 17.32051),
+            Point(-20.0, 0.0), Point(-5.0, -17.32051), Point(25.00001, -17.32051)][..]);
         let corners = layout.hexagon_corners((0, 1).into());
-        assert_eq!(points_to_string(&corners), "(85.0, -17.3), (70.0, 0.0), (40.0, 0.0), (25.0, -17.3), (40.0, -34.6), (70.0, -34.6)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(85.0, -17.32051), Point(70.0, 0.0), Point(40.0, 0.0),
+            Point(25.0, -17.32051), Point(40.0, -34.64101), Point(70.0, -34.64101)][..]);
         let corners = layout.hexagon_corners((1, 0).into());
-        assert_eq!(points_to_string(&corners), "(40.0, -34.6), (25.0, -17.3), (-5.0, -17.3), (-20.0, -34.6), (-5.0, -52.0), (25.0, -52.0)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(40.0, -34.64101), Point(25.0, -17.32051), Point(-5.0, -17.32051),
+            Point(-20.0, -34.64101), Point(-5.0, -51.96152), Point(25.00001, -51.96152)][..]);
         let corners = layout.hexagon_corners((2, -1).into());
-        assert_eq!(points_to_string(&corners), "(-5.0, -52.0), (-20.0, -34.6), (-50.0, -34.6), (-65.0, -52.0), (-50.0, -69.3), (-20.0, -69.3)");
+        assert_abs_diff_eq!(corners[..],
+            &[Point(-5.0, -51.96152), Point(-20.0, -34.64101), Point(-50.0, -34.64101),
+            Point(-65.0, -51.96152), Point(-50.0, -69.28203), Point(-19.99999, -69.28203)][..]);
     }
 
     #[test]
     fn layout_hexagon_rect() {
-        let rect_to_string = |rect: &Rect| -> String {
-            format!("({:.1}, {:.1}) {:.1}x{:.1}", rect.left, rect.top, rect.width, rect.height)
-        };
-
         let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!(rect_to_string(&rect), "(-8.7, -10.0) 17.3x20.0");
+        assert_abs_diff_eq!(rect, Rect::new(-8.660255, -10.0, 17.32051, 20.0));
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!(rect_to_string(&rect), "(-0.0, 5.0) 17.3x20.0");
+        assert_abs_diff_eq!(rect, Rect::new(0.0, 5.0, 17.32051, 20.0));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!(rect_to_string(&rect), "(8.7, -10.0) 17.3x20.0");
+        assert_abs_diff_eq!(rect, Rect::new(8.660252, -10.0, 17.32051, 20.0));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!(rect_to_string(&rect), "(17.3, -25.0) 17.3x20.0");
+        assert_abs_diff_eq!(rect, Rect::new(17.32051, -25.0, 17.32051, 20.0));
         total = total.union(&rect);
-        assert_eq!(rect_to_string(&total), "(-8.7, -25.0) 43.3x50.0");
+        assert_abs_diff_eq!(total, Rect::new(-8.660255, -25.0, 43.30127, 50.0));
 
         let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!(rect_to_string(&rect), "(-17.3, -10.0) 34.6x40.0");
+        assert_abs_diff_eq!(rect, Rect::new(-17.32051, -10.0, 34.64102, 40.0));
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!(rect_to_string(&rect), "(-0.0, -40.0) 34.6x40.0");
+        assert_abs_diff_eq!(rect, Rect::new(0.0, -40.0, 34.64102, 40.0));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!(rect_to_string(&rect), "(17.3, -10.0) 34.6x40.0");
+        assert_abs_diff_eq!(rect, Rect::new(17.32051, -10.0, 34.64102, 40.0));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!(rect_to_string(&rect), "(34.6, 20.0) 34.6x40.0");
+        assert_abs_diff_eq!(rect, Rect::new(34.64101, 20.0, 34.64102, 40.0));
         total = total.union(&rect);
-        assert_eq!(rect_to_string(&total), "(-17.3, -40.0) 86.6x100.0");
+        assert_abs_diff_eq!(total, Rect::new(-17.32051, -40.0, 86.60254, 100.0));
 
         let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
-        assert_eq!(rect_to_string(&rect), "(-20.0, -17.3) 60.0x34.6");
+        assert_abs_diff_eq!(rect, Rect::new(-20.0, -17.32051, 60.0, 34.64102));
         let mut total = rect;
         let rect = layout.hexagon_rect((0, 1).into());
-        assert_eq!(rect_to_string(&rect), "(25.0, -34.6) 60.0x34.6");
+        assert_abs_diff_eq!(rect, Rect::new(25.0, -34.64101, 60.0, 34.64101));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((1, 0).into());
-        assert_eq!(rect_to_string(&rect), "(-20.0, -52.0) 60.0x34.6");
+        assert_abs_diff_eq!(rect, Rect::new(-20.0, -51.96152, 60.0, 34.64102));
         total = total.union(&rect);
         let rect = layout.hexagon_rect((2, -1).into());
-        assert_eq!(rect_to_string(&rect), "(-65.0, -69.3) 60.0x34.6");
+        assert_abs_diff_eq!(rect, Rect::new(-65.0, -69.28203, 60.0, 34.64102));
         total = total.union(&rect);
-        assert_eq!(rect_to_string(&total), "(-65.0, -69.3) 150.0x86.6");
+        assert_abs_diff_eq!(total, Rect::new(-65.0, -69.28203, 150.0, 86.60254));
     }
 }
 
