@@ -12,7 +12,7 @@ use crate::hexagon::FloatCoordinate;
 
 //----------------------------------------------------------------------------
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PolarCoordinate {
     distance: f32,
     angle: f32,
@@ -62,51 +62,58 @@ impl fmt::Display for PolarCoordinate {
     }
 }
 
+#[cfg(test)]
+impl approx::AbsDiffEq for PolarCoordinate {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        f32::abs_diff_eq(&self.distance, &other.distance, epsilon) &&
+        f32::abs_diff_eq(&self.angle, &other.angle, epsilon)
+    }
+}
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use crate::hexagon::FloatCoordinate;
     use super::*;
 
-    const EPS: f32 = 0.001;
+    pub const EPSILON: f32 = 1e-5;
 
     #[test]
     fn polar_from_coordinate() {
-        fn assert_approx_eq(left: PolarCoordinate, right: PolarCoordinate) {
-            assert!((left.distance - right.distance).abs() < EPS && (left.angle - right.angle).abs() < EPS, "left = {}, right = {}", left, right);
-        }
-
         let polar = PolarCoordinate::from_coordinate((1.0, 0.0));
-        assert_approx_eq(PolarCoordinate::new(1.0, 0.0), polar);
+        assert_abs_diff_eq!(polar, PolarCoordinate::new(1.0, 0.0));
 
         let polar = PolarCoordinate::from_coordinate((0.0, 1.0));
-        assert_approx_eq(PolarCoordinate::new(1.0, 60.0), polar);
+        assert_abs_diff_eq!(polar, PolarCoordinate::new(1.0, 60.0));
 
         let polar = PolarCoordinate::from_coordinate((2.0, -1.0));
-        assert_approx_eq(PolarCoordinate::new(SQRT_3, -30.0), polar);
+        assert_abs_diff_eq!(polar, PolarCoordinate::new(SQRT_3, -30.0));
 
         let polar = PolarCoordinate::from_coordinate((-2.0, 1.5));
-        assert_approx_eq(PolarCoordinate::new(1.803, 133.898), polar);
+        assert_abs_diff_eq!(polar, PolarCoordinate::new(1.802776, 133.89789));
     }
 
     #[test]
     fn polar_to_coordinate() {
-        fn assert_approx_eq(left: FloatCoordinate, right: FloatCoordinate) {
-            assert!((left.q() - right.q()).abs() < EPS && (left.r() - right.r()).abs() < EPS, "left = {}, right = {}", left, right);
-        }
-
         let pos = PolarCoordinate::new(1.0, 0.0).to_coordinate();
-        assert_approx_eq(FloatCoordinate::new(1.0, 0.0), pos);
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(1.0, 0.0));
 
         let pos = PolarCoordinate::new(1.0, 60.0).to_coordinate();
-        assert_approx_eq(FloatCoordinate::new(0.0, 1.0), pos);
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 1.0));
 
         let pos = PolarCoordinate::new(SQRT_3, -30.0).to_coordinate();
-        assert_approx_eq(FloatCoordinate::new(2.0, -1.0), pos);
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
-        let pos = PolarCoordinate::new(1.803, 133.898).to_coordinate();
-        assert_approx_eq(FloatCoordinate::new(-2.0, 1.5), pos);
+        let pos = PolarCoordinate::new(1.802776, 133.89789).to_coordinate();
+        assert_abs_diff_eq!(pos, FloatCoordinate::new(-2.0, 1.5));
     }
 }
 
