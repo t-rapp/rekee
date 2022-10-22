@@ -1,0 +1,34 @@
+{
+   "Path": "C:\\Applications\\RallymanGT\\RallymanGT Track Editor\\My Tracks",
+   "Name": "Chicane Example 01",
+   "Tuiles": [
+      {
+         "X": 54,
+         "Y": 52,
+         "Orientation": 0,
+         "TuileId": "202A"
+      },
+      {
+         "X": 55,
+         "Y": 52,
+         "Orientation": 0,
+         "TuileId": "205A",
+         "Tokens": [
+            {
+               "X": 0.0,
+               "Y": 0.0,
+               "Orientation": 180.0,
+               "TokenId": "dirt1"
+            },
+            {
+               "X": -0.5715768,
+               "Y": 0.0,
+               "Orientation": 0.0,
+               "TokenId": "dirt2"
+            }
+         ]
+      }
+   ],
+   "lowResWidth": 2480,
+   "lowResHeight": 1748
+}

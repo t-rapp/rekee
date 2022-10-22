@@ -6,7 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
@@ -25,6 +25,7 @@ type Result<T> = std::result::Result<T, ImportError>;
 pub enum ImportError {
     UnknownTileId(String),
     UnknownTokenId(String),
+    UnsupportedTokenId(String),
     JsonError(serde_json::Error),
 }
 
@@ -35,6 +36,8 @@ impl fmt::Display for ImportError {
                 write!(fmt, "Unknown tile identifier \"{}\"", val),
             ImportError::UnknownTokenId(val) =>
                 write!(fmt, "Unknown token identifier \"{}\"", val),
+            ImportError::UnsupportedTokenId(val) =>
+                write!(fmt, "Unsupported token identifier \"{}\"", val),
             ImportError::JsonError(err) =>
                 write!(fmt, "Error processing JSON data: {}", err),
         }
@@ -198,6 +201,141 @@ mod rgt {
         dir: i32,
         #[serde(rename = "TuileId")]
         id: String,
+        #[serde(rename = "Tokens", default, skip_serializing_if = "Vec::is_empty")]
+        tokens: Vec<ImportToken>,
+    }
+
+    #[derive(Debug, Default, Deserialize, Serialize)]
+    struct ImportToken {
+        #[serde(rename = "X")]
+        x: f32,
+        #[serde(rename = "Y")]
+        y: f32,
+        #[serde(rename = "Orientation")]
+        dir: f32,
+        #[serde(rename = "TokenId")]
+        id: ImportTokenId,
+    }
+
+    impl TryFrom<&ImportToken> for PlacedToken {
+        type Error = ImportError;
+
+        fn try_from(value: &ImportToken) -> Result<PlacedToken> {
+            let id = (&value.id).try_into()?;
+            let pos = FloatCoordinate::from_pixel(&token_layout(), Point(value.x, value.y));
+            let dir = FloatDirection::from_angle(value.dir);
+            Ok(PlacedToken::new(id, pos, dir))
+        }
+    }
+
+    #[derive(Debug, Default, Deserialize, Serialize)]
+    #[serde(transparent)]
+    struct ImportTokenId(String);
+
+    impl TryInto<TokenId> for &ImportTokenId {
+        type Error = ImportError;
+
+        fn try_into(self) -> Result<TokenId> {
+            match self.0.as_ref() {
+                "asphalt1" =>
+                    Ok(TokenId::ChicaneWithLimit(Terrain::Asphalt)),
+                "asphalt2" =>
+                    Ok(TokenId::Chicane(Terrain::Asphalt)),
+                "asphalt3" =>
+                    Ok(TokenId::Water(Terrain::Asphalt)),
+                "asphalt4" =>
+                    Ok(TokenId::Jump(Terrain::Asphalt)),
+                "dirt1" =>
+                    Ok(TokenId::ChicaneWithLimit(Terrain::Gravel)),
+                "dirt2" =>
+                    Ok(TokenId::Chicane(Terrain::Gravel)),
+                "dirt3" =>
+                    Ok(TokenId::Water(Terrain::Gravel)),
+                "dirt4" =>
+                    Ok(TokenId::Jump(Terrain::Gravel)),
+                "ice1" =>
+                    Ok(TokenId::ChicaneWithLimit(Terrain::Snow)),
+                "ice2" =>
+                    Ok(TokenId::Chicane(Terrain::Snow)),
+                "ice3" =>
+                    Ok(TokenId::Water(Terrain::Snow)),
+                "ice4" =>
+                    Ok(TokenId::Jump(Terrain::Snow)),
+                "climbm1" =>
+                    Ok(TokenId::ClimbAscent),
+                "climbp1" =>
+                    Ok(TokenId::ClimbDescent),
+                "climbw" =>
+                    Ok(TokenId::Cloud),
+                "climbr1" =>
+                    Ok(TokenId::Oxygen(1)),
+                "climbr2" =>
+                    Ok(TokenId::Oxygen(2)),
+                "climbr3" =>
+                    Ok(TokenId::Oxygen(3)),
+                "greendoor" =>
+                    Ok(TokenId::JokerEntrance),
+                "reddoor" =>
+                    Ok(TokenId::JokerExit),
+                "whitedoor" =>
+                    Ok(TokenId::Finish),
+                _ =>
+                    Err(ImportError::UnknownTokenId(self.0.clone())),
+            }
+        }
+    }
+
+    impl TryFrom<TokenId> for ImportTokenId {
+        type Error = ImportError;
+
+        fn try_from(value: TokenId) -> Result<ImportTokenId> {
+            match value {
+                TokenId::ChicaneWithLimit(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt1".into())),
+                TokenId::Chicane(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt2".into())),
+                TokenId::Water(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt3".into())),
+                TokenId::Jump(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt4".into())),
+                TokenId::ChicaneWithLimit(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt1".into())),
+                TokenId::Chicane(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt2".into())),
+                TokenId::Water(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt3".into())),
+                TokenId::Jump(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt4".into())),
+                TokenId::ChicaneWithLimit(Terrain::Snow) =>
+                    Ok(ImportTokenId("ice1".into())),
+                TokenId::Chicane(Terrain::Snow) =>
+                    Ok(ImportTokenId("ice2".into())),
+                TokenId::Water(Terrain::Snow) =>
+                    Ok(ImportTokenId("ice3".into())),
+                TokenId::Jump(Terrain::Snow) =>
+                    Ok(ImportTokenId("ice4".into())),
+                TokenId::ClimbAscent =>
+                    Ok(ImportTokenId("climbm1".into())),
+                TokenId::ClimbDescent =>
+                    Ok(ImportTokenId("climbp1".into())),
+                TokenId::Cloud =>
+                    Ok(ImportTokenId("climbw".into())),
+                TokenId::Oxygen(1) =>
+                    Ok(ImportTokenId("climbr1".into())),
+                TokenId::Oxygen(2) =>
+                    Ok(ImportTokenId("climbr2".into())),
+                TokenId::Oxygen(3) =>
+                    Ok(ImportTokenId("climbr3".into())),
+                TokenId::JokerEntrance =>
+                    Ok(ImportTokenId("greendoor".into())),
+                TokenId::JokerExit =>
+                    Ok(ImportTokenId("reddoor".into())),
+                TokenId::Finish =>
+                    Ok(ImportTokenId("whitedoor".into())),
+                _ =>
+                    Err(ImportError::UnsupportedTokenId(value.to_string())),
+            }
+        }
     }
 
     const IMPORT_OFFSET: Coordinate = Coordinate::new(-81, 52);
@@ -219,9 +357,12 @@ mod rgt {
                 .map(|id| if id.num() == 101 { id.base() } else { id })
                 .unwrap_or_default();
             let dir = Direction::from(tile.dir);
+            let tokens = tile.tokens.iter()
+                .filter_map(|token| token.try_into().ok())
+                .collect();
             debug!("import tile ({}, {}), {}, {} -> {}, {}, {}",
                 tile.x, tile.y, tile.id, tile.dir, pos, id, dir);
-            map.insert(id, pos, dir);
+            map.insert_with_tokens(id, pos, dir, tokens);
         }
 
         Ok(map)
@@ -237,6 +378,7 @@ mod rgt {
             low_res_height: 1748,
         };
 
+        let token_layout = token_layout();
         for tile in map.tiles() {
             let pos = tile.pos + IMPORT_OFFSET;
             // convert from axial to offset coordinates
@@ -256,11 +398,27 @@ mod rgt {
             let dir = i32::from(tile.dir);
             debug!("export tile {}, {}, {} -> ({}, {}), {}, {}",
                 tile.pos, tile.id(), tile.dir, x, y, &id, dir);
-            data.tiles.push(ImportTile { x, y, dir, id });
+
+            let mut tokens = Vec::with_capacity(tile.tokens.len());
+            for token in &tile.tokens {
+                let pos = token.pos.to_pixel(&token_layout);
+                let x = pos.x();
+                let y = pos.y();
+                let dir = token.dir.to_angle();
+                let id = token.id.try_into()?;
+                tokens.push(ImportToken { x, y, dir, id });
+            }
+
+            data.tiles.push(ImportTile { x, y, dir, id, tokens });
         }
 
         serde_json::to_string(&data)
             .map_err(ImportError::JsonError)
+    }
+
+    fn token_layout() -> Layout {
+        // invert the x-axis, keep the y-axis
+        Layout::new(Orientation::pointy(), Point(-1.0, 1.0), Point(0.0, 0.0))
     }
 }
 
@@ -397,6 +555,58 @@ mod tests {
         let data = export_native(&map)
             .expect("Cannot export track data");
         assert_eq!(data, r#"{"title":"ShortTrack2","tiles":[{"q":0,"r":1,"id":"102b","dir":0},{"q":1,"r":1,"id":"106b-2","dir":2},{"q":0,"r":0,"id":"116b-2","dir":0},{"q":1,"r":0,"id":"117b-2","dir":2},{"q":2,"r":-1,"id":"111b-2","dir":5},{"q":-1,"r":0,"id":"125b-1","dir":0},{"q":2,"r":0,"id":"112b-1","dir":1},{"q":-1,"r":-1,"id":"128b","dir":3},{"q":-2,"r":0,"id":"138b-1","dir":3},{"q":-1,"r":1,"id":"104b-2","dir":0},{"q":-2,"r":1,"id":"105b-1","dir":3}]}"#);
+    }
+
+    #[test]
+    fn import_rgt_chicane_example() {
+        let data = include_str!("tests/chicane-example1.rgt");
+        let map = import_rgt(data)
+            .expect("Cannot parse import file data");
+        assert_eq!(map.title(), "Chicane Example 01");
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(202, 1, 0), (1, 0).into(), Direction::A),
+            PlacedTile::with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+            ]),
+        ][..]);
+
+        let data = include_str!("tests/chicane-example2.rgt");
+        let map = import_rgt(data)
+            .expect("Cannot parse import file data");
+        assert_eq!(map.title(), "Chicane Example 02");
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(202, 1, 0), (0, 0).into(), Direction::F),
+            PlacedTile::with_tokens(TileId::new(205, 1, 0), (-1,  1).into(), Direction::F, vec![
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+            ]),
+        ][..]);
+    }
+
+    #[test]
+    fn export_rgt_chicane_example() {
+        let mut map = Map::new();
+        map.set_title("Chicane Example 01");
+        map.insert(TileId::new(202, 1, 0), (1, 0).into(), Direction::A);
+        map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ]);
+        let data = export_rgt(&map)
+            .expect("Cannot export track data");
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 01","Tuiles":[{"X":54,"Y":52,"Orientation":0,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":0,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
+
+        let mut map = Map::new();
+        map.set_title("Chicane Example 02");
+        map.insert(TileId::new(202, 1, 0), (1, -1).into(), Direction::F);
+        map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::F, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+        ]);
+        let data = export_rgt(&map)
+            .expect("Cannot export track data");
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 02","Tuiles":[{"X":54,"Y":51,"Orientation":5,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":5,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
