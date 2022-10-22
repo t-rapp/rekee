@@ -302,6 +302,7 @@ pub fn build_file_name(name: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use crate::map::PlacedTile;
     use super::*;
 
@@ -311,25 +312,25 @@ mod tests {
         let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "Chicane Example 01");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(202, 1, 0), (1, 0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
-            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
-            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
-        ])));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(202, 1, 0), (1, 0).into(), Direction::A),
+            PlacedTile::with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+            ]),
+        ][..]);
 
         let data = include_str!("tests/chicane-example2.json");
         let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "Chicane Example 02");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(202, 1, 0), (1, -1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::with_tokens(TileId::new(205, 1, 0), (0,  0).into(), Direction::F, vec![
-            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
-            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
-        ])));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(202, 1, 0), (1, -1).into(), Direction::F),
+            PlacedTile::with_tokens(TileId::new(205, 1, 0), (0,  0).into(), Direction::F, vec![
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (0.33, 0.0).into(), FloatDirection(0.0)),
+            ]),
+        ][..]);
     }
 
     #[test]
@@ -363,19 +364,19 @@ mod tests {
         let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
+            PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
+            PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A),
+            PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C),
+            PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F),
+            PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A),
+            PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B),
+            PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D),
+            PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D),
+            PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A),
+            PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D),
+        ][..]);
     }
 
     #[test]
@@ -404,19 +405,19 @@ mod tests {
         let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
+            PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
+            PlacedTile::new(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A),
+            PlacedTile::new(TileId::new(117, 2, 2), ( 1,  0).into(), Direction::C),
+            PlacedTile::new(TileId::new(111, 2, 2), ( 2, -1).into(), Direction::F),
+            PlacedTile::new(TileId::new(125, 2, 1), (-1,  0).into(), Direction::A),
+            PlacedTile::new(TileId::new(112, 2, 1), ( 2,  0).into(), Direction::B),
+            PlacedTile::new(TileId::new(128, 2, 0), (-1, -1).into(), Direction::D),
+            PlacedTile::new(TileId::new(138, 2, 1), (-2,  0).into(), Direction::D),
+            PlacedTile::new(TileId::new(104, 2, 2), (-1,  1).into(), Direction::A),
+            PlacedTile::new(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D),
+        ][..]);
     }
 
     #[test]
@@ -451,7 +452,7 @@ mod tests {
         let rgt_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(rgt_map.title(), native_map.title());
-        assert_eq!(rgt_map.tiles(), native_map.tiles());
+        assert_abs_diff_eq!(rgt_map.tiles(), native_map.tiles());
 
         let data = "{}";
         assert!(import_auto(data).is_err());

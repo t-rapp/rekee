@@ -125,6 +125,22 @@ impl PartialEq<PlacedTile> for PlacedTile {
     }
 }
 
+#[cfg(test)]
+impl approx::AbsDiffEq for PlacedTile {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        self.id.eq(&other.id) &&
+        self.pos.eq(&other.pos) &&
+        self.dir.eq(&other.dir) &&
+        self.tokens[..].abs_diff_eq(&other.tokens[..], epsilon)
+    }
+}
+
 impl AsRef<TileId> for PlacedTile {
     fn as_ref(&self) -> &TileId {
         &self.id
@@ -237,6 +253,21 @@ impl PlacedToken {
     /// Creates a new token with identifier, coordinates, and rotation.
     pub fn new(id: TokenId, pos: FloatCoordinate, dir: FloatDirection) -> Self {
         PlacedToken { id, pos, dir }
+    }
+}
+
+#[cfg(test)]
+impl approx::AbsDiffEq for PlacedToken {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        tests::EPSILON
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        self.id.eq(&other.id) &&
+        self.pos.abs_diff_eq(&other.pos, epsilon) &&
+        self.dir.abs_diff_eq(&other.dir, epsilon)
     }
 }
 
@@ -574,9 +605,12 @@ impl Default for Map {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use indoc::indoc;
     use crate::tile;
     use super::*;
+
+    pub const EPSILON: f32 = 1e-5;
 
     #[test]
     fn placed_tile_connection() {
@@ -710,15 +744,15 @@ mod tests {
 
         let text = r#"{"id":"0","q":0,"r":0,"dir":0}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
-        assert_eq!(tile, PlacedTile::new(tile!(0), (0, 0).into(), Direction::A));
+        assert_abs_diff_eq!(tile, PlacedTile::new(tile!(0), (0, 0).into(), Direction::A));
 
         let text = r#"{"id":"102a","q":0,"r":1,"dir":0}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
-        assert_eq!(tile, PlacedTile::new(tile!(102, a), (0, 1).into(), Direction::A));
+        assert_abs_diff_eq!(tile, PlacedTile::new(tile!(102, a), (0, 1).into(), Direction::A));
 
         let text = r#"{"id": "103b-1", "q": 1, "r": -2, "dir": 1}"#;
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
-        assert_eq!(tile, PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B));
+        assert_abs_diff_eq!(tile, PlacedTile::new(tile!(103, b, 1), (1, -2).into(), Direction::B));
 
         let text = indoc!(r#"{
             "id": "205a",
@@ -741,10 +775,10 @@ mod tests {
             ]
         }"#);
         let tile: PlacedTile = serde_json::from_str(text).unwrap();
-        let mut tokens = Vec::new();
-        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), 3.0.into()));
-        tokens.push(PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (1.0, 0.5).into(), 0.0.into()));
-        assert_eq!(tile, PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, tokens));
+        assert_abs_diff_eq!(tile, PlacedTile::with_tokens(tile!(205, a), (2, -1).into(), Direction::F, vec![
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (1.0, 0.5).into(), FloatDirection(0.0)),
+        ]));
 
         let text = r#"{}"#;
         let result: Result<PlacedTile, _> = serde_json::from_str(text);
@@ -777,19 +811,19 @@ mod tests {
         assert_eq!(map.active_pos(), None);
 
         assert_eq!(map.title(), "Short Track 2");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), (-2,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), (-2, -1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1, -2).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), (-1, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0, -1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), ( 1, -2).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D),
+            PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A),
+            PlacedTile::new(tile!(113, b, 0), (-2,  0).into(), Direction::D),
+            PlacedTile::new(tile!(117, b, 1), (-2, -1).into(), Direction::E),
+            PlacedTile::new(tile!(114, b, 0), (-1, -2).into(), Direction::F),
+            PlacedTile::new(tile!(115, b, 1), (-1, -1).into(), Direction::D),
+            PlacedTile::new(tile!(115, b, 2), ( 0, -1).into(), Direction::C),
+            PlacedTile::new(tile!(108, b, 0), ( 1, -2).into(), Direction::F),
+            PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::B),
+            PlacedTile::new(tile!(107, b, 1), ( 1,  0).into(), Direction::B),
+            PlacedTile::new(tile!(101),       ( 0, -2).into(), Direction::A),
+        ][..]);
     }
 
     #[test]
@@ -929,19 +963,19 @@ mod tests {
         map.insert(tile!(107, b, 1), (6, -2).into(), Direction::C);
         map.insert(tile!(101, a, 0), (4,  1).into(), Direction::E);
         map.align_center();
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E),
+            PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B),
+            PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E),
+            PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F),
+            PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A),
+            PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E),
+            PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D),
+            PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A),
+            PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C),
+            PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C),
+            PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E),
+        ][..]);
     }
 
     #[test]
@@ -959,19 +993,19 @@ mod tests {
         map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_left();
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 0, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1, -1).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 2, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 2,  0).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), ( 1,  1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 1,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), (-1,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), (-1, -1).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), ( 0,  1).into(), Direction::D)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(tile!(102, b, 0), ( 0, -1).into(), Direction::D),
+            PlacedTile::new(tile!(104, b, 1), ( 1, -1).into(), Direction::A),
+            PlacedTile::new(tile!(113, b, 0), ( 2, -1).into(), Direction::D),
+            PlacedTile::new(tile!(117, b, 1), ( 2,  0).into(), Direction::E),
+            PlacedTile::new(tile!(114, b, 0), ( 1,  1).into(), Direction::F),
+            PlacedTile::new(tile!(115, b, 1), ( 1,  0).into(), Direction::D),
+            PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::C),
+            PlacedTile::new(tile!(108, b, 0), (-1,  1).into(), Direction::F),
+            PlacedTile::new(tile!(110, b, 0), (-1,  0).into(), Direction::B),
+            PlacedTile::new(tile!(107, b, 1), (-1, -1).into(), Direction::B),
+            PlacedTile::new(tile!(101, a, 0), ( 0,  1).into(), Direction::D),
+        ][..]);
     }
 
     #[test]
@@ -989,19 +1023,19 @@ mod tests {
         map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
         map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
         map.rotate_right();
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1,  0).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 0,  1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), (-1,  2).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), (-2,  2).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-2,  1).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), (-1,  1).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), ( 0, -1).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(tile!(102, b, 0), ( 1,  0).into(), Direction::F),
+            PlacedTile::new(tile!(104, b, 1), ( 0,  1).into(), Direction::C),
+            PlacedTile::new(tile!(113, b, 0), (-1,  2).into(), Direction::F),
+            PlacedTile::new(tile!(117, b, 1), (-2,  2).into(), Direction::A),
+            PlacedTile::new(tile!(114, b, 0), (-2,  1).into(), Direction::B),
+            PlacedTile::new(tile!(115, b, 1), (-1,  1).into(), Direction::F),
+            PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::E),
+            PlacedTile::new(tile!(108, b, 0), ( 0, -1).into(), Direction::B),
+            PlacedTile::new(tile!(110, b, 0), ( 1, -1).into(), Direction::D),
+            PlacedTile::new(tile!(107, b, 1), ( 2, -1).into(), Direction::D),
+            PlacedTile::new(tile!(101, a, 0), (-1,  0).into(), Direction::F),
+        ][..]);
     }
 
     #[test]
@@ -1127,19 +1161,19 @@ mod tests {
         }"#);
         let map: Map = serde_json::from_str(text).unwrap();
         assert_eq!(map.title(), "Short Track 2");
-        let mut tiles = map.tiles().iter();
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C)));
-        assert_eq!(tiles.next(), Some(&PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E)));
-        assert_eq!(tiles.next(), None);
+        assert_abs_diff_eq!(map.tiles(), &[
+            PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E),
+            PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B),
+            PlacedTile::new(tile!(113, b, 0), ( 1,  1).into(), Direction::E),
+            PlacedTile::new(tile!(117, b, 1), ( 0,  2).into(), Direction::F),
+            PlacedTile::new(tile!(114, b, 0), (-1,  2).into(), Direction::A),
+            PlacedTile::new(tile!(115, b, 1), ( 0,  1).into(), Direction::E),
+            PlacedTile::new(tile!(115, b, 2), ( 0,  0).into(), Direction::D),
+            PlacedTile::new(tile!(108, b, 0), (-1,  0).into(), Direction::A),
+            PlacedTile::new(tile!(110, b, 0), ( 0, -1).into(), Direction::C),
+            PlacedTile::new(tile!(107, b, 1), ( 1, -2).into(), Direction::C),
+            PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E),
+        ][..]);
         assert_eq!(map.active_pos(), None);
     }
 }
