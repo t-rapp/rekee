@@ -155,7 +155,7 @@ impl LanesFilterElement {
             .collect();
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::publish(UpdateLanesFilterEvent { lanes: value });
+            nuts::send_to::<CatalogController, _>(UpdateLanesFilterEvent { lanes: value });
         }) as Box<dyn Fn(_)>);
 
         let anchor = inner.query_selector("a")?
@@ -223,7 +223,7 @@ impl TerrainFilterElement {
             .collect();
 
         let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::publish(UpdateTerrainFilterEvent { terrain: value });
+            nuts::send_to::<CatalogController, _>(UpdateTerrainFilterEvent { terrain: value });
         }) as Box<dyn Fn(_)>);
 
         let anchor = inner.query_selector("a")?
@@ -382,7 +382,7 @@ impl CatalogView {
             if data.is_some() {
                 event.prevent_default();
                 let pos = check!(mouse_position(&event));
-                nuts::publish(DragMapTileMoveEvent { pos });
+                nuts::publish(DragCatalogTileMoveEvent { pos });
             }
         }) as Box<dyn Fn(_)>);
 

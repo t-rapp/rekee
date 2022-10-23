@@ -468,7 +468,7 @@ impl MapView {
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             let pos = check!(mouse_position(&event));
             nuts::publish(UpdateSelectedTileEvent { pos });
-            nuts::publish(DragMapTileBeginEvent { pos });
+            nuts::send_to::<MapController, _>(DragMapTileBeginEvent { pos });
         }) as Box<dyn Fn(_)>);
         canvas.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
@@ -476,17 +476,17 @@ impl MapView {
         let dragged_mousemove_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
             let pos = check!(mouse_position(&event));
-            nuts::publish(DragMapTileMoveEvent { pos });
+            nuts::send_to::<MapController, _>(DragMapTileMoveEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseup_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             let pos = check!(mouse_position(&event));
-            nuts::publish(DragMapTileEndEvent { pos });
+            nuts::send_to::<MapController, _>(DragMapTileEndEvent { pos });
             nuts::publish(UpdateSelectedTileEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
-            nuts::publish(DragMapTileCancelEvent);
+            nuts::send_to::<MapController, _>(DragMapTileCancelEvent);
         }) as Box<dyn Fn(_)>);
 
         if let Some(btn) = document.get_element_by_id("align-center-button") {
