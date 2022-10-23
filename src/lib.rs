@@ -111,14 +111,14 @@ pub fn main() -> Result<(), JsValue> {
         nuts::publish(AppendTileEvent { id: tile!(110, b), pos: None, hint: "R".parse().ok() });
         nuts::publish(AppendTileEvent { id: tile!(107, b), pos: None, hint: None });
         nuts::publish(InsertTileEvent { id: tile!(101), pos: (0, -2).into(), dir: Direction::D });
-        nuts::publish(UpdateSelectedEvent { pos: Coordinate::new(-1, 0).to_pixel(&layout) });
+        nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(-1, 0).to_pixel(&layout) });
         let token = PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Asphalt), (0.0, 0.0).into(), 3.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
         let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.32, 0.0).into(), 0.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
         let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (-0.32, 0.0).into(), 0.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
-        nuts::publish(UpdateSelectedEvent { pos: Coordinate::new(1, -1).to_pixel(&layout) });
+        nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(1, -1).to_pixel(&layout) });
         let token = PlacedToken::new(TokenId::Finish, (0.5, 0.0).into(), 3.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
         nuts::publish(AlignCenterEvent);

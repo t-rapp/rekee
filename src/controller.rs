@@ -77,7 +77,7 @@ pub struct ToggleTileLabelsEvent {
     pub inverted: bool,
 }
 
-pub struct UpdateSelectedEvent {
+pub struct UpdateSelectedTileEvent {
     pub pos: Point,
 }
 
@@ -89,11 +89,11 @@ pub struct UpdateSelectedTileTokensEvent {
     pub tokens: Vec<PlacedToken>,
 }
 
-pub struct RotateSelectedLeftEvent;
+pub struct RotateSelectedTileLeftEvent;
 
-pub struct RotateSelectedRightEvent;
+pub struct RotateSelectedTileRightEvent;
 
-pub struct RemoveSelectedEvent;
+pub struct RemoveSelectedTileEvent;
 
 pub struct UpdateLanesFilterEvent {
     pub lanes: Option<u8>,
@@ -111,28 +111,28 @@ pub struct UpdateConnectionHintEvent {
     pub hint: Option<ConnectionHint>,
 }
 
-pub struct DragCatalogBeginEvent {
+pub struct DragCatalogTileBeginEvent {
     pub tile: TileId,
 }
 
-pub struct DragCatalogEndEvent {
+pub struct DragCatalogTileEndEvent {
     pub pos: Point,
     pub tile: TileId,
 }
 
-pub struct DragMapBeginEvent {
+pub struct DragMapTileBeginEvent {
     pub pos: Point,
 }
 
-pub struct DragMapMoveEvent {
+pub struct DragMapTileMoveEvent {
     pub pos: Point,
 }
 
-pub struct DragMapEndEvent {
+pub struct DragMapTileEndEvent {
     pub pos: Point,
 }
 
-pub struct DragMapCancelEvent;
+pub struct DragMapTileCancelEvent;
 
 pub struct ShowWelcomeEvent;
 
@@ -173,7 +173,7 @@ impl CatalogController {
         activity.subscribe(CatalogController::update_tile_labels);
         activity.subscribe(CatalogController::toggle_tile_labels);
         activity.subscribe(CatalogController::update_tile_usage);
-        activity.subscribe(CatalogController::drag_catalog_begin);
+        activity.subscribe(CatalogController::drag_catalog_tile_begin);
     }
 
     fn load_settings(&mut self, _event: &LoadSettingsEvent) {
@@ -217,8 +217,8 @@ impl CatalogController {
         self.view.update_tile_usage(&event.tiles);
     }
 
-    fn drag_catalog_begin(&mut self, event: &DragCatalogBeginEvent) {
-        self.view.drag_begin(event.tile);
+    fn drag_catalog_tile_begin(&mut self, event: &DragCatalogTileBeginEvent) {
+        self.view.drag_tile_begin(event.tile);
     }
 }
 
@@ -258,17 +258,17 @@ impl MapController {
         activity.subscribe(MapController::update_background_grid);
         activity.subscribe(MapController::update_tile_labels);
         activity.subscribe(MapController::toggle_tile_labels);
-        activity.subscribe(MapController::update_selected);
+        activity.subscribe(MapController::update_selected_tile);
         activity.subscribe(MapController::add_selected_tile_token);
         activity.subscribe(MapController::update_selected_tile_tokens);
-        activity.subscribe(MapController::rotate_selected_left);
-        activity.subscribe(MapController::rotate_selected_right);
-        activity.subscribe(MapController::remove_selected);
-        activity.subscribe(MapController::drag_catalog_end);
-        activity.subscribe(MapController::drag_map_begin);
-        activity.subscribe(MapController::drag_map_move);
-        activity.subscribe(MapController::drag_map_end);
-        activity.subscribe(MapController::drag_map_cancel);
+        activity.subscribe(MapController::rotate_selected_tile_left);
+        activity.subscribe(MapController::rotate_selected_tile_right);
+        activity.subscribe(MapController::remove_selected_tile);
+        activity.subscribe(MapController::drag_catalog_tile_end);
+        activity.subscribe(MapController::drag_map_tile_begin);
+        activity.subscribe(MapController::drag_map_tile_move);
+        activity.subscribe(MapController::drag_map_tile_end);
+        activity.subscribe(MapController::drag_map_tile_cancel);
         activity.subscribe(MapController::update_connection_hint);
     }
 
@@ -333,8 +333,8 @@ impl MapController {
         self.view.toggle_tile_labels(event.inverted);
     }
 
-    fn update_selected(&mut self, event: &UpdateSelectedEvent) {
-        self.view.update_selected(event.pos);
+    fn update_selected_tile(&mut self, event: &UpdateSelectedTileEvent) {
+        self.view.update_selected_tile(event.pos);
     }
 
     fn add_selected_tile_token(&mut self, event: &AddSelectedTileTokenEvent) {
@@ -345,36 +345,36 @@ impl MapController {
         self.view.update_selected_tile_tokens(&event.tokens);
     }
 
-    fn rotate_selected_left(&mut self, _event: &RotateSelectedLeftEvent) {
-        self.view.rotate_selected_left();
+    fn rotate_selected_tile_left(&mut self, _event: &RotateSelectedTileLeftEvent) {
+        self.view.rotate_selected_tile_left();
     }
 
-    fn rotate_selected_right(&mut self, _event: &RotateSelectedRightEvent) {
-        self.view.rotate_selected_right();
+    fn rotate_selected_tile_right(&mut self, _event: &RotateSelectedTileRightEvent) {
+        self.view.rotate_selected_tile_right();
     }
 
-    fn remove_selected(&mut self, _event: &RemoveSelectedEvent) {
-        self.view.remove_selected();
+    fn remove_selected_tile(&mut self, _event: &RemoveSelectedTileEvent) {
+        self.view.remove_selected_tile();
     }
 
-    fn drag_catalog_end(&mut self, event: &DragCatalogEndEvent) {
-        self.view.drag_end(event.pos, Some(event.tile));
+    fn drag_catalog_tile_end(&mut self, event: &DragCatalogTileEndEvent) {
+        self.view.drag_tile_end(event.pos, Some(event.tile));
     }
 
-    fn drag_map_begin(&mut self, event: &DragMapBeginEvent) {
-        self.view.drag_begin(event.pos);
+    fn drag_map_tile_begin(&mut self, event: &DragMapTileBeginEvent) {
+        self.view.drag_tile_begin(event.pos);
     }
 
-    fn drag_map_move(&mut self, event: &DragMapMoveEvent) {
-        self.view.drag_move(event.pos);
+    fn drag_map_tile_move(&mut self, event: &DragMapTileMoveEvent) {
+        self.view.drag_tile_move(event.pos);
     }
 
-    fn drag_map_end(&mut self, event: &DragMapEndEvent) {
-        self.view.drag_end(event.pos, None);
+    fn drag_map_tile_end(&mut self, event: &DragMapTileEndEvent) {
+        self.view.drag_tile_end(event.pos, None);
     }
 
-    fn drag_map_cancel(&mut self, _event: &DragMapCancelEvent) {
-        self.view.drag_cancel();
+    fn drag_map_tile_cancel(&mut self, _event: &DragMapTileCancelEvent) {
+        self.view.drag_tile_cancel();
     }
 
     fn update_connection_hint(&mut self, event: &UpdateConnectionHintEvent) {
@@ -702,8 +702,8 @@ impl WelcomeController {
         activity.subscribe(WelcomeController::import_file);
         activity.subscribe(WelcomeController::insert_tile);
         activity.subscribe(WelcomeController::append_tile);
-        activity.subscribe(WelcomeController::drag_catalog_end);
-        activity.subscribe(WelcomeController::drag_map_end);
+        activity.subscribe(WelcomeController::drag_catalog_tile_end);
+        activity.subscribe(WelcomeController::drag_map_tile_end);
         activity.subscribe(WelcomeController::show_welcome);
         activity.subscribe(WelcomeController::hide_welcome);
     }
@@ -733,11 +733,11 @@ impl WelcomeController {
         self.view.set_hidden(true);
     }
 
-    fn drag_catalog_end(&mut self, _event: &DragCatalogEndEvent) {
+    fn drag_catalog_tile_end(&mut self, _event: &DragCatalogTileEndEvent) {
         self.view.set_hidden(true);
     }
 
-    fn drag_map_end(&mut self, _event: &DragMapEndEvent) {
+    fn drag_map_tile_end(&mut self, _event: &DragMapTileEndEvent) {
         self.view.set_hidden(true);
     }
 

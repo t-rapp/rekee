@@ -169,7 +169,7 @@ impl SelectedMenu {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::publish(RotateSelectedLeftEvent);
+                nuts::publish(RotateSelectedTileLeftEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
@@ -179,7 +179,7 @@ impl SelectedMenu {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::publish(RotateSelectedRightEvent);
+                nuts::publish(RotateSelectedTileRightEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
@@ -200,7 +200,7 @@ impl SelectedMenu {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::publish(RemoveSelectedEvent);
+                nuts::publish(RemoveSelectedTileEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
@@ -467,8 +467,8 @@ impl MapView {
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             let pos = check!(mouse_position(&event));
-            nuts::publish(UpdateSelectedEvent { pos });
-            nuts::publish(DragMapBeginEvent { pos });
+            nuts::publish(UpdateSelectedTileEvent { pos });
+            nuts::publish(DragMapTileBeginEvent { pos });
         }) as Box<dyn Fn(_)>);
         canvas.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
@@ -476,17 +476,17 @@ impl MapView {
         let dragged_mousemove_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
             let pos = check!(mouse_position(&event));
-            nuts::publish(DragMapMoveEvent { pos });
+            nuts::publish(DragMapTileMoveEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseup_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             let pos = check!(mouse_position(&event));
-            nuts::publish(DragMapEndEvent { pos });
-            nuts::publish(UpdateSelectedEvent { pos });
+            nuts::publish(DragMapTileEndEvent { pos });
+            nuts::publish(UpdateSelectedTileEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
-            nuts::publish(DragMapCancelEvent);
+            nuts::publish(DragMapTileCancelEvent);
         }) as Box<dyn Fn(_)>);
 
         if let Some(btn) = document.get_element_by_id("align-center-button") {
@@ -615,7 +615,7 @@ impl MapView {
         self.grid.set_hidden(!settings.background_grid_visible);
         self.tile_labels_visible = settings.tile_labels_visible;
         self.update_map();
-        self.inner_update_selected(settings.selected.unwrap_or_default());
+        self.inner_update_selected_tile(settings.selected.unwrap_or_default());
     }
 
     pub fn save_settings(&mut self) -> MapSettings {
@@ -683,7 +683,7 @@ impl MapView {
     pub fn rotate_map_left(&mut self) {
         self.map.rotate_left();
         if let Some(pos) = self.selected.pos() {
-            self.inner_update_selected(pos.rotated_left());
+            self.inner_update_selected_tile(pos.rotated_left());
         }
         self.update_map();
     }
@@ -691,7 +691,7 @@ impl MapView {
     pub fn rotate_map_right(&mut self) {
         self.map.rotate_right();
         if let Some(pos) = self.selected.pos() {
-            self.inner_update_selected(pos.rotated_right());
+            self.inner_update_selected_tile(pos.rotated_right());
         }
         self.update_map();
     }
@@ -824,15 +824,15 @@ impl MapView {
         self.selected_menu.set_hidden(true);
     }
 
-    pub fn update_selected(&mut self, pos: Point) {
+    pub fn update_selected_tile(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout,
             self.canvas_viewbox.top_left() + pos);
-        self.inner_update_selected(pos);
+        self.inner_update_selected_tile(pos);
         nuts::send_to::<MapController, _>(SaveSettingsEvent {});
     }
 
-    fn inner_update_selected(&mut self, pos: Coordinate) {
-        debug!("update selected: {:?}", pos);
+    fn inner_update_selected_tile(&mut self, pos: Coordinate) {
+        debug!("update selected tile: {:?}", pos);
 
         let is_tile = self.map.get(pos).is_some();
         if self.selected.pos() != Some(pos) || is_tile {
@@ -868,7 +868,7 @@ impl MapView {
         }
     }
 
-    pub fn rotate_selected_left(&mut self) {
+    pub fn rotate_selected_tile_left(&mut self) {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
@@ -877,7 +877,7 @@ impl MapView {
         }
     }
 
-    pub fn rotate_selected_right(&mut self) {
+    pub fn rotate_selected_tile_right(&mut self) {
         let tile = self.selected.pos()
             .and_then(|pos| self.map.get(pos).cloned());
         if let Some(tile) = tile {
@@ -886,7 +886,7 @@ impl MapView {
         }
     }
 
-    pub fn remove_selected(&mut self) {
+    pub fn remove_selected_tile(&mut self) {
         if let Some(pos) = self.selected.pos() {
             self.map.remove(pos);
             self.update_map();
@@ -895,14 +895,14 @@ impl MapView {
         self.selected_menu.set_hidden(true);
     }
 
-    pub fn drag_begin(&mut self, pos: Point) {
+    pub fn drag_tile_begin(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout,
             self.canvas_viewbox.top_left() + pos);
         if self.selected.pos() != Some(pos) {
             return;
         }
         if let Some(tile) = self.map.get(pos) {
-            info!("drag begin: {:?}", tile);
+            info!("drag tile begin: {:?}", tile);
             let document = check!(self.canvas.owner_document());
             let dragged = check!(DraggedTile::new(&document, &self.layout, tile.clone()).ok());
             // dragged element will be made visible later on mouse move to avoid flicker
@@ -921,10 +921,10 @@ impl MapView {
         }
     }
 
-    pub fn drag_move(&mut self, pos: Point) {
+    pub fn drag_tile_move(&mut self, pos: Point) {
         if let Some(ref dragged) = self.dragged {
             let pos = self.canvas_viewbox.top_left() + pos;
-            debug!("drag move: {:?}", pos);
+            debug!("drag tile move: {:?}", pos);
             dragged.set_pos(pos);
             // make dragged element visible on first mouse move
             dragged.set_hidden(false);
@@ -933,12 +933,12 @@ impl MapView {
         self.selected_menu.set_hidden(true);
     }
 
-    pub fn drag_end(&mut self, pos: Point, added_tile: Option<TileId>) {
+    pub fn drag_tile_end(&mut self, pos: Point, added_tile: Option<TileId>) {
         if let Some(ref dragged) = self.dragged {
             let pos = Coordinate::from_pixel_rounded(&self.layout,
                 self.canvas_viewbox.top_left() + pos);
             let tile = dragged.tile();
-            info!("drag end: {:?} -> {:?}", tile, pos);
+            info!("drag tile end: {:?} -> {:?}", tile, pos);
             check!(self.canvas.remove_child(dragged.as_ref()).ok());
             if pos != tile.pos {
                 self.map.remove(tile.pos);
@@ -951,7 +951,7 @@ impl MapView {
         if let Some(tile) = added_tile {
             let pos = Coordinate::from_pixel_rounded(&self.layout,
                 self.canvas_viewbox.top_left() + pos);
-            info!("drag end: {:?} -> {:?}", tile, pos);
+            info!("drag tile end: {:?} -> {:?}", tile, pos);
             self.map.append(tile, Some(pos), None);
             self.update_map();
         }
@@ -966,10 +966,10 @@ impl MapView {
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
     }
 
-    pub fn drag_cancel(&mut self) {
+    pub fn drag_tile_cancel(&mut self) {
         if let Some(ref dragged) = self.dragged {
             let tile = dragged.tile();
-            info!("drag cancel: {:?}", tile);
+            info!("drag tile cancel: {:?}", tile);
             check!(self.canvas.remove_child(dragged.as_ref()).ok());
         }
         self.dragged = None;

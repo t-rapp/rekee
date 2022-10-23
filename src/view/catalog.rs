@@ -79,7 +79,7 @@ impl CatalogTile {
                     trans.set_effect_allowed("copy");
                     trans.set_drag_image(&drag_img, offset_x, offset_y);
                 }
-                nuts::publish(DragCatalogBeginEvent { tile: id.base() });
+                nuts::publish(DragCatalogTileBeginEvent { tile: id.base() });
             }
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
@@ -382,7 +382,7 @@ impl CatalogView {
             if data.is_some() {
                 event.prevent_default();
                 let pos = check!(mouse_position(&event));
-                nuts::publish(DragMapMoveEvent { pos });
+                nuts::publish(DragMapTileMoveEvent { pos });
             }
         }) as Box<dyn Fn(_)>);
 
@@ -393,8 +393,8 @@ impl CatalogView {
             if let Some(tile) = tile {
                 event.prevent_default();
                 let pos = check!(mouse_position(&event));
-                nuts::publish(DragCatalogEndEvent { pos, tile });
-                nuts::publish(UpdateSelectedEvent { pos });
+                nuts::publish(DragCatalogTileEndEvent { pos, tile });
+                nuts::publish(UpdateSelectedTileEvent { pos });
             }
         }) as Box<dyn Fn(_)>);
 
@@ -615,8 +615,8 @@ impl CatalogView {
         }
     }
 
-    pub fn drag_begin(&mut self, tile: TileId) {
-        info!("drag begin: {:?}", tile);
+    pub fn drag_tile_begin(&mut self, tile: TileId) {
+        info!("drag tile begin: {:?}", tile);
         if self.map.is_none() {
             // lookup map element and initialize drag-n-drop event handlers
             let document = self.catalog.owner_document().unwrap();
