@@ -725,7 +725,7 @@
                     <span class="ident">trans</span>.<span class="ident">set_effect_allowed</span>(<span class="string">&quot;copy&quot;</span>);
                     <span class="ident">trans</span>.<span class="ident">set_drag_image</span>(<span class="kw-2">&amp;</span><span class="ident">drag_img</span>, <span class="ident">offset_x</span>, <span class="ident">offset_y</span>);
                 }
-                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogBeginEvent</span> { <span class="ident">tile</span>: <span class="ident">id</span>.<span class="ident">base</span>() });
+                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileBeginEvent</span> { <span class="ident">tile</span>: <span class="ident">id</span>.<span class="ident">base</span>() });
             }
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
         <span class="ident">tile</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dragstart&quot;</span>, <span class="ident">dragstart_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
@@ -801,7 +801,7 @@
             .<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::publish</span>(<span class="ident">UpdateLanesFilterEvent</span> { <span class="ident">lanes</span>: <span class="ident">value</span> });
+            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">UpdateLanesFilterEvent</span> { <span class="ident">lanes</span>: <span class="ident">value</span> });
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
         <span class="kw">let</span> <span class="ident">anchor</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>
@@ -869,7 +869,7 @@
             .<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::publish</span>(<span class="ident">UpdateTerrainFilterEvent</span> { <span class="ident">terrain</span>: <span class="ident">value</span> });
+            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">UpdateTerrainFilterEvent</span> { <span class="ident">terrain</span>: <span class="ident">value</span> });
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
         <span class="kw">let</span> <span class="ident">anchor</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>
@@ -1028,7 +1028,7 @@
             <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">is_some</span>() {
                 <span class="ident">event</span>.<span class="ident">prevent_default</span>();
                 <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">mouse_position</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>));
-                <span class="ident">nuts::publish</span>(<span class="ident">DragMapMoveEvent</span> { <span class="ident">pos</span> });
+                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileMoveEvent</span> { <span class="ident">pos</span> });
             }
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
@@ -1039,8 +1039,8 @@
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">tile</span> {
                 <span class="ident">event</span>.<span class="ident">prevent_default</span>();
                 <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">mouse_position</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>));
-                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogEndEvent</span> { <span class="ident">pos</span>, <span class="ident">tile</span> });
-                <span class="ident">nuts::publish</span>(<span class="ident">UpdateSelectedEvent</span> { <span class="ident">pos</span> });
+                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileEndEvent</span> { <span class="ident">pos</span>, <span class="ident">tile</span> });
+                <span class="ident">nuts::publish</span>(<span class="ident">UpdateSelectedTileEvent</span> { <span class="ident">pos</span> });
             }
         }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
 
@@ -1261,8 +1261,8 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) {
-        <span class="macro">info!</span>(<span class="string">&quot;drag begin: {:?}&quot;</span>, <span class="ident">tile</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_tile_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) {
+        <span class="macro">info!</span>(<span class="string">&quot;drag tile begin: {:?}&quot;</span>, <span class="ident">tile</span>);
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">is_none</span>() {
             <span class="comment">// lookup map element and initialize drag-n-drop event handlers</span>
             <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
