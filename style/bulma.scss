@@ -36,3 +36,14 @@ $tabs-link-padding: 0.5em;
   }
 }
 @import "card-footer-colors.sass";
+
+// Some cursor helper classes
+.is-draggable {
+  cursor: grab !important;
+}
+.is-dragged {
+  cursor: grabbing !important;
+}
+.is-movable {
+  cursor: move !important;
+}
