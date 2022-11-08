@@ -896,13 +896,6 @@
 <span id="896">896</span>
 <span id="897">897</span>
 <span id="898">898</span>
-<span id="899">899</span>
-<span id="900">900</span>
-<span id="901">901</span>
-<span id="902">902</span>
-<span id="903">903</span>
-<span id="904">904</span>
-<span id="905">905</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Display of map details and configuration of track tokens.</span>
 <span class="comment">//</span>
@@ -1268,7 +1261,7 @@
     <span class="ident">token_distance</span>: <span class="ident">TokenSliderInputField</span>,
     <span class="ident">token_angle</span>: <span class="ident">TokenSliderInputField</span>,
     <span class="ident">token_orientation</span>: <span class="ident">TokenSliderInputField</span>,
-    <span class="ident">image</span>: <span class="ident">Element</span>,
+    <span class="ident">image</span>: <span class="ident">TokenImageElement</span>,
     <span class="ident">toggle_icon</span>: <span class="ident">Element</span>,
     <span class="ident">toggle_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
     <span class="ident">delete</span>: <span class="ident">Element</span>,
@@ -1279,7 +1272,7 @@
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="ident">PlacedTile</span>, <span class="ident">token</span>: <span class="ident">PlacedToken</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">image_parent</span>: <span class="kw-2">&amp;</span><span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">active</span> <span class="op">=</span> <span class="ident">index</span> <span class="op">==</span> <span class="number">0</span>;
 
-        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">draw_tile_token</span>(<span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">TokenImageElement::new</span>(<span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="ident">token</span>)<span class="question-mark">?</span>;
         <span class="ident">image_parent</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">card</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
@@ -1399,7 +1392,7 @@
                     <span class="self">self</span>.<span class="ident">oxygen_variant</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
                 },
             }
-            <span class="self">self</span>.<span class="ident">update_image</span>();
+            <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>);
         }
     }
 
@@ -1411,7 +1404,7 @@
             <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;Token: {}&quot;</span>, <span class="ident">token_id</span>.<span class="ident">base</span>());
             <span class="self">self</span>.<span class="ident">card_header_title</span>.<span class="ident">set_inner_html</span>(<span class="kw-2">&amp;</span><span class="ident">text</span>);
             <span class="self">self</span>.<span class="ident">oxygen_variant</span>.<span class="ident">set_value</span>(<span class="ident">number</span>);
-            <span class="self">self</span>.<span class="ident">update_image</span>();
+            <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>);
         }
     }
 
@@ -1420,7 +1413,7 @@
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_angle</span>.<span class="ident">value</span>();
         <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">pos</span> <span class="op">=</span> <span class="ident">PolarCoordinate::new</span>(<span class="ident">value</span>, <span class="ident">angle</span>).<span class="ident">to_coordinate</span>();
         <span class="self">self</span>.<span class="ident">token_distance</span>.<span class="ident">set_value</span>(<span class="ident">value</span>);
-        <span class="self">self</span>.<span class="ident">update_image</span>();
+        <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>);
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_token_angle</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">f32</span>) {
@@ -1430,7 +1423,7 @@
         <span class="kw">let</span> <span class="ident">orientation</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_orientation</span>.<span class="ident">value</span>();
         <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">dir</span> <span class="op">=</span> <span class="ident">FloatDirection::from_angle</span>(<span class="ident">orientation</span> <span class="op">+</span> <span class="ident">value</span>);
         <span class="self">self</span>.<span class="ident">token_angle</span>.<span class="ident">set_value</span>(<span class="ident">value</span>);
-        <span class="self">self</span>.<span class="ident">update_image</span>();
+        <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>);
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_token_orientation</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">f32</span>) {
@@ -1438,14 +1431,7 @@
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_angle</span>.<span class="ident">value</span>();
         <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">dir</span> <span class="op">=</span> <span class="ident">FloatDirection::from_angle</span>(<span class="ident">value</span> <span class="op">+</span> <span class="ident">angle</span>);
         <span class="self">self</span>.<span class="ident">token_orientation</span>.<span class="ident">set_value</span>(<span class="ident">value</span>);
-        <span class="self">self</span>.<span class="ident">update_image</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">draw_tile_token</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>).<span class="ident">ok</span>());
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">replace_with_with_node_1</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>).<span class="ident">ok</span>());
-        <span class="self">self</span>.<span class="ident">image</span> <span class="op">=</span> <span class="ident">image</span>;
+        <span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">token</span>);
     }
 }
 
@@ -1678,7 +1664,7 @@
 
         <span class="comment">// draw selected tile</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">center</span>) {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">draw_tile</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">TileImageElement::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>) {
                 <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">el</span>).<span class="ident">unwrap</span>();
             }
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="number">1</span>;
@@ -1704,11 +1690,11 @@
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">dir</span> <span class="kw">in</span> <span class="ident">Direction::iter</span>() {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">center</span>.<span class="ident">neighbor</span>(<span class="ident">dir</span>);
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">map</span>.<span class="ident">get</span>(<span class="ident">pos</span>) {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">draw_tile</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>) {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">TileImageElement::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>) {
                     <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">el</span>).<span class="ident">unwrap</span>();
                 }
                 <span class="kw">for</span> <span class="ident">token</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">tokens</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">draw_tile_token</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>, <span class="ident">token</span>) {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">TokenImageElement::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tile_layout</span>, <span class="ident">tile</span>, <span class="ident">token</span>) {
                         <span class="self">self</span>.<span class="ident">tokens</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">el</span>).<span class="ident">unwrap</span>();
                     }
                 }
