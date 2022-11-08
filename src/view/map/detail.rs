@@ -363,7 +363,7 @@ struct TokenImageProperties {
     token_distance: TokenSliderInputField,
     token_angle: TokenSliderInputField,
     token_orientation: TokenSliderInputField,
-    image: Element,
+    image: TokenImageElement,
     toggle_icon: Element,
     toggle_cb: Closure<dyn Fn(web_sys::Event)>,
     delete: Element,
@@ -374,7 +374,7 @@ impl TokenImageProperties {
     fn new(document: &Document, layout: Layout, tile: PlacedTile, token: PlacedToken, index: u32, image_parent: &Element) -> Result<Self> {
         let active = index == 0;
 
-        let image = draw_tile_token(document, &layout, &tile, &token)?;
+        let image = TokenImageElement::new(document, &layout, &tile, &token)?;
         image_parent.append_child(&image)?;
 
         let card = document.create_element("div")?;
@@ -494,7 +494,7 @@ impl TokenImageProperties {
                     self.oxygen_variant.set_hidden(true);
                 },
             }
-            self.update_image();
+            self.image.set_token(&self.layout, &self.tile, &self.token);
         }
     }
 
@@ -506,7 +506,7 @@ impl TokenImageProperties {
             let text = format!("Token: {}", token_id.base());
             self.card_header_title.set_inner_html(&text);
             self.oxygen_variant.set_value(number);
-            self.update_image();
+            self.image.set_token(&self.layout, &self.tile, &self.token);
         }
     }
 
@@ -515,7 +515,7 @@ impl TokenImageProperties {
         let angle = self.token_angle.value();
         self.token.pos = PolarCoordinate::new(value, angle).to_coordinate();
         self.token_distance.set_value(value);
-        self.update_image();
+        self.image.set_token(&self.layout, &self.tile, &self.token);
     }
 
     pub fn set_token_angle(&mut self, value: f32) {
@@ -525,7 +525,7 @@ impl TokenImageProperties {
         let orientation = self.token_orientation.value();
         self.token.dir = FloatDirection::from_angle(orientation + value);
         self.token_angle.set_value(value);
-        self.update_image();
+        self.image.set_token(&self.layout, &self.tile, &self.token);
     }
 
     pub fn set_token_orientation(&mut self, value: f32) {
@@ -533,14 +533,7 @@ impl TokenImageProperties {
         let angle = self.token_angle.value();
         self.token.dir = FloatDirection::from_angle(value + angle);
         self.token_orientation.set_value(value);
-        self.update_image();
-    }
-
-    fn update_image(&mut self) {
-        let document = self.inner.owner_document().unwrap();
-        let image = check!(draw_tile_token(&document, &self.layout, &self.tile, &self.token).ok());
-        check!(self.image.replace_with_with_node_1(&image).ok());
-        self.image = image;
+        self.image.set_token(&self.layout, &self.tile, &self.token);
     }
 }
 
@@ -773,7 +766,7 @@ impl MapDetailView {
 
         // draw selected tile
         if let Some(tile) = map.get(center) {
-            if let Ok(el) = draw_tile(&document, &self.tile_layout, tile) {
+            if let Ok(el) = TileImageElement::new(&document, &self.tile_layout, tile) {
                 self.tiles.append_child(&el).unwrap();
             }
             let mut index = 1;
@@ -799,11 +792,11 @@ impl MapDetailView {
         for &dir in Direction::iter() {
             let pos = center.neighbor(dir);
             if let Some(tile) = map.get(pos) {
-                if let Ok(el) = draw_tile(&document, &self.tile_layout, tile) {
+                if let Ok(el) = TileImageElement::new(&document, &self.tile_layout, tile) {
                     self.tiles.append_child(&el).unwrap();
                 }
                 for token in &tile.tokens {
-                    if let Ok(el) = draw_tile_token(&document, &self.tile_layout, tile, token) {
+                    if let Ok(el) = TokenImageElement::new(&document, &self.tile_layout, tile, token) {
                         self.tokens.append_child(&el).unwrap();
                     }
                 }

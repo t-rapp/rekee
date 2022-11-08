@@ -8,6 +8,8 @@
 
 #![allow(clippy::needless_return)]
 
+use std::ops::Deref;
+
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -73,8 +75,8 @@ fn tile_image_center(layout: &Layout) -> Point {
     Point(0.5 * size.x(), 0.5 * size.y())
 }
 
-fn token_image_size(layout: &Layout, token: &PlacedToken) -> Point {
-    match token.id {
+fn token_image_size(layout: &Layout, token_id: TokenId) -> Point {
+    match token_id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
             Point(0.500 * layout.size().x(), 0.350 * layout.size().y()),
         TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
@@ -84,9 +86,9 @@ fn token_image_size(layout: &Layout, token: &PlacedToken) -> Point {
     }
 }
 
-fn token_image_center(layout: &Layout, token: &PlacedToken) -> Point {
-    let size = token_image_size(layout, token);
-    match token.id {
+fn token_image_center(layout: &Layout, token_id: TokenId) -> Point {
+    let size = token_image_size(layout, token_id);
+    match token_id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
             Point(0.5 * size.x(), 0.5 * size.y()),
         TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
@@ -98,46 +100,6 @@ fn token_image_center(layout: &Layout, token: &PlacedToken) -> Point {
 
 //----------------------------------------------------------------------------
 
-fn draw_tile(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
-    let pos = tile.pos.to_pixel(layout);
-    let parent = document.create_element_ns(SVG_NS, "g")?;
-    parent.set_attribute("class", "tile")?;
-    parent.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
-
-    let size = tile_image_size(layout);
-    let center = tile_image_center(layout);
-    let angle = layout.direction_to_angle(tile.dir);
-    let img = document.create_element_ns(SVG_NS, "image")?;
-    if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
-        img.set_attribute("href", &format!("tiles/tile-{:x}.webp", tile.id()))?;
-    } else {
-        img.set_attribute("href", &format!("tiles/thumbs/tile-{:x}.webp", tile.id()))?;
-    }
-    img.set_attribute("width", &format!("{:.0}", size.x()))?;
-    img.set_attribute("height", &format!("{:.0}", size.y()))?;
-    img.set_attribute("image-rendering", "optimizeQuality")?;
-    img.set_attribute("transform", &format!("rotate({:.0}) translate({:.1} {:.1})", angle, -center.x(), -center.y()))?;
-    parent.append_child(&img)?;
-
-    Ok(parent)
-}
-
-fn draw_tile_with_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
-    let parent = draw_tile(document, layout, tile)?;
-
-    let label = document.create_element_ns(SVG_NS, "text")?;
-    label.set_attribute("class", "label")?;
-    label.set_attribute("x", "0")?;
-    label.set_attribute("y", "0")?;
-    let mut text = tile.id().base().to_string();
-    if !tile.tokens.is_empty() {
-        text.push('*');
-    }
-    label.append_child(&document.create_text_node(&text))?;
-    parent.append_child(&label)?;
-
-    Ok(parent)
-}
 
 fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
     let pos = tile.pos.to_pixel(layout);
@@ -155,30 +117,6 @@ fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> R
     }
     label.append_child(&document.create_text_node(&text))?;
     parent.append_child(&label)?;
-
-    Ok(parent)
-}
-
-fn draw_tile_token(document: &Document, layout: &Layout, tile: &PlacedTile, token: &PlacedToken) -> Result<Element> {
-    let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
-    let parent = document.create_element_ns(SVG_NS, "g")?;
-    parent.set_attribute("class", "token")?;
-    parent.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y()))?;
-
-    let size = token_image_size(layout, token);
-    let center = token_image_center(layout, token);
-    let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
-    let img = document.create_element_ns(SVG_NS, "image")?;
-    if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
-        img.set_attribute("href", &format!("tokens/{:x}.webp", token.id))?;
-    } else {
-        img.set_attribute("href", &format!("tokens/thumbs/{:x}.webp", token.id))?;
-    }
-    img.set_attribute("width", &format!("{}", size.x()))?;
-    img.set_attribute("height", &format!("{}", size.y()))?;
-    img.set_attribute("image-rendering", "optimizeQuality")?;
-    img.set_attribute("transform", &format!("rotate({:.1}) translate({:.3} {:.3})", angle, -center.x(), -center.y()))?;
-    parent.append_child(&img)?;
 
     Ok(parent)
 }
@@ -204,6 +142,110 @@ macro_rules! check {
             Some(val) => val,
         }
     };
+}
+
+//----------------------------------------------------------------------------
+
+struct TileImageElement {
+    inner: Element,
+}
+
+impl TileImageElement {
+    pub fn new(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Self> {
+        let pos = tile.pos.to_pixel(layout);
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_attribute("class", "tile")?;
+        inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
+
+        let size = tile_image_size(layout);
+        let center = tile_image_center(layout);
+        let angle = layout.direction_to_angle(tile.dir);
+        let image = document.create_element_ns(SVG_NS, "image")?;
+        if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
+            image.set_attribute("href", &format!("tiles/tile-{:x}.webp", tile.id()))?;
+        } else {
+            image.set_attribute("href", &format!("tiles/thumbs/tile-{:x}.webp", tile.id()))?;
+        }
+        image.set_attribute("width", &format!("{:.0}", size.x()))?;
+        image.set_attribute("height", &format!("{:.0}", size.y()))?;
+        image.set_attribute("image-rendering", "optimizeQuality")?;
+        image.set_attribute("transform", &format!("rotate({:.0}) translate({:.1} {:.1})", angle, -center.x(), -center.y()))?;
+        inner.append_child(&image)?;
+
+        Ok(TileImageElement { inner })
+    }
+
+    pub fn new_with_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Self> {
+        let element = Self::new(document, layout, tile)?;
+
+        let label = document.create_element_ns(SVG_NS, "text")?;
+        label.set_attribute("class", "label")?;
+        label.set_attribute("x", "0")?;
+        label.set_attribute("y", "0")?;
+        let mut text = tile.id().base().to_string();
+        if !tile.tokens.is_empty() {
+            text.push('*');
+        }
+        label.append_child(&document.create_text_node(&text))?;
+        element.append_child(&label)?;
+
+        Ok(element)
+    }
+}
+
+impl Deref for TileImageElement {
+    type Target = Element;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct TokenImageElement {
+    inner: Element,
+    image: Element,
+}
+
+impl TokenImageElement {
+    pub fn new(document: &Document, layout: &Layout, tile: &PlacedTile, token: &PlacedToken) -> Result<Self> {
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_attribute("class", "token")?;
+
+        let image = document.create_element_ns(SVG_NS, "image")?;
+        image.set_attribute("image-rendering", "optimizeQuality")?;
+        inner.append_child(&image)?;
+
+        let element = TokenImageElement { inner, image };
+        element.set_token(layout, tile, token);
+        Ok(element)
+    }
+
+    pub fn set_token(&self, layout: &Layout, tile: &PlacedTile, token: &PlacedToken) {
+        let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
+        check!(self.inner.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y())).ok());
+
+        let size = token_image_size(layout, token.id);
+        let center = token_image_center(layout, token.id);
+        let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
+        if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
+            check!(self.image.set_attribute("href", &format!("tokens/{:x}.webp", token.id)).ok());
+        } else {
+            check!(self.image.set_attribute("href", &format!("tokens/thumbs/{:x}.webp", token.id)).ok());
+        }
+        check!(self.image.set_attribute("width", &format!("{}", size.x())).ok());
+        check!(self.image.set_attribute("height", &format!("{}", size.y())).ok());
+        check!(self.image.set_attribute("transform", &format!("rotate({:.1}) translate({:.3} {:.3})", angle, -center.x(), -center.y())).ok());
+    }
+}
+
+impl Deref for TokenImageElement {
+    type Target = Element;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -262,42 +304,42 @@ mod tests {
 
         let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
 
-        let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(0.0));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::Chicane(Terrain::Asphalt);
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(30.000, 21.000)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(15.000, 10.500)");
 
-        let token = PlacedToken::new(TokenId::ClimbAscent, (0.0, 0.0).into(), FloatDirection(0.0));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::ClimbAscent;
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(18.900, 18.900)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(9.450, 9.450)");
 
-        let token = PlacedToken::new(TokenId::JokerEntrance, (0.0, 0.0).into(), FloatDirection(0.0));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::JokerEntrance;
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(72.000, 35.100)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(36.000, 35.100)");
 
         let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
 
-        let token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (0.0, 0.0).into(), FloatDirection(1.5));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::Chicane(Terrain::Asphalt);
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(30.000, 21.000)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(15.000, 10.500)");
 
-        let token = PlacedToken::new(TokenId::ClimbAscent, (0.0, 0.0).into(), FloatDirection(0.0));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::ClimbAscent;
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(18.900, 18.900)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(9.450, 9.450)");
 
-        let token = PlacedToken::new(TokenId::JokerExit, (0.0, 0.0).into(), FloatDirection(1.5));
-        let size = token_image_size(&layout, &token);
+        let token_id = TokenId::JokerExit;
+        let size = token_image_size(&layout, token_id);
         assert_eq!(point_to_string(size), "(72.000, 35.100)");
-        let center = token_image_center(&layout, &token);
+        let center = token_image_center(&layout, token_id);
         assert_eq!(point_to_string(center), "(36.000, 35.100)");
     }
 }

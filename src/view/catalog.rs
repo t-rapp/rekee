@@ -45,7 +45,8 @@ impl CatalogTile {
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
         let tile = PlacedTile::new(id, (0, 0).into(), Direction::A);
-        canvas.append_child(&draw_tile_with_label(document, layout, &tile)?.into())?;
+        let tile_image = TileImageElement::new_with_label(document, layout, &tile)?;
+        canvas.append_child(&tile_image)?;
 
         let tile = document.create_element("div")?;
         tile.set_attribute("class", "tile")?;

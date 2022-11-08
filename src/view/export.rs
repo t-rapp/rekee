@@ -278,8 +278,8 @@ impl TokenImage {
     fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile, token: PlacedToken) -> Result<Self> {
         let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir))
             .to_pixel(layout);
-        let size = token_image_size(layout, &token);
-        let center = token_image_center(layout, &token);
+        let size = token_image_size(layout, token.id);
+        let center = token_image_center(layout, token.id);
         let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
         let image = HtmlImageElement::new()?;
 

@@ -293,13 +293,13 @@ impl AsRef<Element> for ActiveHex {
 //----------------------------------------------------------------------------
 
 struct DraggedTile {
-    inner: Element,
+    inner: TileImageElement,
     tile: PlacedTile,
 }
 
 impl DraggedTile {
     fn new(document: &Document, layout: &Layout, tile: PlacedTile) -> Result<Self> {
-        let inner = draw_tile(document, layout, &tile)?;
+        let inner = TileImageElement::new(document, layout, &tile)?;
         inner.set_id("dragged");
 
         Ok(DraggedTile{ inner, tile })
@@ -734,11 +734,11 @@ impl MapView {
 
         // then add updated tiles
         for tile in self.map.tiles() {
-            if let Ok(el) = draw_tile(&document, &self.layout, tile) {
+            if let Ok(el) = TileImageElement::new(&document, &self.layout, tile) {
                 self.tiles.append_child(&el).unwrap();
             }
             for token in &tile.tokens {
-                if let Ok(el) = draw_tile_token(&document, &self.layout, tile, token) {
+                if let Ok(el) = TokenImageElement::new(&document, &self.layout, tile, token) {
                     self.tokens.append_child(&el).unwrap();
                 }
             }
