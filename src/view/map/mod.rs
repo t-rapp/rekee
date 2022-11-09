@@ -742,7 +742,7 @@ impl MapView {
                     self.tokens.append_child(&el).unwrap();
                 }
             }
-            if let Ok(el) = draw_tile_label(&document, &self.layout, tile) {
+            if let Ok(el) = TileLabelElement::new(&document, &self.layout, tile) {
                 self.labels.append_child(&el).unwrap();
             }
         }

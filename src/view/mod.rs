@@ -100,29 +100,6 @@ fn token_image_center(layout: &Layout, token_id: TokenId) -> Point {
 
 //----------------------------------------------------------------------------
 
-
-fn draw_tile_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Element> {
-    let pos = tile.pos.to_pixel(layout);
-    let parent = document.create_element_ns(SVG_NS, "g")?;
-    parent.set_attribute("class", "tile")?;
-    parent.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
-
-    let label = document.create_element_ns(SVG_NS, "text")?;
-    label.set_attribute("class", "label")?;
-    label.set_attribute("x", "0")?;
-    label.set_attribute("y", "0")?;
-    let mut text = tile.id().base().to_string();
-    if !tile.tokens.is_empty() {
-        text.push('*');
-    }
-    label.append_child(&document.create_text_node(&text))?;
-    parent.append_child(&label)?;
-
-    Ok(parent)
-}
-
-//----------------------------------------------------------------------------
-
 fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
@@ -178,6 +155,41 @@ impl TileImageElement {
     pub fn new_with_label(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Self> {
         let element = Self::new(document, layout, tile)?;
 
+        let label = TileLabelElement::create_label_element(document, tile)?;
+        element.append_child(&label)?;
+
+        Ok(element)
+    }
+}
+
+impl Deref for TileImageElement {
+    type Target = Element;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct TileLabelElement {
+    inner: Element,
+}
+
+impl TileLabelElement {
+    pub fn new(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Self> {
+        let pos = tile.pos.to_pixel(layout);
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_attribute("class", "tile")?;
+        inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
+
+        let label = Self::create_label_element(document, tile)?;
+        inner.append_child(&label)?;
+
+        Ok(TileLabelElement { inner })
+    }
+
+    fn create_label_element(document: &Document, tile: &PlacedTile) -> Result<Element> {
         let label = document.create_element_ns(SVG_NS, "text")?;
         label.set_attribute("class", "label")?;
         label.set_attribute("x", "0")?;
@@ -187,13 +199,13 @@ impl TileImageElement {
             text.push('*');
         }
         label.append_child(&document.create_text_node(&text))?;
-        element.append_child(&label)?;
 
-        Ok(element)
+        Ok(label)
     }
+
 }
 
-impl Deref for TileImageElement {
+impl Deref for TileLabelElement {
     type Target = Element;
 
     fn deref(&self) -> &Self::Target {
