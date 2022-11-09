@@ -275,72 +275,65 @@ impl<T: AsRef<Element>> ElementHidden for T {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use super::*;
 
     #[test]
     fn tile_image_size_and_center() {
-        let point_to_string = |point: Point| -> String {
-            format!("({:.3}, {:.3})", point.x(), point.y())
-        };
-
         let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
         let size = tile_image_size(&layout);
-        assert_eq!(point_to_string(size), "(120.000, 104.000)");
+        assert_abs_diff_eq!(size, Point(120.0, 104.0));
         let center = tile_image_center(&layout);
-        assert_eq!(point_to_string(center), "(60.000, 52.000)");
+        assert_abs_diff_eq!(center, Point(60.0, 52.0));
 
         let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
         let size = tile_image_size(&layout);
-        assert_eq!(point_to_string(size), "(120.000, 104.000)");
+        assert_abs_diff_eq!(size, Point(120.0, 104.0));
         let center = tile_image_center(&layout);
-        assert_eq!(point_to_string(center), "(60.000, 52.000)");
+        assert_abs_diff_eq!(center, Point(60.0, 52.0));
     }
 
     #[test]
     fn token_image_size_and_center() {
-        let point_to_string = |point: Point| -> String {
-            format!("({:.3}, {:.3})", point.x(), point.y())
-        };
-
         let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
 
         let token_id = TokenId::Chicane(Terrain::Asphalt);
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(30.000, 21.000)");
+        assert_abs_diff_eq!(size, Point(30.0, 21.0));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(15.000, 10.500)");
+        assert_abs_diff_eq!(center, Point(15.0, 10.5));
 
         let token_id = TokenId::ClimbAscent;
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(18.900, 18.900)");
+        assert_abs_diff_eq!(size, Point(18.9, 18.9));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(9.450, 9.450)");
+        assert_abs_diff_eq!(center, Point(9.45, 9.45));
 
         let token_id = TokenId::JokerEntrance;
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(72.000, 35.100)");
+        assert_abs_diff_eq!(size, Point(72.0, 35.1));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(36.000, 35.100)");
+        assert_abs_diff_eq!(center, Point(36.0, 35.1));
 
         let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
 
         let token_id = TokenId::Chicane(Terrain::Asphalt);
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(30.000, 21.000)");
+        assert_abs_diff_eq!(size, Point(30.0, 21.0));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(15.000, 10.500)");
+        assert_abs_diff_eq!(center, Point(15.0, 10.5));
 
         let token_id = TokenId::ClimbAscent;
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(18.900, 18.900)");
+        assert_abs_diff_eq!(size, Point(18.9, 18.9));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(9.450, 9.450)");
+        assert_abs_diff_eq!(center, Point(9.45, 9.45));
 
         let token_id = TokenId::JokerExit;
         let size = token_image_size(&layout, token_id);
-        assert_eq!(point_to_string(size), "(72.000, 35.100)");
+        assert_abs_diff_eq!(size, Point(72.0, 35.1));
         let center = token_image_center(&layout, token_id);
-        assert_eq!(point_to_string(center), "(36.000, 35.100)");
+        assert_abs_diff_eq!(center, Point(36.0, 35.1));
     }
 }
 
