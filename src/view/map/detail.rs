@@ -803,8 +803,10 @@ impl MapDetailView {
             }
         }
 
-        if let Some(item) = self.token_properties.first() {
-            self.toggle_token_properties(item.index);
+        let first_index = self.token_properties.first()
+            .map(|item| item.index);
+        if let Some(index) = first_index {
+            self.toggle_token_properties(index);
         }
     }
 
