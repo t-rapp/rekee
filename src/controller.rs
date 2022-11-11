@@ -620,7 +620,10 @@ impl MapDetailController {
 
     fn show(&mut self, domain: &mut DomainState, _event: &ShowMapDetailEvent) {
         if let Some(settings) = domain.try_get::<MapSettings>() {
-            let center = settings.selected.unwrap_or_default();
+            let center = match settings.selected {
+                Some(val) => val,
+                None => return,
+            };
             self.view.update_background_grid(settings.background_grid_visible);
             self.view.update_map_tiles(&settings.map, center);
         }
