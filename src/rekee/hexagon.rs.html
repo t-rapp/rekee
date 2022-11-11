@@ -1464,6 +1464,21 @@
 <span id="1464">1464</span>
 <span id="1465">1465</span>
 <span id="1466">1466</span>
+<span id="1467">1467</span>
+<span id="1468">1468</span>
+<span id="1469">1469</span>
+<span id="1470">1470</span>
+<span id="1471">1471</span>
+<span id="1472">1472</span>
+<span id="1473">1473</span>
+<span id="1474">1474</span>
+<span id="1475">1475</span>
+<span id="1476">1476</span>
+<span id="1477">1477</span>
+<span id="1478">1478</span>
+<span id="1479">1479</span>
+<span id="1480">1480</span>
+<span id="1481">1481</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Types and methods for working with a hexagon grid.</span>
 <span class="doccomment">//!</span>
@@ -1477,7 +1492,7 @@
 <span class="comment">//----------------------------------------------------------------------------</span>
 
 <span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">Mul</span>, <span class="ident">Index</span>, <span class="ident">IndexMut</span>};
+<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">Mul</span>, <span class="ident">Neg</span>, <span class="ident">Index</span>, <span class="ident">IndexMut</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
 
@@ -1914,6 +1929,21 @@
         <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">u8::from</span>(<span class="self">self</span>);
         <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">u8::from</span>(<span class="ident">other</span>);
         (<span class="number">6</span> <span class="op">+</span> <span class="ident">a</span> <span class="op">-</span> <span class="ident">b</span>).<span class="ident">into</span>()
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Neg</span> <span class="kw">for</span> <span class="ident">Direction</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
+
+    <span class="kw">fn</span> <span class="ident">neg</span>(<span class="self">self</span>) -&gt; <span class="ident">Direction</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Direction::A</span> =&gt; <span class="ident">Direction::A</span>,
+            <span class="ident">Direction::B</span> =&gt; <span class="ident">Direction::F</span>,
+            <span class="ident">Direction::C</span> =&gt; <span class="ident">Direction::E</span>,
+            <span class="ident">Direction::D</span> =&gt; <span class="ident">Direction::D</span>,
+            <span class="ident">Direction::E</span> =&gt; <span class="ident">Direction::C</span>,
+            <span class="ident">Direction::F</span> =&gt; <span class="ident">Direction::B</span>,
+        }
     }
 }
 

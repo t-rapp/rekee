@@ -743,6 +743,36 @@
 <span id="743">743</span>
 <span id="744">744</span>
 <span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
 <span class="doccomment">//!</span>
@@ -1291,6 +1321,21 @@
     <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
 }
 
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenBeginEvent</span> {
+    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenMoveEvent</span> {
+    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenEndEvent</span> {
+    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenCancelEvent</span>;
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplyMapDetailEvent</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapDetailController</span> {
@@ -1327,6 +1372,18 @@
         <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenOrientationEvent</span><span class="op">|</span> {
             <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_orientation</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
         });
+        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenBeginEvent</span><span class="op">|</span> {
+            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_begin</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">pos</span>);
+        });
+        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenMoveEvent</span><span class="op">|</span> {
+            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+        });
+        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenEndEvent</span><span class="op">|</span> {
+            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+        });
+        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">DragMapDetailTokenCancelEvent</span><span class="op">|</span> {
+            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_cancel</span>();
+        });
         <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyMapDetailEvent</span><span class="op">|</span> {
             <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_map_detail</span>();
         });
@@ -1338,7 +1395,10 @@
 
     <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapDetailEvent</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
-            <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">settings</span>.<span class="ident">selected</span>.<span class="ident">unwrap_or_default</span>();
+            <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">settings</span>.<span class="ident">selected</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                <span class="prelude-val">None</span> =&gt; <span class="kw">return</span>,
+            };
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
             <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">center</span>);
         }

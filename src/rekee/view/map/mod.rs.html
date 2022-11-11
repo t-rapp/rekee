@@ -1006,6 +1006,17 @@
 <span id="1006">1006</span>
 <span id="1007">1007</span>
 <span id="1008">1008</span>
+<span id="1009">1009</span>
+<span id="1010">1010</span>
+<span id="1011">1011</span>
+<span id="1012">1012</span>
+<span id="1013">1013</span>
+<span id="1014">1014</span>
+<span id="1015">1015</span>
+<span id="1016">1016</span>
+<span id="1017">1017</span>
+<span id="1018">1018</span>
+<span id="1019">1019</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Rendering of the map and according event handlers.</span>
 <span class="comment">//</span>
@@ -1358,6 +1369,7 @@
     <span class="ident">active</span>: <span class="ident">ActiveHex</span>,
     <span class="ident">tile_labels_visible</span>: <span class="ident">bool</span>,
     <span class="ident">keychange_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::KeyboardEvent</span>)<span class="op">&gt;</span>,
+    <span class="ident">dblclick_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::MouseEvent</span>)<span class="op">&gt;</span>,
     <span class="ident">dragged</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DraggedTile</span><span class="op">&gt;</span>,
     <span class="ident">dragged_mousemove_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::MouseEvent</span>)<span class="op">&gt;</span>,
     <span class="ident">dragged_mouseup_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::MouseEvent</span>)<span class="op">&gt;</span>,
@@ -1471,6 +1483,13 @@
             <span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
         <span class="ident">document</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;keyup&quot;</span>,
             <span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> <span class="ident">dblclick_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::MouseEvent</span><span class="op">|</span> {
+            <span class="ident">event</span>.<span class="ident">prevent_default</span>();
+            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
+            <span class="ident">nuts::publish</span>(<span class="ident">ShowMapDetailEvent</span>);
+        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="ident">canvas</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dblclick&quot;</span>, <span class="ident">dblclick_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
 
         <span class="comment">// add drag-n-drop event handlers to canvas element</span>
         <span class="kw">let</span> <span class="ident">callback</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::MouseEvent</span><span class="op">|</span> {
@@ -1607,10 +1626,11 @@
         <span class="ident">settings_button</span>.<span class="ident">remove_attribute</span>(<span class="string">&quot;disabled&quot;</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">MapView</span> {
-            <span class="ident">layout</span>, <span class="ident">map</span>, <span class="ident">canvas</span>, <span class="ident">canvas_viewbox</span>, <span class="ident">grid</span>, <span class="ident">tiles</span>, <span class="ident">tokens</span>, <span class="ident">labels</span>, <span class="ident">title</span>,
-            <span class="ident">selected</span>, <span class="ident">selected_menu</span>, <span class="ident">active</span>, <span class="ident">tile_labels_visible</span>, <span class="ident">keychange_cb</span>,
-            <span class="ident">dragged</span>, <span class="ident">dragged_mousemove_cb</span>, <span class="ident">dragged_mouseup_cb</span>, <span class="ident">dragged_mouseleave_cb</span>,
-            <span class="ident">document_title</span>, <span class="ident">download_button</span>, <span class="ident">export_button</span>
+            <span class="ident">layout</span>, <span class="ident">map</span>, <span class="ident">canvas</span>, <span class="ident">canvas_viewbox</span>, <span class="ident">grid</span>, <span class="ident">tiles</span>, <span class="ident">tokens</span>, <span class="ident">labels</span>,
+            <span class="ident">title</span>, <span class="ident">selected</span>, <span class="ident">selected_menu</span>, <span class="ident">active</span>, <span class="ident">tile_labels_visible</span>,
+            <span class="ident">keychange_cb</span>, <span class="ident">dblclick_cb</span>, <span class="ident">dragged</span>, <span class="ident">dragged_mousemove_cb</span>,
+            <span class="ident">dragged_mouseup_cb</span>, <span class="ident">dragged_mouseleave_cb</span>, <span class="ident">document_title</span>,
+            <span class="ident">download_button</span>, <span class="ident">export_button</span>
         };
         <span class="ident">view</span>.<span class="ident">update_map</span>();
         <span class="ident">parent</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
@@ -2004,6 +2024,8 @@
             <span class="self">self</span>.<span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;keyup&quot;</span>,
             <span class="self">self</span>.<span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;dblclick&quot;</span>,
+            <span class="self">self</span>.<span class="ident">dblclick_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;mousemove&quot;</span>,
             <span class="self">self</span>.<span class="ident">dragged_mousemove_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">canvas</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;mouseup&quot;</span>,
