@@ -546,6 +546,21 @@ pub struct UpdateTokenOrientationEvent {
     pub value: f32,
 }
 
+pub struct DragMapDetailTokenBeginEvent {
+    pub index: u32,
+    pub pos: Point,
+}
+
+pub struct DragMapDetailTokenMoveEvent {
+    pub pos: Point,
+}
+
+pub struct DragMapDetailTokenEndEvent {
+    pub pos: Point,
+}
+
+pub struct DragMapDetailTokenCancelEvent;
+
 pub struct ApplyMapDetailEvent;
 
 pub struct MapDetailController {
@@ -581,6 +596,18 @@ impl MapDetailController {
         });
         activity.private_channel(|controller, event: UpdateTokenOrientationEvent| {
             controller.view.update_token_orientation(event.index, event.value);
+        });
+        activity.private_channel(|controller, event: DragMapDetailTokenBeginEvent| {
+            controller.view.drag_token_begin(event.index, event.pos);
+        });
+        activity.private_channel(|controller, event: DragMapDetailTokenMoveEvent| {
+            controller.view.drag_token_move(event.pos);
+        });
+        activity.private_channel(|controller, event: DragMapDetailTokenEndEvent| {
+            controller.view.drag_token_end(event.pos);
+        });
+        activity.private_channel(|controller, _event: DragMapDetailTokenCancelEvent| {
+            controller.view.drag_token_cancel();
         });
         activity.private_channel(|controller, _event: ApplyMapDetailEvent| {
             controller.view.apply_map_detail();

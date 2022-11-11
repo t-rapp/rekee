@@ -103,6 +103,10 @@ fn token_image_center(layout: &Layout, token_id: TokenId) -> Point {
 fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
+    mouse_position_element(event, &element)
+}
+
+fn mouse_position_element(event: &web_sys::MouseEvent, element: &Element) -> Option<Point> {
     let rect = element.get_bounding_client_rect();
     let x = event.client_x() as f32 - rect.left() as f32;
     let y = event.client_y() as f32 - rect.top() as f32;
@@ -249,6 +253,11 @@ impl TokenImageElement {
         check!(self.image.set_attribute("width", &format!("{}", size.x())).ok());
         check!(self.image.set_attribute("height", &format!("{}", size.y())).ok());
         check!(self.image.set_attribute("transform", &format!("rotate({:.1}) translate({:.3} {:.3})", angle, -center.x(), -center.y())).ok());
+    }
+
+    pub fn set_token_pos(&self, layout: &Layout, tile: &PlacedTile, token_pos: FloatCoordinate) {
+        let pos = (FloatCoordinate::from(tile.pos) + token_pos.rotate(tile.dir)).to_pixel(layout);
+        check!(self.inner.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y())).ok());
     }
 }
 

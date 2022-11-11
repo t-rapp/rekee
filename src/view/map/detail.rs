@@ -93,6 +93,13 @@ impl TokenTypeField {
         let text = value.base().to_string();
         self.input.set_value(&text);
     }
+
+    fn set_disabled(&self, value: bool) {
+        self.input.set_disabled(value);
+        if value {
+            check!(self.input.blur().ok());
+        }
+    }
 }
 
 impl AsRef<Element> for TokenTypeField {
@@ -180,6 +187,15 @@ impl OxygenVariantField {
         for input in &self.inputs {
             if let Ok(number) = input.value().parse::<u8>() {
                 input.set_checked(number == value);
+            }
+        }
+    }
+
+    fn set_disabled(&self, value: bool) {
+        for input in &self.inputs {
+            input.set_disabled(value);
+            if value {
+                check!(input.blur().ok());
             }
         }
     }
@@ -326,6 +342,15 @@ impl TokenSliderInputField {
             self.number.set_value(&value_str);
         }
     }
+
+    fn set_disabled(&self, value: bool) {
+        self.input.set_disabled(value);
+        self.number.set_disabled(value);
+        if value {
+            check!(self.input.blur().ok());
+            check!(self.number.blur().ok());
+        }
+    }
 }
 
 impl AsRef<Element> for TokenSliderInputField {
@@ -364,6 +389,8 @@ struct TokenImageProperties {
     token_angle: TokenSliderInputField,
     token_orientation: TokenSliderInputField,
     image: TokenImageElement,
+    dragged_start: Option<FloatCoordinate>,
+    dragged_mousedown_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     toggle_icon: Element,
     toggle_cb: Closure<dyn Fn(web_sys::Event)>,
     delete: Element,
@@ -371,11 +398,11 @@ struct TokenImageProperties {
 }
 
 impl TokenImageProperties {
-    fn new(document: &Document, layout: Layout, tile: PlacedTile, token: PlacedToken, index: u32, image_parent: &Element) -> Result<Self> {
+    fn new(document: &Document, layout: Layout, tile: PlacedTile, token: PlacedToken, index: u32, parent: &MapDetailView) -> Result<Self> {
         let active = index == 0;
 
         let image = TokenImageElement::new(document, &layout, &tile, &token)?;
-        image_parent.append_child(&image)?;
+        parent.tokens.append_child(&image)?;
 
         let card = document.create_element("div")?;
         card.set_attribute("class", "card")?;
@@ -441,6 +468,22 @@ impl TokenImageProperties {
         delete.append_child(&document.create_text_node("Delete Token"))?;
         card_footer.append_child(&delete)?;
 
+        let dragged_start = None;
+
+        let dragged_mousedown_cb = Closure::wrap(Box::new({
+            let canvas = parent.canvas.clone();
+            move |event: web_sys::MouseEvent| {
+                if event.button() != 0 {
+                    return;
+                }
+                event.prevent_default();
+                let pos = check!(mouse_position_element(&event, &canvas));
+                nuts::send_to::<MapDetailController, _>(DragMapDetailTokenBeginEvent { index, pos });
+            }
+        }) as Box<dyn Fn(_)>);
+        image.add_event_listener_with_callback("mousedown",
+            dragged_mousedown_cb.as_ref().unchecked_ref())?;
+
         let toggle_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
             nuts::send_to::<MapDetailController, _>(ToggleTokenPropertiesEvent { index });
         }) as Box<dyn Fn(_)>);
@@ -457,7 +500,8 @@ impl TokenImageProperties {
             inner: card, layout, tile, token, index, active, image, card_header,
             card_header_title, card_content, card_footer, token_type,
             oxygen_variant, token_distance, token_angle, token_orientation,
-            toggle_icon, toggle_cb, delete, delete_cb
+            dragged_start, dragged_mousedown_cb, toggle_icon, toggle_cb,
+            delete, delete_cb
         };
         item.set_active(active);
         Ok(item)
@@ -468,6 +512,13 @@ impl TokenImageProperties {
         self.card_content.set_hidden(!value);
         self.card_footer.set_hidden(!value);
         self.toggle_icon.set_hidden(value);
+        if value {
+            check!(self.image.class_list().remove_1("is-clickable").ok());
+            check!(self.image.class_list().add_1("is-movable").ok());
+        } else {
+            check!(self.image.class_list().add_1("is-clickable").ok());
+            check!(self.image.class_list().remove_1("is-movable").ok());
+        }
         self.active = value;
     }
 
@@ -535,6 +586,59 @@ impl TokenImageProperties {
         self.token_orientation.set_value(value);
         self.image.set_token(&self.layout, &self.tile, &self.token);
     }
+
+    pub fn drag_token_begin(&mut self, pos: FloatCoordinate) {
+        self.token_type.set_disabled(true);
+        self.oxygen_variant.set_disabled(true);
+        self.token_distance.set_disabled(true);
+        self.token_angle.set_disabled(true);
+        self.token_orientation.set_disabled(true);
+        self.dragged_start = Some(pos);
+    }
+
+    pub fn drag_token_move(&mut self, pos: FloatCoordinate) {
+        let offset = match self.dragged_start {
+            Some(val) => pos - val,
+            None => return,
+        };
+        let token_pos = self.token.pos + offset.rotate(-self.tile.dir);
+        let polar = PolarCoordinate::from_coordinate(token_pos);
+        let orientation = self.token.dir.to_angle() - polar.angle();
+        self.token_distance.set_value(polar.distance());
+        self.token_angle.set_value(polar.angle().rem_euclid(360.0));
+        self.token_orientation.set_value(orientation.rem_euclid(360.0));
+        self.image.set_token_pos(&self.layout, &self.tile, token_pos);
+    }
+
+    pub fn drag_token_end(&mut self, pos: FloatCoordinate) {
+        let offset = match self.dragged_start {
+            Some(val) => pos - val,
+            None => return,
+        };
+        self.token.pos = self.token.pos + offset.rotate(-self.tile.dir);
+        let polar = PolarCoordinate::from_coordinate(self.token.pos);
+        let orientation = self.token.dir.to_angle() - polar.angle();
+        self.token_type.set_disabled(false);
+        self.oxygen_variant.set_disabled(false);
+        self.token_distance.set_value(polar.distance());
+        self.token_distance.set_disabled(false);
+        self.token_angle.set_value(polar.angle().rem_euclid(360.0));
+        self.token_angle.set_disabled(false);
+        self.token_orientation.set_value(orientation.rem_euclid(360.0));
+        self.token_orientation.set_disabled(false);
+        self.dragged_start = None;
+        self.image.set_token(&self.layout, &self.tile, &self.token);
+    }
+
+    pub fn drag_token_cancel(&mut self) {
+        self.token_type.set_disabled(false);
+        self.oxygen_variant.set_disabled(false);
+        self.token_distance.set_disabled(false);
+        self.token_angle.set_disabled(false);
+        self.token_orientation.set_disabled(false);
+        self.dragged_start = None;
+        self.image.set_token(&self.layout, &self.tile, &self.token);
+    }
 }
 
 impl AsRef<Element> for TokenImageProperties {
@@ -549,6 +653,8 @@ impl Drop for TokenImageProperties {
             self.toggle_cb.as_ref().unchecked_ref());
         let _ = self.delete.remove_event_listener_with_callback("click",
             self.delete_cb.as_ref().unchecked_ref());
+        let _ = self.image.remove_event_listener_with_callback("mousedown",
+            self.dragged_mousedown_cb.as_ref().unchecked_ref());
         self.image.remove();
         self.inner.remove();
     }
@@ -623,6 +729,8 @@ pub struct MapDetailView {
     inner: Element,
     layout: Layout,
     tile_layout: Layout,
+    canvas: Element,
+    canvas_viewbox: Rect,
     center_tile: Option<PlacedTile>,
     grid: Element,
     tiles: Element,
@@ -635,6 +743,10 @@ pub struct MapDetailView {
     close: Element,
     close_cb: Closure<dyn Fn(web_sys::Event)>,
     keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
+    dragged_index: Option<u32>,
+    dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
 }
 
 impl MapDetailView {
@@ -729,10 +841,35 @@ impl MapDetailView {
         }) as Box<dyn Fn(_)>);
         document.add_event_listener_with_callback("keydown", keydown_cb.as_ref().unchecked_ref())?;
 
+        let dragged_index = None;
+
+        let dragged_mousemove_cb = Closure::wrap(Box::new({
+            move |event: web_sys::MouseEvent| {
+                event.prevent_default();
+                let pos = check!(mouse_position(&event));
+                nuts::send_to::<MapDetailController, _>(DragMapDetailTokenMoveEvent { pos });
+            }
+        }) as Box<dyn Fn(_)>);
+
+        let dragged_mouseup_cb = Closure::wrap(Box::new({
+            move |event: web_sys::MouseEvent| {
+                let pos = check!(mouse_position(&event));
+                nuts::send_to::<MapDetailController, _>(DragMapDetailTokenEndEvent { pos });
+            }
+        }) as Box<dyn Fn(_)>);
+
+        let dragged_mouseleave_cb = Closure::wrap(Box::new({
+            move |_event: web_sys::MouseEvent| {
+                nuts::send_to::<MapDetailController, _>(DragMapDetailTokenCancelEvent);
+            }
+        }) as Box<dyn Fn(_)>);
+
         Ok(MapDetailView {
-            inner, layout, tile_layout, center_tile, grid, tiles, tokens,
-            token_properties, token_properties_adder, token_properties_column,
-            apply, apply_cb, close, close_cb, keydown_cb
+            inner, layout, tile_layout, canvas, canvas_viewbox, center_tile,
+            grid, tiles, tokens, token_properties, token_properties_adder,
+            token_properties_column, apply, apply_cb, close, close_cb,
+            keydown_cb, dragged_index, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb
         })
     }
 
@@ -771,7 +908,7 @@ impl MapDetailView {
             }
             let mut index = 1;
             for token in &tile.tokens {
-                if let Ok(item) = TokenImageProperties::new(&document, self.tile_layout.clone(), tile.clone(), token.clone(), index, &self.tokens) {
+                if let Ok(item) = TokenImageProperties::new(&document, self.tile_layout.clone(), tile.clone(), token.clone(), index, self) {
                     self.token_properties_column.append_child(item.as_ref()).unwrap();
                     self.token_properties.push(item);
                     index += 1;
@@ -859,7 +996,7 @@ impl MapDetailView {
             .max()
             .unwrap_or(0) + 1;
 
-        let item = check!(TokenImageProperties::new(&document, self.tile_layout.clone(), tile, token, index, &self.tokens).ok());
+        let item = check!(TokenImageProperties::new(&document, self.tile_layout.clone(), tile, token, index, self).ok());
         let token_properties_adder: &Element = self.token_properties_adder.as_ref();
         check!(token_properties_adder.before_with_node_1(item.as_ref()).ok());
         self.token_properties.push(item);
@@ -874,6 +1011,78 @@ impl MapDetailView {
         for item in self.token_properties.iter_mut() {
             item.set_active(item.index == index);
         }
+    }
+
+    pub fn drag_token_begin(&mut self, index: u32, pos: Point) {
+        let pos = FloatCoordinate::from_pixel(&self.layout,
+            self.canvas_viewbox.top_left() + pos);
+        info!("drag token begin: {}, {}", index, pos);
+
+        if let Some(item) = self.get_token_properties_mut(index) {
+            item.drag_token_begin(pos);
+        }
+        self.dragged_index = Some(index);
+        check!(self.canvas.add_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.add_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.add_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+
+        self.toggle_token_properties(index);
+    }
+
+    pub fn drag_token_move(&mut self, pos: Point) {
+        let index = match self.dragged_index {
+            Some(val) => val,
+            None => return,
+        };
+        let pos = FloatCoordinate::from_pixel(&self.layout,
+            self.canvas_viewbox.top_left() + pos);
+        if let Some(item) = self.get_token_properties_mut(index) {
+            item.drag_token_move(pos);
+        }
+    }
+
+    pub fn drag_token_end(&mut self, pos: Point) {
+        let index = match self.dragged_index {
+            Some(val) => val,
+            None => return,
+        };
+        let pos = FloatCoordinate::from_pixel(&self.layout,
+            self.canvas_viewbox.top_left() + pos);
+        info!("drag token end: {}, {}", index, pos);
+
+        if let Some(item) = self.get_token_properties_mut(index) {
+            item.drag_token_end(pos);
+        }
+        self.dragged_index = None;
+        check!(self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+
+    }
+
+    pub fn drag_token_cancel(&mut self) {
+        let index = match self.dragged_index {
+            Some(val) => val,
+            None => return,
+        };
+        info!("drag token cancel: {}", index);
+
+        if let Some(item) = self.get_token_properties_mut(index) {
+            item.drag_token_cancel();
+        }
+        self.dragged_index = None;
+        check!(self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
+        check!(self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
     }
 
     pub fn apply_map_detail(&mut self) {
@@ -894,6 +1103,12 @@ impl Drop for MapDetailView {
             self.close_cb.as_ref().unchecked_ref());
         let _ = document.remove_event_listener_with_callback("keydown",
             self.keydown_cb.as_ref().unchecked_ref());
+        let _ = self.canvas.remove_event_listener_with_callback("mousemove",
+            self.dragged_mousemove_cb.as_ref().unchecked_ref());
+        let _ = self.canvas.remove_event_listener_with_callback("mouseup",
+            self.dragged_mouseup_cb.as_ref().unchecked_ref());
+        let _ = self.canvas.remove_event_listener_with_callback("mouseleave",
+            self.dragged_mouseleave_cb.as_ref().unchecked_ref());
     }
 }
 

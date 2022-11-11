@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------------
 
 use std::fmt;
-use std::ops::{Add, Sub, Mul, Index, IndexMut};
+use std::ops::{Add, Sub, Mul, Neg, Index, IndexMut};
 
 use serde::{Serialize, Deserialize};
 
@@ -448,6 +448,21 @@ impl Sub for Direction {
         let a = u8::from(self);
         let b = u8::from(other);
         (6 + a - b).into()
+    }
+}
+
+impl Neg for Direction {
+    type Output = Self;
+
+    fn neg(self) -> Direction {
+        match self {
+            Direction::A => Direction::A,
+            Direction::B => Direction::F,
+            Direction::C => Direction::E,
+            Direction::D => Direction::D,
+            Direction::E => Direction::C,
+            Direction::F => Direction::B,
+        }
     }
 }
 
