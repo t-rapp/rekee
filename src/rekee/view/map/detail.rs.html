@@ -896,6 +896,8 @@
 <span id="896">896</span>
 <span id="897">897</span>
 <span id="898">898</span>
+<span id="899">899</span>
+<span id="900">900</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Display of map details and configuration of track tokens.</span>
 <span class="comment">//</span>
@@ -1701,8 +1703,10 @@
             }
         }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_properties</span>.<span class="ident">first</span>() {
-            <span class="self">self</span>.<span class="ident">toggle_token_properties</span>(<span class="ident">item</span>.<span class="ident">index</span>);
+        <span class="kw">let</span> <span class="ident">first_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_properties</span>.<span class="ident">first</span>()
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="ident">item</span>.<span class="ident">index</span>);
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span> <span class="ident">first_index</span> {
+            <span class="self">self</span>.<span class="ident">toggle_token_properties</span>(<span class="ident">index</span>);
         }
     }
 
