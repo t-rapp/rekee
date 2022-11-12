@@ -193,7 +193,7 @@ impl SelectedMenu {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+                nuts::send_to::<MapController, _>(SaveSettingsEvent);
                 nuts::publish(ShowMapDetailEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
@@ -532,7 +532,7 @@ impl MapView {
 
         if let Some(btn) = document.get_element_by_id("track-info-button") {
             let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-                nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+                nuts::send_to::<MapController, _>(SaveSettingsEvent);
                 nuts::publish(ShowTrackInfoEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
@@ -594,7 +594,7 @@ impl MapView {
         let export_button = document.get_element_by_id("export-image-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
             nuts::publish(ExportImageEvent);
         }) as Box<dyn Fn(_)>);
         export_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
@@ -603,7 +603,7 @@ impl MapView {
         let settings_button = document.get_element_by_id("map-config-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
             nuts::publish(ShowMapConfigEvent);
         }) as Box<dyn Fn(_)>);
         settings_button.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
@@ -799,7 +799,7 @@ impl MapView {
         nuts::publish(UpdateTileUsageEvent { tiles });
 
         // remember map status
-        nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+        nuts::send_to::<MapController, _>(SaveSettingsEvent);
      }
 
     pub fn update_title(&mut self, title: &str) {
@@ -813,7 +813,7 @@ impl MapView {
         if visible != !self.grid.hidden() {
             debug!("update background grid: {:?}", visible);
             self.grid.set_hidden(!visible);
-            nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
         }
     }
 
@@ -841,7 +841,7 @@ impl MapView {
         let pos = Coordinate::from_pixel_rounded(&self.layout,
             self.canvas_viewbox.top_left() + pos);
         self.inner_update_selected_tile(pos);
-        nuts::send_to::<MapController, _>(SaveSettingsEvent {});
+        nuts::send_to::<MapController, _>(SaveSettingsEvent);
     }
 
     fn inner_update_selected_tile(&mut self, pos: Coordinate) {

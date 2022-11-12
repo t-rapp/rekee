@@ -64,7 +64,7 @@ impl WelcomeView {
         self.inner.set_hidden(value);
 
         // remember visibility state
-        nuts::send_to::<WelcomeController, _>(SaveSettingsEvent {});
+        nuts::send_to::<WelcomeController, _>(SaveSettingsEvent);
     }
 }
 

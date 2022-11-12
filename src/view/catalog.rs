@@ -420,7 +420,7 @@ impl CatalogView {
 
         let config_button = document.get_element_by_id("catalog-config-button").unwrap();
         let config_show_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
-            nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+            nuts::send_to::<CatalogController, _>(SaveSettingsEvent);
             nuts::publish(ShowCatalogConfigEvent);
         }) as Box<dyn Fn(_)>);
         config_button.add_event_listener_with_callback("click", config_show_cb.as_ref().unchecked_ref()).unwrap();
@@ -463,7 +463,7 @@ impl CatalogView {
 
     pub fn update_editions(&mut self, editions: &[Edition]) {
         self.inner_update_editions(editions);
-        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent);
     }
 
     fn inner_update_editions(&mut self, editions: &[Edition]) {
@@ -526,12 +526,12 @@ impl CatalogView {
 
     pub fn update_lanes_filter(&mut self, lanes: Option<u8>) {
         self.inner_update_filter(lanes, self.filter_terrain);
-        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent);
     }
 
     pub fn update_terrain_filter(&mut self, terrain: Option<Terrain>) {
         self.inner_update_filter(self.filter_lanes, terrain);
-        nuts::send_to::<CatalogController, _>(SaveSettingsEvent {});
+        nuts::send_to::<CatalogController, _>(SaveSettingsEvent);
     }
 
     fn inner_update_filter(&mut self, lanes: Option<u8>, terrain: Option<Terrain>) {

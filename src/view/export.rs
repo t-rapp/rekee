@@ -387,7 +387,7 @@ impl ExportView {
 
     pub fn update_export_scale(&mut self, scale: Option<ExportScale>) {
         self.export_scale = scale;
-        nuts::send_to::<ExportController, _>(SaveSettingsEvent {});
+        nuts::send_to::<ExportController, _>(SaveSettingsEvent);
     }
 
     pub fn draw_export_image(&mut self, map: &Map, tile_labels_visible: bool) {
