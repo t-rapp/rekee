@@ -75,6 +75,7 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
+<span id="78">78</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Controls display of the welcome message.</span>
 <span class="comment">//</span>
@@ -89,6 +90,7 @@
 <span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Element</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::welcome</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------</span>
@@ -140,7 +142,7 @@
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">set_hidden</span>(<span class="ident">value</span>);
 
         <span class="comment">// remember visibility state</span>
-        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">WelcomeController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span> {});
+        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">WelcomeController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
     }
 }
 

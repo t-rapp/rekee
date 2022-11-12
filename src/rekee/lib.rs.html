@@ -136,6 +136,14 @@
 <span id="136">136</span>
 <span id="137">137</span>
 <span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Library providing track editor functions for the Rekee web application.</span>
 <span class="doccomment">//!</span>
@@ -168,6 +176,14 @@
 
 <span class="kw">mod</span> <span class="ident">controller</span>;
 <span class="kw">use</span> <span class="ident">controller</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">controller::catalog::CatalogController</span>;
+<span class="kw">use</span> <span class="ident">controller::catalog_config::CatalogConfigController</span>;
+<span class="kw">use</span> <span class="ident">controller::export::ExportController</span>;
+<span class="kw">use</span> <span class="ident">controller::map::MapController</span>;
+<span class="kw">use</span> <span class="ident">controller::map_config::MapConfigController</span>;
+<span class="kw">use</span> <span class="ident">controller::map_detail::MapDetailController</span>;
+<span class="kw">use</span> <span class="ident">controller::track_info::TrackInfoController</span>;
+<span class="kw">use</span> <span class="ident">controller::welcome::WelcomeController</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">edition</span>;
 

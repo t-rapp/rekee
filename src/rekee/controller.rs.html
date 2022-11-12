@@ -773,6 +773,44 @@
 <span id="773">773</span>
 <span id="774">774</span>
 <span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Definition and distribution of user events.</span>
 <span class="doccomment">//!</span>
@@ -787,8 +825,6 @@
 <span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
 <span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 <span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition::Edition</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::{<span class="ident">Coordinate</span>, <span class="ident">Direction</span>, <span class="ident">Point</span>};
@@ -895,655 +931,695 @@
     <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">TileId</span>,
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowWelcomeEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideWelcomeEvent</span>;
-
 <span class="comment">//----------------------------------------------------------------------------</span>
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateLanesFilterEvent</span> {
-    <span class="kw">pub</span> <span class="ident">lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-}
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">catalog</span> {
+    <span class="kw">use</span> <span class="ident">nuts::DefaultDomain</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateTerrainFilterEvent</span> {
-    <span class="kw">pub</span> <span class="ident">terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogController</span> {
-    <span class="ident">view</span>: <span class="ident">CatalogView</span>,
-    <span class="ident">storage</span>: <span class="ident">Storage</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">CatalogController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">CatalogView</span>) {
-        <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;catalog&quot;</span>);
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">CatalogController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateLanesFilterEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_lanes_filter</span>(<span class="ident">event</span>.<span class="ident">lanes</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTerrainFilterEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_terrain_filter</span>(<span class="ident">event</span>.<span class="ident">terrain</span>);
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::load_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::save_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::import_file</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_catalog_editions</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_tile_labels</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::toggle_tile_labels</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_tile_usage</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::drag_catalog_tile_begin</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateLanesFilterEvent</span> {
+        <span class="kw">pub</span> <span class="ident">lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateTerrainFilterEvent</span> {
+        <span class="kw">pub</span> <span class="ident">terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>,
+    }
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogController</span> {
+        <span class="ident">view</span>: <span class="ident">CatalogView</span>,
+        <span class="ident">storage</span>: <span class="ident">Storage</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">CatalogController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">CatalogView</span>) {
+            <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;catalog&quot;</span>);
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">CatalogController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateLanesFilterEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_lanes_filter</span>(<span class="ident">event</span>.<span class="ident">lanes</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTerrainFilterEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_terrain_filter</span>(<span class="ident">event</span>.<span class="ident">terrain</span>);
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::load_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::save_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::import_file</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_catalog_editions</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_tile_labels</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::toggle_tile_labels</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::update_tile_usage</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogController::drag_catalog_tile_begin</span>);
         }
-    }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
-        <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
-        <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_catalog_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateCatalogEditionsEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">editions</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileLabelsEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_labels</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">toggle_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ToggleTileLabelsEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">toggle_tile_labels</span>(<span class="ident">event</span>.<span class="ident">inverted</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileUsageEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tiles</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">drag_catalog_tile_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileBeginEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_begin</span>(<span class="ident">event</span>.<span class="ident">tile</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapTileBeginEvent</span> {
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapTileMoveEvent</span> {
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapTileEndEvent</span> {
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapTileCancelEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapController</span> {
-    <span class="ident">view</span>: <span class="ident">MapView</span>,
-    <span class="ident">storage</span>: <span class="ident">Storage</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">MapController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapView</span>) {
-        <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;map&quot;</span>);
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileBeginEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_begin</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileMoveEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileEndEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">None</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">DragMapTileCancelEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_cancel</span>();
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::load_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::save_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::import_file</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::export_file</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::insert_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::append_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::align_center</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::clear_map</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_map_left</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_map_right</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_title</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_background_grid</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_tile_labels</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::toggle_tile_labels</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_selected_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::add_selected_tile_token</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_selected_tile_tokens</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_tile_left</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_tile_right</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::remove_selected_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::drag_catalog_tile_move</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::drag_catalog_tile_end</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_connection_hint</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+        <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            }
         }
-    }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
-        <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
-        <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportFileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">export_file</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">insert_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">dir</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">append_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">hint</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AlignCenterEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">align_center</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ClearMapEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">clear_map</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapLeftEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_left</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapRightEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_right</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTitleEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_title</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">title</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_background_grid</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateBackgroundGridEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileLabelsEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_labels</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">toggle_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ToggleTileLabelsEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">toggle_tile_labels</span>(<span class="ident">event</span>.<span class="ident">inverted</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_selected_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected_tile</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">add_selected_tile_token</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AddSelectedTileTokenEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">add_selected_tile_token</span>(<span class="ident">event</span>.<span class="ident">token</span>.<span class="ident">clone</span>());
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_selected_tile_tokens</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedTileTokensEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected_tile_tokens</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tokens</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">rotate_selected_tile_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedTileLeftEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_tile_left</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">rotate_selected_tile_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedTileRightEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_tile_right</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">remove_selected_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RemoveSelectedTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">remove_selected_tile</span>();
-    }
-
-    <span class="kw">fn</span> <span class="ident">drag_catalog_tile_move</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileMoveEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">drag_catalog_tile_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileEndEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">Some</span>(<span class="ident">event</span>.<span class="ident">tile</span>));
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateConnectionHintEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_connection_hint</span>(<span class="ident">event</span>.<span class="ident">hint</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowCatalogConfigEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideCatalogConfigEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ToggleCatalogEditionEvent</span> {
-    <span class="kw">pub</span> <span class="ident">edition</span>: <span class="ident">Edition</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplyCatalogEditionsEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogConfigController</span> {
-    <span class="ident">view</span>: <span class="ident">CatalogConfigView</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">CatalogConfigController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">CatalogConfigView</span>) {
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">CatalogConfigController</span> { <span class="ident">view</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">ToggleCatalogEditionEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">toggle_edition</span>(<span class="ident">event</span>.<span class="ident">edition</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyCatalogEditionsEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_catalog_editions</span>();
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">CatalogConfigController::show</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogConfigController::hide</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowCatalogConfigEvent</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">CatalogSettings</span><span class="op">&gt;</span>() {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_editions</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">editions</span>);
+        <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
+            <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
         }
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
-    }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideCatalogConfigEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowTrackInfoEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideTrackInfoEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TrackInfoController</span> {
-    <span class="ident">view</span>: <span class="ident">TrackInfoView</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">TrackInfoController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">TrackInfoView</span>) {
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">TrackInfoController</span> { <span class="ident">view</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowTrackInfoEvent</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="ident">settings</span>.<span class="ident">map</span>.<span class="ident">tiles</span>());
+        <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
         }
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
-    }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideTrackInfoEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowMapConfigEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideMapConfigEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplyMapConfigEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapConfigController</span> {
-    <span class="ident">view</span>: <span class="ident">MapConfigView</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">MapConfigController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapConfigView</span>) {
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapConfigController</span> { <span class="ident">view</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateExportScaleEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">set_export_scale</span>(<span class="ident">event</span>.<span class="ident">scale</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyMapConfigEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_map_config</span>();
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapConfigEvent</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_tile_labels</span>(<span class="ident">settings</span>.<span class="ident">tile_labels_visible</span>);
+        <span class="kw">fn</span> <span class="ident">update_catalog_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateCatalogEditionsEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">editions</span>);
         }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">ExportSettings</span><span class="op">&gt;</span>() {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_export_scale</span>(<span class="ident">settings</span>.<span class="ident">export_scale</span>);
+
+        <span class="kw">fn</span> <span class="ident">update_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileLabelsEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_labels</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
         }
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
-    }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapConfigEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowMapDetailEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideMapDetailEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AddTokenPropertiesEvent</span> {
-    <span class="kw">pub</span> <span class="ident">token_id</span>: <span class="ident">TokenId</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DeleteTokenPropertiesEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ToggleTokenPropertiesEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateTokenTypeEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">token_id</span>: <span class="ident">TokenId</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateOxygenVariantEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">number</span>: <span class="ident">u8</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateTokenDistanceEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateTokenAngleEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UpdateTokenOrientationEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenBeginEvent</span> {
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenMoveEvent</span> {
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenEndEvent</span> {
-    <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DragMapDetailTokenCancelEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplyMapDetailEvent</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapDetailController</span> {
-    <span class="ident">view</span>: <span class="ident">MapDetailView</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">MapDetailController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapDetailView</span>) {
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapDetailController</span> { <span class="ident">view</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">AddTokenPropertiesEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">add_token_properties</span>(<span class="ident">event</span>.<span class="ident">token_id</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DeleteTokenPropertiesEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">delete_token_properties</span>(<span class="ident">event</span>.<span class="ident">index</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">ToggleTokenPropertiesEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">toggle_token_properties</span>(<span class="ident">event</span>.<span class="ident">index</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenTypeEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_type</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">token_id</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateOxygenVariantEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_oxygen_variant</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">number</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenDistanceEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_distance</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenAngleEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_angle</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenOrientationEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_orientation</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenBeginEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_begin</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">pos</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenMoveEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenEndEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">DragMapDetailTokenCancelEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_cancel</span>();
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyMapDetailEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_map_detail</span>();
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapDetailEvent</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
-            <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">settings</span>.<span class="ident">selected</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
-                <span class="prelude-val">None</span> =&gt; <span class="kw">return</span>,
-            };
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">center</span>);
+        <span class="kw">fn</span> <span class="ident">toggle_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ToggleTileLabelsEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">toggle_tile_labels</span>(<span class="ident">event</span>.<span class="ident">inverted</span>);
         }
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
-    }
 
-    <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapDetailEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
-    }
-}
-
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DrawExportTileDoneEvent</span> {
-    <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DrawExportTokenDoneEvent</span> {
-    <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
-    <span class="kw">pub</span> <span class="ident">token</span>: <span class="ident">PlacedToken</span>,
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportController</span> {
-    <span class="ident">view</span>: <span class="ident">ExportView</span>,
-    <span class="ident">storage</span>: <span class="ident">Storage</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">ExportController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">ExportView</span>) {
-        <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;export&quot;</span>);
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">ExportController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DrawExportTileDoneEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">draw_export_tile_done</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tile</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DrawExportTokenDoneEvent</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">draw_export_token_done</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">token</span>);
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::load_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::save_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::update_export_scale</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">ExportController::export_image</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+        <span class="kw">fn</span> <span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileUsageEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tiles</span>);
         }
-    }
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
-        <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
-        <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">update_export_scale</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateExportScaleEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_export_scale</span>(<span class="ident">event</span>.<span class="ident">scale</span>);
-    }
-
-    <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">settings</span>.<span class="ident">tile_labels_visible</span>);
+        <span class="kw">fn</span> <span class="ident">drag_catalog_tile_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileBeginEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_begin</span>(<span class="ident">event</span>.<span class="ident">tile</span>);
         }
     }
 }
 
 <span class="comment">//----------------------------------------------------------------------------</span>
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WelcomeController</span> {
-    <span class="ident">view</span>: <span class="ident">WelcomeView</span>,
-    <span class="ident">storage</span>: <span class="ident">Storage</span>,
-}
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">map</span> {
+    <span class="kw">use</span> <span class="ident">nuts::DefaultDomain</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="kw">impl</span> <span class="ident">WelcomeController</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">WelcomeView</span>) {
-        <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::with_session_storage</span>(<span class="string">&quot;welcome&quot;</span>);
-        <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">WelcomeController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
-        <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
-
-        <span class="comment">// register private events</span>
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-        <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
-            <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
-        });
-
-        <span class="comment">// register public events</span>
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::load_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::save_settings</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::import_file</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::insert_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::append_tile</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::drag_catalog_tile_end</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::show_welcome</span>);
-        <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::hide_welcome</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapTileBeginEvent</span> {
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
-            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapTileMoveEvent</span> {
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapTileEndEvent</span> {
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapTileCancelEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapController</span> {
+        <span class="ident">view</span>: <span class="ident">MapView</span>,
+        <span class="ident">storage</span>: <span class="ident">Storage</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">MapController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapView</span>) {
+            <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;map&quot;</span>);
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileBeginEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_begin</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileMoveEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapTileEndEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">None</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">DragMapTileCancelEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_tile_cancel</span>();
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::load_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::save_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::import_file</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::export_file</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::insert_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::append_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::align_center</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::clear_map</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_map_left</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_map_right</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_title</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_background_grid</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_tile_labels</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::toggle_tile_labels</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_selected_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::add_selected_tile_token</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_selected_tile_tokens</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_tile_left</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::rotate_selected_tile_right</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::remove_selected_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::drag_catalog_tile_move</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::drag_catalog_tile_end</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">MapController::update_connection_hint</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            }
+        }
+
+        <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
+            <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">import_file</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">map</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">export_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportFileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">export_file</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">insert_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">dir</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">append_tile</span>(<span class="ident">event</span>.<span class="ident">id</span>, <span class="ident">event</span>.<span class="ident">pos</span>, <span class="ident">event</span>.<span class="ident">hint</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">align_center</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AlignCenterEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">align_center</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">clear_map</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ClearMapEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">clear_map</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">rotate_map_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapLeftEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_left</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">rotate_map_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateMapRightEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_map_right</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_title</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTitleEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_title</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">title</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_background_grid</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateBackgroundGridEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateTileLabelsEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_tile_labels</span>(<span class="ident">event</span>.<span class="ident">visible</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">toggle_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">ToggleTileLabelsEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">toggle_tile_labels</span>(<span class="ident">event</span>.<span class="ident">inverted</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_selected_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected_tile</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">add_selected_tile_token</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">AddSelectedTileTokenEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">add_selected_tile_token</span>(<span class="ident">event</span>.<span class="ident">token</span>.<span class="ident">clone</span>());
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_selected_tile_tokens</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateSelectedTileTokensEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_selected_tile_tokens</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tokens</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">rotate_selected_tile_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedTileLeftEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_tile_left</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">rotate_selected_tile_right</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RotateSelectedTileRightEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">rotate_selected_tile_right</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">remove_selected_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">RemoveSelectedTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">remove_selected_tile</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">drag_catalog_tile_move</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileMoveEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">drag_catalog_tile_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileEndEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">drag_tile_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>, <span class="prelude-val">Some</span>(<span class="ident">event</span>.<span class="ident">tile</span>));
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_connection_hint</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateConnectionHintEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_connection_hint</span>(<span class="ident">event</span>.<span class="ident">hint</span>);
         }
     }
+}
 
-    <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
-        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
-        <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
-        <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">catalog_config</span> {
+    <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowCatalogConfigEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideCatalogConfigEvent</span>;
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">ToggleCatalogEditionEvent</span> {
+        <span class="kw">pub</span> <span class="ident">edition</span>: <span class="ident">Edition</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">ApplyCatalogEditionsEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogConfigController</span> {
+        <span class="ident">view</span>: <span class="ident">CatalogConfigView</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+    <span class="kw">impl</span> <span class="ident">CatalogConfigController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">CatalogConfigView</span>) {
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">CatalogConfigController</span> { <span class="ident">view</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">ToggleCatalogEditionEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">toggle_edition</span>(<span class="ident">event</span>.<span class="ident">edition</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyCatalogEditionsEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_catalog_editions</span>();
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">CatalogConfigController::show</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">CatalogConfigController::hide</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowCatalogConfigEvent</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">CatalogSettings</span><span class="op">&gt;</span>() {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_editions</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">editions</span>);
+            }
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideCatalogConfigEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
+        }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">track_info</span> {
+    <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowTrackInfoEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideTrackInfoEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TrackInfoController</span> {
+        <span class="ident">view</span>: <span class="ident">TrackInfoView</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+    <span class="kw">impl</span> <span class="ident">TrackInfoController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">TrackInfoView</span>) {
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">TrackInfoController</span> { <span class="ident">view</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowTrackInfoEvent</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="ident">settings</span>.<span class="ident">map</span>.<span class="ident">tiles</span>());
+            }
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideTrackInfoEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
+        }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">map_config</span> {
+    <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowMapConfigEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideMapConfigEvent</span>;
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">ApplyMapConfigEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapConfigController</span> {
+        <span class="ident">view</span>: <span class="ident">MapConfigView</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">drag_catalog_tile_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileEndEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+    <span class="kw">impl</span> <span class="ident">MapConfigController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapConfigView</span>) {
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapConfigController</span> { <span class="ident">view</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateExportScaleEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">set_export_scale</span>(<span class="ident">event</span>.<span class="ident">scale</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyMapConfigEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_map_config</span>();
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapConfigEvent</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_tile_labels</span>(<span class="ident">settings</span>.<span class="ident">tile_labels_visible</span>);
+            }
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">ExportSettings</span><span class="op">&gt;</span>() {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_export_scale</span>(<span class="ident">settings</span>.<span class="ident">export_scale</span>);
+            }
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapConfigEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
+        }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">map_detail</span> {
+    <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowMapDetailEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideMapDetailEvent</span>;
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">AddTokenPropertiesEvent</span> {
+        <span class="kw">pub</span> <span class="ident">token_id</span>: <span class="ident">TokenId</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">show_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowWelcomeEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DeleteTokenPropertiesEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
     }
 
-    <span class="kw">fn</span> <span class="ident">hide_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideWelcomeEvent</span>) {
-        <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">ToggleTokenPropertiesEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateTokenTypeEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">token_id</span>: <span class="ident">TokenId</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateOxygenVariantEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">number</span>: <span class="ident">u8</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateTokenDistanceEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateTokenAngleEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">UpdateTokenOrientationEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">f32</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapDetailTokenBeginEvent</span> {
+        <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapDetailTokenMoveEvent</span> {
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapDetailTokenEndEvent</span> {
+        <span class="kw">pub</span> <span class="ident">pos</span>: <span class="ident">Point</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DragMapDetailTokenCancelEvent</span>;
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">ApplyMapDetailEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapDetailController</span> {
+        <span class="ident">view</span>: <span class="ident">MapDetailView</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">MapDetailController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">MapDetailView</span>) {
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">MapDetailController</span> { <span class="ident">view</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">AddTokenPropertiesEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">add_token_properties</span>(<span class="ident">event</span>.<span class="ident">token_id</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DeleteTokenPropertiesEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">delete_token_properties</span>(<span class="ident">event</span>.<span class="ident">index</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">ToggleTokenPropertiesEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">toggle_token_properties</span>(<span class="ident">event</span>.<span class="ident">index</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenTypeEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_type</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">token_id</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateOxygenVariantEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_oxygen_variant</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">number</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenDistanceEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_distance</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenAngleEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_angle</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">UpdateTokenOrientationEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">update_token_orientation</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">value</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenBeginEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_begin</span>(<span class="ident">event</span>.<span class="ident">index</span>, <span class="ident">event</span>.<span class="ident">pos</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenMoveEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_move</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DragMapDetailTokenEndEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_end</span>(<span class="ident">event</span>.<span class="ident">pos</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">DragMapDetailTokenCancelEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">drag_token_cancel</span>();
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">_event</span>: <span class="ident">ApplyMapDetailEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">apply_map_detail</span>();
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident"><span class="self">Self</span>::show</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident"><span class="self">Self</span>::hide</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">show</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowMapDetailEvent</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+                <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">settings</span>.<span class="ident">selected</span> {
+                    <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+                    <span class="prelude-val">None</span> =&gt; <span class="kw">return</span>,
+                };
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_background_grid</span>(<span class="ident">settings</span>.<span class="ident">background_grid_visible</span>);
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_map_tiles</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">center</span>);
+            }
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">hide</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideMapDetailEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_active</span>(<span class="bool-val">false</span>);
+        }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export</span> {
+    <span class="kw">use</span> <span class="ident">nuts</span>::{<span class="ident">DefaultDomain</span>, <span class="ident">DomainState</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DrawExportTileDoneEvent</span> {
+        <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">DrawExportTokenDoneEvent</span> {
+        <span class="kw">pub</span> <span class="ident">tile</span>: <span class="ident">PlacedTile</span>,
+        <span class="kw">pub</span> <span class="ident">token</span>: <span class="ident">PlacedToken</span>,
+    }
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportController</span> {
+        <span class="ident">view</span>: <span class="ident">ExportView</span>,
+        <span class="ident">storage</span>: <span class="ident">Storage</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">ExportController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">ExportView</span>) {
+            <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::new</span>(<span class="string">&quot;export&quot;</span>);
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">ExportController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DrawExportTileDoneEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">draw_export_tile_done</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tile</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span>: <span class="ident">DrawExportTokenDoneEvent</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">view</span>.<span class="ident">draw_export_token_done</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">tile</span>, <span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">token</span>);
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::load_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::save_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">ExportController::update_export_scale</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe_domained</span>(<span class="ident">ExportController::export_image</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            }
+        }
+
+        <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
+            <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">update_export_scale</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateExportScaleEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">update_export_scale</span>(<span class="ident">event</span>.<span class="ident">scale</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">export_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">domain</span>: <span class="kw-2">&amp;mut</span> <span class="ident">DomainState</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ExportImageEvent</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">domain</span>.<span class="ident">try_get</span>::<span class="op">&lt;</span><span class="ident">MapSettings</span><span class="op">&gt;</span>() {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">draw_export_image</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">map</span>, <span class="ident">settings</span>.<span class="ident">tile_labels_visible</span>);
+            }
+        }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">welcome</span> {
+    <span class="kw">use</span> <span class="ident">nuts::DefaultDomain</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShowWelcomeEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideWelcomeEvent</span>;
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WelcomeController</span> {
+        <span class="ident">view</span>: <span class="ident">WelcomeView</span>,
+        <span class="ident">storage</span>: <span class="ident">Storage</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">WelcomeController</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">view</span>: <span class="ident">WelcomeView</span>) {
+            <span class="kw">let</span> <span class="ident">storage</span> <span class="op">=</span> <span class="ident">Storage::with_session_storage</span>(<span class="string">&quot;welcome&quot;</span>);
+            <span class="kw">let</span> <span class="ident">controller</span> <span class="op">=</span> <span class="ident">WelcomeController</span> { <span class="ident">view</span>, <span class="ident">storage</span> };
+            <span class="kw">let</span> <span class="ident">activity</span> <span class="op">=</span> <span class="ident">nuts::new_domained_activity</span>(<span class="ident">controller</span>, <span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>);
+
+            <span class="comment">// register private events</span>
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+            <span class="ident">activity</span>.<span class="ident">private_channel</span>(<span class="op">|</span><span class="ident">controller</span>, <span class="ident">event</span><span class="op">|</span> {
+                <span class="ident">controller</span>.<span class="ident">save_settings</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>);
+            });
+
+            <span class="comment">// register public events</span>
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::load_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::save_settings</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::import_file</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::insert_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::append_tile</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::drag_catalog_tile_end</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::show_welcome</span>);
+            <span class="ident">activity</span>.<span class="ident">subscribe</span>(<span class="ident">WelcomeController::hide_welcome</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">LoadSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">get</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">settings</span>) <span class="op">=</span> <span class="ident">settings</span> {
+                <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            }
+        }
+
+        <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">SaveSettingsEvent</span>) {
+            <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">save_settings</span>();
+            <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>);
+            <span class="ident">nuts::store_to_domain</span>(<span class="kw-2">&amp;</span><span class="ident">DefaultDomain</span>, <span class="ident">settings</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ImportFileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">insert_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">InsertTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">append_tile</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">AppendTileEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">drag_catalog_tile_end</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">DragCatalogTileEndEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">show_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">ShowWelcomeEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
+        }
+
+        <span class="kw">fn</span> <span class="ident">hide_welcome</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">HideWelcomeEvent</span>) {
+            <span class="self">self</span>.<span class="ident">view</span>.<span class="ident">set_hidden</span>(<span class="bool-val">true</span>);
+        }
     }
 }
 

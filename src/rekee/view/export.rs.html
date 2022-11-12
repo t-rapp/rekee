@@ -560,6 +560,7 @@
 <span id="560">560</span>
 <span id="561">561</span>
 <span id="562">562</span>
+<span id="563">563</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
 <span class="doccomment">//! Supports export of maps as an image.</span>
 <span class="doccomment">//!</span>
@@ -583,6 +584,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::export</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::import</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">PlacedTile</span>, <span class="ident">PlacedToken</span>, <span class="ident">Map</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -948,7 +950,7 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_export_scale</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">scale</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">export_scale</span> <span class="op">=</span> <span class="ident">scale</span>;
-        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span> {});
+        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">ExportController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">draw_export_image</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>, <span class="ident">tile_labels_visible</span>: <span class="ident">bool</span>) {
