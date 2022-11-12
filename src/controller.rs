@@ -13,8 +13,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use nuts::{DefaultDomain, DomainState};
-
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, Point};
 use crate::map::{Map, PlacedTile, PlacedToken};
@@ -120,17 +118,17 @@ pub struct DragCatalogTileEndEvent {
     pub tile: TileId,
 }
 
-pub struct ShowWelcomeEvent;
-
-pub struct HideWelcomeEvent;
-
 //----------------------------------------------------------------------------
 
-pub struct UpdateLanesFilterEvent {
+pub mod catalog {
+    use nuts::DefaultDomain;
+    use super::*;
+
+pub(crate) struct UpdateLanesFilterEvent {
     pub lanes: Option<u8>,
 }
 
-pub struct UpdateTerrainFilterEvent {
+pub(crate) struct UpdateTerrainFilterEvent {
     pub terrain: Option<Terrain>,
 }
 
@@ -208,21 +206,27 @@ impl CatalogController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
 
-pub struct DragMapTileBeginEvent {
+pub mod map {
+    use nuts::DefaultDomain;
+    use super::*;
+
+pub(crate) struct DragMapTileBeginEvent {
     pub pos: Point,
 }
 
-pub struct DragMapTileMoveEvent {
+pub(crate) struct DragMapTileMoveEvent {
     pub pos: Point,
 }
 
-pub struct DragMapTileEndEvent {
+pub(crate) struct DragMapTileEndEvent {
     pub pos: Point,
 }
 
-pub struct DragMapTileCancelEvent;
+pub(crate) struct DragMapTileCancelEvent;
 
 pub struct MapController {
     view: MapView,
@@ -379,17 +383,23 @@ impl MapController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
+
+pub mod catalog_config {
+    use nuts::{DefaultDomain, DomainState};
+    use super::*;
 
 pub struct ShowCatalogConfigEvent;
 
 pub struct HideCatalogConfigEvent;
 
-pub struct ToggleCatalogEditionEvent {
+pub(crate) struct ToggleCatalogEditionEvent {
     pub edition: Edition,
 }
 
-pub struct ApplyCatalogEditionsEvent;
+pub(crate) struct ApplyCatalogEditionsEvent;
 
 pub struct CatalogConfigController {
     view: CatalogConfigView,
@@ -425,7 +435,13 @@ impl CatalogConfigController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
+
+pub mod track_info {
+    use nuts::{DefaultDomain, DomainState};
+    use super::*;
 
 pub struct ShowTrackInfoEvent;
 
@@ -457,13 +473,19 @@ impl TrackInfoController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
+
+pub mod map_config {
+    use nuts::{DefaultDomain, DomainState};
+    use super::*;
 
 pub struct ShowMapConfigEvent;
 
 pub struct HideMapConfigEvent;
 
-pub struct ApplyMapConfigEvent;
+pub(crate) struct ApplyMapConfigEvent;
 
 pub struct MapConfigController {
     view: MapConfigView,
@@ -503,65 +525,71 @@ impl MapConfigController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
+
+pub mod map_detail {
+    use nuts::{DefaultDomain, DomainState};
+    use super::*;
 
 pub struct ShowMapDetailEvent;
 
 pub struct HideMapDetailEvent;
 
-pub struct AddTokenPropertiesEvent {
+pub(crate) struct AddTokenPropertiesEvent {
     pub token_id: TokenId,
 }
 
-pub struct DeleteTokenPropertiesEvent {
+pub(crate) struct DeleteTokenPropertiesEvent {
     pub index: u32,
 }
 
-pub struct ToggleTokenPropertiesEvent {
+pub(crate) struct ToggleTokenPropertiesEvent {
     pub index: u32,
 }
 
-pub struct UpdateTokenTypeEvent {
+pub(crate) struct UpdateTokenTypeEvent {
     pub index: u32,
     pub token_id: TokenId,
 }
 
-pub struct UpdateOxygenVariantEvent {
+pub(crate) struct UpdateOxygenVariantEvent {
     pub index: u32,
     pub number: u8,
 }
 
-pub struct UpdateTokenDistanceEvent {
+pub(crate) struct UpdateTokenDistanceEvent {
     pub index: u32,
     pub value: f32,
 }
 
-pub struct UpdateTokenAngleEvent {
+pub(crate) struct UpdateTokenAngleEvent {
     pub index: u32,
     pub value: f32,
 }
 
-pub struct UpdateTokenOrientationEvent {
+pub(crate) struct UpdateTokenOrientationEvent {
     pub index: u32,
     pub value: f32,
 }
 
-pub struct DragMapDetailTokenBeginEvent {
+pub(crate) struct DragMapDetailTokenBeginEvent {
     pub index: u32,
     pub pos: Point,
 }
 
-pub struct DragMapDetailTokenMoveEvent {
+pub(crate) struct DragMapDetailTokenMoveEvent {
     pub pos: Point,
 }
 
-pub struct DragMapDetailTokenEndEvent {
+pub(crate) struct DragMapDetailTokenEndEvent {
     pub pos: Point,
 }
 
-pub struct DragMapDetailTokenCancelEvent;
+pub(crate) struct DragMapDetailTokenCancelEvent;
 
-pub struct ApplyMapDetailEvent;
+pub(crate) struct ApplyMapDetailEvent;
 
 pub struct MapDetailController {
     view: MapDetailView,
@@ -635,13 +663,19 @@ impl MapDetailController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
 
-pub struct DrawExportTileDoneEvent {
+pub mod export {
+    use nuts::{DefaultDomain, DomainState};
+    use super::*;
+
+pub(crate) struct DrawExportTileDoneEvent {
     pub tile: PlacedTile,
 }
 
-pub struct DrawExportTokenDoneEvent {
+pub(crate) struct DrawExportTokenDoneEvent {
     pub tile: PlacedTile,
     pub token: PlacedToken,
 }
@@ -702,7 +736,17 @@ impl ExportController {
     }
 }
 
+}
+
 //----------------------------------------------------------------------------
+
+pub mod welcome {
+    use nuts::DefaultDomain;
+    use super::*;
+
+    pub struct ShowWelcomeEvent;
+
+    pub struct HideWelcomeEvent;
 
 pub struct WelcomeController {
     view: WelcomeView,
@@ -770,6 +814,8 @@ impl WelcomeController {
     fn hide_welcome(&mut self, _event: &HideWelcomeEvent) {
         self.view.set_hidden(true);
     }
+}
+
 }
 
 //----------------------------------------------------------------------------

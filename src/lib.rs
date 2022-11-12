@@ -30,6 +30,14 @@ use wasm_bindgen::prelude::*;
 
 mod controller;
 use controller::*;
+use controller::catalog::CatalogController;
+use controller::catalog_config::CatalogConfigController;
+use controller::export::ExportController;
+use controller::map::MapController;
+use controller::map_config::MapConfigController;
+use controller::map_detail::MapDetailController;
+use controller::track_info::TrackInfoController;
+use controller::welcome::WelcomeController;
 
 pub mod edition;
 

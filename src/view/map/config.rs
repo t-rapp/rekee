@@ -12,6 +12,7 @@ use web_sys::{self, Element};
 
 use crate::check;
 use crate::controller::*;
+use crate::controller::map_config::*;
 use crate::view::export::ExportScale;
 use super::*;
 

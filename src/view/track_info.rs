@@ -11,7 +11,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Element};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::track_info::*;
 use crate::map::PlacedTile;
 use super::*;
 

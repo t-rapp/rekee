@@ -13,6 +13,10 @@ use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::*;
+use crate::controller::map::*;
+use crate::controller::map_config::ShowMapConfigEvent;
+use crate::controller::map_detail::ShowMapDetailEvent;
+use crate::controller::track_info::ShowTrackInfoEvent;
 use crate::import;
 use crate::map::{Map, PlacedTile, PlacedToken};
 use super::*;

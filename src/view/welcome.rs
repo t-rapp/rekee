@@ -12,6 +12,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Element};
 
 use crate::controller::*;
+use crate::controller::welcome::*;
 use super::*;
 
 //----------------------------------------------------------------------------
