@@ -471,6 +471,7 @@ impl MapView {
 
         let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
+            event.stop_propagation();
             nuts::send_to::<MapController, _>(SaveSettingsEvent);
             nuts::publish(ShowMapDetailEvent);
         }) as Box<dyn Fn(_)>);
