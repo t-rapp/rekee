@@ -44,6 +44,8 @@ features = [
   "File",
   "FileList",
   "FileReader",
+  "FontFace",
+  "FontFaceSet",
   'HtmlCanvasElement',
   'HtmlElement',
   'HtmlImageElement',

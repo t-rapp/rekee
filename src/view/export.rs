@@ -17,7 +17,7 @@ use std::str::FromStr;
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{self, HtmlCanvasElement, HtmlImageElement, HtmlElement};
+use web_sys::{self, FontFace, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 
 use crate::check;
 use crate::controller::*;
@@ -64,10 +64,10 @@ fn draw_token_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlIma
 fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, pos: Point, size: Point) -> Result<()> {
     let pos_x = f64::from(pos.x());
     let pos_y = f64::from(pos.y());
-    let height = 0.8 * f32::max(size.x(), size.y());
+    let height = (0.8 * f32::max(size.x(), size.y())).round() as i32;
 
     context.save();
-    context.set_font(&format!("bold {:.0}px sans-serif", height));
+    context.set_font(&format!("bold {}px Overpass, sans-serif", height));
     context.set_text_align("center");
     context.set_text_baseline("middle");
     context.set_fill_style(&JsValue::from_str("#EEE"));
@@ -82,10 +82,11 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, text: &str, pos:
     let pos_y = f64::from(pos.y());
 
     context.save();
-    context.set_font(&format!("bold {}px sans-serif", height));
+    context.set_font(&format!("bold {}px Overpass, sans-serif", height));
     context.set_text_align("center");
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
+    context.set_miter_limit(2.0);
     context.set_stroke_style(&JsValue::from_str("#FFF"));
     context.stroke_text(text, pos_x, pos_y)?;
     context.set_fill_style(&JsValue::from_str("#444"));
@@ -370,6 +371,13 @@ impl ExportView {
         anchor.set_hidden(true);
         parent.append_child(&anchor)?;
 
+        let label_font = FontFace::new_with_str("Overpass",
+            "url('overpass-bold.woff2') format('woff2')")?;
+        label_font.set_style("normal");
+        label_font.set_weight("bold");
+        document.fonts().add(&label_font)?;
+        let _ = label_font.load();
+
         Ok(ExportView {
             base_layout, export_layout, export_scale, map, tile_labels_visible,
             tile_images, token_images, canvas, anchor
@@ -441,10 +449,10 @@ impl ExportView {
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
         // draw map title
         if has_title {
-            context.set_font(&format!("normal {}px sans-serif", export_scale.title_height()));
+            context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
             context.set_text_baseline("top");
-            context.set_fill_style(&JsValue::from_str("#222"));
+            context.set_fill_style(&JsValue::from_str("#444"));
             check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
         }
         context.restore();
