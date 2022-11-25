@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -359,366 +359,366 @@
 <span id="359">359</span>
 <span id="360">360</span>
 <span id="361">361</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Rendering of objects and common functions.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Rendering of objects and common functions.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::needless_return</span>)]</span>
+</span><span class="attribute">#![allow(clippy::needless_return)]
 
-<span class="kw">use</span> <span class="ident">std::ops::Deref</span>;
+</span><span class="kw">use </span>std::ops::Deref;
 
-<span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Document</span>, <span class="ident">Element</span>};
+<span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>wasm_bindgen::JsCast;
+<span class="kw">use </span>web_sys::{<span class="self">self</span>, Document, Element};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hexagon</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map::PlacedTile</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map::PlacedToken</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::token::TokenId</span>;
+<span class="kw">use </span><span class="kw">crate</span>::hexagon::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::map::PlacedTile;
+<span class="kw">use </span><span class="kw">crate</span>::map::PlacedToken;
+<span class="kw">use </span><span class="kw">crate</span>::tile::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
 
-<span class="kw">mod</span> <span class="ident">catalog</span>;
-<span class="kw">mod</span> <span class="ident">catalog_config</span>;
-<span class="kw">mod</span> <span class="ident">export</span>;
-<span class="kw">mod</span> <span class="ident">map</span>;
-<span class="kw">mod</span> <span class="ident">track_info</span>;
-<span class="kw">mod</span> <span class="ident">version</span>;
-<span class="kw">mod</span> <span class="ident">welcome</span>;
+<span class="kw">mod </span>catalog;
+<span class="kw">mod </span>catalog_config;
+<span class="kw">mod </span>export;
+<span class="kw">mod </span>map;
+<span class="kw">mod </span>track_info;
+<span class="kw">mod </span>version;
+<span class="kw">mod </span>welcome;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CatalogSettings</span> <span class="op">=</span> <span class="ident">catalog::CatalogSettings</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CatalogView</span> <span class="op">=</span> <span class="ident">catalog::CatalogView</span>;
+</span><span class="kw">pub type </span>CatalogSettings = catalog::CatalogSettings;
+<span class="kw">pub type </span>CatalogView = catalog::CatalogView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CatalogConfigView</span> <span class="op">=</span> <span class="ident">catalog_config::CatalogConfigView</span>;
+<span class="kw">pub type </span>CatalogConfigView = catalog_config::CatalogConfigView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportScale</span> <span class="op">=</span> <span class="ident">export::ExportScale</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportSettings</span> <span class="op">=</span> <span class="ident">export::ExportSettings</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExportView</span> <span class="op">=</span> <span class="ident">export::ExportView</span>;
+<span class="kw">pub type </span>ExportScale = export::ExportScale;
+<span class="kw">pub type </span>ExportSettings = export::ExportSettings;
+<span class="kw">pub type </span>ExportView = export::ExportView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapSettings</span> <span class="op">=</span> <span class="ident">map::MapSettings</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapView</span> <span class="op">=</span> <span class="ident">map::MapView</span>;
+<span class="kw">pub type </span>MapSettings = map::MapSettings;
+<span class="kw">pub type </span>MapView = map::MapView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapConfigView</span> <span class="op">=</span> <span class="ident">map::config::MapConfigView</span>;
+<span class="kw">pub type </span>MapConfigView = map::config::MapConfigView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">MapDetailView</span> <span class="op">=</span> <span class="ident">map::detail::MapDetailView</span>;
+<span class="kw">pub type </span>MapDetailView = map::detail::MapDetailView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TrackInfoView</span> <span class="op">=</span> <span class="ident">track_info::TrackInfoView</span>;
+<span class="kw">pub type </span>TrackInfoView = track_info::TrackInfoView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VersionView</span> <span class="op">=</span> <span class="ident">version::VersionView</span>;
+<span class="kw">pub type </span>VersionView = version::VersionView;
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">WelcomeView</span> <span class="op">=</span> <span class="ident">welcome::WelcomeView</span>;
+<span class="kw">pub type </span>WelcomeView = welcome::WelcomeView;
 
-<span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">JsValue</span><span class="op">&gt;</span>;
+<span class="kw">type </span><span class="prelude-ty">Result</span>&lt;T&gt; = std::result::Result&lt;T, JsValue&gt;;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">const</span> <span class="ident">SVG_NS</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">SVG_NS_STR</span>);
-<span class="kw">const</span> <span class="ident">SVG_NS_STR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;http://www.w3.org/2000/svg&quot;</span>;
+</span><span class="kw">const </span>SVG_NS: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; = <span class="prelude-val">Some</span>(SVG_NS_STR);
+<span class="kw">const </span>SVG_NS_STR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;http://www.w3.org/2000/svg&quot;</span>;
 
-<span class="kw">const</span> <span class="ident">TILE_STYLE</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tile.css&quot;</span>);
+<span class="kw">const </span>TILE_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">&quot;tile.css&quot;</span>);
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">fn</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="ident">Point</span> {
-    <span class="comment">// use flat layout orientation as we confine us to the image size without rotation applied yet</span>
-    <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">with_orientation</span>(<span class="ident">Orientation::flat</span>())
-        .<span class="ident">hexagon_rect</span>(<span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>));
-    <span class="ident">Point</span>(<span class="ident">rect</span>.<span class="ident">width</span>.<span class="ident">round</span>(), <span class="ident">rect</span>.<span class="ident">height</span>.<span class="ident">round</span>())
+</span><span class="kw">fn </span>tile_image_size(layout: <span class="kw-2">&amp;</span>Layout) -&gt; Point {
+    <span class="comment">// use flat layout orientation as we confine us to the image size without rotation applied yet
+    </span><span class="kw">let </span>rect = layout.with_orientation(Orientation::flat())
+        .hexagon_rect(Coordinate::new(<span class="number">0</span>, <span class="number">0</span>));
+    Point(rect.width.round(), rect.height.round())
 }
 
-<span class="kw">fn</span> <span class="ident">tile_image_center</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="ident">Point</span> {
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>);
-    <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>())
+<span class="kw">fn </span>tile_image_center(layout: <span class="kw-2">&amp;</span>Layout) -&gt; Point {
+    <span class="kw">let </span>size = tile_image_size(layout);
+    Point(<span class="number">0.5 </span>* size.x(), <span class="number">0.5 </span>* size.y())
 }
 
-<span class="kw">fn</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">token_id</span>: <span class="ident">TokenId</span>) -&gt; <span class="ident">Point</span> {
-    <span class="kw">match</span> <span class="ident">token_id</span> {
-        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="number">0.500</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.350</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
-        <span class="ident">TokenId::ClimbAscent</span> <span class="op">|</span> <span class="ident">TokenId::ClimbDescent</span> <span class="op">|</span> <span class="ident">TokenId::Cloud</span> <span class="op">|</span> <span class="ident">TokenId::Oxygen</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="number">0.315</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.315</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
-        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
-            <span class="ident">Point</span>(<span class="number">1.200</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>(), <span class="number">0.585</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>()),
+<span class="kw">fn </span>token_image_size(layout: <span class="kw-2">&amp;</span>Layout, token_id: TokenId) -&gt; Point {
+    <span class="kw">match </span>token_id {
+        TokenId::Chicane(<span class="kw">_</span>) | TokenId::ChicaneWithLimit(<span class="kw">_</span>) | TokenId::Jump(<span class="kw">_</span>) | TokenId::Water(<span class="kw">_</span>) =&gt;
+            Point(<span class="number">0.500 </span>* layout.size().x(), <span class="number">0.350 </span>* layout.size().y()),
+        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
+            Point(<span class="number">0.315 </span>* layout.size().x(), <span class="number">0.315 </span>* layout.size().y()),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =&gt;
+            Point(<span class="number">1.200 </span>* layout.size().x(), <span class="number">0.585 </span>* layout.size().y()),
     }
 }
 
-<span class="kw">fn</span> <span class="ident">token_image_center</span>(<span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">token_id</span>: <span class="ident">TokenId</span>) -&gt; <span class="ident">Point</span> {
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>, <span class="ident">token_id</span>);
-    <span class="kw">match</span> <span class="ident">token_id</span> {
-        <span class="ident">TokenId::Chicane</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Jump</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TokenId::Water</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>()),
-        <span class="ident">TokenId::ClimbAscent</span> <span class="op">|</span> <span class="ident">TokenId::ClimbDescent</span> <span class="op">|</span> <span class="ident">TokenId::Cloud</span> <span class="op">|</span> <span class="ident">TokenId::Oxygen</span>(<span class="kw">_</span>) =&gt;
-            <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">y</span>()),
-        <span class="ident">TokenId::Finish</span> <span class="op">|</span> <span class="ident">TokenId::JokerEntrance</span> <span class="op">|</span> <span class="ident">TokenId::JokerExit</span> =&gt;
-            <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">size</span>.<span class="ident">x</span>(), <span class="ident">size</span>.<span class="ident">y</span>()),
+<span class="kw">fn </span>token_image_center(layout: <span class="kw-2">&amp;</span>Layout, token_id: TokenId) -&gt; Point {
+    <span class="kw">let </span>size = token_image_size(layout, token_id);
+    <span class="kw">match </span>token_id {
+        TokenId::Chicane(<span class="kw">_</span>) | TokenId::ChicaneWithLimit(<span class="kw">_</span>) | TokenId::Jump(<span class="kw">_</span>) | TokenId::Water(<span class="kw">_</span>) =&gt;
+            Point(<span class="number">0.5 </span>* size.x(), <span class="number">0.5 </span>* size.y()),
+        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
+            Point(<span class="number">0.5 </span>* size.x(), <span class="number">0.5 </span>* size.y()),
+        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =&gt;
+            Point(<span class="number">0.5 </span>* size.x(), size.y()),
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">fn</span> <span class="ident">mouse_position</span>(<span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::MouseEvent</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Point</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">current_target</span>()
-        .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">target</span><span class="op">|</span> <span class="ident">target</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::Element</span><span class="op">&gt;</span>().<span class="ident">ok</span>())<span class="question-mark">?</span>;
-    <span class="ident">mouse_position_element</span>(<span class="ident">event</span>, <span class="kw-2">&amp;</span><span class="ident">element</span>)
+</span><span class="kw">fn </span>mouse_position(event: <span class="kw-2">&amp;</span>web_sys::MouseEvent) -&gt; <span class="prelude-ty">Option</span>&lt;Point&gt; {
+    <span class="kw">let </span>element = event.current_target()
+        .and_then(|target| target.dyn_into::&lt;web_sys::Element&gt;().ok())<span class="question-mark">?</span>;
+    mouse_position_element(event, <span class="kw-2">&amp;</span>element)
 }
 
-<span class="kw">fn</span> <span class="ident">mouse_position_element</span>(<span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::MouseEvent</span>, <span class="ident">element</span>: <span class="kw-2">&amp;</span><span class="ident">Element</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Point</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">element</span>.<span class="ident">get_bounding_client_rect</span>();
-    <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">client_x</span>() <span class="kw">as</span> <span class="ident">f32</span> <span class="op">-</span> <span class="ident">rect</span>.<span class="ident">left</span>() <span class="kw">as</span> <span class="ident">f32</span>;
-    <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">client_y</span>() <span class="kw">as</span> <span class="ident">f32</span> <span class="op">-</span> <span class="ident">rect</span>.<span class="ident">top</span>() <span class="kw">as</span> <span class="ident">f32</span>;
-    <span class="prelude-val">Some</span>(<span class="ident">Point</span>(<span class="ident">x</span>, <span class="ident">y</span>))
+<span class="kw">fn </span>mouse_position_element(event: <span class="kw-2">&amp;</span>web_sys::MouseEvent, element: <span class="kw-2">&amp;</span>Element) -&gt; <span class="prelude-ty">Option</span>&lt;Point&gt; {
+    <span class="kw">let </span>rect = element.get_bounding_client_rect();
+    <span class="kw">let </span>x = event.client_x() <span class="kw">as </span>f32 - rect.left() <span class="kw">as </span>f32;
+    <span class="kw">let </span>y = event.client_y() <span class="kw">as </span>f32 - rect.top() <span class="kw">as </span>f32;
+    <span class="prelude-val">Some</span>(Point(x, y))
 }
 
-<span class="comment">// Helper macro that checks an option result and aborts the current function in case of an error.</span>
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules!</span> <span class="ident">check</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) =&gt; {
-        <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span> {
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
+<span class="comment">// Helper macro that checks an option result and aborts the current function in case of an error.
+</span><span class="attribute">#[doc(hidden)]
+#[macro_export]
+</span><span class="macro">macro_rules! </span>check {
+    (<span class="macro-nonterminal">$e</span>:expr) =&gt; {
+        <span class="kw">match </span><span class="macro-nonterminal">$e </span>{
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return</span>,
+            <span class="prelude-val">Some</span>(val) =&gt; val,
         }
     };
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">TileImageElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
+</span><span class="kw">struct </span>TileImageElement {
+    inner: Element,
 }
 
-<span class="kw">impl</span> <span class="ident">TileImageElement</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
+<span class="kw">impl </span>TileImageElement {
+    <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="ident">layout</span>);
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">tile_image_center</span>(<span class="ident">layout</span>);
-        <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
-        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">150.0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">150.0</span> {
-            <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{:x}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
-        } <span class="kw">else</span> {
-            <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumbs/tile-{:x}.webp&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>()))<span class="question-mark">?</span>;
+        <span class="kw">let </span>size = tile_image_size(layout);
+        <span class="kw">let </span>center = tile_image_center(layout);
+        <span class="kw">let </span>angle = layout.direction_to_angle(tile.dir);
+        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if </span>layout.size().x() &gt;= <span class="number">150.0 </span>|| layout.size().y() &gt;= <span class="number">150.0 </span>{
+            image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{:x}.webp&quot;</span>, tile.id()))<span class="question-mark">?</span>;
+        } <span class="kw">else </span>{
+            image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumbs/tile-{:x}.webp&quot;</span>, tile.id()))<span class="question-mark">?</span>;
         }
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>()))<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.1} {:.1})&quot;</span>, <span class="ident">angle</span>, <span class="op">-</span><span class="ident">center</span>.<span class="ident">x</span>(), <span class="op">-</span><span class="ident">center</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, size.x()))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, size.y()))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.1} {:.1})&quot;</span>, angle, -center.x(), -center.y()))<span class="question-mark">?</span>;
+        inner.append_child(<span class="kw-2">&amp;</span>image)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">TileImageElement</span> { <span class="ident">inner</span> })
+        <span class="prelude-val">Ok</span>(TileImageElement { inner })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_label</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::new</span>(<span class="ident">document</span>, <span class="ident">layout</span>, <span class="ident">tile</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub fn </span>new_with_label(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>element = <span class="self">Self</span>::new(document, layout, tile)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="ident">TileLabelElement::create_label_element</span>(<span class="ident">document</span>, <span class="ident">tile</span>)<span class="question-mark">?</span>;
-        <span class="ident">element</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">label</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>label = TileLabelElement::create_label_element(document, tile)<span class="question-mark">?</span>;
+        element.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">element</span>)
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">TileImageElement</span> {
-    <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Element</span>;
-
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::Target</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+        <span class="prelude-val">Ok</span>(element)
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="kw">impl </span>Deref <span class="kw">for </span>TileImageElement {
+    <span class="kw">type </span>Target = Element;
 
-<span class="kw">struct</span> <span class="ident">TileLabelElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
+    }
 }
 
-<span class="kw">impl</span> <span class="ident">TileLabelElement</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>()))<span class="question-mark">?</span>;
+<span class="comment">//----------------------------------------------------------------------------
 
-        <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::create_label_element</span>(<span class="ident">document</span>, <span class="ident">tile</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">label</span>)<span class="question-mark">?</span>;
+</span><span class="kw">struct </span>TileLabelElement {
+    inner: Element,
+}
 
-        <span class="prelude-val">Ok</span>(<span class="ident">TileLabelElement</span> { <span class="ident">inner</span> })
+<span class="kw">impl </span>TileLabelElement {
+    <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>label = <span class="self">Self</span>::create_label_element(document, tile)<span class="question-mark">?</span>;
+        inner.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(TileLabelElement { inner })
     }
 
-    <span class="kw">fn</span> <span class="ident">create_label_element</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">label</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">label</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">label</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">base</span>().<span class="ident">to_string</span>();
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">text</span>.<span class="ident">push</span>(<span class="string">&#39;*&#39;</span>);
+    <span class="kw">fn </span>create_label_element(document: <span class="kw-2">&amp;</span>Document, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
+        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>text = tile.id().base().to_string();
+        <span class="kw">if </span>!tile.tokens.is_empty() {
+            text.push(<span class="string">&#39;*&#39;</span>);
         }
-        <span class="ident">label</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>.<span class="ident">create_text_node</span>(<span class="kw-2">&amp;</span><span class="ident">text</span>))<span class="question-mark">?</span>;
+        label.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text))<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">label</span>)
+        <span class="prelude-val">Ok</span>(label)
     }
 
 }
 
-<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">TileLabelElement</span> {
-    <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Element</span>;
+<span class="kw">impl </span>Deref <span class="kw">for </span>TileLabelElement {
+    <span class="kw">type </span>Target = Element;
 
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::Target</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">TokenImageElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">image</span>: <span class="ident">Element</span>,
+</span><span class="kw">struct </span>TokenImageElement {
+    inner: Element,
+    image: Element,
 }
 
-<span class="kw">impl</span> <span class="ident">TokenImageElement</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>, <span class="ident">token</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;token&quot;</span>)<span class="question-mark">?</span>;
+<span class="kw">impl </span>TokenImageElement {
+    <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;token&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">inner</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
+        inner.append_child(<span class="kw-2">&amp;</span>image)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident">TokenImageElement</span> { <span class="ident">inner</span>, <span class="ident">image</span> };
-        <span class="ident">element</span>.<span class="ident">set_token</span>(<span class="ident">layout</span>, <span class="ident">tile</span>, <span class="ident">token</span>);
-        <span class="prelude-val">Ok</span>(<span class="ident">element</span>)
+        <span class="kw">let </span>element = TokenImageElement { inner, image };
+        element.set_token(layout, tile, token);
+        <span class="prelude-val">Ok</span>(element)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>, <span class="ident">token</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) {
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> (<span class="ident">FloatCoordinate::from</span>(<span class="ident">tile</span>.<span class="ident">pos</span>) <span class="op">+</span> <span class="ident">token</span>.<span class="ident">pos</span>.<span class="ident">rotate</span>(<span class="ident">tile</span>.<span class="ident">dir</span>)).<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>())).<span class="ident">ok</span>());
+    <span class="kw">pub fn </span>set_token(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken) {
+        <span class="kw">let </span>pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y())).ok());
 
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="ident">layout</span>, <span class="ident">token</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="ident">layout</span>, <span class="ident">token</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">direction_to_angle</span>(<span class="ident">FloatDirection::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>) <span class="op">+</span> <span class="ident">token</span>.<span class="ident">dir</span>);
-        <span class="kw">if</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">x</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">150.0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">layout</span>.<span class="ident">size</span>().<span class="ident">y</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">150.0</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.webp&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>)).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/thumbs/{:x}.webp&quot;</span>, <span class="ident">token</span>.<span class="ident">id</span>)).<span class="ident">ok</span>());
+        <span class="kw">let </span>size = token_image_size(layout, token.id);
+        <span class="kw">let </span>center = token_image_center(layout, token.id);
+        <span class="kw">let </span>angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
+        <span class="kw">if </span>layout.size().x() &gt;= <span class="number">150.0 </span>|| layout.size().y() &gt;= <span class="number">150.0 </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.webp&quot;</span>, token.id)).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/thumbs/{:x}.webp&quot;</span>, token.id)).ok());
         }
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">x</span>())).<span class="ident">ok</span>());
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">size</span>.<span class="ident">y</span>())).<span class="ident">ok</span>());
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.1}) translate({:.3} {:.3})&quot;</span>, <span class="ident">angle</span>, <span class="op">-</span><span class="ident">center</span>.<span class="ident">x</span>(), <span class="op">-</span><span class="ident">center</span>.<span class="ident">y</span>())).<span class="ident">ok</span>());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, size.x())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, size.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.1}) translate({:.3} {:.3})&quot;</span>, angle, -center.x(), -center.y())).ok());
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_token_pos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">tile</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedTile</span>, <span class="ident">token_pos</span>: <span class="ident">FloatCoordinate</span>) {
-        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> (<span class="ident">FloatCoordinate::from</span>(<span class="ident">tile</span>.<span class="ident">pos</span>) <span class="op">+</span> <span class="ident">token_pos</span>.<span class="ident">rotate</span>(<span class="ident">tile</span>.<span class="ident">dir</span>)).<span class="ident">to_pixel</span>(<span class="ident">layout</span>);
-        <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, <span class="ident">pos</span>.<span class="ident">x</span>(), <span class="ident">pos</span>.<span class="ident">y</span>())).<span class="ident">ok</span>());
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">TokenImageElement</span> {
-    <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Element</span>;
-
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::Target</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+    <span class="kw">pub fn </span>set_token_pos(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token_pos: FloatCoordinate) {
+        <span class="kw">let </span>pos = (FloatCoordinate::from(tile.pos) + token_pos.rotate(tile.dir)).to_pixel(layout);
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y())).ok());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="kw">impl </span>Deref <span class="kw">for </span>TokenImageElement {
+    <span class="kw">type </span>Target = Element;
 
-<span class="kw">trait</span> <span class="ident">ElementHidden</span> {
-    <span class="kw">fn</span> <span class="ident">hidden</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span>;
-    <span class="kw">fn</span> <span class="ident">set_hidden</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>);
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
+    }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">ElementHidden</span> <span class="kw">for</span> <span class="ident">T</span> {
-    <span class="kw">fn</span> <span class="ident">hidden</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">let</span> <span class="ident">elm</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">as_ref</span>();
-        <span class="ident">elm</span>.<span class="ident">class_list</span>().<span class="ident">contains</span>(<span class="string">&quot;is-hidden&quot;</span>)
+<span class="comment">//----------------------------------------------------------------------------
+
+</span><span class="kw">trait </span>ElementHidden {
+    <span class="kw">fn </span>hidden(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+    <span class="kw">fn </span>set_hidden(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool);
+}
+
+<span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementHidden <span class="kw">for </span>T {
+    <span class="kw">fn </span>hidden(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">let </span>elm = <span class="self">self</span>.as_ref();
+        elm.class_list().contains(<span class="string">&quot;is-hidden&quot;</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_hidden</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">let</span> <span class="ident">elm</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">as_ref</span>();
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="ident">elm</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-hidden&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="ident">elm</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-hidden&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">fn </span>set_hidden(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">let </span>elm = <span class="self">self</span>.as_ref();
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(elm.class_list().add_1(<span class="string">&quot;is-hidden&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(elm.class_list().remove_1(<span class="string">&quot;is-hidden&quot;</span>).ok());
         }
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">approx::assert_abs_diff_eq</span>;
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+</span><span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>approx::assert_abs_diff_eq;
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">tile_image_size_and_center</span>() {
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">60.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">120.0</span>, <span class="number">104.0</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">tile_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">52.0</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>tile_image_size_and_center() {
+        <span class="kw">let </span>layout = Layout::new(Orientation::pointy(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let </span>size = tile_image_size(<span class="kw-2">&amp;</span>layout);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">120.0</span>, <span class="number">104.0</span>));
+        <span class="kw">let </span>center = tile_image_center(<span class="kw-2">&amp;</span>layout);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">60.0</span>, <span class="number">52.0</span>));
 
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">60.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">tile_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">120.0</span>, <span class="number">104.0</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">tile_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">52.0</span>));
+        <span class="kw">let </span>layout = Layout::new(Orientation::flat(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let </span>size = tile_image_size(<span class="kw-2">&amp;</span>layout);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">120.0</span>, <span class="number">104.0</span>));
+        <span class="kw">let </span>center = tile_image_center(<span class="kw-2">&amp;</span>layout);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">60.0</span>, <span class="number">52.0</span>));
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">token_image_size_and_center</span>() {
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">60.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>token_image_size_and_center() {
+        <span class="kw">let </span>layout = Layout::new(Orientation::pointy(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">0.0</span>, <span class="number">0.0</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>);
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">21.0</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">15.0</span>, <span class="number">10.5</span>));
+        <span class="kw">let </span>token_id = TokenId::Chicane(Terrain::Asphalt);
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">30.0</span>, <span class="number">21.0</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">15.0</span>, <span class="number">10.5</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::ClimbAscent</span>;
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">18.9</span>, <span class="number">18.9</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">9.45</span>, <span class="number">9.45</span>));
+        <span class="kw">let </span>token_id = TokenId::ClimbAscent;
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">18.9</span>, <span class="number">18.9</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">9.45</span>, <span class="number">9.45</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::JokerEntrance</span>;
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">72.0</span>, <span class="number">35.1</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">36.0</span>, <span class="number">35.1</span>));
+        <span class="kw">let </span>token_id = TokenId::JokerEntrance;
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">72.0</span>, <span class="number">35.1</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">36.0</span>, <span class="number">35.1</span>));
 
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::flat</span>(), <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">60.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let </span>layout = Layout::new(Orientation::flat(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">0.0</span>, <span class="number">0.0</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>);
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">30.0</span>, <span class="number">21.0</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">15.0</span>, <span class="number">10.5</span>));
+        <span class="kw">let </span>token_id = TokenId::Chicane(Terrain::Asphalt);
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">30.0</span>, <span class="number">21.0</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">15.0</span>, <span class="number">10.5</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::ClimbAscent</span>;
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">18.9</span>, <span class="number">18.9</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">9.45</span>, <span class="number">9.45</span>));
+        <span class="kw">let </span>token_id = TokenId::ClimbAscent;
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">18.9</span>, <span class="number">18.9</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">9.45</span>, <span class="number">9.45</span>));
 
-        <span class="kw">let</span> <span class="ident">token_id</span> <span class="op">=</span> <span class="ident">TokenId::JokerExit</span>;
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">token_image_size</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">size</span>, <span class="ident">Point</span>(<span class="number">72.0</span>, <span class="number">35.1</span>));
-        <span class="kw">let</span> <span class="ident">center</span> <span class="op">=</span> <span class="ident">token_image_center</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="ident">token_id</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">center</span>, <span class="ident">Point</span>(<span class="number">36.0</span>, <span class="number">35.1</span>));
+        <span class="kw">let </span>token_id = TokenId::JokerExit;
+        <span class="kw">let </span>size = token_image_size(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(size, Point(<span class="number">72.0</span>, <span class="number">35.1</span>));
+        <span class="kw">let </span>center = token_image_center(<span class="kw-2">&amp;</span>layout, token_id);
+        <span class="macro">assert_abs_diff_eq!</span>(center, Point(<span class="number">36.0</span>, <span class="number">35.1</span>));
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

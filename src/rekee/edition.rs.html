@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/edition.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>edition.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/edition.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>edition.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -796,402 +796,402 @@
 <span id="796">796</span>
 <span id="797">797</span>
 <span id="798">798</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! (Sidenote: I have not fully settled on the term &quot;edition&quot; yet; &quot;box&quot; might</span>
-<span class="doccomment">//! be better but is already widely used for a different purpose in the Rust std</span>
-<span class="doccomment">//! library. This type name might still change until the Rekee library reaches</span>
-<span class="doccomment">//! version 1.0)</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).
+//!
+//! (Sidenote: I have not fully settled on the term &quot;edition&quot; yet; &quot;box&quot; might
+//! be better but is already widely used for a different purpose in the Rust std
+//! library. This type name might still change until the Rekee library reaches
+//! version 1.0)
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
+</span><span class="kw">use </span>std::fmt;
+<span class="kw">use </span>std::str::FromStr;
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
+<span class="kw">use </span>serde::{Serialize, Deserialize};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile::TileId</span>;
+<span class="kw">use </span><span class="kw">crate</span>::tile::TileId;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="doccomment">/// Rallyman game edition (core box or one of the expansions).</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;kebab-case&quot;</span>, <span class="ident">try_from</span> <span class="op">=</span> <span class="string">&quot;&amp;str&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Edition</span> {
-    <span class="doccomment">/// Rallyman: GT core box</span>
-    <span class="ident">GtCoreBox</span>,
-    <span class="doccomment">/// Championship expansion for Rallyman: GT</span>
-    <span class="ident">GtChampionship</span>,
-    <span class="doccomment">/// World Tour expansion for Rallyman: GT</span>
-    <span class="ident">GtWorldTour</span>,
-    <span class="doccomment">/// Team Challenge expansion for Rallyman: GT</span>
-    <span class="ident">GtTeamChallenge</span>,
-    <span class="doccomment">/// Adrenaline Pack expansion for Rallyman: GT</span>
-    <span class="ident">GtAdrenalinePack</span>,
-    <span class="doccomment">/// Rallyman: DIRT core box</span>
-    <span class="ident">DirtCoreBox</span>,
-    <span class="doccomment">/// 110% expansion for Rallyman: DIRT</span>
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;dirt-110-percent&quot;</span>)]</span>
-    <span class="ident">Dirt110Percent</span>,
-    <span class="doccomment">/// RX expansion for Rallyman: DIRT</span>
-    <span class="ident">DirtRx</span>,
-    <span class="doccomment">/// Climb expansion for Rallyman: DIRT</span>
-    <span class="ident">DirtClimb</span>,
-    <span class="doccomment">/// Copilot Pack expansion for Rallyman: DIRT</span>
-    <span class="ident">DirtCopilotPack</span>,
+</span><span class="doccomment">/// Rallyman game edition (core box or one of the expansions).
+</span><span class="attribute">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = <span class="string">&quot;kebab-case&quot;</span>, try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+</span><span class="kw">pub enum </span>Edition {
+    <span class="doccomment">/// Rallyman: GT core box
+    </span>GtCoreBox,
+    <span class="doccomment">/// Championship expansion for Rallyman: GT
+    </span>GtChampionship,
+    <span class="doccomment">/// World Tour expansion for Rallyman: GT
+    </span>GtWorldTour,
+    <span class="doccomment">/// Team Challenge expansion for Rallyman: GT
+    </span>GtTeamChallenge,
+    <span class="doccomment">/// Adrenaline Pack expansion for Rallyman: GT
+    </span>GtAdrenalinePack,
+    <span class="doccomment">/// Rallyman: DIRT core box
+    </span>DirtCoreBox,
+    <span class="doccomment">/// 110% expansion for Rallyman: DIRT
+    </span><span class="attribute">#[serde(rename = <span class="string">&quot;dirt-110-percent&quot;</span>)]
+    </span>Dirt110Percent,
+    <span class="doccomment">/// RX expansion for Rallyman: DIRT
+    </span>DirtRx,
+    <span class="doccomment">/// Climb expansion for Rallyman: DIRT
+    </span>DirtClimb,
+    <span class="doccomment">/// Copilot Pack expansion for Rallyman: DIRT
+    </span>DirtCopilotPack,
 }
 
-<span class="kw">impl</span> <span class="ident">Edition</span> {
-    <span class="doccomment">/// Returns all the tiles of the game joined into a sorted list.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let tiles = Edition::all_tiles();</span>
-    <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(101)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 307);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">all_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">307</span>);
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident"><span class="self">Self</span>::iter</span>() {
-            <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
+<span class="kw">impl </span>Edition {
+    <span class="doccomment">/// Returns all the tiles of the game joined into a sorted list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::all_tiles();
+    /// assert_eq!(tiles.first(), Some(&amp;tile!(101)));
+    /// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));
+    /// assert_eq!(tiles.len(), 307);
+    /// ```
+    </span><span class="kw">pub fn </span>all_tiles() -&gt; Vec&lt;TileId&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::with_capacity(<span class="number">307</span>);
+        <span class="kw">for </span>edition <span class="kw">in </span><span class="self">Self</span>::iter() {
+            tiles.extend_from_slice(<span class="kw-2">&amp;</span>edition.tiles());
         }
-        <span class="ident">tiles</span>.<span class="ident">sort_unstable</span>();
-        <span class="ident">tiles</span>
+        tiles.sort_unstable();
+        tiles
     }
 
-    <span class="doccomment">/// Returns tiles part of Rallyman: GT game editions joined into a sorted list.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let tiles = Edition::gt_tiles();</span>
-    <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(101)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(901, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 145);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gt_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">145</span>);
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Gt</span>.<span class="ident">editions</span>() {
-            <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
+    <span class="doccomment">/// Returns tiles part of Rallyman: GT game editions joined into a sorted list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::gt_tiles();
+    /// assert_eq!(tiles.first(), Some(&amp;tile!(101)));
+    /// assert_eq!(tiles.last(), Some(&amp;tile!(901, b)));
+    /// assert_eq!(tiles.len(), 145);
+    /// ```
+    </span><span class="attribute">#[deprecated(note = <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]
+    </span><span class="kw">pub fn </span>gt_tiles() -&gt; Vec&lt;TileId&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::with_capacity(<span class="number">145</span>);
+        <span class="kw">for </span>edition <span class="kw">in </span>Series::Gt.editions() {
+            tiles.extend_from_slice(<span class="kw-2">&amp;</span>edition.tiles());
         }
-        <span class="ident">tiles</span>.<span class="ident">sort_unstable</span>();
-        <span class="ident">tiles</span>
+        tiles.sort_unstable();
+        tiles
     }
 
-    <span class="doccomment">/// Returns tiles part of Rallyman: DIRT game editions joined into a sorted list.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let tiles = Edition::dirt_tiles();</span>
-    <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(201, a)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 162);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dirt_tiles</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">162</span>);
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Dirt</span>.<span class="ident">editions</span>() {
-            <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">tiles</span>());
+    <span class="doccomment">/// Returns tiles part of Rallyman: DIRT game editions joined into a sorted list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::dirt_tiles();
+    /// assert_eq!(tiles.first(), Some(&amp;tile!(201, a)));
+    /// assert_eq!(tiles.last(), Some(&amp;tile!(905, b)));
+    /// assert_eq!(tiles.len(), 162);
+    /// ```
+    </span><span class="attribute">#[deprecated(note = <span class="string">&quot;Please use Series::editions() together with Edition::tiles() instead&quot;</span>)]
+    </span><span class="kw">pub fn </span>dirt_tiles() -&gt; Vec&lt;TileId&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::with_capacity(<span class="number">162</span>);
+        <span class="kw">for </span>edition <span class="kw">in </span>Series::Dirt.editions() {
+            tiles.extend_from_slice(<span class="kw-2">&amp;</span>edition.tiles());
         }
-        <span class="ident">tiles</span>.<span class="ident">sort_unstable</span>();
-        <span class="ident">tiles</span>
+        tiles.sort_unstable();
+        tiles
     }
 
-    <span class="kw">fn</span> <span class="ident">internal_tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">TileId</span>] {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Edition::GtCoreBox</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_CORE_BOX</span>,
-            <span class="ident">Edition::GtChampionship</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_CHAMPIONSHIP</span>,
-            <span class="ident">Edition::GtWorldTour</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_WORLD_TOUR</span>,
-            <span class="ident">Edition::GtTeamChallenge</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_TEAM_CHALLENGE</span>,
-            <span class="ident">Edition::GtAdrenalinePack</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>,
-            <span class="ident">Edition::DirtCoreBox</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>,
-            <span class="ident">Edition::Dirt110Percent</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>,
-            <span class="ident">Edition::DirtRx</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>,
-            <span class="ident">Edition::DirtClimb</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>,
-            <span class="ident">Edition::DirtCopilotPack</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT_PACK</span>,
+    <span class="kw">fn </span>internal_tiles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[TileId] {
+        <span class="kw">match </span><span class="self">self </span>{
+            Edition::GtCoreBox =&gt;
+                <span class="kw-2">&amp;</span>GT_CORE_BOX,
+            Edition::GtChampionship =&gt;
+                <span class="kw-2">&amp;</span>GT_CHAMPIONSHIP,
+            Edition::GtWorldTour =&gt;
+                <span class="kw-2">&amp;</span>GT_WORLD_TOUR,
+            Edition::GtTeamChallenge =&gt;
+                <span class="kw-2">&amp;</span>GT_TEAM_CHALLENGE,
+            Edition::GtAdrenalinePack =&gt;
+                <span class="kw-2">&amp;</span>GT_ADRENALINE_PACK,
+            Edition::DirtCoreBox =&gt;
+                <span class="kw-2">&amp;</span>DIRT_CORE_BOX,
+            Edition::Dirt110Percent =&gt;
+                <span class="kw-2">&amp;</span>DIRT_110_PERCENT,
+            Edition::DirtRx =&gt;
+                <span class="kw-2">&amp;</span>DIRT_RX,
+            Edition::DirtClimb =&gt;
+                <span class="kw-2">&amp;</span>DIRT_CLIMB,
+            Edition::DirtCopilotPack =&gt;
+                <span class="kw-2">&amp;</span>DIRT_COPILOT_PACK,
         }
      }
 
-    <span class="doccomment">/// Returns the tiles of a specific game edition.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let tiles = Edition::GtCoreBox.tiles();</span>
-    <span class="doccomment">/// assert_eq!(tiles.first(), Some(&amp;tile!(101)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.last(), Some(&amp;tile!(120, b)));</span>
-    <span class="doccomment">/// assert_eq!(tiles.len(), 63);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tiles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">63</span>);
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">iter</span>() {
-            <span class="kw">let</span> <span class="ident">tile_a</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">1</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
-            <span class="kw">let</span> <span class="ident">tile_b</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">2</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
-            <span class="comment">// only add both sides if the tile actually has two different ones (not #101)</span>
-            <span class="kw">if</span> <span class="ident">tile_a</span>.<span class="ident">base</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">tile_b</span>.<span class="ident">base</span>() {
-                <span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">tile_a</span>);
-                <span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">tile_b</span>);
-            } <span class="kw">else</span> {
-                <span class="ident">tiles</span>.<span class="ident">push</span>(<span class="kw-2">*</span><span class="ident">tile</span>);
+    <span class="doccomment">/// Returns the tiles of a specific game edition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let tiles = Edition::GtCoreBox.tiles();
+    /// assert_eq!(tiles.first(), Some(&amp;tile!(101)));
+    /// assert_eq!(tiles.last(), Some(&amp;tile!(120, b)));
+    /// assert_eq!(tiles.len(), 63);
+    /// ```
+    </span><span class="kw">pub fn </span>tiles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;TileId&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::with_capacity(<span class="number">63</span>);
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.internal_tiles().iter() {
+            <span class="kw">let </span>tile_a = TileId::new(tile.num(), <span class="number">1</span>, tile.var());
+            <span class="kw">let </span>tile_b = TileId::new(tile.num(), <span class="number">2</span>, tile.var());
+            <span class="comment">// only add both sides if the tile actually has two different ones (not #101)
+            </span><span class="kw">if </span>tile_a.base() != tile_b.base() {
+                tiles.push(tile_a);
+                tiles.push(tile_b);
+            } <span class="kw">else </span>{
+                tiles.push(<span class="kw-2">*</span>tile);
             }
         }
-        <span class="ident">tiles</span>
+        tiles
     }
 
-    <span class="doccomment">/// Check whether the edition contains a specific tile.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Returns `true` when the identifier is found in the list of tiles.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Compares the full tile identifier, including the graphical variant. To</span>
-    <span class="doccomment">/// compare the base identifier only use [`Edition::contains_base()`]</span>
-    <span class="doccomment">/// instead. See [`TileId::base()`] for more information on the difference</span>
-    <span class="doccomment">/// between base and full tile identifiers.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let edition = Edition::DirtCoreBox;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), true);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), false);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let edition = Edition::DirtClimb;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(201, a)), false);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(325, b)), true);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let edition = Edition::GtWorldTour;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(124, a, 1)), false);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains(tile!(124, a, 2)), true);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
-        <span class="comment">// clear side, any edition contains both sides of a tile</span>
-        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">TileId::new</span>(<span class="ident">tile</span>.<span class="ident">num</span>(), <span class="number">0</span>, <span class="ident">tile</span>.<span class="ident">var</span>());
-        <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
-        <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">binary_search</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>).<span class="ident">is_ok</span>()
+    <span class="doccomment">/// Check whether the edition contains a specific tile.
+    ///
+    /// Returns `true` when the identifier is found in the list of tiles.
+    ///
+    /// Compares the full tile identifier, including the graphical variant. To
+    /// compare the base identifier only use [`Edition::contains_base()`]
+    /// instead. See [`TileId::base()`] for more information on the difference
+    /// between base and full tile identifiers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let edition = Edition::DirtCoreBox;
+    /// assert_eq!(edition.contains(tile!(201, a)), true);
+    /// assert_eq!(edition.contains(tile!(325, b)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains(tile!(201, a)), false);
+    /// assert_eq!(edition.contains(tile!(325, b)), true);
+    ///
+    /// let edition = Edition::GtWorldTour;
+    /// assert_eq!(edition.contains(tile!(124, a, 1)), false);
+    /// assert_eq!(edition.contains(tile!(124, a, 2)), true);
+    /// ```
+    </span><span class="kw">pub fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, tile: TileId) -&gt; bool {
+        <span class="comment">// clear side, any edition contains both sides of a tile
+        </span><span class="kw">let </span>tile = TileId::new(tile.num(), <span class="number">0</span>, tile.var());
+        <span class="comment">// can use fast binary search as the list order is checked with unit tests
+        </span><span class="self">self</span>.internal_tiles().binary_search(<span class="kw-2">&amp;</span>tile).is_ok()
     }
 
-    <span class="doccomment">/// Check whether the edition matches a given base tile identifier.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Returns `true` when a tile with matching base identifier is found in the</span>
-    <span class="doccomment">/// list of tiles.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Compares the base tile identifier, with graphical variant excluded. To</span>
-    <span class="doccomment">/// compare the full identifier use [`Edition::contains()`] instead. See</span>
-    <span class="doccomment">/// [`TileId::base()`] for more information on the difference between base</span>
-    <span class="doccomment">/// and full tile identifiers.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// # use rekee::tile;</span>
-    <span class="doccomment">/// let edition = Edition::DirtCoreBox;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(201, a)), true);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(325, b)), false);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let edition = Edition::DirtClimb;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(201, a)), false);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(325, b)), true);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let edition = Edition::GtWorldTour;</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(124, a, 1).base()), true);</span>
-    <span class="doccomment">/// assert_eq!(edition.contains_base(tile!(124, a, 2).base()), true);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
-        <span class="comment">// Ignore side as any edition contains both sides of a tile, and ignore</span>
-        <span class="comment">// graphical variant as we care for the base identifier only</span>
-        <span class="kw">let</span> <span class="ident">tile_num</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">num</span>();
-        <span class="comment">// can use fast binary search as the list order is checked with unit tests</span>
-        <span class="self">self</span>.<span class="ident">internal_tiles</span>().<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">tile_num</span>, <span class="op">|</span><span class="ident">tile</span><span class="op">|</span> <span class="ident">tile</span>.<span class="ident">num</span>()).<span class="ident">is_ok</span>()
+    <span class="doccomment">/// Check whether the edition matches a given base tile identifier.
+    ///
+    /// Returns `true` when a tile with matching base identifier is found in the
+    /// list of tiles.
+    ///
+    /// Compares the base tile identifier, with graphical variant excluded. To
+    /// compare the full identifier use [`Edition::contains()`] instead. See
+    /// [`TileId::base()`] for more information on the difference between base
+    /// and full tile identifiers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile;
+    /// let edition = Edition::DirtCoreBox;
+    /// assert_eq!(edition.contains_base(tile!(201, a)), true);
+    /// assert_eq!(edition.contains_base(tile!(325, b)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains_base(tile!(201, a)), false);
+    /// assert_eq!(edition.contains_base(tile!(325, b)), true);
+    ///
+    /// let edition = Edition::GtWorldTour;
+    /// assert_eq!(edition.contains_base(tile!(124, a, 1).base()), true);
+    /// assert_eq!(edition.contains_base(tile!(124, a, 2).base()), true);
+    /// ```
+    </span><span class="kw">pub fn </span>contains_base(<span class="kw-2">&amp;</span><span class="self">self</span>, tile: TileId) -&gt; bool {
+        <span class="comment">// Ignore side as any edition contains both sides of a tile, and ignore
+        // graphical variant as we care for the base identifier only
+        </span><span class="kw">let </span>tile_num = tile.num();
+        <span class="comment">// can use fast binary search as the list order is checked with unit tests
+        </span><span class="self">self</span>.internal_tiles().binary_search_by_key(<span class="kw-2">&amp;</span>tile_num, |tile| tile.num()).is_ok()
     }
 
-    <span class="doccomment">/// Check whether the edition is a stand-alone game, or an expansion module.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// assert_eq!(Edition::GtAdrenalinePack.is_expansion(), true);</span>
-    <span class="doccomment">/// assert_eq!(Edition::GtCoreBox.is_expansion(), false);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_expansion</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="op">!</span><span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">Edition::GtCoreBox</span> <span class="op">|</span> <span class="ident">Edition::DirtCoreBox</span>)
+    <span class="doccomment">/// Check whether the edition is a stand-alone game, or an expansion module.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// assert_eq!(Edition::GtAdrenalinePack.is_expansion(), true);
+    /// assert_eq!(Edition::GtCoreBox.is_expansion(), false);
+    /// ```
+    </span><span class="kw">pub fn </span>is_expansion(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        !<span class="macro">matches!</span>(<span class="self">self</span>, Edition::GtCoreBox | Edition::DirtCoreBox)
     }
 
-    <span class="doccomment">/// Game series that the edition belongs to.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Examples</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use rekee::edition::*;</span>
-    <span class="doccomment">/// let series = Edition::GtWorldTour.series();</span>
-    <span class="doccomment">/// assert_eq!(series, Series::Gt);</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let series = Edition::Dirt110Percent.series();</span>
-    <span class="doccomment">/// assert_eq!(series, Series::Dirt);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">series</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Series</span> {
-        <span class="kw">if</span> <span class="ident">GT_EDITIONS</span>.<span class="ident">contains</span>(<span class="self">self</span>) {
-            <span class="ident">Series::Gt</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">DIRT_EDITIONS</span>.<span class="ident">contains</span>(<span class="self">self</span>) {
-            <span class="ident">Series::Dirt</span>
-        } <span class="kw">else</span> {
+    <span class="doccomment">/// Game series that the edition belongs to.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// let series = Edition::GtWorldTour.series();
+    /// assert_eq!(series, Series::Gt);
+    ///
+    /// let series = Edition::Dirt110Percent.series();
+    /// assert_eq!(series, Series::Dirt);
+    /// ```
+    </span><span class="kw">pub fn </span>series(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Series {
+        <span class="kw">if </span>GT_EDITIONS.contains(<span class="self">self</span>) {
+            Series::Gt
+        } <span class="kw">else if </span>DIRT_EDITIONS.contains(<span class="self">self</span>) {
+            Series::Dirt
+        } <span class="kw">else </span>{
             <span class="macro">unimplemented!</span>();
         }
     }
 
-    <span class="doccomment">/// Iterator over all game editions.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">const</span> <span class="ident">EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">10</span>] <span class="op">=</span> [
-            <span class="ident">Edition::GtCoreBox</span>,
-            <span class="ident">Edition::GtChampionship</span>,
-            <span class="ident">Edition::GtWorldTour</span>,
-            <span class="ident">Edition::GtTeamChallenge</span>,
-            <span class="ident">Edition::GtAdrenalinePack</span>,
-            <span class="ident">Edition::DirtCoreBox</span>,
-            <span class="ident">Edition::Dirt110Percent</span>,
-            <span class="ident">Edition::DirtRx</span>,
-            <span class="ident">Edition::DirtClimb</span>,
-            <span class="ident">Edition::DirtCopilotPack</span>,
+    <span class="doccomment">/// Iterator over all game editions.
+    </span><span class="kw">pub fn </span>iter() -&gt; std::slice::Iter&lt;<span class="lifetime">&#39;static</span>, <span class="self">Self</span>&gt; {
+        <span class="kw">const </span>EDITIONS: [Edition; <span class="number">10</span>] = [
+            Edition::GtCoreBox,
+            Edition::GtChampionship,
+            Edition::GtWorldTour,
+            Edition::GtTeamChallenge,
+            Edition::GtAdrenalinePack,
+            Edition::DirtCoreBox,
+            Edition::Dirt110Percent,
+            Edition::DirtRx,
+            Edition::DirtClimb,
+            Edition::DirtCopilotPack,
         ];
-        <span class="ident">EDITIONS</span>.<span class="ident">iter</span>()
+        EDITIONS.iter()
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Edition::GtCoreBox</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Core Box&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtChampionship</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Championship&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtWorldTour</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT World Tour&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtTeamChallenge</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Team Challenge&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::GtAdrenalinePack</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;GT Adrenaline Pack&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtCoreBox</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Core Box&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::Dirt110Percent</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT 110%&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtRx</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT RX&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtClimb</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Climb&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Edition::DirtCopilotPack</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;DIRT Copilot Pack&quot;</span>)<span class="question-mark">?</span>,
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>Edition {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            Edition::GtCoreBox =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;GT Core Box&quot;</span>)<span class="question-mark">?</span>,
+            Edition::GtChampionship =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;GT Championship&quot;</span>)<span class="question-mark">?</span>,
+            Edition::GtWorldTour =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;GT World Tour&quot;</span>)<span class="question-mark">?</span>,
+            Edition::GtTeamChallenge =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;GT Team Challenge&quot;</span>)<span class="question-mark">?</span>,
+            Edition::GtAdrenalinePack =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;GT Adrenaline Pack&quot;</span>)<span class="question-mark">?</span>,
+            Edition::DirtCoreBox =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;DIRT Core Box&quot;</span>)<span class="question-mark">?</span>,
+            Edition::Dirt110Percent =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;DIRT 110%&quot;</span>)<span class="question-mark">?</span>,
+            Edition::DirtRx =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;DIRT RX&quot;</span>)<span class="question-mark">?</span>,
+            Edition::DirtClimb =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;DIRT Climb&quot;</span>)<span class="question-mark">?</span>,
+            Edition::DirtCopilotPack =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;DIRT Copilot Pack&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="comment">// small hack to provide the Serde string serialization as a formatter</span>
-<span class="kw">impl</span> <span class="ident">fmt::LowerHex</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="self">self</span>).<span class="ident">unwrap</span>();
-        <span class="ident">text</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span>);
-        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">text</span>)
+<span class="comment">// small hack to provide the Serde string serialization as a formatter
+</span><span class="kw">impl </span>fmt::LowerHex <span class="kw">for </span>Edition {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">let </span><span class="kw-2">mut </span>text = serde_json::to_string(<span class="self">self</span>).unwrap();
+        text.retain(|ch| ch != <span class="string">&#39;&quot;&#39;</span>);
+        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, text)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseEditionError</span>;
+<span class="kw">impl </span>FromStr <span class="kw">for </span>Edition {
+    <span class="kw">type </span><span class="prelude-val">Err </span>= ParseEditionError;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
-        <span class="comment">// match strings from both trait implementations, std::fmt::Display and serde::Serialize</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">val</span>.<span class="ident">replace</span>(<span class="ident">char::is_whitespace</span>, <span class="string">&quot;-&quot;</span>);
-        <span class="ident">s</span>.<span class="ident">make_ascii_lowercase</span>();
-        <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">as_ref</span>() {
-            <span class="string">&quot;gt-core-box&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtCoreBox</span>),
-            <span class="string">&quot;gt-championship&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtChampionship</span>),
-            <span class="string">&quot;gt-world-tour&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtWorldTour</span>),
-            <span class="string">&quot;gt-team-challenge&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtTeamChallenge</span>),
-            <span class="string">&quot;gt-adrenaline-pack&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtAdrenalinePack</span>),
-            <span class="string">&quot;dirt-core-box&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtCoreBox</span>),
-            <span class="string">&quot;dirt-110-percent&quot;</span> <span class="op">|</span> <span class="string">&quot;dirt-110%&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::Dirt110Percent</span>),
-            <span class="string">&quot;dirt-rx&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtRx</span>),
-            <span class="string">&quot;dirt-climb&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtClimb</span>),
-            <span class="string">&quot;dirt-copilot-pack&quot;</span> =&gt;
-                <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtCopilotPack</span>),
-            <span class="kw">_</span> =&gt;
-                <span class="prelude-val">Err</span>(<span class="ident">ParseEditionError::Unknown</span>(<span class="ident">val</span>.<span class="ident">to_string</span>())),
+    <span class="kw">fn </span>from_str(val: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
+        <span class="comment">// match strings from both trait implementations, std::fmt::Display and serde::Serialize
+        </span><span class="kw">let </span><span class="kw-2">mut </span>s = val.replace(char::is_whitespace, <span class="string">&quot;-&quot;</span>);
+        s.make_ascii_lowercase();
+        <span class="kw">match </span>s.as_ref() {
+            <span class="string">&quot;gt-core-box&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::GtCoreBox),
+            <span class="string">&quot;gt-championship&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::GtChampionship),
+            <span class="string">&quot;gt-world-tour&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::GtWorldTour),
+            <span class="string">&quot;gt-team-challenge&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::GtTeamChallenge),
+            <span class="string">&quot;gt-adrenaline-pack&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::GtAdrenalinePack),
+            <span class="string">&quot;dirt-core-box&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::DirtCoreBox),
+            <span class="string">&quot;dirt-110-percent&quot; </span>| <span class="string">&quot;dirt-110%&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::Dirt110Percent),
+            <span class="string">&quot;dirt-rx&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::DirtRx),
+            <span class="string">&quot;dirt-climb&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::DirtClimb),
+            <span class="string">&quot;dirt-copilot-pack&quot; </span>=&gt;
+                <span class="prelude-val">Ok</span>(Edition::DirtCopilotPack),
+            <span class="kw">_ </span>=&gt;
+                <span class="prelude-val">Err</span>(ParseEditionError::Unknown(val.to_string())),
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseEditionError</span> {
-    <span class="ident">Unknown</span>(<span class="ident">String</span>),
+<span class="attribute">#[derive(Debug, PartialEq, Eq)]
+</span><span class="kw">pub enum </span>ParseEditionError {
+    Unknown(String),
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseEditionError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseEditionError::Unknown</span>(<span class="ident">val</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown edition token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>ParseEditionError {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            ParseEditionError::Unknown(val) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown edition token \&quot;{}\&quot;&quot;</span>, val),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">std::convert::TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Edition</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ParseEditionError</span>;
+<span class="kw">impl </span>std::convert::TryFrom&lt;<span class="kw-2">&amp;</span>str&gt; <span class="kw">for </span>Edition {
+    <span class="kw">type </span>Error = ParseEditionError;
 
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
-        <span class="ident">Edition::from_str</span>(<span class="ident">value</span>)
+    <span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+        Edition::from_str(value)
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="comment">// Private variation of the public macro that skips tile a/b side information</span>
-<span class="macro">macro_rules!</span> <span class="ident">tile</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>) =&gt; {
-        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="number">0</span>)
+// Private variation of the public macro that skips tile a/b side information
+</span><span class="macro">macro_rules! </span>tile {
+    (<span class="macro-nonterminal">$num</span>:expr) =&gt; {
+        <span class="macro-nonterminal">$crate::tile::TileId::new</span>(<span class="macro-nonterminal">$num</span>, <span class="number">0</span>, <span class="number">0</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>:<span class="ident">expr</span>) =&gt; {
-        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::tile::TileId::new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">num</span>, <span class="number">0</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">var</span>)
+    (<span class="macro-nonterminal">$num</span>:expr, <span class="macro-nonterminal">$var</span>:expr) =&gt; {
+        <span class="macro-nonterminal">$crate::tile::TileId::new</span>(<span class="macro-nonterminal">$num</span>, <span class="number">0</span>, <span class="macro-nonterminal">$var</span>)
     };
 }
 
-<span class="kw">const</span> <span class="ident">GT_CORE_BOX</span>: [<span class="ident">TileId</span>; <span class="number">32</span>] <span class="op">=</span> [
+<span class="kw">const </span>GT_CORE_BOX: [TileId; <span class="number">32</span>] = [
     <span class="macro">tile!</span>(<span class="number">101</span>),
     <span class="macro">tile!</span>(<span class="number">102</span>),
     <span class="macro">tile!</span>(<span class="number">103</span>, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">103</span>, <span class="number">2</span>), <span class="macro">tile!</span>(<span class="number">103</span>, <span class="number">3</span>),
@@ -1214,7 +1214,7 @@
     <span class="macro">tile!</span>(<span class="number">120</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">GT_CHAMPIONSHIP</span>: [<span class="ident">TileId</span>; <span class="number">12</span>] <span class="op">=</span> [
+<span class="kw">const </span>GT_CHAMPIONSHIP: [TileId; <span class="number">12</span>] = [
     <span class="macro">tile!</span>(<span class="number">121</span>, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">121</span>, <span class="number">2</span>),
     <span class="macro">tile!</span>(<span class="number">122</span>, <span class="number">1</span>),
     <span class="macro">tile!</span>(<span class="number">123</span>),
@@ -1227,7 +1227,7 @@
     <span class="macro">tile!</span>(<span class="number">130</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">GT_WORLD_TOUR</span>: [<span class="ident">TileId</span>; <span class="number">12</span>] <span class="op">=</span> [
+<span class="kw">const </span>GT_WORLD_TOUR: [TileId; <span class="number">12</span>] = [
     <span class="macro">tile!</span>(<span class="number">122</span>, <span class="number">2</span>),
     <span class="macro">tile!</span>(<span class="number">124</span>, <span class="number">2</span>),
     <span class="macro">tile!</span>(<span class="number">125</span>, <span class="number">2</span>),
@@ -1241,7 +1241,7 @@
     <span class="macro">tile!</span>(<span class="number">138</span>, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">138</span>, <span class="number">2</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">GT_TEAM_CHALLENGE</span>: [<span class="ident">TileId</span>; <span class="number">12</span>] <span class="op">=</span> [
+<span class="kw">const </span>GT_TEAM_CHALLENGE: [TileId; <span class="number">12</span>] = [
     <span class="macro">tile!</span>(<span class="number">139</span>),
     <span class="macro">tile!</span>(<span class="number">140</span>),
     <span class="macro">tile!</span>(<span class="number">141</span>),
@@ -1256,7 +1256,7 @@
     <span class="macro">tile!</span>(<span class="number">150</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">GT_ADRENALINE_PACK</span>: [<span class="ident">TileId</span>; <span class="number">5</span>] <span class="op">=</span> [
+<span class="kw">const </span>GT_ADRENALINE_PACK: [TileId; <span class="number">5</span>] = [
     <span class="macro">tile!</span>(<span class="number">151</span>),
     <span class="macro">tile!</span>(<span class="number">152</span>),
     <span class="macro">tile!</span>(<span class="number">153</span>),
@@ -1264,7 +1264,7 @@
     <span class="macro">tile!</span>(<span class="number">901</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_CORE_BOX</span>: [<span class="ident">TileId</span>; <span class="number">32</span>] <span class="op">=</span> [
+<span class="kw">const </span>DIRT_CORE_BOX: [TileId; <span class="number">32</span>] = [
     <span class="macro">tile!</span>(<span class="number">201</span>),
     <span class="macro">tile!</span>(<span class="number">202</span>),
     <span class="macro">tile!</span>(<span class="number">203</span>),
@@ -1299,7 +1299,7 @@
     <span class="macro">tile!</span>(<span class="number">232</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_110_PERCENT</span>: [<span class="ident">TileId</span>; <span class="number">24</span>] <span class="op">=</span> [
+<span class="kw">const </span>DIRT_110_PERCENT: [TileId; <span class="number">24</span>] = [
     <span class="macro">tile!</span>(<span class="number">301</span>),
     <span class="macro">tile!</span>(<span class="number">302</span>),
     <span class="macro">tile!</span>(<span class="number">303</span>),
@@ -1326,7 +1326,7 @@
     <span class="macro">tile!</span>(<span class="number">324</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_RX</span>: [<span class="ident">TileId</span>; <span class="number">15</span>] <span class="op">=</span> [
+<span class="kw">const </span>DIRT_RX: [TileId; <span class="number">15</span>] = [
     <span class="macro">tile!</span>(<span class="number">401</span>),
     <span class="macro">tile!</span>(<span class="number">402</span>),
     <span class="macro">tile!</span>(<span class="number">403</span>),
@@ -1344,14 +1344,14 @@
     <span class="macro">tile!</span>(<span class="number">415</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_CLIMB</span>: [<span class="ident">TileId</span>; <span class="number">4</span>] <span class="op">=</span> [
+<span class="kw">const </span>DIRT_CLIMB: [TileId; <span class="number">4</span>] = [
     <span class="macro">tile!</span>(<span class="number">325</span>),
     <span class="macro">tile!</span>(<span class="number">326</span>),
     <span class="macro">tile!</span>(<span class="number">418</span>),
     <span class="macro">tile!</span>(<span class="number">419</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_COPILOT_PACK</span>: [<span class="ident">TileId</span>; <span class="number">6</span>] <span class="op">=</span> [
+<span class="kw">const </span>DIRT_COPILOT_PACK: [TileId; <span class="number">6</span>] = [
     <span class="macro">tile!</span>(<span class="number">416</span>),
     <span class="macro">tile!</span>(<span class="number">417</span>),
     <span class="macro">tile!</span>(<span class="number">902</span>),
@@ -1360,239 +1360,239 @@
     <span class="macro">tile!</span>(<span class="number">905</span>),
 ];
 
-<span class="kw">const</span> <span class="ident">GT_EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">5</span>] <span class="op">=</span> [
-    <span class="ident">Edition::GtCoreBox</span>,
-    <span class="ident">Edition::GtChampionship</span>,
-    <span class="ident">Edition::GtWorldTour</span>,
-    <span class="ident">Edition::GtTeamChallenge</span>,
-    <span class="ident">Edition::GtAdrenalinePack</span>,
+<span class="kw">const </span>GT_EDITIONS: [Edition; <span class="number">5</span>] = [
+    Edition::GtCoreBox,
+    Edition::GtChampionship,
+    Edition::GtWorldTour,
+    Edition::GtTeamChallenge,
+    Edition::GtAdrenalinePack,
 ];
 
-<span class="kw">const</span> <span class="ident">DIRT_EDITIONS</span>: [<span class="ident">Edition</span>; <span class="number">5</span>] <span class="op">=</span> [
-    <span class="ident">Edition::DirtCoreBox</span>,
-    <span class="ident">Edition::Dirt110Percent</span>,
-    <span class="ident">Edition::DirtRx</span>,
-    <span class="ident">Edition::DirtClimb</span>,
-    <span class="ident">Edition::DirtCopilotPack</span>,
+<span class="kw">const </span>DIRT_EDITIONS: [Edition; <span class="number">5</span>] = [
+    Edition::DirtCoreBox,
+    Edition::Dirt110Percent,
+    Edition::DirtRx,
+    Edition::DirtClimb,
+    Edition::DirtCopilotPack,
 ];
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="doccomment">/// Rallyman game series (GT or DIRT).</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Series</span> {
-    <span class="doccomment">/// Rallyman: GT</span>
-    <span class="ident">Gt</span>,
-    <span class="doccomment">/// Rallyman: DIRT</span>
-    <span class="ident">Dirt</span>,
+</span><span class="doccomment">/// Rallyman game series (GT or DIRT).
+</span><span class="attribute">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+</span><span class="kw">pub enum </span>Series {
+    <span class="doccomment">/// Rallyman: GT
+    </span>Gt,
+    <span class="doccomment">/// Rallyman: DIRT
+    </span>Dirt,
 }
 
-<span class="kw">impl</span> <span class="ident">Series</span> {
-    <span class="doccomment">/// Iterator over the editions of the game series.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">Edition</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Series::Gt</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">GT_EDITIONS</span>,
-            <span class="ident">Series::Dirt</span> =&gt;
-                <span class="kw-2">&amp;</span><span class="ident">DIRT_EDITIONS</span>,
+<span class="kw">impl </span>Series {
+    <span class="doccomment">/// Iterator over the editions of the game series.
+    </span><span class="kw">pub fn </span>editions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; std::slice::Iter&lt;<span class="lifetime">&#39;static</span>, Edition&gt; {
+        <span class="kw">let </span>editions = <span class="kw">match </span><span class="self">self </span>{
+            Series::Gt =&gt;
+                <span class="kw-2">&amp;</span>GT_EDITIONS,
+            Series::Dirt =&gt;
+                <span class="kw-2">&amp;</span>DIRT_EDITIONS,
         };
-        <span class="ident">editions</span>.<span class="ident">iter</span>()
+        editions.iter()
     }
 
-    <span class="doccomment">/// Iterator over all game series.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>() -&gt; <span class="ident">std::slice::Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">const</span> <span class="ident">SERIES</span>: [<span class="ident">Series</span>; <span class="number">2</span>] <span class="op">=</span> [
-            <span class="ident">Series::Gt</span>,
-            <span class="ident">Series::Dirt</span>,
+    <span class="doccomment">/// Iterator over all game series.
+    </span><span class="kw">pub fn </span>iter() -&gt; std::slice::Iter&lt;<span class="lifetime">&#39;static</span>, <span class="self">Self</span>&gt; {
+        <span class="kw">const </span>SERIES: [Series; <span class="number">2</span>] = [
+            Series::Gt,
+            Series::Dirt,
         ];
-        <span class="ident">SERIES</span>.<span class="ident">iter</span>()
+        SERIES.iter()
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Series</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Series::Gt</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Rallyman: GT&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">Series::Dirt</span> =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Rallyman: DIRT&quot;</span>)<span class="question-mark">?</span>,
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>Series {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            Series::Gt =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Rallyman: GT&quot;</span>)<span class="question-mark">?</span>,
+            Series::Dirt =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Rallyman: DIRT&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Series</span> {
-    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseSeriesError</span>;
+<span class="kw">impl </span>FromStr <span class="kw">for </span>Series {
+    <span class="kw">type </span><span class="prelude-val">Err </span>= ParseSeriesError;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">val</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Err</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String::from</span>(<span class="ident">val</span>);
-        <span class="ident">s</span>.<span class="ident">make_ascii_lowercase</span>();
-        <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&quot;gt&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">Series::Gt</span>)
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&quot;dirt&quot;</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">Series::Dirt</span>)
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">ParseSeriesError::Unknown</span>(<span class="ident">val</span>.<span class="ident">to_string</span>()))
+    <span class="kw">fn </span>from_str(val: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>s = String::from(val);
+        s.make_ascii_lowercase();
+        <span class="kw">if </span>s.ends_with(<span class="string">&quot;gt&quot;</span>) {
+            <span class="prelude-val">Ok</span>(Series::Gt)
+        } <span class="kw">else if </span>s.ends_with(<span class="string">&quot;dirt&quot;</span>) {
+            <span class="prelude-val">Ok</span>(Series::Dirt)
+        } <span class="kw">else </span>{
+            <span class="prelude-val">Err</span>(ParseSeriesError::Unknown(val.to_string()))
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseSeriesError</span> {
-    <span class="ident">Unknown</span>(<span class="ident">String</span>),
+<span class="attribute">#[derive(Debug, PartialEq, Eq)]
+</span><span class="kw">pub enum </span>ParseSeriesError {
+    Unknown(String),
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ParseSeriesError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ParseSeriesError::Unknown</span>(<span class="ident">val</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown series token \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>ParseSeriesError {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            ParseSeriesError::Unknown(val) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown series token \&quot;{}\&quot;&quot;</span>, val),
         }
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+</span><span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">tile_list_empty_side</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_CORE_BOX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_CHAMPIONSHIP</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_WORLD_TOUR</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_TEAM_CHALLENGE</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT_PACK</span>);
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tiles</span> {
-            <span class="macro">assert_eq!</span>(<span class="ident">tile</span>.<span class="ident">side</span>(), <span class="number">0</span>, <span class="string">&quot;tile {} is defined with a non-empty side&quot;</span>, <span class="ident">tile</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>tile_list_empty_side() {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::new();
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_CORE_BOX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_CHAMPIONSHIP);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_WORLD_TOUR);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_TEAM_CHALLENGE);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_ADRENALINE_PACK);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_CORE_BOX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_110_PERCENT);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_RX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_CLIMB);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_COPILOT_PACK);
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="kw-2">&amp;</span>tiles {
+            <span class="macro">assert_eq!</span>(tile.side(), <span class="number">0</span>, <span class="string">&quot;tile {} is defined with a non-empty side&quot;</span>, tile);
         }
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">tile_list_unique</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_CORE_BOX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_CHAMPIONSHIP</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_WORLD_TOUR</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_TEAM_CHALLENGE</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">GT_ADRENALINE_PACK</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CORE_BOX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_110_PERCENT</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_RX</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_CLIMB</span>);
-        <span class="ident">tiles</span>.<span class="ident">extend_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">DIRT_COPILOT_PACK</span>);
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tiles</span> {
-            <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tiles</span>.<span class="ident">iter</span>()
-                .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">id</span> <span class="op">==</span> <span class="ident">tile</span>)
-                .<span class="ident">count</span>();
-            <span class="macro">assert_eq!</span>(<span class="ident">count</span>, <span class="number">1</span>, <span class="string">&quot;tile {} is defined more than once&quot;</span>, <span class="ident">tile</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>tile_list_unique() {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::new();
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_CORE_BOX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_CHAMPIONSHIP);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_WORLD_TOUR);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_TEAM_CHALLENGE);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>GT_ADRENALINE_PACK);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_CORE_BOX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_110_PERCENT);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_RX);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_CLIMB);
+        tiles.extend_from_slice(<span class="kw-2">&amp;</span>DIRT_COPILOT_PACK);
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="kw-2">&amp;</span>tiles {
+            <span class="kw">let </span>count = tiles.iter()
+                .filter(|id| <span class="kw-2">*</span>id == tile)
+                .count();
+            <span class="macro">assert_eq!</span>(count, <span class="number">1</span>, <span class="string">&quot;tile {} is defined more than once&quot;</span>, tile);
         }
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">edition_to_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">Edition::GtCoreBox</span>.<span class="ident">to_string</span>(), <span class="string">&quot;GT Core Box&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">Edition::GtAdrenalinePack</span>.<span class="ident">to_string</span>(), <span class="string">&quot;GT Adrenaline Pack&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">Edition::DirtCoreBox</span>.<span class="ident">to_string</span>(), <span class="string">&quot;DIRT Core Box&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">Edition::Dirt110Percent</span>.<span class="ident">to_string</span>(), <span class="string">&quot;DIRT 110%&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>edition_to_str() {
+        <span class="macro">assert_eq!</span>(Edition::GtCoreBox.to_string(), <span class="string">&quot;GT Core Box&quot;</span>);
+        <span class="macro">assert_eq!</span>(Edition::GtAdrenalinePack.to_string(), <span class="string">&quot;GT Adrenaline Pack&quot;</span>);
+        <span class="macro">assert_eq!</span>(Edition::DirtCoreBox.to_string(), <span class="string">&quot;DIRT Core Box&quot;</span>);
+        <span class="macro">assert_eq!</span>(Edition::Dirt110Percent.to_string(), <span class="string">&quot;DIRT 110%&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">Edition::GtChampionship</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;gt-championship&quot;</span>);
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">Edition::DirtCopilotPack</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">&quot;dirt-copilot-pack&quot;</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, Edition::GtChampionship);
+        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;gt-championship&quot;</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, Edition::DirtCopilotPack);
+        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;dirt-copilot-pack&quot;</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">edition_from_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;gt-world-tour&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtWorldTour</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;GT Team Challenge&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::GtTeamChallenge</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;dirt-110-percent&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::Dirt110Percent</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Dirt 110%&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::Dirt110Percent</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;DIRT-RX&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtRx</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;dirt-copilot-pack&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Edition::DirtCopilotPack</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>edition_from_str() {
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;gt-world-tour&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::GtWorldTour));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;GT Team Challenge&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::GtTeamChallenge));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;dirt-110-percent&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::Dirt110Percent));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Dirt 110%&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::Dirt110Percent));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;DIRT-RX&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::DirtRx));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;dirt-copilot-pack&quot;</span>.parse::&lt;Edition&gt;(), <span class="prelude-val">Ok</span>(Edition::DirtCopilotPack));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="string">&quot;rx&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
+        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;Edition&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">&quot;rx&quot;</span>.parse::&lt;Edition&gt;().is_err());
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">edition_serde</span>() {
-        <span class="kw">let</span> <span class="ident">edition</span> <span class="op">=</span> <span class="ident">Edition::GtChampionship</span>;
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;gt-championship&quot;&quot;#</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>edition_serde() {
+        <span class="kw">let </span>edition = Edition::GtChampionship;
+        <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>edition).unwrap();
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;gt-championship&quot;&quot;#</span>);
 
-        <span class="kw">let</span> <span class="ident">edition</span> <span class="op">=</span> <span class="ident">Edition::Dirt110Percent</span>;
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">text</span>, <span class="string">r#&quot;&quot;dirt-110-percent&quot;&quot;#</span>);
+        <span class="kw">let </span>edition = Edition::Dirt110Percent;
+        <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>edition).unwrap();
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;dirt-110-percent&quot;&quot;#</span>);
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;Dirt Climb&quot;&quot;#</span>;
-        <span class="kw">let</span> <span class="ident">edition</span>: <span class="ident">Edition</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">edition</span>, <span class="ident">Edition::DirtClimb</span>);
+        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;Dirt Climb&quot;&quot;#</span>;
+        <span class="kw">let </span>edition: Edition = serde_json::from_str(text).unwrap();
+        <span class="macro">assert_eq!</span>(edition, Edition::DirtClimb);
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;#</span>;
-        <span class="kw">let</span> <span class="ident">result</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Edition</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>);
-        <span class="macro">assert!</span>(<span class="ident">result</span>.<span class="ident">is_err</span>());
+        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;#</span>;
+        <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Edition, <span class="kw">_</span>&gt; = serde_json::from_str(text);
+        <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="string">r#&quot;&quot;core-box&quot;&quot;#</span>;
-        <span class="kw">let</span> <span class="ident">result</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Edition</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">text</span>);
-        <span class="macro">assert!</span>(<span class="ident">result</span>.<span class="ident">is_err</span>());
+        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;core-box&quot;&quot;#</span>;
+        <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Edition, <span class="kw">_</span>&gt; = serde_json::from_str(text);
+        <span class="macro">assert!</span>(result.is_err());
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">edition_tiles_sorted</span>() {
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Edition::iter</span>() {
-            <span class="kw">for</span> <span class="ident">tiles</span> <span class="kw">in</span> <span class="ident">edition</span>.<span class="ident">internal_tiles</span>().<span class="ident">windows</span>(<span class="number">2</span>) {
-                <span class="macro">assert!</span>(<span class="ident">tiles</span>[<span class="number">0</span>] <span class="op">&lt;</span><span class="op">=</span> <span class="ident">tiles</span>[<span class="number">1</span>], <span class="string">&quot;tile list is not strictly sorted ({} &gt; {})&quot;</span>, <span class="ident">tiles</span>[<span class="number">0</span>], <span class="ident">tiles</span>[<span class="number">1</span>]);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>edition_tiles_sorted() {
+        <span class="kw">for </span>edition <span class="kw">in </span>Edition::iter() {
+            <span class="kw">for </span>tiles <span class="kw">in </span>edition.internal_tiles().windows(<span class="number">2</span>) {
+                <span class="macro">assert!</span>(tiles[<span class="number">0</span>] &lt;= tiles[<span class="number">1</span>], <span class="string">&quot;tile list is not strictly sorted ({} &gt; {})&quot;</span>, tiles[<span class="number">0</span>], tiles[<span class="number">1</span>]);
             }
         }
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">edition_tiles_match_info</span>() {
-        <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile::TileInfo</span>;
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>edition_tiles_match_info() {
+        <span class="kw">use </span><span class="kw">crate</span>::tile::TileInfo;
 
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Edition::iter</span>() {
-            <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">edition</span>.<span class="ident">tiles</span>() {
-                <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">TileInfo::get</span>(<span class="ident">tile</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>,
-                    <span class="prelude-val">None</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;no tile info found for tile {}&quot;</span>, <span class="ident">tile</span>),
+        <span class="kw">for </span>edition <span class="kw">in </span>Edition::iter() {
+            <span class="kw">for </span>tile <span class="kw">in </span>edition.tiles() {
+                <span class="kw">let </span>info = <span class="kw">match </span>TileInfo::get(tile) {
+                    <span class="prelude-val">Some</span>(val) =&gt; val,
+                    <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;no tile info found for tile {}&quot;</span>, tile),
                 };
-                <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">1</span> {
-                    <span class="macro">assert!</span>(<span class="ident">tile</span>.<span class="ident">var</span>() <span class="op">==</span> <span class="number">0</span>, <span class="string">&quot;tile {} is defined with non-empty variation&quot;</span>, <span class="ident">tile</span>);
-                } <span class="kw">else</span> {
-                    <span class="macro">assert!</span>(<span class="ident">tile</span>.<span class="ident">var</span>() <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;tile {} is defined with empty variation&quot;</span>, <span class="ident">tile</span>);
+                <span class="kw">if </span>info.count() &lt;= <span class="number">1 </span>{
+                    <span class="macro">assert!</span>(tile.var() == <span class="number">0</span>, <span class="string">&quot;tile {} is defined with non-empty variation&quot;</span>, tile);
+                } <span class="kw">else </span>{
+                    <span class="macro">assert!</span>(tile.var() &gt; <span class="number">0</span>, <span class="string">&quot;tile {} is defined with empty variation&quot;</span>, tile);
                 }
-                <span class="macro">assert_eq!</span>(<span class="ident">edition</span>.<span class="ident">series</span>(), <span class="ident">info</span>.<span class="ident">series</span>(), <span class="string">&quot;series of tile {} does not match edition&quot;</span>, <span class="ident">tile</span>);
+                <span class="macro">assert_eq!</span>(edition.series(), info.series(), <span class="string">&quot;series of tile {} does not match edition&quot;</span>, tile);
             }
         }
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">series_to_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="ident">Series::Gt</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Rallyman: GT&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">Series::Dirt</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Rallyman: DIRT&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>series_to_str() {
+        <span class="macro">assert_eq!</span>(Series::Gt.to_string(), <span class="string">&quot;Rallyman: GT&quot;</span>);
+        <span class="macro">assert_eq!</span>(Series::Dirt.to_string(), <span class="string">&quot;Rallyman: DIRT&quot;</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">series_from_str</span>() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;gt&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Series::Gt</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Rallyman GT&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Series::Gt</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;DIRT&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Series::Dirt</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;rallyman-dirt&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Series::Dirt</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Rallyman: DIRT&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>(), <span class="prelude-val">Ok</span>(<span class="ident">Series::Dirt</span>));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>series_from_str() {
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;gt&quot;</span>.parse::&lt;Series&gt;(), <span class="prelude-val">Ok</span>(Series::Gt));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Rallyman GT&quot;</span>.parse::&lt;Series&gt;(), <span class="prelude-val">Ok</span>(Series::Gt));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;DIRT&quot;</span>.parse::&lt;Series&gt;(), <span class="prelude-val">Ok</span>(Series::Dirt));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;rallyman-dirt&quot;</span>.parse::&lt;Series&gt;(), <span class="prelude-val">Ok</span>(Series::Dirt));
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Rallyman: DIRT&quot;</span>.parse::&lt;Series&gt;(), <span class="prelude-val">Ok</span>(Series::Dirt));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
-        <span class="macro">assert!</span>(<span class="string">&quot;Rallyman&quot;</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Series</span><span class="op">&gt;</span>().<span class="ident">is_err</span>());
+        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;Series&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">&quot;Rallyman&quot;</span>.parse::&lt;Series&gt;().is_err());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

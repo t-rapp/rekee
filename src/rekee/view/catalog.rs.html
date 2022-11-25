@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/catalog.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/catalog.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -647,654 +647,654 @@
 <span id="647">647</span>
 <span id="648">648</span>
 <span id="649">649</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Rendering of the tile catalog and according event handlers.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Rendering of the tile catalog and according event handlers.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="kw">use</span> <span class="ident">std::collections</span>::{<span class="ident">BTreeSet</span>, <span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
+</span><span class="kw">use </span>std::collections::{BTreeSet, HashMap, HashSet};
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>};
-<span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Document</span>, <span class="ident">Element</span>};
+<span class="kw">use </span>serde::{Serialize, Deserialize};
+<span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>wasm_bindgen::JsCast;
+<span class="kw">use </span>web_sys::{<span class="self">self</span>, Document, Element};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::catalog</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::catalog_config::ShowCatalogConfigEvent</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition</span>::{<span class="ident">Edition</span>, <span class="ident">Series</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map::Map</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::check;
+<span class="kw">use </span><span class="kw">crate</span>::controller::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::catalog::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::catalog_config::ShowCatalogConfigEvent;
+<span class="kw">use </span><span class="kw">crate</span>::edition::{Edition, Series};
+<span class="kw">use </span><span class="kw">crate</span>::map::Map;
+<span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">CatalogTile</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">id</span>: <span class="ident">TileId</span>,
-    <span class="ident">count</span>: <span class="ident">usize</span>,
-    <span class="ident">usage</span>: <span class="ident">usize</span>,
-    <span class="ident">counter</span>: <span class="ident">Element</span>,
-    <span class="ident">dblclick_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::MouseEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">dragstart_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::DragEvent</span>)<span class="op">&gt;</span>,
+</span><span class="kw">struct </span>CatalogTile {
+    inner: Element,
+    id: TileId,
+    count: usize,
+    usage: usize,
+    counter: Element,
+    dblclick_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
+    dragstart_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::DragEvent)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">CatalogTile</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>, <span class="ident">id</span>: <span class="ident">TileId</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">canvas</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;svg&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">origin</span>().<span class="ident">x</span>()).<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">i32</span>;
-        <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">layout</span>.<span class="ident">origin</span>().<span class="ident">y</span>()).<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">i32</span>;
-        <span class="ident">canvas</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, <span class="ident">width</span>))<span class="question-mark">?</span>;
-        <span class="ident">canvas</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, <span class="ident">height</span>))<span class="question-mark">?</span>;
-        <span class="ident">canvas</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;viewBox&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;0 0 {} {}&quot;</span>, <span class="ident">width</span>, <span class="ident">height</span>))<span class="question-mark">?</span>;
-        <span class="ident">canvas</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;xmlns&quot;</span>, <span class="ident">SVG_NS_STR</span>)<span class="question-mark">?</span>;
+<span class="kw">impl </span>CatalogTile {
+    <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, id: TileId) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>canvas = document.create_element_ns(SVG_NS, <span class="string">&quot;svg&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>width = (<span class="number">2.0 </span>* layout.origin().x()).round() <span class="kw">as </span>i32;
+        <span class="kw">let </span>height = (<span class="number">2.0 </span>* layout.origin().y()).round() <span class="kw">as </span>i32;
+        canvas.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, width))<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, height))<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">&quot;viewBox&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;0 0 {} {}&quot;</span>, width, height))<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">&quot;xmlns&quot;</span>, SVG_NS_STR)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;style&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">style</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>.<span class="ident">create_text_node</span>(<span class="ident">TILE_STYLE</span>))<span class="question-mark">?</span>;
-        <span class="ident">canvas</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">style</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">PlacedTile::new</span>(<span class="ident">id</span>, (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="kw">let</span> <span class="ident">tile_image</span> <span class="op">=</span> <span class="ident">TileImageElement::new_with_label</span>(<span class="ident">document</span>, <span class="ident">layout</span>, <span class="kw-2">&amp;</span><span class="ident">tile</span>)<span class="question-mark">?</span>;
-        <span class="ident">canvas</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">tile_image</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>style = document.create_element_ns(SVG_NS, <span class="string">&quot;style&quot;</span>)<span class="question-mark">?</span>;
+        style.append_child(<span class="kw-2">&amp;</span>document.create_text_node(TILE_STYLE))<span class="question-mark">?</span>;
+        canvas.append_child(<span class="kw-2">&amp;</span>style)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tile = PlacedTile::new(id, (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A);
+        <span class="kw">let </span>tile_image = TileImageElement::new_with_label(document, layout, <span class="kw-2">&amp;</span>tile)<span class="question-mark">?</span>;
+        canvas.append_child(<span class="kw-2">&amp;</span>tile_image)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">tile</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">tile</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;draggable&quot;</span>, <span class="string">&quot;true&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">tile</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">canvas</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tile = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        tile.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        tile.set_attribute(<span class="string">&quot;draggable&quot;</span>, <span class="string">&quot;true&quot;</span>)<span class="question-mark">?</span>;
+        tile.append_child(<span class="kw-2">&amp;</span>canvas)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">counter</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">counter</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;counter tag is-rounded is-light&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">tile</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">counter</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>counter = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        counter.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;counter tag is-rounded is-light&quot;</span>)<span class="question-mark">?</span>;
+        tile.append_child(<span class="kw-2">&amp;</span>counter)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">dblclick_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::MouseEvent</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">hint</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">event</span>.<span class="ident">shift_key</span>(), <span class="ident">event</span>.<span class="ident">ctrl_key</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">event</span>.<span class="ident">meta_key</span>()) {
-                (<span class="bool-val">true</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Straight</span>),
-                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Left</span>),
-                (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Right</span>),
+        <span class="kw">let </span>dblclick_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
+            <span class="kw">let </span>hint = <span class="kw">match </span>(event.shift_key(), event.ctrl_key() || event.meta_key()) {
+                (<span class="bool-val">true</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Straight),
+                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Left),
+                (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Right),
                 (<span class="bool-val">false</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">None</span>,
             };
-            <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="ident">id</span>.<span class="ident">base</span>(), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">tile</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dblclick&quot;</span>, <span class="ident">dblclick_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+            nuts::publish(AppendTileEvent { id: id.base(), pos: <span class="prelude-val">None</span>, hint });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        tile.add_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>, dblclick_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">dragstart_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>({
-            <span class="kw">let</span> <span class="ident">drag_img</span> <span class="op">=</span> <span class="ident">canvas</span>;
-            <span class="kw">let</span> <span class="ident">offset_x</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">origin</span>().<span class="ident">x</span>().<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">i32</span>;
-            <span class="kw">let</span> <span class="ident">offset_y</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">origin</span>().<span class="ident">y</span>().<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">i32</span>;
-            <span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::DragEvent</span><span class="op">|</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">trans</span>) <span class="op">=</span> <span class="ident">event</span>.<span class="ident">data_transfer</span>() {
-                    <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">id</span>.<span class="ident">base</span>().<span class="ident">to_string</span>();
-                    <span class="ident">trans</span>.<span class="ident">set_data</span>(<span class="string">&quot;application/rekee&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>).<span class="ident">unwrap</span>();
-                    <span class="ident">trans</span>.<span class="ident">set_data</span>(<span class="string">&quot;text/plain&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>).<span class="ident">unwrap</span>();
-                    <span class="ident">trans</span>.<span class="ident">set_effect_allowed</span>(<span class="string">&quot;copy&quot;</span>);
-                    <span class="ident">trans</span>.<span class="ident">set_drag_image</span>(<span class="kw-2">&amp;</span><span class="ident">drag_img</span>, <span class="ident">offset_x</span>, <span class="ident">offset_y</span>);
+        <span class="kw">let </span>dragstart_cb = Closure::wrap(Box::new({
+            <span class="kw">let </span>drag_img = canvas;
+            <span class="kw">let </span>offset_x = layout.origin().x().round() <span class="kw">as </span>i32;
+            <span class="kw">let </span>offset_y = layout.origin().y().round() <span class="kw">as </span>i32;
+            <span class="kw">move </span>|event: web_sys::DragEvent| {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(trans) = event.data_transfer() {
+                    <span class="kw">let </span>data = id.base().to_string();
+                    trans.set_data(<span class="string">&quot;application/rekee&quot;</span>, <span class="kw-2">&amp;</span>data).unwrap();
+                    trans.set_data(<span class="string">&quot;text/plain&quot;</span>, <span class="kw-2">&amp;</span>data).unwrap();
+                    trans.set_effect_allowed(<span class="string">&quot;copy&quot;</span>);
+                    trans.set_drag_image(<span class="kw-2">&amp;</span>drag_img, offset_x, offset_y);
                 }
-                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileBeginEvent</span> { <span class="ident">tile</span>: <span class="ident">id</span>.<span class="ident">base</span>() });
+                nuts::publish(DragCatalogTileBeginEvent { tile: id.base() });
             }
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">tile</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dragstart&quot;</span>, <span class="ident">dragstart_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        tile.add_event_listener_with_callback(<span class="string">&quot;dragstart&quot;</span>, dragstart_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">CatalogTile</span> { <span class="ident">inner</span>: <span class="ident">tile</span>, <span class="ident">id</span>, <span class="ident">count</span>: <span class="number">0</span>, <span class="ident">usage</span>: <span class="number">0</span>, <span class="ident">counter</span>, <span class="ident">dblclick_cb</span>, <span class="ident">dragstart_cb</span> })
+        <span class="prelude-val">Ok</span>(CatalogTile { inner: tile, id, count: <span class="number">0</span>, usage: <span class="number">0</span>, counter, dblclick_cb, dragstart_cb })
     }
 
-    <span class="kw">fn</span> <span class="ident">inner_update_counter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">count</span>: <span class="ident">usize</span>, <span class="ident">usage</span>: <span class="ident">usize</span>) {
-        <span class="self">self</span>.<span class="ident">count</span> <span class="op">=</span> <span class="ident">count</span>;
-        <span class="self">self</span>.<span class="ident">usage</span> <span class="op">=</span> <span class="ident">usage</span>;
-        <span class="kw">let</span> <span class="ident">counter</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">count</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">usage</span> <span class="kw">as</span> <span class="ident">i32</span>;
-        <span class="self">self</span>.<span class="ident">counter</span>.<span class="ident">set_inner_html</span>(<span class="kw-2">&amp;</span><span class="ident">counter</span>.<span class="ident">to_string</span>());
-        <span class="kw">if</span> <span class="ident">counter</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-disabled&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-disabled&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">fn </span>inner_update_counter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, count: usize, usage: usize) {
+        <span class="self">self</span>.count = count;
+        <span class="self">self</span>.usage = usage;
+        <span class="kw">let </span>counter = <span class="self">self</span>.count <span class="kw">as </span>i32 - <span class="self">self</span>.usage <span class="kw">as </span>i32;
+        <span class="self">self</span>.counter.set_inner_html(<span class="kw-2">&amp;</span>counter.to_string());
+        <span class="kw">if </span>counter &lt;= <span class="number">0 </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-disabled&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-disabled&quot;</span>).ok());
         }
-        <span class="kw">if</span> <span class="ident">counter</span> <span class="op">&lt;</span> <span class="number">0</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">counter</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-light&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">counter</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-warning&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">counter</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-light&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">counter</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-warning&quot;</span>).<span class="ident">ok</span>());
+        <span class="kw">if </span>counter &lt; <span class="number">0 </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.counter.class_list().remove_1(<span class="string">&quot;is-light&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.counter.class_list().add_1(<span class="string">&quot;is-warning&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.counter.class_list().add_1(<span class="string">&quot;is-light&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.counter.class_list().remove_1(<span class="string">&quot;is-warning&quot;</span>).ok());
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_count</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">usize</span>) {
-        <span class="self">self</span>.<span class="ident">inner_update_counter</span>(<span class="ident">value</span>, <span class="self">self</span>.<span class="ident">usage</span>);
+    <span class="kw">pub fn </span>set_count(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: usize) {
+        <span class="self">self</span>.inner_update_counter(value, <span class="self">self</span>.usage);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_usage</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">usize</span>) {
-        <span class="self">self</span>.<span class="ident">inner_update_counter</span>(<span class="self">self</span>.<span class="ident">count</span>, <span class="ident">value</span>);
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CatalogTile</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+    <span class="kw">pub fn </span>set_usage(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: usize) {
+        <span class="self">self</span>.inner_update_counter(<span class="self">self</span>.count, value);
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">CatalogTile</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;dblclick&quot;</span>,
-            <span class="self">self</span>.<span class="ident">dblclick_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;dragstart&quot;</span>,
-            <span class="self">self</span>.<span class="ident">dragstart_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>CatalogTile {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-
-<span class="kw">struct</span> <span class="ident">LanesFilterElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>,
-    <span class="ident">anchor</span>: <span class="ident">Element</span>,
-    <span class="ident">click_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+<span class="kw">impl </span>Drop <span class="kw">for </span>CatalogTile {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>,
+            <span class="self">self</span>.dblclick_cb.as_ref().unchecked_ref());
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;dragstart&quot;</span>,
+            <span class="self">self</span>.dragstart_cb.as_ref().unchecked_ref());
+    }
 }
 
-<span class="kw">impl</span> <span class="ident">LanesFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">get_attribute</span>(<span class="string">&quot;data-value&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>().<span class="ident">ok</span>());
+<span class="comment">//----------------------------------------------------------------------------
 
-        <span class="kw">let</span> <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TileInfo::iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> {
-                <span class="ident">Direction::iter</span>()
-                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">dir</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">edge</span>(<span class="kw-2">*</span><span class="ident">dir</span>).<span class="ident">lanes</span>())
-                    .<span class="ident">any</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">==</span> <span class="ident">value</span>)
+</span><span class="kw">struct </span>LanesFilterElement {
+    inner: Element,
+    value: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    tiles: BTreeSet&lt;TileId&gt;,
+    anchor: Element,
+    click_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
+}
+
+<span class="kw">impl </span>LanesFilterElement {
+    <span class="kw">fn </span>new(inner: Element) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>value = inner.get_attribute(<span class="string">&quot;data-value&quot;</span>)
+            .and_then(|val| val.parse::&lt;u8&gt;().ok());
+
+        <span class="kw">let </span>tiles: BTreeSet&lt;<span class="kw">_</span>&gt; = TileInfo::iter()
+            .filter(|info| {
+                Direction::iter()
+                    .map(|dir| info.edge(<span class="kw-2">*</span>dir).lanes())
+                    .any(|val| <span class="prelude-val">Some</span>(val) == value)
             })
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">base_id</span>())
-            .<span class="ident">collect</span>();
+            .map(|info| info.base_id())
+            .collect();
 
-        <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">UpdateLanesFilterEvent</span> { <span class="ident">lanes</span>: <span class="ident">value</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="kw">let </span>click_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(UpdateLanesFilterEvent { lanes: value });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let</span> <span class="ident">anchor</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find anchor element of filter item&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">anchor</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>anchor = inner.query_selector(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">&quot;Cannot find anchor element of filter item&quot;</span>)<span class="question-mark">?</span>;
+        anchor.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            click_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">LanesFilterElement</span> { <span class="ident">inner</span>, <span class="ident">value</span>, <span class="ident">tiles</span>, <span class="ident">anchor</span>, <span class="ident">click_cb</span> })
+        <span class="prelude-val">Ok</span>(LanesFilterElement { inner, value, tiles, anchor, click_cb })
     }
 
-    <span class="kw">fn</span> <span class="ident">value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">value</span>
+    <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
+        <span class="self">self</span>.value
     }
 
-    <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">value</span> {
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">base</span>()),
-            <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
+    <span class="kw">fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, tile: TileId) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.value {
+            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="self">self</span>.tiles.contains(<span class="kw-2">&amp;</span>tile.base()),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">true</span>,
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">fn </span>set_active(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-active&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-active&quot;</span>).ok());
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LanesFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>LanesFilterElement {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LanesFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>LanesFilterElement {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.anchor.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.click_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">TerrainFilterElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>,
-    <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>,
-    <span class="ident">anchor</span>: <span class="ident">Element</span>,
-    <span class="ident">click_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">struct </span>TerrainFilterElement {
+    inner: Element,
+    value: <span class="prelude-ty">Option</span>&lt;Terrain&gt;,
+    tiles: BTreeSet&lt;TileId&gt;,
+    anchor: Element,
+    click_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">TerrainFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">get_attribute</span>(<span class="string">&quot;data-value&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>().<span class="ident">ok</span>());
+<span class="kw">impl </span>TerrainFilterElement {
+    <span class="kw">fn </span>new(inner: Element) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>value = inner.get_attribute(<span class="string">&quot;data-value&quot;</span>)
+            .and_then(|val| val.parse::&lt;Terrain&gt;().ok());
 
-        <span class="kw">let</span> <span class="ident">tiles</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TileInfo::iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">value</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) =&gt; <span class="ident">info</span>.<span class="ident">terrain</span>() <span class="op">==</span> <span class="ident">val</span>,
-                <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
+        <span class="kw">let </span>tiles: BTreeSet&lt;<span class="kw">_</span>&gt; = TileInfo::iter()
+            .filter(|info| <span class="kw">match </span>value {
+                <span class="prelude-val">Some</span>(val) =&gt; info.terrain() == val,
+                <span class="prelude-val">None </span>=&gt; <span class="bool-val">true</span>,
             })
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">info</span><span class="op">|</span> <span class="ident">info</span>.<span class="ident">base_id</span>())
-            .<span class="ident">collect</span>();
+            .map(|info| info.base_id())
+            .collect();
 
-        <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">UpdateTerrainFilterEvent</span> { <span class="ident">terrain</span>: <span class="ident">value</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="kw">let </span>click_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(UpdateTerrainFilterEvent { terrain: value });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let</span> <span class="ident">anchor</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find anchor element of filter item&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">anchor</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>anchor = inner.query_selector(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">&quot;Cannot find anchor element of filter item&quot;</span>)<span class="question-mark">?</span>;
+        anchor.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            click_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">TerrainFilterElement</span> { <span class="ident">inner</span>, <span class="ident">value</span>, <span class="ident">tiles</span>, <span class="ident">anchor</span>, <span class="ident">click_cb</span> })
+        <span class="prelude-val">Ok</span>(TerrainFilterElement { inner, value, tiles, anchor, click_cb })
     }
 
-    <span class="kw">fn</span> <span class="ident">value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">value</span>
+    <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Terrain&gt; {
+        <span class="self">self</span>.value
     }
 
-    <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">value</span> {
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">base</span>()),
-            <span class="prelude-val">None</span> =&gt; <span class="bool-val">true</span>,
+    <span class="kw">fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, tile: TileId) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.value {
+            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="self">self</span>.tiles.contains(<span class="kw-2">&amp;</span>tile.base()),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">true</span>,
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">fn </span>set_active(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-active&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-active&quot;</span>).ok());
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TerrainFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>TerrainFilterElement {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">TerrainFilterElement</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>TerrainFilterElement {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.anchor.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.click_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogSettings</span> {
-    <span class="kw">pub</span> <span class="ident">editions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">filter_lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">filter_terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>,
+</span><span class="attribute">#[derive(Serialize, Deserialize)]
+#[serde(default)]
+</span><span class="kw">pub struct </span>CatalogSettings {
+    <span class="kw">pub </span>editions: Vec&lt;Edition&gt;,
+    <span class="kw">pub </span>filter_lanes: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    <span class="kw">pub </span>filter_terrain: <span class="prelude-ty">Option</span>&lt;Terrain&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">CatalogSettings</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="comment">// list of default editions depends on whether the DIRT feature is enabled or not</span>
-        <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;dirt&quot;</span>) {
-            <span class="ident">Series::Dirt</span>.<span class="ident">editions</span>()
-        } <span class="kw">else</span> {
-            <span class="ident">Series::Gt</span>.<span class="ident">editions</span>()
+<span class="kw">impl </span>Default <span class="kw">for </span>CatalogSettings {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="comment">// list of default editions depends on whether the DIRT feature is enabled or not
+        </span><span class="kw">let </span>editions = <span class="kw">if </span><span class="macro">cfg!</span>(feature = <span class="string">&quot;dirt&quot;</span>) {
+            Series::Dirt.editions()
+        } <span class="kw">else </span>{
+            Series::Gt.editions()
         };
-        <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="ident">editions</span>
-            .<span class="ident">cloned</span>()
-            .<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="ident">filter_lanes</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        <span class="kw">let</span> <span class="ident">filter_terrain</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        <span class="ident">CatalogSettings</span> { <span class="ident">editions</span>, <span class="ident">filter_lanes</span>, <span class="ident">filter_terrain</span> }
+        <span class="kw">let </span>editions = editions
+            .cloned()
+            .collect();
+        <span class="kw">let </span>filter_lanes = <span class="prelude-val">None</span>;
+        <span class="kw">let </span>filter_terrain = <span class="prelude-val">None</span>;
+        CatalogSettings { editions, filter_lanes, filter_terrain }
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogView</span> {
-    <span class="ident">catalog</span>: <span class="ident">Element</span>,
-    <span class="ident">tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">CatalogTile</span><span class="op">&gt;</span>,
-    <span class="ident">editions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Edition</span><span class="op">&gt;</span>,
-    <span class="ident">filter_lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="ident">filter_lanes_elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LanesFilterElement</span><span class="op">&gt;</span>,
-    <span class="ident">filter_terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>,
-    <span class="ident">filter_terrain_elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TerrainFilterElement</span><span class="op">&gt;</span>,
-    <span class="ident">tile_labels_visible</span>: <span class="ident">bool</span>,
-    <span class="ident">map</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span>,
-    <span class="ident">dragover_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::DragEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">dragdrop_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::DragEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">keychange_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::KeyboardEvent</span>)<span class="op">&gt;</span>,
-    <span class="ident">config_button</span>: <span class="ident">Element</span>,
-    <span class="ident">config_show_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">pub struct </span>CatalogView {
+    catalog: Element,
+    tiles: Vec&lt;CatalogTile&gt;,
+    editions: Vec&lt;Edition&gt;,
+    filter_lanes: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    filter_lanes_elements: Vec&lt;LanesFilterElement&gt;,
+    filter_terrain: <span class="prelude-ty">Option</span>&lt;Terrain&gt;,
+    filter_terrain_elements: Vec&lt;TerrainFilterElement&gt;,
+    tile_labels_visible: bool,
+    map: <span class="prelude-ty">Option</span>&lt;Element&gt;,
+    dragover_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::DragEvent)&gt;,
+    dragdrop_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::DragEvent)&gt;,
+    keychange_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::KeyboardEvent)&gt;,
+    config_button: Element,
+    config_show_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">CatalogView</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>, <span class="ident">layout</span>: <span class="kw-2">&amp;</span><span class="ident">Layout</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="comment">// optimize tile element area using the layout orientation</span>
-        <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">hexagon_rect</span>(<span class="ident">Coordinate::new</span>(<span class="number">0</span>, <span class="number">0</span>));
-        <span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="ident">Point</span>(<span class="number">0.5</span> <span class="op">*</span> <span class="ident">rect</span>.<span class="ident">width</span>.<span class="ident">round</span>(), <span class="number">0.5</span> <span class="op">*</span> <span class="ident">rect</span>.<span class="ident">height</span>.<span class="ident">round</span>());
-        <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">layout</span>.<span class="ident">with_origin</span>(<span class="ident">origin</span>);
+<span class="kw">impl </span>CatalogView {
+    <span class="kw">pub fn </span>new(parent: Element, layout: <span class="kw-2">&amp;</span>Layout) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="comment">// optimize tile element area using the layout orientation
+        </span><span class="kw">let </span>rect = layout.hexagon_rect(Coordinate::new(<span class="number">0</span>, <span class="number">0</span>));
+        <span class="kw">let </span>origin = Point(<span class="number">0.5 </span>* rect.width.round(), <span class="number">0.5 </span>* rect.height.round());
+        <span class="kw">let </span>layout = layout.with_origin(origin);
 
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let </span>document = parent.owner_document().unwrap();
 
-        <span class="kw">let</span> <span class="ident">catalog</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;ul&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">catalog</span>.<span class="ident">set_id</span>(<span class="string">&quot;catalog&quot;</span>);
-        <span class="ident">catalog</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;mt-2&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">layout</span>.<span class="ident">is_pointy</span>() {
-            <span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-pointy&quot;</span>)<span class="question-mark">?</span>;
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">layout</span>.<span class="ident">is_flat</span>() {
-            <span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-flat&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>catalog = document.create_element(<span class="string">&quot;ul&quot;</span>)<span class="question-mark">?</span>;
+        catalog.set_id(<span class="string">&quot;catalog&quot;</span>);
+        catalog.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;mt-2&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if </span>layout.is_pointy() {
+            catalog.class_list().add_1(<span class="string">&quot;is-pointy&quot;</span>)<span class="question-mark">?</span>;
+        } <span class="kw">else if </span>layout.is_flat() {
+            catalog.class_list().add_1(<span class="string">&quot;is-flat&quot;</span>)<span class="question-mark">?</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">editions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Series::Gt</span>.<span class="ident">editions</span>()
-            .<span class="ident">cloned</span>()
-            .<span class="ident">collect</span>();
+        <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = Series::Gt.editions()
+            .cloned()
+            .collect();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_ids</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Edition::iter</span>()
-            .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">edition</span>.<span class="ident">tiles</span>())
-            .<span class="ident">collect</span>();
-        <span class="ident">tile_ids</span>.<span class="ident">sort_unstable</span>();
+        <span class="kw">let </span><span class="kw-2">mut </span>tile_ids: Vec&lt;TileId&gt; = Edition::iter()
+            .flat_map(|edition| edition.tiles())
+            .collect();
+        tile_ids.sort_unstable();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tiles</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">tile_ids</span>.<span class="ident">len</span>());
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">base_ids</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span><span class="ident">::new</span>();
-        <span class="kw">for</span> <span class="ident">tile_id</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tile_ids</span> {
-            <span class="comment">// create only a single tile for each base identifier, ignore more variants</span>
-            <span class="kw">if</span> <span class="ident">base_ids</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">tile_id</span>.<span class="ident">base</span>()) {
+        <span class="kw">let </span><span class="kw-2">mut </span>tiles = Vec::with_capacity(tile_ids.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>base_ids = HashSet::&lt;TileId&gt;::new();
+        <span class="kw">for </span>tile_id <span class="kw">in </span><span class="kw-2">&amp;</span>tile_ids {
+            <span class="comment">// create only a single tile for each base identifier, ignore more variants
+            </span><span class="kw">if </span>base_ids.contains(<span class="kw-2">&amp;</span>tile_id.base()) {
                 <span class="kw">continue</span>;
             }
-            <span class="ident">base_ids</span>.<span class="ident">insert</span>(<span class="ident">tile_id</span>.<span class="ident">base</span>());
-            <span class="kw">let</span> <span class="ident">tile</span> <span class="op">=</span> <span class="ident">CatalogTile::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>, <span class="kw-2">*</span><span class="ident">tile_id</span>)<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;li&quot;</span>)<span class="question-mark">?</span>;
-            <span class="ident">item</span>.<span class="ident">append_child</span>(<span class="ident">tile</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
-            <span class="ident">catalog</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>)<span class="question-mark">?</span>;
-            <span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">tile</span>);
+            base_ids.insert(tile_id.base());
+            <span class="kw">let </span>tile = CatalogTile::new(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, <span class="kw-2">*</span>tile_id)<span class="question-mark">?</span>;
+            <span class="kw">let </span>item = document.create_element(<span class="string">&quot;li&quot;</span>)<span class="question-mark">?</span>;
+            item.append_child(tile.as_ref())<span class="question-mark">?</span>;
+            catalog.append_child(<span class="kw-2">&amp;</span>item)<span class="question-mark">?</span>;
+            tiles.push(tile);
         }
-        <span class="ident">parent</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">catalog</span>)<span class="question-mark">?</span>;
+        parent.append_child(<span class="kw-2">&amp;</span>catalog)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">filter_lanes_elements</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
-        <span class="kw">let</span> <span class="ident">node_list</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">query_selector_all</span>(<span class="string">&quot;#lanes-filter li&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">node_list</span>.<span class="ident">length</span>() {
-            <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident">node_list</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>()
-                .<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::Element</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
-            <span class="ident">filter_lanes_elements</span>.<span class="ident">push</span>(<span class="ident">LanesFilterElement::new</span>(<span class="ident">element</span>)<span class="question-mark">?</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>filter_lanes_elements = Vec::with_capacity(<span class="number">4</span>);
+        <span class="kw">let </span>node_list = parent.query_selector_all(<span class="string">&quot;#lanes-filter li&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..node_list.length() {
+            <span class="kw">let </span>element = node_list.get(i).unwrap()
+                .dyn_into::&lt;web_sys::Element&gt;().unwrap();
+            filter_lanes_elements.push(LanesFilterElement::new(element)<span class="question-mark">?</span>);
         }
-        <span class="kw">let</span> <span class="ident">filter_lanes</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">let </span>filter_lanes = <span class="prelude-val">None</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">filter_terrain_elements</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
-        <span class="kw">let</span> <span class="ident">node_list</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">query_selector_all</span>(<span class="string">&quot;#terrain-filter li&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">node_list</span>.<span class="ident">length</span>() {
-            <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident">node_list</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>()
-                .<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::Element</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
-            <span class="ident">filter_terrain_elements</span>.<span class="ident">push</span>(<span class="ident">TerrainFilterElement::new</span>(<span class="ident">element</span>)<span class="question-mark">?</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>filter_terrain_elements = Vec::with_capacity(<span class="number">4</span>);
+        <span class="kw">let </span>node_list = parent.query_selector_all(<span class="string">&quot;#terrain-filter li&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..node_list.length() {
+            <span class="kw">let </span>element = node_list.get(i).unwrap()
+                .dyn_into::&lt;web_sys::Element&gt;().unwrap();
+            filter_terrain_elements.push(TerrainFilterElement::new(element)<span class="question-mark">?</span>);
         }
-        <span class="kw">let</span> <span class="ident">filter_terrain</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">let </span>filter_terrain = <span class="prelude-val">None</span>;
 
-        <span class="kw">let</span> <span class="ident">tile_labels_visible</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="kw">let </span>tile_labels_visible = <span class="bool-val">true</span>;
 
-        <span class="kw">let</span> <span class="ident">dragover_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::DragEvent</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">data_transfer</span>()
-                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">trans</span><span class="op">|</span> <span class="ident">trans</span>.<span class="ident">get_data</span>(<span class="string">&quot;application/rekee&quot;</span>).<span class="ident">ok</span>());
-            <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">is_some</span>() {
-                <span class="ident">event</span>.<span class="ident">prevent_default</span>();
-                <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">mouse_position</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>));
-                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileMoveEvent</span> { <span class="ident">pos</span> });
+        <span class="kw">let </span>dragover_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::DragEvent| {
+            <span class="kw">let </span>data = event.data_transfer()
+                .and_then(|trans| trans.get_data(<span class="string">&quot;application/rekee&quot;</span>).ok());
+            <span class="kw">if </span>data.is_some() {
+                event.prevent_default();
+                <span class="kw">let </span>pos = <span class="macro">check!</span>(mouse_position(<span class="kw-2">&amp;</span>event));
+                nuts::publish(DragCatalogTileMoveEvent { pos });
             }
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let</span> <span class="ident">dragdrop_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::DragEvent</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">tile</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">event</span>.<span class="ident">data_transfer</span>()
-                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">trans</span><span class="op">|</span> <span class="ident">trans</span>.<span class="ident">get_data</span>(<span class="string">&quot;application/rekee&quot;</span>).<span class="ident">ok</span>())
-                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> <span class="ident">data</span>.<span class="ident">parse</span>().<span class="ident">ok</span>());
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tile</span>) <span class="op">=</span> <span class="ident">tile</span> {
-                <span class="ident">event</span>.<span class="ident">prevent_default</span>();
-                <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="ident">mouse_position</span>(<span class="kw-2">&amp;</span><span class="ident">event</span>));
-                <span class="ident">nuts::publish</span>(<span class="ident">DragCatalogTileEndEvent</span> { <span class="ident">pos</span>, <span class="ident">tile</span> });
-                <span class="ident">nuts::publish</span>(<span class="ident">UpdateSelectedTileEvent</span> { <span class="ident">pos</span> });
+        <span class="kw">let </span>dragdrop_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::DragEvent| {
+            <span class="kw">let </span>tile: <span class="prelude-ty">Option</span>&lt;TileId&gt; = event.data_transfer()
+                .and_then(|trans| trans.get_data(<span class="string">&quot;application/rekee&quot;</span>).ok())
+                .and_then(|data| data.parse().ok());
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(tile) = tile {
+                event.prevent_default();
+                <span class="kw">let </span>pos = <span class="macro">check!</span>(mouse_position(<span class="kw-2">&amp;</span>event));
+                nuts::publish(DragCatalogTileEndEvent { pos, tile });
+                nuts::publish(UpdateSelectedTileEvent { pos });
             }
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let</span> <span class="ident">keychange_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">event</span>: <span class="ident">web_sys::KeyboardEvent</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="ident">event</span>.<span class="ident">repeat</span>() {
+        <span class="kw">let </span>keychange_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::KeyboardEvent| {
+            <span class="kw">if </span>event.repeat() {
                 <span class="kw">return</span>;
             }
-            <span class="kw">let</span> <span class="ident">hint</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">event</span>.<span class="ident">shift_key</span>(), <span class="ident">event</span>.<span class="ident">ctrl_key</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">event</span>.<span class="ident">meta_key</span>()) {
-                (<span class="bool-val">true</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Straight</span>),
-                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Left</span>),
-                (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">ConnectionHint::Right</span>),
+            <span class="kw">let </span>hint = <span class="kw">match </span>(event.shift_key(), event.ctrl_key() || event.meta_key()) {
+                (<span class="bool-val">true</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Straight),
+                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Left),
+                (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(ConnectionHint::Right),
                 (<span class="bool-val">false</span>, <span class="bool-val">false</span>) =&gt; <span class="prelude-val">None</span>,
             };
-            <span class="ident">nuts::publish</span>(<span class="ident">UpdateConnectionHintEvent</span> { <span class="ident">hint</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">document</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;keydown&quot;</span>,
-            <span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
-        <span class="ident">document</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;keyup&quot;</span>,
-            <span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+            nuts::publish(UpdateConnectionHintEvent { hint });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        document.add_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
+            keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        document.add_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
+            keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">config_button</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;catalog-config-button&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">config_show_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
-            <span class="ident">nuts::publish</span>(<span class="ident">ShowCatalogConfigEvent</span>);
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">config_button</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">config_show_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">unwrap</span>();
-        <span class="ident">config_button</span>.<span class="ident">remove_attribute</span>(<span class="string">&quot;disabled&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let </span>config_button = document.get_element_by_id(<span class="string">&quot;catalog-config-button&quot;</span>).unwrap();
+        <span class="kw">let </span>config_show_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
+            nuts::publish(ShowCatalogConfigEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        config_button.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, config_show_cb.as_ref().unchecked_ref()).unwrap();
+        config_button.remove_attribute(<span class="string">&quot;disabled&quot;</span>).unwrap();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">CatalogView</span> {
-            <span class="ident">catalog</span>, <span class="ident">tiles</span>, <span class="ident">editions</span>, <span class="ident">filter_lanes</span>, <span class="ident">filter_lanes_elements</span>, <span class="ident">filter_terrain</span>,
-            <span class="ident">filter_terrain_elements</span>, <span class="ident">tile_labels_visible</span>, <span class="ident">map</span>: <span class="prelude-val">None</span>, <span class="ident">dragover_cb</span>, <span class="ident">dragdrop_cb</span>,
-            <span class="ident">keychange_cb</span>, <span class="ident">config_button</span>, <span class="ident">config_show_cb</span>
+        <span class="kw">let </span><span class="kw-2">mut </span>view = CatalogView {
+            catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
+            filter_terrain_elements, tile_labels_visible, map: <span class="prelude-val">None</span>, dragover_cb, dragdrop_cb,
+            keychange_cb, config_button, config_show_cb
         };
-        <span class="ident">view</span>.<span class="ident">load_settings</span>(<span class="kw-2">&amp;</span><span class="ident">CatalogSettings::default</span>());
-        <span class="ident">parent</span>.<span class="ident">set_hidden</span>(<span class="bool-val">false</span>);
+        view.load_settings(<span class="kw-2">&amp;</span>CatalogSettings::default());
+        parent.set_hidden(<span class="bool-val">false</span>);
 
-        <span class="prelude-val">Ok</span>(<span class="ident">view</span>)
+        <span class="prelude-val">Ok</span>(view)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">CatalogSettings</span>) {
-        <span class="self">self</span>.<span class="ident">inner_update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">settings</span>.<span class="ident">editions</span>);
-        <span class="self">self</span>.<span class="ident">inner_update_filter</span>(<span class="ident">settings</span>.<span class="ident">filter_lanes</span>, <span class="ident">settings</span>.<span class="ident">filter_terrain</span>);
+    <span class="kw">pub fn </span>load_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, settings: <span class="kw-2">&amp;</span>CatalogSettings) {
+        <span class="self">self</span>.inner_update_editions(<span class="kw-2">&amp;</span>settings.editions);
+        <span class="self">self</span>.inner_update_filter(settings.filter_lanes, settings.filter_terrain);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">save_settings</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">CatalogSettings</span> {
-        <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">clone</span>();
-        <span class="kw">let</span> <span class="ident">filter_lanes</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">filter_lanes</span>;
-        <span class="kw">let</span> <span class="ident">filter_terrain</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">filter_terrain</span>;
-        <span class="ident">CatalogSettings</span> { <span class="ident">editions</span>, <span class="ident">filter_lanes</span>, <span class="ident">filter_terrain</span> }
+    <span class="kw">pub fn </span>save_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CatalogSettings {
+        <span class="kw">let </span>editions = <span class="self">self</span>.editions.clone();
+        <span class="kw">let </span>filter_lanes = <span class="self">self</span>.filter_lanes;
+        <span class="kw">let </span>filter_terrain = <span class="self">self</span>.filter_terrain;
+        CatalogSettings { editions, filter_lanes, filter_terrain }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_file</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) {
-        <span class="comment">// ensure that all editions that are used by tiles of the imported map are visible</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">used_editions</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">clone</span>();
-        <span class="kw">for</span> <span class="ident">edition</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">group_by_edition</span>() {
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">used_editions</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">edition</span>) {
-                <span class="macro">info!</span>(<span class="string">&quot;automatically add used edition {}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">edition</span>);
-                <span class="ident">used_editions</span>.<span class="ident">push</span>(<span class="ident">edition</span>);
+    <span class="kw">pub fn </span>import_file(<span class="kw-2">&amp;mut </span><span class="self">self</span>, map: <span class="kw-2">&amp;</span>Map) {
+        <span class="comment">// ensure that all editions that are used by tiles of the imported map are visible
+        </span><span class="kw">let </span><span class="kw-2">mut </span>used_editions = <span class="self">self</span>.editions.clone();
+        <span class="kw">for </span>edition <span class="kw">in </span>map.tiles().group_by_edition() {
+            <span class="kw">if </span>!used_editions.contains(<span class="kw-2">&amp;</span>edition) {
+                <span class="macro">info!</span>(<span class="string">&quot;automatically add used edition {}&quot;</span>, <span class="kw-2">&amp;</span>edition);
+                used_editions.push(edition);
             }
         }
-        <span class="self">self</span>.<span class="ident">update_editions</span>(<span class="kw-2">&amp;</span><span class="ident">used_editions</span>);
+        <span class="self">self</span>.update_editions(<span class="kw-2">&amp;</span>used_editions);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">editions</span>: <span class="kw-2">&amp;</span>[<span class="ident">Edition</span>]) {
-        <span class="self">self</span>.<span class="ident">inner_update_editions</span>(<span class="ident">editions</span>);
-        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
+    <span class="kw">pub fn </span>update_editions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, editions: <span class="kw-2">&amp;</span>[Edition]) {
+        <span class="self">self</span>.inner_update_editions(editions);
+        nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
     }
 
-    <span class="kw">fn</span> <span class="ident">inner_update_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">editions</span>: <span class="kw-2">&amp;</span>[<span class="ident">Edition</span>]) {
-        <span class="macro">info!</span>(<span class="string">&quot;update editions {:?}&quot;</span>, <span class="ident">editions</span>);
-        <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">clear</span>();
-        <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">extend_from_slice</span>(<span class="ident">editions</span>);
-        <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">sort_unstable</span>();
+    <span class="kw">fn </span>inner_update_editions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, editions: <span class="kw-2">&amp;</span>[Edition]) {
+        <span class="macro">info!</span>(<span class="string">&quot;update editions {:?}&quot;</span>, editions);
+        <span class="self">self</span>.editions.clear();
+        <span class="self">self</span>.editions.extend_from_slice(editions);
+        <span class="self">self</span>.editions.sort_unstable();
 
-        <span class="comment">// count number of editions per series to determine the active filter types</span>
-        <span class="kw">let</span> <span class="ident">gt_count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">series</span>() <span class="op">==</span> <span class="ident">Series::Gt</span>)
-            .<span class="ident">count</span>();
-        <span class="kw">let</span> <span class="ident">dirt_count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">series</span>() <span class="op">==</span> <span class="ident">Series::Dirt</span>)
-            .<span class="ident">count</span>();
-        <span class="kw">let</span> <span class="ident">lanes_filter_active</span> <span class="op">=</span> <span class="ident">gt_count</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">dirt_count</span>;
-        <span class="kw">let</span> <span class="ident">terrain_filter_active</span> <span class="op">=</span> <span class="ident">dirt_count</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">gt_count</span>;
+        <span class="comment">// count number of editions per series to determine the active filter types
+        </span><span class="kw">let </span>gt_count = <span class="self">self</span>.editions.iter()
+            .filter(|val| val.series() == Series::Gt)
+            .count();
+        <span class="kw">let </span>dirt_count = <span class="self">self</span>.editions.iter()
+            .filter(|val| val.series() == Series::Dirt)
+            .count();
+        <span class="kw">let </span>lanes_filter_active = gt_count &gt;= dirt_count;
+        <span class="kw">let </span>terrain_filter_active = dirt_count &gt;= gt_count;
 
-        <span class="comment">// show or hide filter types based on the active series, clear filter</span>
-        <span class="comment">// settings that are not visible and thus can&#39;t be changed by the user</span>
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">element</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;lanes-filter&quot;</span>) {
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">lanes_filter_active</span> {
-                <span class="self">self</span>.<span class="ident">filter_lanes</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="comment">// show or hide filter types based on the active series, clear filter
+        // settings that are not visible and thus can&#39;t be changed by the user
+        </span><span class="kw">let </span>document = <span class="self">self</span>.catalog.owner_document().unwrap();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(element) = document.get_element_by_id(<span class="string">&quot;lanes-filter&quot;</span>) {
+            <span class="kw">if </span>!lanes_filter_active {
+                <span class="self">self</span>.filter_lanes = <span class="prelude-val">None</span>;
             }
-            <span class="ident">element</span>.<span class="ident">set_hidden</span>(<span class="op">!</span><span class="ident">lanes_filter_active</span>);
-        } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">filter_lanes</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+            element.set_hidden(!lanes_filter_active);
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.filter_lanes = <span class="prelude-val">None</span>;
         }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">element</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;terrain-filter&quot;</span>) {
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">terrain_filter_active</span> {
-                <span class="self">self</span>.<span class="ident">filter_terrain</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(element) = document.get_element_by_id(<span class="string">&quot;terrain-filter&quot;</span>) {
+            <span class="kw">if </span>!terrain_filter_active {
+                <span class="self">self</span>.filter_terrain = <span class="prelude-val">None</span>;
             }
-            <span class="ident">element</span>.<span class="ident">set_hidden</span>(<span class="op">!</span><span class="ident">terrain_filter_active</span>);
-        } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">filter_terrain</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+            element.set_hidden(!terrain_filter_active);
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.filter_terrain = <span class="prelude-val">None</span>;
         }
 
-        <span class="comment">// calculate the number of available tile variants</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_ids</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">editions</span>.<span class="ident">iter</span>()
-            .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">edition</span>.<span class="ident">tiles</span>())
-            .<span class="ident">collect</span>();
-        <span class="ident">tile_ids</span>.<span class="ident">sort_unstable</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_counts</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="op">&lt;</span><span class="ident">TileId</span>, <span class="ident">usize</span><span class="op">&gt;</span><span class="ident">::new</span>();
-        <span class="kw">for</span> <span class="ident">tile_id</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tile_ids</span> {
-            <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tile_counts</span>.<span class="ident">entry</span>(<span class="ident">tile_id</span>.<span class="ident">base</span>())
-                .<span class="ident">or_insert</span>(<span class="number">0</span>);
-            <span class="kw-2">*</span><span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        <span class="comment">// calculate the number of available tile variants
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tile_ids: Vec&lt;TileId&gt; = editions.iter()
+            .flat_map(|edition| edition.tiles())
+            .collect();
+        tile_ids.sort_unstable();
+        <span class="kw">let </span><span class="kw-2">mut </span>tile_counts = HashMap::&lt;TileId, usize&gt;::new();
+        <span class="kw">for </span>tile_id <span class="kw">in </span><span class="kw-2">&amp;</span>tile_ids {
+            <span class="kw">let </span>count = tile_counts.entry(tile_id.base())
+                .or_insert(<span class="number">0</span>);
+            <span class="kw-2">*</span>count += <span class="number">1</span>;
         }
 
-        <span class="comment">// update the catalog tile elements with number of tile variants</span>
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">iter_mut</span>() {
-            <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tile_counts</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">base</span>())
-                .<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span><span class="number">0</span>);
-            <span class="ident">tile</span>.<span class="ident">set_count</span>(<span class="kw-2">*</span><span class="ident">count</span>);
+        <span class="comment">// update the catalog tile elements with number of tile variants
+        </span><span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.tiles.iter_mut() {
+            <span class="kw">let </span>count = tile_counts.get(<span class="kw-2">&amp;</span>tile.id.base())
+                .unwrap_or(<span class="kw-2">&amp;</span><span class="number">0</span>);
+            tile.set_count(<span class="kw-2">*</span>count);
         }
 
-        <span class="self">self</span>.<span class="ident">inner_update_filter</span>(<span class="self">self</span>.<span class="ident">filter_lanes</span>, <span class="self">self</span>.<span class="ident">filter_terrain</span>);
+        <span class="self">self</span>.inner_update_filter(<span class="self">self</span>.filter_lanes, <span class="self">self</span>.filter_terrain);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_lanes_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) {
-        <span class="self">self</span>.<span class="ident">inner_update_filter</span>(<span class="ident">lanes</span>, <span class="self">self</span>.<span class="ident">filter_terrain</span>);
-        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
+    <span class="kw">pub fn </span>update_lanes_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, lanes: <span class="prelude-ty">Option</span>&lt;u8&gt;) {
+        <span class="self">self</span>.inner_update_filter(lanes, <span class="self">self</span>.filter_terrain);
+        nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_terrain_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>) {
-        <span class="self">self</span>.<span class="ident">inner_update_filter</span>(<span class="self">self</span>.<span class="ident">filter_lanes</span>, <span class="ident">terrain</span>);
-        <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">SaveSettingsEvent</span>);
+    <span class="kw">pub fn </span>update_terrain_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, terrain: <span class="prelude-ty">Option</span>&lt;Terrain&gt;) {
+        <span class="self">self</span>.inner_update_filter(<span class="self">self</span>.filter_lanes, terrain);
+        nuts::send_to::&lt;CatalogController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
     }
 
-    <span class="kw">fn</span> <span class="ident">inner_update_filter</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">lanes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">terrain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Terrain</span><span class="op">&gt;</span>) {
-        <span class="macro">info!</span>(<span class="string">&quot;update filter: lanes={:?}, terrain={:?}&quot;</span>, <span class="ident">lanes</span>, <span class="ident">terrain</span>);
+    <span class="kw">fn </span>inner_update_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, lanes: <span class="prelude-ty">Option</span>&lt;u8&gt;, terrain: <span class="prelude-ty">Option</span>&lt;Terrain&gt;) {
+        <span class="macro">info!</span>(<span class="string">&quot;update filter: lanes={:?}, terrain={:?}&quot;</span>, lanes, terrain);
 
-        <span class="kw">let</span> <span class="ident">edition_tiles</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
-            .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">edition</span><span class="op">|</span> <span class="ident">edition</span>.<span class="ident">tiles</span>())
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="ident">id</span>.<span class="ident">base</span>())
-            .<span class="ident">collect</span>();
+        <span class="kw">let </span>edition_tiles: HashSet&lt;TileId&gt; = <span class="self">self</span>.editions.iter()
+            .flat_map(|edition| edition.tiles())
+            .map(|id| id.base())
+            .collect();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lanes_element</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">filter_lanes_elements</span> {
-            <span class="kw">let</span> <span class="ident">active</span> <span class="op">=</span> <span class="ident">item</span>.<span class="ident">value</span>() <span class="op">==</span> <span class="ident">lanes</span>;
-            <span class="ident">item</span>.<span class="ident">set_active</span>(<span class="ident">active</span>);
-            <span class="kw">if</span> <span class="ident">active</span> {
-                <span class="ident">lanes_element</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>);
-            }
-        }
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">terrain_element</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">filter_terrain_elements</span> {
-            <span class="kw">let</span> <span class="ident">active</span> <span class="op">=</span> <span class="ident">item</span>.<span class="ident">value</span>() <span class="op">==</span> <span class="ident">terrain</span>;
-            <span class="ident">item</span>.<span class="ident">set_active</span>(<span class="ident">active</span>);
-            <span class="kw">if</span> <span class="ident">active</span> {
-                <span class="ident">terrain_element</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>lanes_element = <span class="prelude-val">None</span>;
+        <span class="kw">for </span>item <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.filter_lanes_elements {
+            <span class="kw">let </span>active = item.value() == lanes;
+            item.set_active(active);
+            <span class="kw">if </span>active {
+                lanes_element = <span class="prelude-val">Some</span>(item);
             }
         }
 
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tiles</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hidden</span> <span class="op">=</span> <span class="op">!</span><span class="ident">edition_tiles</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">base</span>());
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">filter</span>) <span class="op">=</span> <span class="ident">lanes_element</span> {
-                <span class="ident">hidden</span> <span class="op">|</span><span class="op">=</span> <span class="op">!</span><span class="ident">filter</span>.<span class="ident">contains</span>(<span class="ident">tile</span>.<span class="ident">id</span>);
-            }
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">filter</span>) <span class="op">=</span> <span class="ident">terrain_element</span> {
-                <span class="ident">hidden</span> <span class="op">|</span><span class="op">=</span> <span class="op">!</span><span class="ident">filter</span>.<span class="ident">contains</span>(<span class="ident">tile</span>.<span class="ident">id</span>);
-            }
-            <span class="comment">// hide the parent list item element when found for consistent</span>
-            <span class="comment">// item spacing via CSS flexbox attributes</span>
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>) <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">as_ref</span>().<span class="ident">parent_element</span>() {
-                <span class="ident">item</span>.<span class="ident">set_hidden</span>(<span class="ident">hidden</span>);
-            } <span class="kw">else</span> {
-                <span class="ident">tile</span>.<span class="ident">set_hidden</span>(<span class="ident">hidden</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>terrain_element = <span class="prelude-val">None</span>;
+        <span class="kw">for </span>item <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.filter_terrain_elements {
+            <span class="kw">let </span>active = item.value() == terrain;
+            item.set_active(active);
+            <span class="kw">if </span>active {
+                terrain_element = <span class="prelude-val">Some</span>(item);
             }
         }
 
-        <span class="self">self</span>.<span class="ident">filter_lanes</span> <span class="op">=</span> <span class="ident">lanes</span>;
-        <span class="self">self</span>.<span class="ident">filter_terrain</span> <span class="op">=</span> <span class="ident">terrain</span>;
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.tiles {
+            <span class="kw">let </span><span class="kw-2">mut </span>hidden = !edition_tiles.contains(<span class="kw-2">&amp;</span>tile.id.base());
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(filter) = lanes_element {
+                hidden |= !filter.contains(tile.id);
+            }
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(filter) = terrain_element {
+                hidden |= !filter.contains(tile.id);
+            }
+            <span class="comment">// hide the parent list item element when found for consistent
+            // item spacing via CSS flexbox attributes
+            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(item) = tile.as_ref().parent_element() {
+                item.set_hidden(hidden);
+            } <span class="kw">else </span>{
+                tile.set_hidden(hidden);
+            }
+        }
+
+        <span class="self">self</span>.filter_lanes = lanes;
+        <span class="self">self</span>.filter_terrain = terrain;
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">visible</span>: <span class="ident">bool</span>) {
-        <span class="kw">if</span> <span class="ident">visible</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">tile_labels_visible</span> {
-            <span class="macro">info!</span>(<span class="string">&quot;update catalog tile labels: {:?}&quot;</span>, <span class="ident">visible</span>);
-            <span class="self">self</span>.<span class="ident">tile_labels_visible</span> <span class="op">=</span> <span class="ident">visible</span>;
-            <span class="kw">if</span> <span class="ident">visible</span> {
-                <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;tile-labels-hidden&quot;</span>).<span class="ident">ok</span>());
-            } <span class="kw">else</span> {
-                <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;tile-labels-hidden&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">pub fn </span>update_tile_labels(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
+        <span class="kw">if </span>visible != <span class="self">self</span>.tile_labels_visible {
+            <span class="macro">info!</span>(<span class="string">&quot;update catalog tile labels: {:?}&quot;</span>, visible);
+            <span class="self">self</span>.tile_labels_visible = visible;
+            <span class="kw">if </span>visible {
+                <span class="macro">check!</span>(<span class="self">self</span>.catalog.class_list().remove_1(<span class="string">&quot;tile-labels-hidden&quot;</span>).ok());
+            } <span class="kw">else </span>{
+                <span class="macro">check!</span>(<span class="self">self</span>.catalog.class_list().add_1(<span class="string">&quot;tile-labels-hidden&quot;</span>).ok());
             }
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toggle_tile_labels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">inverted</span>: <span class="ident">bool</span>) {
-        <span class="kw">let</span> <span class="ident">visible</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tile_labels_visible</span> <span class="op">^</span> <span class="ident">inverted</span>;
-        <span class="macro">info!</span>(<span class="string">&quot;toggle catalog tile labels: {:?}&quot;</span>, <span class="ident">visible</span>);
-        <span class="kw">if</span> <span class="ident">visible</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;tile-labels-hidden&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;tile-labels-hidden&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">pub fn </span>toggle_tile_labels(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inverted: bool) {
+        <span class="kw">let </span>visible = <span class="self">self</span>.tile_labels_visible ^ inverted;
+        <span class="macro">info!</span>(<span class="string">&quot;toggle catalog tile labels: {:?}&quot;</span>, visible);
+        <span class="kw">if </span>visible {
+            <span class="macro">check!</span>(<span class="self">self</span>.catalog.class_list().remove_1(<span class="string">&quot;tile-labels-hidden&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.catalog.class_list().add_1(<span class="string">&quot;tile-labels-hidden&quot;</span>).ok());
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_tile_usage</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tiles</span>: <span class="kw-2">&amp;</span>[<span class="ident">TileId</span>]) {
+    <span class="kw">pub fn </span>update_tile_usage(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tiles: <span class="kw-2">&amp;</span>[TileId]) {
         <span class="macro">info!</span>(<span class="string">&quot;update tile usage&quot;</span>);
 
-        <span class="comment">/* when a tile is used, count both sides as used */</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tile_counts</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="op">&lt;</span><span class="ident">u16</span>, <span class="ident">usize</span><span class="op">&gt;</span><span class="ident">::new</span>();
-        <span class="kw">for</span> <span class="ident">full_id</span> <span class="kw">in</span> <span class="ident">tiles</span> {
-            <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tile_counts</span>.<span class="ident">entry</span>(<span class="ident">full_id</span>.<span class="ident">num</span>()).<span class="ident">or_insert</span>(<span class="number">0</span>);
-            <span class="kw-2">*</span><span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        <span class="comment">/* when a tile is used, count both sides as used */
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tile_counts = HashMap::&lt;u16, usize&gt;::new();
+        <span class="kw">for </span>full_id <span class="kw">in </span>tiles {
+            <span class="kw">let </span>count = tile_counts.entry(full_id.num()).or_insert(<span class="number">0</span>);
+            <span class="kw-2">*</span>count += <span class="number">1</span>;
         }
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">tiles</span>.<span class="ident">iter_mut</span>() {
-            <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">tile_counts</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">num</span>()).<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span><span class="number">0</span>);
-            <span class="ident">tile</span>.<span class="ident">set_usage</span>(<span class="kw-2">*</span><span class="ident">count</span>);
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.tiles.iter_mut() {
+            <span class="kw">let </span>count = tile_counts.get(<span class="kw-2">&amp;</span>tile.id.num()).unwrap_or(<span class="kw-2">&amp;</span><span class="number">0</span>);
+            tile.set_usage(<span class="kw-2">*</span>count);
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drag_tile_begin</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">tile</span>: <span class="ident">TileId</span>) {
-        <span class="macro">info!</span>(<span class="string">&quot;drag tile begin: {:?}&quot;</span>, <span class="ident">tile</span>);
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">map</span>.<span class="ident">is_none</span>() {
-            <span class="comment">// lookup map element and initialize drag-n-drop event handlers</span>
-            <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;map&quot;</span>) {
-                <span class="macro">check!</span>(<span class="ident">map</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;dragover&quot;</span>,
-                    <span class="self">self</span>.<span class="ident">dragover_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">ok</span>());
-                <span class="macro">check!</span>(<span class="ident">map</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;drop&quot;</span>,
-                    <span class="self">self</span>.<span class="ident">dragdrop_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()).<span class="ident">ok</span>());
-                <span class="self">self</span>.<span class="ident">map</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>);
+    <span class="kw">pub fn </span>drag_tile_begin(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tile: TileId) {
+        <span class="macro">info!</span>(<span class="string">&quot;drag tile begin: {:?}&quot;</span>, tile);
+        <span class="kw">if </span><span class="self">self</span>.map.is_none() {
+            <span class="comment">// lookup map element and initialize drag-n-drop event handlers
+            </span><span class="kw">let </span>document = <span class="self">self</span>.catalog.owner_document().unwrap();
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(map) = document.get_element_by_id(<span class="string">&quot;map&quot;</span>) {
+                <span class="macro">check!</span>(map.add_event_listener_with_callback(<span class="string">&quot;dragover&quot;</span>,
+                    <span class="self">self</span>.dragover_cb.as_ref().unchecked_ref()).ok());
+                <span class="macro">check!</span>(map.add_event_listener_with_callback(<span class="string">&quot;drop&quot;</span>,
+                    <span class="self">self</span>.dragdrop_cb.as_ref().unchecked_ref()).ok());
+                <span class="self">self</span>.map = <span class="prelude-val">Some</span>(map);
             }
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">CatalogView</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">catalog</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;keydown&quot;</span>,
-            <span class="self">self</span>.<span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;keyup&quot;</span>,
-            <span class="self">self</span>.<span class="ident">keychange_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">config_button</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">config_show_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>CatalogView {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>document = <span class="self">self</span>.catalog.owner_document().unwrap();
+        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
+            <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
+        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
+            <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
+        <span class="kw">let _ </span>= <span class="self">self</span>.config_button.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.config_show_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

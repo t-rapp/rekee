@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/config.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../rekee/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/config.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../rekee/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -173,180 +173,180 @@
 <span id="173">173</span>
 <span id="174">174</span>
 <span id="175">175</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Configuration of general track settings used for display and export.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Configuration of general track settings used for display and export.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Element</span>};
+</span><span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>wasm_bindgen::JsCast;
+<span class="kw">use </span>web_sys::{<span class="self">self</span>, Element};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::map_config</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::view::export::ExportScale</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::check;
+<span class="kw">use </span><span class="kw">crate</span>::controller::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::map_config::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::view::export::ExportScale;
+<span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">ExportScaleElement</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span>,
-    <span class="ident">click_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">struct </span>ExportScaleElement {
+    inner: Element,
+    value: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
+    click_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">ExportScaleElement</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">get_attribute</span>(<span class="string">&quot;data-value&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">val</span><span class="op">|</span> <span class="ident">val</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span>().<span class="ident">ok</span>());
+<span class="kw">impl </span>ExportScaleElement {
+    <span class="kw">fn </span>new(inner: Element) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>value = inner.get_attribute(<span class="string">&quot;data-value&quot;</span>)
+            .and_then(|val| val.parse::&lt;ExportScale&gt;().ok());
 
-        <span class="kw">let</span> <span class="ident">click_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapConfigController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">UpdateExportScaleEvent</span> { <span class="ident">scale</span>: <span class="ident">value</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">inner</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>click_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;MapConfigController, <span class="kw">_</span>&gt;(UpdateExportScaleEvent { scale: value });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        inner.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            click_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">ExportScaleElement</span> { <span class="ident">inner</span>, <span class="ident">value</span>, <span class="ident">click_cb</span> })
+        <span class="prelude-val">Ok</span>(ExportScaleElement { inner, value, click_cb })
     }
 
-    <span class="kw">fn</span> <span class="ident">value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">value</span>
+    <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ExportScale&gt; {
+        <span class="self">self</span>.value
     }
 
-    <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">let</span> <span class="ident">color_class</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">value</span> {
-            <span class="prelude-val">None</span> =&gt; <span class="string">&quot;is-dark&quot;</span>,
+    <span class="kw">fn </span>set_active(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">let </span>color_class = <span class="kw">match </span><span class="self">self</span>.value {
+            <span class="prelude-val">None </span>=&gt; <span class="string">&quot;is-dark&quot;</span>,
             <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="string">&quot;is-info&quot;</span>,
         };
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="ident">color_class</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-selected&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="ident">color_class</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-selected&quot;</span>).<span class="ident">ok</span>());
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(color_class).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-selected&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(color_class).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-selected&quot;</span>).ok());
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ExportScaleElement</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>ExportScaleElement {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ExportScaleElement</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">click_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>ExportScaleElement {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.click_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapConfigView</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">background_grid</span>: <span class="ident">web_sys::HtmlInputElement</span>,
-    <span class="ident">export_scale</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span>,
-    <span class="ident">export_scale_elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ExportScaleElement</span><span class="op">&gt;</span>,
-    <span class="ident">tile_labels</span>: <span class="ident">web_sys::HtmlInputElement</span>,
-    <span class="ident">apply</span>: <span class="ident">Element</span>,
-    <span class="ident">apply_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
-    <span class="ident">close</span>: <span class="ident">Element</span>,
-    <span class="ident">close_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">pub struct </span>MapConfigView {
+    inner: Element,
+    background_grid: web_sys::HtmlInputElement,
+    export_scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
+    export_scale_elements: Vec&lt;ExportScaleElement&gt;,
+    tile_labels: web_sys::HtmlInputElement,
+    apply: Element,
+    apply_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
+    close: Element,
+    close_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">MapConfigView</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">parent</span>;
+<span class="kw">impl </span>MapConfigView {
+    <span class="kw">pub fn </span>new(parent: Element) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>document = parent.owner_document().unwrap();
+        <span class="kw">let </span>inner = parent;
 
-        <span class="kw">let</span> <span class="ident">background_grid</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;background-grid&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">elm</span><span class="op">|</span> <span class="ident">elm</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::HtmlInputElement</span><span class="op">&gt;</span>().<span class="ident">ok</span>())
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find background grid input of map config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>background_grid = document.get_element_by_id(<span class="string">&quot;background-grid&quot;</span>)
+            .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
+            .ok_or(<span class="string">&quot;Cannot find background grid input of map config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">export_scale</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">export_scale_elements</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
-        <span class="kw">let</span> <span class="ident">node_list</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector_all</span>(<span class="string">&quot;#export-scale button&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">node_list</span>.<span class="ident">length</span>() {
-            <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="ident">node_list</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>()
-                .<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::Element</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
-                <span class="ident">export_scale_elements</span>.<span class="ident">push</span>(<span class="ident">ExportScaleElement::new</span>(<span class="ident">element</span>)<span class="question-mark">?</span>);
+        <span class="kw">let </span>export_scale = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>export_scale_elements = Vec::with_capacity(<span class="number">4</span>);
+        <span class="kw">let </span>node_list = inner.query_selector_all(<span class="string">&quot;#export-scale button&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..node_list.length() {
+            <span class="kw">let </span>element = node_list.get(i).unwrap()
+                .dyn_into::&lt;web_sys::Element&gt;().unwrap();
+                export_scale_elements.push(ExportScaleElement::new(element)<span class="question-mark">?</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">tile_labels</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;tile-labels&quot;</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">elm</span><span class="op">|</span> <span class="ident">elm</span>.<span class="ident">dyn_into</span>::<span class="op">&lt;</span><span class="ident">web_sys::HtmlInputElement</span><span class="op">&gt;</span>().<span class="ident">ok</span>())
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find tile labels input of map config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tile_labels = document.get_element_by_id(<span class="string">&quot;tile-labels&quot;</span>)
+            .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
+            .ok_or(<span class="string">&quot;Cannot find tile labels input of map config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">apply</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;apply-map-config&quot;</span>)
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find apply button of map config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>apply = document.get_element_by_id(<span class="string">&quot;apply-map-config&quot;</span>)
+            .ok_or(<span class="string">&quot;Cannot find apply button of map config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">apply_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">MapConfigController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">ApplyMapConfigEvent</span>);
-            <span class="ident">nuts::publish</span>(<span class="ident">HideMapConfigEvent</span>);
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">apply</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">apply_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>apply_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;MapConfigController, <span class="kw">_</span>&gt;(ApplyMapConfigEvent);
+            nuts::publish(HideMapConfigEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        apply.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, apply_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">close_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::publish</span>(<span class="ident">HideMapConfigEvent</span>);
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
+        <span class="kw">let </span>close_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::publish(HideMapConfigEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let</span> <span class="ident">close</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;.modal-close&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find close button of map config element&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">close</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">close_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>close = inner.query_selector(<span class="string">&quot;.modal-close&quot;</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">&quot;Cannot find close button of map config element&quot;</span>)<span class="question-mark">?</span>;
+        close.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">MapConfigView</span> {
-            <span class="ident">inner</span>, <span class="ident">background_grid</span>, <span class="ident">export_scale</span>, <span class="ident">export_scale_elements</span>,
-            <span class="ident">tile_labels</span>, <span class="ident">apply</span>, <span class="ident">apply_cb</span>, <span class="ident">close</span>, <span class="ident">close_cb</span>
+        <span class="prelude-val">Ok</span>(MapConfigView {
+            inner, background_grid, export_scale, export_scale_elements,
+            tile_labels, apply, apply_cb, close, close_cb
         })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-active&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-active&quot;</span>).ok());
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_background_grid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">visible</span>: <span class="ident">bool</span>) {
-        <span class="self">self</span>.<span class="ident">background_grid</span>.<span class="ident">set_checked</span>(<span class="ident">visible</span>);
+    <span class="kw">pub fn </span>set_background_grid(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.background_grid.set_checked(visible);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_export_scale</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">scale</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExportScale</span><span class="op">&gt;</span>) {
-        <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">export_scale_elements</span> {
-            <span class="kw">let</span> <span class="ident">active</span> <span class="op">=</span> <span class="ident">item</span>.<span class="ident">value</span>() <span class="op">==</span> <span class="ident">scale</span>;
-            <span class="ident">item</span>.<span class="ident">set_active</span>(<span class="ident">active</span>);
+    <span class="kw">pub fn </span>set_export_scale(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;) {
+        <span class="kw">for </span>item <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.export_scale_elements {
+            <span class="kw">let </span>active = item.value() == scale;
+            item.set_active(active);
         }
-        <span class="self">self</span>.<span class="ident">export_scale</span> <span class="op">=</span> <span class="ident">scale</span>;
+        <span class="self">self</span>.export_scale = scale;
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_tile_labels</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">visible</span>: <span class="ident">bool</span>) {
-        <span class="self">self</span>.<span class="ident">tile_labels</span>.<span class="ident">set_checked</span>(<span class="ident">visible</span>);
+    <span class="kw">pub fn </span>set_tile_labels(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.tile_labels.set_checked(visible);
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apply_map_config</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="ident">visible</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">background_grid</span>.<span class="ident">checked</span>();
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateBackgroundGridEvent</span> { <span class="ident">visible</span> });
-        <span class="kw">let</span> <span class="ident">scale</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">export_scale</span>;
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateExportScaleEvent</span> { <span class="ident">scale</span> });
-        <span class="kw">let</span> <span class="ident">visible</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tile_labels</span>.<span class="ident">checked</span>();
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateTileLabelsEvent</span> { <span class="ident">visible</span> });
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">MapConfigView</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">apply</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">apply_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">close</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">close_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+    <span class="kw">pub fn </span>apply_map_config(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>visible = <span class="self">self</span>.background_grid.checked();
+        nuts::publish(UpdateBackgroundGridEvent { visible });
+        <span class="kw">let </span>scale = <span class="self">self</span>.export_scale;
+        nuts::publish(UpdateExportScaleEvent { scale });
+        <span class="kw">let </span>visible = <span class="self">self</span>.tile_labels.checked();
+        nuts::publish(UpdateTileLabelsEvent { visible });
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="kw">impl </span>Drop <span class="kw">for </span>MapConfigView {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.apply.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.apply_cb.as_ref().unchecked_ref());
+        <span class="kw">let _ </span>= <span class="self">self</span>.close.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.close_cb.as_ref().unchecked_ref());
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

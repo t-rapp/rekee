@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -144,151 +144,151 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Library providing track editor functions for the Rekee web application.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! When the library is compiled into a WASM module it will include a `main`</span>
-<span class="doccomment">//! function which connects the view components to the web page environment.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The following HTML elements are looked up by element id:</span>
-<span class="doccomment">//! * `catalog-container` (mandatory)</span>
-<span class="doccomment">//! * `catalog-config-container` (mandatory)</span>
-<span class="doccomment">//! * `export-container` (mandatory)</span>
-<span class="doccomment">//! * `map-container` (mandatory)</span>
-<span class="doccomment">//! * `track-info-container` (optional)</span>
-<span class="doccomment">//! * `map-config-container` (optional)</span>
-<span class="doccomment">//! * `map-detail-container` (optional)</span>
-<span class="doccomment">//! * `version` (optional)</span>
-<span class="doccomment">//! * `welcome` (optional)</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The library can also be used outside the web environment as a native</span>
-<span class="doccomment">//! library to process track files. For details take a look at the files in the</span>
-<span class="doccomment">//! `examples` folder.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Library providing track editor functions for the Rekee web application.
+//!
+//! When the library is compiled into a WASM module it will include a `main`
+//! function which connects the view components to the web page environment.
+//!
+//! The following HTML elements are looked up by element id:
+//! * `catalog-container` (mandatory)
+//! * `catalog-config-container` (mandatory)
+//! * `export-container` (mandatory)
+//! * `map-container` (mandatory)
+//! * `track-info-container` (optional)
+//! * `map-config-container` (optional)
+//! * `map-detail-container` (optional)
+//! * `version` (optional)
+//! * `welcome` (optional)
+//!
+//! The library can also be used outside the web environment as a native
+//! library to process track files. For details take a look at the files in the
+//! `examples` folder.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::bool_assert_comparison</span>)]</span>
+</span><span class="attribute">#![allow(clippy::bool_assert_comparison)]
 
-<span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
+</span><span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
 
-<span class="kw">mod</span> <span class="ident">controller</span>;
-<span class="kw">use</span> <span class="ident">controller</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">controller::catalog::CatalogController</span>;
-<span class="kw">use</span> <span class="ident">controller::catalog_config::CatalogConfigController</span>;
-<span class="kw">use</span> <span class="ident">controller::export::ExportController</span>;
-<span class="kw">use</span> <span class="ident">controller::map::MapController</span>;
-<span class="kw">use</span> <span class="ident">controller::map_config::MapConfigController</span>;
-<span class="kw">use</span> <span class="ident">controller::map_detail::MapDetailController</span>;
-<span class="kw">use</span> <span class="ident">controller::track_info::TrackInfoController</span>;
-<span class="kw">use</span> <span class="ident">controller::welcome::WelcomeController</span>;
+<span class="kw">mod </span>controller;
+<span class="kw">use </span>controller::<span class="kw-2">*</span>;
+<span class="kw">use </span>controller::catalog::CatalogController;
+<span class="kw">use </span>controller::catalog_config::CatalogConfigController;
+<span class="kw">use </span>controller::export::ExportController;
+<span class="kw">use </span>controller::map::MapController;
+<span class="kw">use </span>controller::map_config::MapConfigController;
+<span class="kw">use </span>controller::map_detail::MapDetailController;
+<span class="kw">use </span>controller::track_info::TrackInfoController;
+<span class="kw">use </span>controller::welcome::WelcomeController;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">edition</span>;
+<span class="kw">pub mod </span>edition;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">hexagon</span>;
-<span class="kw">use</span> <span class="ident">hexagon</span>::<span class="kw-2">*</span>;
+<span class="kw">pub mod </span>hexagon;
+<span class="kw">use </span>hexagon::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">import</span>;
+<span class="kw">pub mod </span>import;
 
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">mod</span> <span class="ident">logger</span>;
+<span class="attribute">#[macro_use]
+</span><span class="kw">mod </span>logger;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">map</span>;
-<span class="kw">use</span> <span class="ident">map</span>::<span class="kw-2">*</span>;
+<span class="kw">pub mod </span>map;
+<span class="kw">use </span>map::<span class="kw-2">*</span>;
 
-<span class="kw">mod</span> <span class="ident">storage</span>;
+<span class="kw">mod </span>storage;
 
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tile</span>;
-<span class="kw">use</span> <span class="ident">tile::Terrain</span>;
+<span class="attribute">#[macro_use]
+</span><span class="kw">pub mod </span>tile;
+<span class="kw">use </span>tile::Terrain;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">token</span>;
-<span class="kw">use</span> <span class="ident">token</span>::<span class="kw-2">*</span>;
+<span class="kw">pub mod </span>token;
+<span class="kw">use </span>token::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">mod</span> <span class="ident">view</span>;
-<span class="kw">use</span> <span class="ident">view</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[macro_use]
+</span><span class="kw">mod </span>view;
+<span class="kw">use </span>view::<span class="kw-2">*</span>;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="attribute">#[<span class="ident">wasm_bindgen</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">main</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">JsValue</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">window</span> <span class="op">=</span> <span class="ident">web_sys::window</span>().<span class="ident">unwrap</span>();
-    <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">window</span>.<span class="ident">document</span>().<span class="ident">unwrap</span>();
-    <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="number">60.0</span>, <span class="number">60.0</span>), <span class="ident">Point</span>(<span class="number">540.0</span>, <span class="number">400.0</span>));
+</span><span class="attribute">#[doc(hidden)]
+#[wasm_bindgen]
+</span><span class="kw">pub fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), JsValue&gt; {
+    <span class="kw">let </span>window = web_sys::window().unwrap();
+    <span class="kw">let </span>document = window.document().unwrap();
+    <span class="kw">let </span>layout = Layout::new(Orientation::pointy(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">540.0</span>, <span class="number">400.0</span>));
 
-    <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;catalog-container&quot;</span>)
-        .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#catalog-container&#39; parent element for catalog component&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">CatalogController::init</span>(<span class="ident">CatalogView::new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
+    <span class="kw">let </span>parent = document.get_element_by_id(<span class="string">&quot;catalog-container&quot;</span>)
+        .ok_or(<span class="string">&quot;Cannot find &#39;#catalog-container&#39; parent element for catalog component&quot;</span>)<span class="question-mark">?</span>;
+    CatalogController::init(CatalogView::new(parent, <span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>);
 
-    <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;map-container&quot;</span>)
-        .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#map-container&#39; parent element for map component&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">MapController::init</span>(<span class="ident">MapView::new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
+    <span class="kw">let </span>parent = document.get_element_by_id(<span class="string">&quot;map-container&quot;</span>)
+        .ok_or(<span class="string">&quot;Cannot find &#39;#map-container&#39; parent element for map component&quot;</span>)<span class="question-mark">?</span>;
+    MapController::init(MapView::new(parent, <span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>);
 
-    <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;catalog-config-container&quot;</span>)
-        .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#catalog-config-container&#39; parent element for catalog config component&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">CatalogConfigController::init</span>(<span class="ident">CatalogConfigView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    <span class="kw">let </span>parent = document.get_element_by_id(<span class="string">&quot;catalog-config-container&quot;</span>)
+        .ok_or(<span class="string">&quot;Cannot find &#39;#catalog-config-container&#39; parent element for catalog config component&quot;</span>)<span class="question-mark">?</span>;
+    CatalogConfigController::init(CatalogConfigView::new(parent)<span class="question-mark">?</span>);
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;track-info-container&quot;</span>) {
-        <span class="ident">TrackInfoController::init</span>(<span class="ident">TrackInfoView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = document.get_element_by_id(<span class="string">&quot;track-info-container&quot;</span>) {
+        TrackInfoController::init(TrackInfoView::new(parent)<span class="question-mark">?</span>);
     }
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;map-config-container&quot;</span>) {
-        <span class="ident">MapConfigController::init</span>(<span class="ident">MapConfigView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = document.get_element_by_id(<span class="string">&quot;map-config-container&quot;</span>) {
+        MapConfigController::init(MapConfigView::new(parent)<span class="question-mark">?</span>);
     }
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;map-detail-container&quot;</span>) {
-        <span class="ident">MapDetailController::init</span>(<span class="ident">MapDetailView::new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = document.get_element_by_id(<span class="string">&quot;map-detail-container&quot;</span>) {
+        MapDetailController::init(MapDetailView::new(parent, <span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>);
     }
 
-    <span class="kw">let</span> <span class="ident">parent</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;export-container&quot;</span>)
-        .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find &#39;#export-container&#39; parent element for export component&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">ExportController::init</span>(<span class="ident">ExportView::new</span>(<span class="ident">parent</span>, <span class="kw-2">&amp;</span><span class="ident">layout</span>)<span class="question-mark">?</span>);
+    <span class="kw">let </span>parent = document.get_element_by_id(<span class="string">&quot;export-container&quot;</span>)
+        .ok_or(<span class="string">&quot;Cannot find &#39;#export-container&#39; parent element for export component&quot;</span>)<span class="question-mark">?</span>;
+    ExportController::init(ExportView::new(parent, <span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>);
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;version&quot;</span>) {
-        <span class="ident">VersionView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>;
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = document.get_element_by_id(<span class="string">&quot;version&quot;</span>) {
+        VersionView::new(parent)<span class="question-mark">?</span>;
     }
 
-    <span class="comment">// build some example track when compiling in development mode</span>
-    <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">debug_assertions</span>) {
-        <span class="ident">nuts::publish</span>(<span class="ident">InsertTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">102</span>, <span class="ident">b</span>), <span class="ident">pos</span>: (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">dir</span>: <span class="ident">Direction::D</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">104</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">Some</span>((<span class="op">-</span><span class="number">1</span>, <span class="number">0</span>).<span class="ident">into</span>()), <span class="ident">hint</span>: <span class="prelude-val">None</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">113</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="string">&quot;R&quot;</span>.<span class="ident">parse</span>().<span class="ident">ok</span>() });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">117</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="string">&quot;r&quot;</span>.<span class="ident">parse</span>().<span class="ident">ok</span>() });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">114</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="string">&quot;R&quot;</span>.<span class="ident">parse</span>().<span class="ident">ok</span>() });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">115</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="prelude-val">None</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">115</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="prelude-val">None</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">108</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="string">&quot;r&quot;</span>.<span class="ident">parse</span>().<span class="ident">ok</span>() });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">110</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="string">&quot;R&quot;</span>.<span class="ident">parse</span>().<span class="ident">ok</span>() });
-        <span class="ident">nuts::publish</span>(<span class="ident">AppendTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">107</span>, <span class="ident">b</span>), <span class="ident">pos</span>: <span class="prelude-val">None</span>, <span class="ident">hint</span>: <span class="prelude-val">None</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">InsertTileEvent</span> { <span class="ident">id</span>: <span class="macro">tile!</span>(<span class="number">101</span>), <span class="ident">pos</span>: (<span class="number">0</span>, <span class="op">-</span><span class="number">2</span>).<span class="ident">into</span>(), <span class="ident">dir</span>: <span class="ident">Direction::D</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateSelectedTileEvent</span> { <span class="ident">pos</span>: <span class="ident">Coordinate::new</span>(<span class="op">-</span><span class="number">1</span>, <span class="number">0</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>) });
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Asphalt</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">3.0</span>.<span class="ident">into</span>());
-        <span class="ident">nuts::publish</span>(<span class="ident">AddSelectedTileTokenEvent</span> { <span class="ident">token</span> });
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>), (<span class="number">0.32</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">0.0</span>.<span class="ident">into</span>());
-        <span class="ident">nuts::publish</span>(<span class="ident">AddSelectedTileTokenEvent</span> { <span class="ident">token</span> });
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>), (<span class="op">-</span><span class="number">0.32</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">0.0</span>.<span class="ident">into</span>());
-        <span class="ident">nuts::publish</span>(<span class="ident">AddSelectedTileTokenEvent</span> { <span class="ident">token</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateSelectedTileEvent</span> { <span class="ident">pos</span>: <span class="ident">Coordinate::new</span>(<span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">layout</span>) });
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Finish</span>, (<span class="number">0.5</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="number">3.0</span>.<span class="ident">into</span>());
-        <span class="ident">nuts::publish</span>(<span class="ident">AddSelectedTileTokenEvent</span> { <span class="ident">token</span> });
-        <span class="ident">nuts::publish</span>(<span class="ident">AlignCenterEvent</span>);
+    <span class="comment">// build some example track when compiling in development mode
+    </span><span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions) {
+        nuts::publish(InsertTileEvent { id: <span class="macro">tile!</span>(<span class="number">102</span>, b), pos: (<span class="number">0</span>, <span class="number">0</span>).into(), dir: Direction::D });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">104</span>, b), pos: <span class="prelude-val">Some</span>((-<span class="number">1</span>, <span class="number">0</span>).into()), hint: <span class="prelude-val">None </span>});
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">113</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="string">&quot;R&quot;</span>.parse().ok() });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">117</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="string">&quot;r&quot;</span>.parse().ok() });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">114</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="string">&quot;R&quot;</span>.parse().ok() });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">115</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="prelude-val">None </span>});
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">115</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="prelude-val">None </span>});
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">108</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="string">&quot;r&quot;</span>.parse().ok() });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">110</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="string">&quot;R&quot;</span>.parse().ok() });
+        nuts::publish(AppendTileEvent { id: <span class="macro">tile!</span>(<span class="number">107</span>, b), pos: <span class="prelude-val">None</span>, hint: <span class="prelude-val">None </span>});
+        nuts::publish(InsertTileEvent { id: <span class="macro">tile!</span>(<span class="number">101</span>), pos: (<span class="number">0</span>, -<span class="number">2</span>).into(), dir: Direction::D });
+        nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(-<span class="number">1</span>, <span class="number">0</span>).to_pixel(<span class="kw-2">&amp;</span>layout) });
+        <span class="kw">let </span>token = PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Asphalt), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into());
+        nuts::publish(AddSelectedTileTokenEvent { token });
+        <span class="kw">let </span>token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (<span class="number">0.32</span>, <span class="number">0.0</span>).into(), <span class="number">0.0</span>.into());
+        nuts::publish(AddSelectedTileTokenEvent { token });
+        <span class="kw">let </span>token = PlacedToken::new(TokenId::Chicane(Terrain::Asphalt), (-<span class="number">0.32</span>, <span class="number">0.0</span>).into(), <span class="number">0.0</span>.into());
+        nuts::publish(AddSelectedTileTokenEvent { token });
+        nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(<span class="number">1</span>, -<span class="number">1</span>).to_pixel(<span class="kw-2">&amp;</span>layout) });
+        <span class="kw">let </span>token = PlacedToken::new(TokenId::Finish, (<span class="number">0.5</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into());
+        nuts::publish(AddSelectedTileTokenEvent { token });
+        nuts::publish(AlignCenterEvent);
     }
 
-    <span class="comment">// initialize after all other controllers are completed to ignore events during setup</span>
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;welcome&quot;</span>) {
-        <span class="ident">WelcomeController::init</span>(<span class="ident">WelcomeView::new</span>(<span class="ident">parent</span>)<span class="question-mark">?</span>);
+    <span class="comment">// initialize after all other controllers are completed to ignore events during setup
+    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = document.get_element_by_id(<span class="string">&quot;welcome&quot;</span>) {
+        WelcomeController::init(WelcomeView::new(parent)<span class="question-mark">?</span>);
     }
 
-    <span class="comment">// restore previous view settings</span>
-    <span class="ident">nuts::publish</span>(<span class="ident">LoadSettingsEvent</span> {});
+    <span class="comment">// restore previous view settings
+    </span>nuts::publish(LoadSettingsEvent {});
 
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

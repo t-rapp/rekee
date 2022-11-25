@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/import.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>import.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/import.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>import.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -692,699 +692,699 @@
 <span id="692">692</span>
 <span id="693">693</span>
 <span id="694">694</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Import and export of map data.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Import and export of map data.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="kw">use</span> <span class="ident">std::convert</span>::{<span class="ident">TryFrom</span>, <span class="ident">TryInto</span>};
-<span class="kw">use</span> <span class="ident">std::fmt</span>;
+</span><span class="kw">use </span>std::convert::{TryFrom, TryInto};
+<span class="kw">use </span>std::fmt;
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition::Series</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map</span>::{<span class="ident">PlacedToken</span>, <span class="ident">Map</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tile</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::token::TokenId</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::edition::Series;
+<span class="kw">use </span><span class="kw">crate</span>::map::{PlacedToken, Map};
+<span class="kw">use </span><span class="kw">crate</span>::tile::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
+<span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">ImportError</span><span class="op">&gt;</span>;
+</span><span class="kw">type </span><span class="prelude-ty">Result</span>&lt;T&gt; = std::result::Result&lt;T, ImportError&gt;;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ImportError</span> {
-    <span class="ident">UnknownTileId</span>(<span class="ident">String</span>),
-    <span class="ident">UnknownTokenId</span>(<span class="ident">String</span>),
-    <span class="ident">UnsupportedTokenId</span>(<span class="ident">String</span>),
-    <span class="ident">JsonError</span>(<span class="ident">serde_json::Error</span>),
+<span class="attribute">#[derive(Debug)]
+</span><span class="kw">pub enum </span>ImportError {
+    UnknownTileId(String),
+    UnknownTokenId(String),
+    UnsupportedTokenId(String),
+    JsonError(serde_json::Error),
 }
 
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ImportError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ImportError::UnknownTileId</span>(<span class="ident">val</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown tile identifier \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
-            <span class="ident">ImportError::UnknownTokenId</span>(<span class="ident">val</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unknown token identifier \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
-            <span class="ident">ImportError::UnsupportedTokenId</span>(<span class="ident">val</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Unsupported token identifier \&quot;{}\&quot;&quot;</span>, <span class="ident">val</span>),
-            <span class="ident">ImportError::JsonError</span>(<span class="ident">err</span>) =&gt;
-                <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;Error processing JSON data: {}&quot;</span>, <span class="ident">err</span>),
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>ImportError {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            ImportError::UnknownTileId(val) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown tile identifier \&quot;{}\&quot;&quot;</span>, val),
+            ImportError::UnknownTokenId(val) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown token identifier \&quot;{}\&quot;&quot;</span>, val),
+            ImportError::UnsupportedTokenId(val) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unsupported token identifier \&quot;{}\&quot;&quot;</span>, val),
+            ImportError::JsonError(err) =&gt;
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;Error processing JSON data: {}&quot;</span>, err),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">serde_json::Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ImportError</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">error</span>: <span class="ident">serde_json::Error</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">ImportError::JsonError</span>(<span class="ident">error</span>)
+<span class="kw">impl </span>From&lt;serde_json::Error&gt; <span class="kw">for </span>ImportError {
+    <span class="kw">fn </span>from(error: serde_json::Error) -&gt; <span class="self">Self </span>{
+        ImportError::JsonError(error)
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="doccomment">/// Import map data in native Rekee format.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_native</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&gt;</span> {
-    <span class="ident">native::import</span>(<span class="ident">data</span>)
+</span><span class="doccomment">/// Import map data in native Rekee format.
+</span><span class="kw">pub fn </span>import_native(data: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Map&gt; {
+    native::import(data)
 }
 
-<span class="doccomment">/// Export map data in native Rekee format.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export_native</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="ident">native::export</span>(<span class="ident">map</span>)
+<span class="doccomment">/// Export map data in native Rekee format.
+</span><span class="kw">pub fn </span>export_native(map: <span class="kw-2">&amp;</span>Map) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    native::export(map)
 }
 
-<span class="kw">mod</span> <span class="ident">native</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">mod </span>native {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportRoot</span> {
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-        <span class="ident">title</span>: <span class="ident">String</span>,
-        <span class="ident">tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ImportTile</span><span class="op">&gt;</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportRoot {
+        <span class="attribute">#[serde(default)]
+        </span>title: String,
+        tiles: Vec&lt;ImportTile&gt;,
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportTile</span> {
-        <span class="ident">q</span>: <span class="ident">i32</span>,
-        <span class="ident">r</span>: <span class="ident">i32</span>,
-        <span class="ident">id</span>: <span class="ident">String</span>,
-        <span class="ident">dir</span>: <span class="ident">i32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>, <span class="ident">skip_serializing_if</span> <span class="op">=</span> <span class="string">&quot;Vec::is_empty&quot;</span>)]</span>
-        <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ImportToken</span><span class="op">&gt;</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportTile {
+        q: i32,
+        r: i32,
+        id: String,
+        dir: i32,
+        <span class="attribute">#[serde(default, skip_serializing_if = <span class="string">&quot;Vec::is_empty&quot;</span>)]
+        </span>tokens: Vec&lt;ImportToken&gt;,
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportToken</span> {
-        <span class="ident">id</span>: <span class="ident">String</span>,
-        <span class="ident">q</span>: <span class="ident">f32</span>,
-        <span class="ident">r</span>: <span class="ident">f32</span>,
-        <span class="ident">dir</span>: <span class="ident">f32</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportToken {
+        id: String,
+        q: f32,
+        r: f32,
+        dir: f32,
     }
 
-    <span class="kw">impl</span> <span class="ident">TryInto</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">ImportToken</span> {
-        <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ImportError</span>;
+    <span class="kw">impl </span>TryInto&lt;PlacedToken&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>ImportToken {
+        <span class="kw">type </span>Error = ImportError;
 
-        <span class="kw">fn</span> <span class="ident">try_into</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span>()
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">ImportError::UnknownTokenId</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::new</span>(<span class="self">self</span>.<span class="ident">q</span>, <span class="self">self</span>.<span class="ident">r</span>);
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">FloatDirection</span>(<span class="self">self</span>.<span class="ident">dir</span>);
-            <span class="prelude-val">Ok</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>))
+        <span class="kw">fn </span>try_into(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;PlacedToken&gt; {
+            <span class="kw">let </span>id = <span class="self">self</span>.id.parse::&lt;TokenId&gt;()
+                .map_err(|<span class="kw">_</span>| ImportError::UnknownTokenId(<span class="self">self</span>.id.clone()))<span class="question-mark">?</span>;
+            <span class="kw">let </span>pos = FloatCoordinate::new(<span class="self">self</span>.q, <span class="self">self</span>.r);
+            <span class="kw">let </span>dir = FloatDirection(<span class="self">self</span>.dir);
+            <span class="prelude-val">Ok</span>(PlacedToken::new(id, pos, dir))
         }
     }
 
-    <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ImportToken</span> {
-        <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">PlacedToken</span>) -&gt; <span class="ident">ImportToken</span> {
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">value</span>.<span class="ident">id</span>);
-            <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">pos</span>.<span class="ident">q</span>();
-            <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">pos</span>.<span class="ident">r</span>();
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">f32::from</span>(<span class="ident">value</span>.<span class="ident">dir</span>);
-            <span class="ident">ImportToken</span> { <span class="ident">id</span>, <span class="ident">q</span>, <span class="ident">r</span>, <span class="ident">dir</span> }
+    <span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>PlacedToken&gt; <span class="kw">for </span>ImportToken {
+        <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span>PlacedToken) -&gt; ImportToken {
+            <span class="kw">let </span>id = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, value.id);
+            <span class="kw">let </span>q = value.pos.q();
+            <span class="kw">let </span>r = value.pos.r();
+            <span class="kw">let </span>dir = f32::from(value.dir);
+            ImportToken { id, q, r, dir }
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">data</span>: <span class="ident">ImportRoot</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub fn </span>import(data: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Map&gt; {
+        <span class="kw">let </span>data: ImportRoot = serde_json::from_str(data)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">data</span>.<span class="ident">title</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">title</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        <span class="kw">if </span>!data.title.is_empty() {
+            map.set_title(<span class="kw-2">&amp;</span>data.title);
         }
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">data</span>.<span class="ident">tiles</span> {
-            <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="ident">tile</span>.<span class="ident">q</span>, <span class="ident">tile</span>.<span class="ident">r</span>);
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>()
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">ImportError::UnknownTileId</span>(<span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">clone</span>()));
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">Direction::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
-            <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">iter</span>()
-                <span class="comment">// tokens that have no corresponding import identifier will be silently dropped here</span>
-                .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">token</span><span class="op">|</span> <span class="ident">token</span>.<span class="ident">try_into</span>().<span class="ident">ok</span>())
-                .<span class="ident">collect</span>();
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">id</span>) <span class="op">=</span> <span class="ident">id</span> {
-                <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>);
+        <span class="kw">for </span>tile <span class="kw">in </span>data.tiles {
+            <span class="kw">let </span>pos = Coordinate::new(tile.q, tile.r);
+            <span class="kw">let </span>id = tile.id.parse::&lt;TileId&gt;()
+                .map_err(|<span class="kw">_</span>| ImportError::UnknownTileId(tile.id.clone()));
+            <span class="kw">let </span>dir = Direction::from(tile.dir);
+            <span class="kw">let </span>tokens = tile.tokens.iter()
+                <span class="comment">// tokens that have no corresponding import identifier will be silently dropped here
+                </span>.filter_map(|token| token.try_into().ok())
+                .collect();
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(id) = id {
+                map.insert_with_tokens(id, pos, dir, tokens);
             }
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">map</span>)
+        <span class="prelude-val">Ok</span>(map)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">ImportRoot</span> {
-            <span class="ident">title</span>: <span class="ident">map</span>.<span class="ident">title</span>().<span class="ident">to_string</span>(),
-            <span class="ident">tiles</span>: <span class="ident">Vec::with_capacity</span>(<span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">len</span>()),
+    <span class="kw">pub fn </span>export(map: <span class="kw-2">&amp;</span>Map) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>data = ImportRoot {
+            title: map.title().to_string(),
+            tiles: Vec::with_capacity(map.tiles().len()),
         };
 
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>() {
-            <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">q</span>();
-            <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span>.<span class="ident">r</span>();
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, <span class="ident">tile</span>.<span class="ident">id</span>());
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">i32::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
-            <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">iter</span>()
-                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">token</span><span class="op">|</span> <span class="ident">token</span>.<span class="ident">into</span>())
-                .<span class="ident">collect</span>();
-            <span class="ident">data</span>.<span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">ImportTile</span> { <span class="ident">q</span>, <span class="ident">r</span>, <span class="ident">id</span>, <span class="ident">dir</span>, <span class="ident">tokens</span> });
+        <span class="kw">for </span>tile <span class="kw">in </span>map.tiles() {
+            <span class="kw">let </span>q = tile.pos.q();
+            <span class="kw">let </span>r = tile.pos.r();
+            <span class="kw">let </span>id = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, tile.id());
+            <span class="kw">let </span>dir = i32::from(tile.dir);
+            <span class="kw">let </span>tokens = tile.tokens.iter()
+                .map(|token| token.into())
+                .collect();
+            data.tiles.push(ImportTile { q, r, id, dir, tokens });
         }
 
-        <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)
-            .<span class="ident">map_err</span>(<span class="ident">ImportError::JsonError</span>)
+        serde_json::to_string(<span class="kw-2">&amp;</span>data)
+            .map_err(ImportError::JsonError)
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="doccomment">/// Import map data in RGT format.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Allows to read files generated by the Rallyman GT Track Editor software.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_rgt</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&gt;</span> {
-    <span class="ident">rgt::import</span>(<span class="ident">data</span>)
+</span><span class="doccomment">/// Import map data in RGT format.
+///
+/// Allows to read files generated by the Rallyman GT Track Editor software.
+</span><span class="kw">pub fn </span>import_rgt(data: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Map&gt; {
+    rgt::import(data)
 }
 
-<span class="doccomment">/// Export map data in RGT format.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Allows to write files compatible with the Rallyman GT Track Editor software.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export_rgt</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="ident">rgt::export</span>(<span class="ident">map</span>)
+<span class="doccomment">/// Export map data in RGT format.
+///
+/// Allows to write files compatible with the Rallyman GT Track Editor software.
+</span><span class="kw">pub fn </span>export_rgt(map: <span class="kw-2">&amp;</span>Map) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    rgt::export(map)
 }
 
-<span class="kw">mod</span> <span class="ident">rgt</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">mod </span>rgt {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportRoot</span> {
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Path&quot;</span>, <span class="ident">default</span>)]</span>
-        <span class="ident">path</span>: <span class="ident">String</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Name&quot;</span>, <span class="ident">default</span>)]</span>
-        <span class="ident">title</span>: <span class="ident">String</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Tuiles&quot;</span>)]</span>
-        <span class="ident">tiles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ImportTile</span><span class="op">&gt;</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;lowResWidth&quot;</span>, <span class="ident">default</span>)]</span>
-        <span class="ident">low_res_width</span>: <span class="ident">u32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;lowResHeight&quot;</span>, <span class="ident">default</span>)]</span>
-        <span class="ident">low_res_height</span>: <span class="ident">u32</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportRoot {
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Path&quot;</span>, default)]
+        </span>path: String,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Name&quot;</span>, default)]
+        </span>title: String,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Tuiles&quot;</span>)]
+        </span>tiles: Vec&lt;ImportTile&gt;,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;lowResWidth&quot;</span>, default)]
+        </span>low_res_width: u32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;lowResHeight&quot;</span>, default)]
+        </span>low_res_height: u32,
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportTile</span> {
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;X&quot;</span>)]</span>
-        <span class="ident">x</span>: <span class="ident">i32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Y&quot;</span>)]</span>
-        <span class="ident">y</span>: <span class="ident">i32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Orientation&quot;</span>)]</span>
-        <span class="ident">dir</span>: <span class="ident">i32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;TuileId&quot;</span>)]</span>
-        <span class="ident">id</span>: <span class="ident">String</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Tokens&quot;</span>, <span class="ident">default</span>, <span class="ident">skip_serializing_if</span> <span class="op">=</span> <span class="string">&quot;Vec::is_empty&quot;</span>)]</span>
-        <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ImportToken</span><span class="op">&gt;</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportTile {
+        <span class="attribute">#[serde(rename = <span class="string">&quot;X&quot;</span>)]
+        </span>x: i32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Y&quot;</span>)]
+        </span>y: i32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Orientation&quot;</span>)]
+        </span>dir: i32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;TuileId&quot;</span>)]
+        </span>id: String,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Tokens&quot;</span>, default, skip_serializing_if = <span class="string">&quot;Vec::is_empty&quot;</span>)]
+        </span>tokens: Vec&lt;ImportToken&gt;,
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportToken</span> {
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;X&quot;</span>)]</span>
-        <span class="ident">x</span>: <span class="ident">f32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Y&quot;</span>)]</span>
-        <span class="ident">y</span>: <span class="ident">f32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;Orientation&quot;</span>)]</span>
-        <span class="ident">dir</span>: <span class="ident">f32</span>,
-        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;TokenId&quot;</span>)]</span>
-        <span class="ident">id</span>: <span class="ident">ImportTokenId</span>,
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    </span><span class="kw">struct </span>ImportToken {
+        <span class="attribute">#[serde(rename = <span class="string">&quot;X&quot;</span>)]
+        </span>x: f32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Y&quot;</span>)]
+        </span>y: f32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;Orientation&quot;</span>)]
+        </span>dir: f32,
+        <span class="attribute">#[serde(rename = <span class="string">&quot;TokenId&quot;</span>)]
+        </span>id: ImportTokenId,
     }
 
-    <span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ImportToken</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PlacedToken</span> {
-        <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ImportError</span>;
+    <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>ImportToken&gt; <span class="kw">for </span>PlacedToken {
+        <span class="kw">type </span>Error = ImportError;
 
-        <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">ImportToken</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PlacedToken</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="ident">value</span>.<span class="ident">id</span>).<span class="ident">try_into</span>()<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">FloatCoordinate::from_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">token_layout</span>(), <span class="ident">Point</span>(<span class="ident">value</span>.<span class="ident">x</span>, <span class="ident">value</span>.<span class="ident">y</span>));
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">FloatDirection::from_angle</span>(<span class="ident">value</span>.<span class="ident">dir</span>);
-            <span class="prelude-val">Ok</span>(<span class="ident">PlacedToken::new</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>))
+        <span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>ImportToken) -&gt; <span class="prelude-ty">Result</span>&lt;PlacedToken&gt; {
+            <span class="kw">let </span>id = (<span class="kw-2">&amp;</span>value.id).try_into()<span class="question-mark">?</span>;
+            <span class="kw">let </span>pos = FloatCoordinate::from_pixel(<span class="kw-2">&amp;</span>token_layout(), Point(value.x, value.y));
+            <span class="kw">let </span>dir = FloatDirection::from_angle(value.dir);
+            <span class="prelude-val">Ok</span>(PlacedToken::new(id, pos, dir))
         }
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">ImportTokenId</span>(<span class="ident">String</span>);
+    <span class="attribute">#[derive(Debug, Default, Deserialize, Serialize)]
+    #[serde(transparent)]
+    </span><span class="kw">struct </span>ImportTokenId(String);
 
-    <span class="kw">impl</span> <span class="ident">TryInto</span><span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">ImportTokenId</span> {
-        <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ImportError</span>;
+    <span class="kw">impl </span>TryInto&lt;TokenId&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>ImportTokenId {
+        <span class="kw">type </span>Error = ImportError;
 
-        <span class="kw">fn</span> <span class="ident">try_into</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span> {
-            <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">as_ref</span>() {
-                <span class="string">&quot;asphalt1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Asphalt</span>)),
-                <span class="string">&quot;asphalt2&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>)),
-                <span class="string">&quot;asphalt3&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Asphalt</span>)),
-                <span class="string">&quot;asphalt4&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Asphalt</span>)),
-                <span class="string">&quot;dirt1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>)),
-                <span class="string">&quot;dirt2&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>)),
-                <span class="string">&quot;dirt3&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Gravel</span>)),
-                <span class="string">&quot;dirt4&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Gravel</span>)),
-                <span class="string">&quot;ice1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Snow</span>)),
-                <span class="string">&quot;ice2&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Snow</span>)),
-                <span class="string">&quot;ice3&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Snow</span>)),
-                <span class="string">&quot;ice4&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Snow</span>)),
-                <span class="string">&quot;climbm1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ClimbAscent</span>),
-                <span class="string">&quot;climbp1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::ClimbDescent</span>),
-                <span class="string">&quot;climbw&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Cloud</span>),
-                <span class="string">&quot;climbr1&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Oxygen</span>(<span class="number">1</span>)),
-                <span class="string">&quot;climbr2&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Oxygen</span>(<span class="number">2</span>)),
-                <span class="string">&quot;climbr3&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Oxygen</span>(<span class="number">3</span>)),
-                <span class="string">&quot;greendoor&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::JokerEntrance</span>),
-                <span class="string">&quot;reddoor&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::JokerExit</span>),
-                <span class="string">&quot;whitedoor&quot;</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">TokenId::Finish</span>),
-                <span class="kw">_</span> =&gt;
-                    <span class="prelude-val">Err</span>(<span class="ident">ImportError::UnknownTokenId</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>())),
+        <span class="kw">fn </span>try_into(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TokenId&gt; {
+            <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.as_ref() {
+                <span class="string">&quot;asphalt1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::ChicaneWithLimit(Terrain::Asphalt)),
+                <span class="string">&quot;asphalt2&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Chicane(Terrain::Asphalt)),
+                <span class="string">&quot;asphalt3&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Water(Terrain::Asphalt)),
+                <span class="string">&quot;asphalt4&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Jump(Terrain::Asphalt)),
+                <span class="string">&quot;dirt1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::ChicaneWithLimit(Terrain::Gravel)),
+                <span class="string">&quot;dirt2&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Chicane(Terrain::Gravel)),
+                <span class="string">&quot;dirt3&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Water(Terrain::Gravel)),
+                <span class="string">&quot;dirt4&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Jump(Terrain::Gravel)),
+                <span class="string">&quot;ice1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::ChicaneWithLimit(Terrain::Snow)),
+                <span class="string">&quot;ice2&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Chicane(Terrain::Snow)),
+                <span class="string">&quot;ice3&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Water(Terrain::Snow)),
+                <span class="string">&quot;ice4&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Jump(Terrain::Snow)),
+                <span class="string">&quot;climbm1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::ClimbAscent),
+                <span class="string">&quot;climbp1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::ClimbDescent),
+                <span class="string">&quot;climbw&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Cloud),
+                <span class="string">&quot;climbr1&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Oxygen(<span class="number">1</span>)),
+                <span class="string">&quot;climbr2&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Oxygen(<span class="number">2</span>)),
+                <span class="string">&quot;climbr3&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Oxygen(<span class="number">3</span>)),
+                <span class="string">&quot;greendoor&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::JokerEntrance),
+                <span class="string">&quot;reddoor&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::JokerExit),
+                <span class="string">&quot;whitedoor&quot; </span>=&gt;
+                    <span class="prelude-val">Ok</span>(TokenId::Finish),
+                <span class="kw">_ </span>=&gt;
+                    <span class="prelude-val">Err</span>(ImportError::UnknownTokenId(<span class="self">self</span>.<span class="number">0</span>.clone())),
             }
         }
     }
 
-    <span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="ident">TokenId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ImportTokenId</span> {
-        <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">ImportError</span>;
+    <span class="kw">impl </span>TryFrom&lt;TokenId&gt; <span class="kw">for </span>ImportTokenId {
+        <span class="kw">type </span>Error = ImportError;
 
-        <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">value</span>: <span class="ident">TokenId</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ImportTokenId</span><span class="op">&gt;</span> {
-            <span class="kw">match</span> <span class="ident">value</span> {
-                <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Asphalt</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;asphalt1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Asphalt</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;asphalt2&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Asphalt</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;asphalt3&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Asphalt</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;asphalt4&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;dirt1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;dirt2&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Gravel</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;dirt3&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Gravel</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;dirt4&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Snow</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;ice1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Snow</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;ice2&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Water</span>(<span class="ident">Terrain::Snow</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;ice3&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Jump</span>(<span class="ident">Terrain::Snow</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;ice4&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::ClimbAscent</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbm1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::ClimbDescent</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbp1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Cloud</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbw&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Oxygen</span>(<span class="number">1</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbr1&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Oxygen</span>(<span class="number">2</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbr2&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Oxygen</span>(<span class="number">3</span>) =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;climbr3&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::JokerEntrance</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;greendoor&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::JokerExit</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;reddoor&quot;</span>.<span class="ident">into</span>())),
-                <span class="ident">TokenId::Finish</span> =&gt;
-                    <span class="prelude-val">Ok</span>(<span class="ident">ImportTokenId</span>(<span class="string">&quot;whitedoor&quot;</span>.<span class="ident">into</span>())),
-                <span class="kw">_</span> =&gt;
-                    <span class="prelude-val">Err</span>(<span class="ident">ImportError::UnsupportedTokenId</span>(<span class="ident">value</span>.<span class="ident">to_string</span>())),
+        <span class="kw">fn </span>try_from(value: TokenId) -&gt; <span class="prelude-ty">Result</span>&lt;ImportTokenId&gt; {
+            <span class="kw">match </span>value {
+                TokenId::ChicaneWithLimit(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt1&quot;</span>.into())),
+                TokenId::Chicane(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt2&quot;</span>.into())),
+                TokenId::Water(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt3&quot;</span>.into())),
+                TokenId::Jump(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt4&quot;</span>.into())),
+                TokenId::ChicaneWithLimit(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt1&quot;</span>.into())),
+                TokenId::Chicane(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt2&quot;</span>.into())),
+                TokenId::Water(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt3&quot;</span>.into())),
+                TokenId::Jump(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt4&quot;</span>.into())),
+                TokenId::ChicaneWithLimit(Terrain::Snow) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice1&quot;</span>.into())),
+                TokenId::Chicane(Terrain::Snow) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice2&quot;</span>.into())),
+                TokenId::Water(Terrain::Snow) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice3&quot;</span>.into())),
+                TokenId::Jump(Terrain::Snow) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice4&quot;</span>.into())),
+                TokenId::ClimbAscent =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbm1&quot;</span>.into())),
+                TokenId::ClimbDescent =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbp1&quot;</span>.into())),
+                TokenId::Cloud =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbw&quot;</span>.into())),
+                TokenId::Oxygen(<span class="number">1</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbr1&quot;</span>.into())),
+                TokenId::Oxygen(<span class="number">2</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbr2&quot;</span>.into())),
+                TokenId::Oxygen(<span class="number">3</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbr3&quot;</span>.into())),
+                TokenId::JokerEntrance =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;greendoor&quot;</span>.into())),
+                TokenId::JokerExit =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;reddoor&quot;</span>.into())),
+                TokenId::Finish =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;whitedoor&quot;</span>.into())),
+                <span class="kw">_ </span>=&gt;
+                    <span class="prelude-val">Err</span>(ImportError::UnsupportedTokenId(value.to_string())),
             }
         }
     }
 
-    <span class="kw">const</span> <span class="ident">IMPORT_OFFSET</span>: <span class="ident">Coordinate</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="op">-</span><span class="number">81</span>, <span class="number">52</span>);
+    <span class="kw">const </span>IMPORT_OFFSET: Coordinate = Coordinate::new(-<span class="number">81</span>, <span class="number">52</span>);
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">data</span>: <span class="ident">ImportRoot</span> <span class="op">=</span> <span class="ident">serde_json::from_str</span>(<span class="ident">data</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub fn </span>import(data: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Map&gt; {
+        <span class="kw">let </span>data: ImportRoot = serde_json::from_str(data)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">data</span>.<span class="ident">title</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">title</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        <span class="kw">if </span>!data.title.is_empty() {
+            map.set_title(<span class="kw-2">&amp;</span>data.title);
         }
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">data</span>.<span class="ident">tiles</span> {
-            <span class="comment">// convert from offset to axial coordinates</span>
-            <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="op">-</span><span class="ident">tile</span>.<span class="ident">x</span> <span class="op">-</span> ((<span class="ident">tile</span>.<span class="ident">y</span> <span class="op">&amp;</span> <span class="number">1</span>) <span class="op">+</span> <span class="ident">tile</span>.<span class="ident">y</span>) <span class="op">/</span> <span class="number">2</span>;
-            <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">y</span>;
-            <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Coordinate::new</span>(<span class="ident">q</span>, <span class="ident">r</span>) <span class="op">-</span> <span class="ident">IMPORT_OFFSET</span>;
-            <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">id</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TileId</span><span class="op">&gt;</span>()
-                <span class="comment">// special mapping for pit-stop tile</span>
-                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="kw">if</span> <span class="ident">id</span>.<span class="ident">num</span>() <span class="op">==</span> <span class="number">101</span> { <span class="ident">id</span>.<span class="ident">base</span>() } <span class="kw">else</span> { <span class="ident">id</span> })
-                .<span class="ident">unwrap_or_default</span>();
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">Direction::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
-            <span class="kw">let</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">iter</span>()
-                .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">token</span><span class="op">|</span> <span class="ident">token</span>.<span class="ident">try_into</span>().<span class="ident">ok</span>())
-                .<span class="ident">collect</span>();
+        <span class="kw">for </span>tile <span class="kw">in </span>data.tiles {
+            <span class="comment">// convert from offset to axial coordinates
+            </span><span class="kw">let </span>q = -tile.x - ((tile.y &amp; <span class="number">1</span>) + tile.y) / <span class="number">2</span>;
+            <span class="kw">let </span>r = tile.y;
+            <span class="kw">let </span>pos = Coordinate::new(q, r) - IMPORT_OFFSET;
+            <span class="kw">let </span>id = tile.id.parse::&lt;TileId&gt;()
+                <span class="comment">// special mapping for pit-stop tile
+                </span>.map(|id| <span class="kw">if </span>id.num() == <span class="number">101 </span>{ id.base() } <span class="kw">else </span>{ id })
+                .unwrap_or_default();
+            <span class="kw">let </span>dir = Direction::from(tile.dir);
+            <span class="kw">let </span>tokens = tile.tokens.iter()
+                .filter_map(|token| token.try_into().ok())
+                .collect();
             <span class="macro">debug!</span>(<span class="string">&quot;import tile ({}, {}), {}, {} -&gt; {}, {}, {}&quot;</span>,
-                <span class="ident">tile</span>.<span class="ident">x</span>, <span class="ident">tile</span>.<span class="ident">y</span>, <span class="ident">tile</span>.<span class="ident">id</span>, <span class="ident">tile</span>.<span class="ident">dir</span>, <span class="ident">pos</span>, <span class="ident">id</span>, <span class="ident">dir</span>);
-            <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">id</span>, <span class="ident">pos</span>, <span class="ident">dir</span>, <span class="ident">tokens</span>);
+                tile.x, tile.y, tile.id, tile.dir, pos, id, dir);
+            map.insert_with_tokens(id, pos, dir, tokens);
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">map</span>)
+        <span class="prelude-val">Ok</span>(map)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">Map</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="comment">// generate some default values for data that is not used in our editor</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">ImportRoot</span> {
-            <span class="ident">path</span>: <span class="string">&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="ident">title</span>: <span class="ident">map</span>.<span class="ident">title</span>().<span class="ident">to_string</span>(),
-            <span class="ident">tiles</span>: <span class="ident">Vec::with_capacity</span>(<span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">len</span>()),
-            <span class="ident">low_res_width</span>: <span class="number">2480</span>,
-            <span class="ident">low_res_height</span>: <span class="number">1748</span>,
+    <span class="kw">pub fn </span>export(map: <span class="kw-2">&amp;</span>Map) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="comment">// generate some default values for data that is not used in our editor
+        </span><span class="kw">let </span><span class="kw-2">mut </span>data = ImportRoot {
+            path: <span class="string">&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;</span>.to_string(),
+            title: map.title().to_string(),
+            tiles: Vec::with_capacity(map.tiles().len()),
+            low_res_width: <span class="number">2480</span>,
+            low_res_height: <span class="number">1748</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">token_layout</span> <span class="op">=</span> <span class="ident">token_layout</span>();
-        <span class="kw">for</span> <span class="ident">tile</span> <span class="kw">in</span> <span class="ident">map</span>.<span class="ident">tiles</span>() {
-            <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">tile</span>.<span class="ident">pos</span> <span class="op">+</span> <span class="ident">IMPORT_OFFSET</span>;
-            <span class="comment">// convert from axial to offset coordinates</span>
-            <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="op">-</span><span class="ident">pos</span>.<span class="ident">q</span>() <span class="op">-</span> ((<span class="ident">pos</span>.<span class="ident">r</span>() <span class="op">&amp;</span> <span class="number">1</span>) <span class="op">+</span> <span class="ident">pos</span>.<span class="ident">r</span>()) <span class="op">/</span> <span class="number">2</span>;
-            <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">r</span>();
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">id</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">num</span>() {
-                <span class="comment">// special mapping for pit-stop tile</span>
-                <span class="number">101</span> =&gt; <span class="string">&quot;101a&quot;</span>.<span class="ident">to_string</span>(),
-                <span class="kw">_</span> =&gt; <span class="ident">tile</span>.<span class="ident">id</span>().<span class="ident">to_string</span>(),
+        <span class="kw">let </span>token_layout = token_layout();
+        <span class="kw">for </span>tile <span class="kw">in </span>map.tiles() {
+            <span class="kw">let </span>pos = tile.pos + IMPORT_OFFSET;
+            <span class="comment">// convert from axial to offset coordinates
+            </span><span class="kw">let </span>x = -pos.q() - ((pos.r() &amp; <span class="number">1</span>) + pos.r()) / <span class="number">2</span>;
+            <span class="kw">let </span>y = pos.r();
+            <span class="kw">let </span><span class="kw-2">mut </span>id = <span class="kw">match </span>tile.id().num() {
+                <span class="comment">// special mapping for pit-stop tile
+                </span><span class="number">101 </span>=&gt; <span class="string">&quot;101a&quot;</span>.to_string(),
+                <span class="kw">_ </span>=&gt; tile.id().to_string(),
             };
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">info</span>) <span class="op">=</span> <span class="ident">TileInfo::get</span>(<span class="ident">tile</span>.<span class="ident">id</span>()) {
-                <span class="kw">if</span> <span class="ident">info</span>.<span class="ident">series</span>() <span class="op">==</span> <span class="ident">Series::Dirt</span> {
-                    <span class="comment">// DIRT tiles are handled uppercase</span>
-                    <span class="ident">id</span>.<span class="ident">make_ascii_uppercase</span>();
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(info) = TileInfo::get(tile.id()) {
+                <span class="kw">if </span>info.series() == Series::Dirt {
+                    <span class="comment">// DIRT tiles are handled uppercase
+                    </span>id.make_ascii_uppercase();
                 }
             }
-            <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">i32::from</span>(<span class="ident">tile</span>.<span class="ident">dir</span>);
+            <span class="kw">let </span>dir = i32::from(tile.dir);
             <span class="macro">debug!</span>(<span class="string">&quot;export tile {}, {}, {} -&gt; ({}, {}), {}, {}&quot;</span>,
-                <span class="ident">tile</span>.<span class="ident">pos</span>, <span class="ident">tile</span>.<span class="ident">id</span>(), <span class="ident">tile</span>.<span class="ident">dir</span>, <span class="ident">x</span>, <span class="ident">y</span>, <span class="kw-2">&amp;</span><span class="ident">id</span>, <span class="ident">dir</span>);
+                tile.pos, tile.id(), tile.dir, x, y, <span class="kw-2">&amp;</span>id, dir);
 
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tokens</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">tile</span>.<span class="ident">tokens</span>.<span class="ident">len</span>());
-            <span class="kw">for</span> <span class="ident">token</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">tile</span>.<span class="ident">tokens</span> {
-                <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">pos</span>.<span class="ident">to_pixel</span>(<span class="kw-2">&amp;</span><span class="ident">token_layout</span>);
-                <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">x</span>();
-                <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">y</span>();
-                <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">dir</span>.<span class="ident">to_angle</span>();
-                <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">id</span>.<span class="ident">try_into</span>()<span class="question-mark">?</span>;
-                <span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">ImportToken</span> { <span class="ident">x</span>, <span class="ident">y</span>, <span class="ident">dir</span>, <span class="ident">id</span> });
+            <span class="kw">let </span><span class="kw-2">mut </span>tokens = Vec::with_capacity(tile.tokens.len());
+            <span class="kw">for </span>token <span class="kw">in </span><span class="kw-2">&amp;</span>tile.tokens {
+                <span class="kw">let </span>pos = token.pos.to_pixel(<span class="kw-2">&amp;</span>token_layout);
+                <span class="kw">let </span>x = pos.x();
+                <span class="kw">let </span>y = pos.y();
+                <span class="kw">let </span>dir = token.dir.to_angle();
+                <span class="kw">let </span>id = token.id.try_into()<span class="question-mark">?</span>;
+                tokens.push(ImportToken { x, y, dir, id });
             }
 
-            <span class="ident">data</span>.<span class="ident">tiles</span>.<span class="ident">push</span>(<span class="ident">ImportTile</span> { <span class="ident">x</span>, <span class="ident">y</span>, <span class="ident">dir</span>, <span class="ident">id</span>, <span class="ident">tokens</span> });
+            data.tiles.push(ImportTile { x, y, dir, id, tokens });
         }
 
-        <span class="ident">serde_json::to_string</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)
-            .<span class="ident">map_err</span>(<span class="ident">ImportError::JsonError</span>)
+        serde_json::to_string(<span class="kw-2">&amp;</span>data)
+            .map_err(ImportError::JsonError)
     }
 
-    <span class="kw">fn</span> <span class="ident">token_layout</span>() -&gt; <span class="ident">Layout</span> {
-        <span class="comment">// invert the x-axis, keep the y-axis</span>
-        <span class="ident">Layout::new</span>(<span class="ident">Orientation::pointy</span>(), <span class="ident">Point</span>(<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="ident">Point</span>(<span class="number">0.0</span>, <span class="number">0.0</span>))
+    <span class="kw">fn </span>token_layout() -&gt; Layout {
+        <span class="comment">// invert the x-axis, keep the y-axis
+        </span>Layout::new(Orientation::pointy(), Point(-<span class="number">1.0</span>, <span class="number">1.0</span>), Point(<span class="number">0.0</span>, <span class="number">0.0</span>))
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="doccomment">/// Import map data with format auto-detection.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">import_auto</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&gt;</span> {
-    <span class="comment">// try our native format first</span>
-    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">native::import</span>(<span class="ident">data</span>);
-    <span class="kw">if</span> <span class="ident">result</span>.<span class="ident">is_ok</span>() {
-        <span class="kw">return</span> <span class="ident">result</span>;
+</span><span class="doccomment">/// Import map data with format auto-detection.
+</span><span class="kw">pub fn </span>import_auto(data: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Map&gt; {
+    <span class="comment">// try our native format first
+    </span><span class="kw">let </span>result = native::import(data);
+    <span class="kw">if </span>result.is_ok() {
+        <span class="kw">return </span>result;
     }
-    <span class="comment">// then try other formats</span>
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">map</span>) <span class="op">=</span> <span class="ident">rgt::import</span>(<span class="ident">data</span>) {
-        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">map</span>);
+    <span class="comment">// then try other formats
+    </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(map) = rgt::import(data) {
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(map);
     }
-    <span class="comment">// no format succeeded, return the first error</span>
-    <span class="ident">result</span>
+    <span class="comment">// no format succeeded, return the first error
+    </span>result
 }
 
-<span class="doccomment">/// Helper function to generate a valid filename from a (map title) string.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_file_name</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">name</span>.<span class="ident">trim</span>().<span class="ident">chars</span>()
-        <span class="comment">// remove all control characters</span>
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">chr</span><span class="op">|</span> <span class="op">!</span><span class="ident">chr</span>.<span class="ident">is_control</span>())
-        <span class="comment">// replace path separators</span>
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">chr</span><span class="op">|</span> <span class="kw">if</span> <span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;/&#39;</span> <span class="op">&amp;&amp;</span> <span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;\\&#39;</span> { <span class="ident">chr</span> } <span class="kw">else</span> { <span class="string">&#39;_&#39;</span> })
-        <span class="comment">// remove special characters on Microsoft Windows</span>
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">chr</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&lt;&#39;</span> <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&gt;&#39;</span> <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;:&#39;</span> <span class="op">&amp;&amp;</span>
-                      <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;|&#39;</span> <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;?&#39;</span> <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">chr</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;*&#39;</span>)
-        .<span class="ident">collect</span>();
-    <span class="kw">if</span> <span class="ident">result</span>.<span class="ident">is_empty</span>() {
-        <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="string">&quot;MyTrack&quot;</span>);
+<span class="doccomment">/// Helper function to generate a valid filename from a (map title) string.
+</span><span class="kw">pub fn </span>build_file_name(name: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">let </span><span class="kw-2">mut </span>result: String = name.trim().chars()
+        <span class="comment">// remove all control characters
+        </span>.filter(|chr| !chr.is_control())
+        <span class="comment">// replace path separators
+        </span>.map(|chr| <span class="kw">if </span>chr != <span class="string">&#39;/&#39; </span>&amp;&amp; chr != <span class="string">&#39;\\&#39; </span>{ chr } <span class="kw">else </span>{ <span class="string">&#39;_&#39; </span>})
+        <span class="comment">// remove special characters on Microsoft Windows
+        </span>.filter(|chr| <span class="kw-2">*</span>chr != <span class="string">&#39;&lt;&#39; </span>&amp;&amp; <span class="kw-2">*</span>chr != <span class="string">&#39;&gt;&#39; </span>&amp;&amp; <span class="kw-2">*</span>chr != <span class="string">&#39;:&#39; </span>&amp;&amp;
+                      <span class="kw-2">*</span>chr != <span class="string">&#39;&quot;&#39; </span>&amp;&amp; <span class="kw-2">*</span>chr != <span class="string">&#39;|&#39; </span>&amp;&amp; <span class="kw-2">*</span>chr != <span class="string">&#39;?&#39; </span>&amp;&amp; <span class="kw-2">*</span>chr != <span class="string">&#39;*&#39;</span>)
+        .collect();
+    <span class="kw">if </span>result.is_empty() {
+        result.push_str(<span class="string">&quot;MyTrack&quot;</span>);
     }
-    <span class="ident">result</span>
+    result
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">approx::assert_abs_diff_eq</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::map::PlacedTile</span>;
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+</span><span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>approx::assert_abs_diff_eq;
+    <span class="kw">use </span><span class="kw">crate</span>::map::PlacedTile;
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_native_chicane_example</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example1.json&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_native</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;Chicane Example 01&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>, <span class="macro">vec!</span>[
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_native_chicane_example() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example1.json&quot;</span>);
+        <span class="kw">let </span>map = import_native(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Chicane Example 01&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A, <span class="macro">vec!</span>[
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
             ]),
         ][..]);
 
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example2.json&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_native</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;Chicane Example 02&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>),
-            <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="macro">vec!</span>[
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example2.json&quot;</span>);
+        <span class="kw">let </span>map = import_native(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Chicane Example 02&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::F),
+            PlacedTile::with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>,  <span class="number">0</span>).into(), Direction::F, <span class="macro">vec!</span>[
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
             ]),
         ][..]);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">export_native_chicane_example</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;Chicane Example 01&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>, <span class="macro">vec!</span>[
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>export_native_chicane_example() {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;Chicane Example 01&quot;</span>);
+        map.insert(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).into(), Direction::A);
+        map.insert_with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A, <span class="macro">vec!</span>[
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
         ]);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_native</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;title&quot;:&quot;Chicane Example 01&quot;,&quot;tiles&quot;:[{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;202a&quot;,&quot;dir&quot;:0},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;205a&quot;,&quot;dir&quot;:0,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:0.33,&quot;r&quot;:0.0,&quot;dir&quot;:0.0}]}]}&quot;#</span>);
+        <span class="kw">let </span>data = export_native(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;title&quot;:&quot;Chicane Example 01&quot;,&quot;tiles&quot;:[{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;202a&quot;,&quot;dir&quot;:0},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;205a&quot;,&quot;dir&quot;:0,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:0.33,&quot;r&quot;:0.0,&quot;dir&quot;:0.0}]}]}&quot;#</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;Chicane Example 02&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>);
-        <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="macro">vec!</span>[
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;Chicane Example 02&quot;</span>);
+        map.insert(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::F);
+        map.insert_with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::F, <span class="macro">vec!</span>[
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
         ]);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_native</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;title&quot;:&quot;Chicane Example 02&quot;,&quot;tiles&quot;:[{&quot;q&quot;:1,&quot;r&quot;:-1,&quot;id&quot;:&quot;202a&quot;,&quot;dir&quot;:5},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;205a&quot;,&quot;dir&quot;:5,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:0.33,&quot;r&quot;:0.0,&quot;dir&quot;:0.0}]}]}&quot;#</span>);
+        <span class="kw">let </span>data = export_native(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;title&quot;:&quot;Chicane Example 02&quot;,&quot;tiles&quot;:[{&quot;q&quot;:1,&quot;r&quot;:-1,&quot;id&quot;:&quot;202a&quot;,&quot;dir&quot;:5},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;205a&quot;,&quot;dir&quot;:5,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:0.33,&quot;r&quot;:0.0,&quot;dir&quot;:0.0}]}]}&quot;#</span>);
         }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_native_short_track</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.json&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_native</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::B</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_native_short_track() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.json&quot;</span>);
+        <span class="kw">let </span>map = import_native(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C),
+            PlacedTile::new(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::C),
+            PlacedTile::new(TileId::new(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F),
+            PlacedTile::new(TileId::new(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).into(), Direction::B),
+            PlacedTile::new(TileId::new(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (-<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::D),
+            PlacedTile::new(TileId::new(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">0</span>).into(), Direction::D),
+            PlacedTile::new(TileId::new(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D),
         ][..]);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">export_native_short_track</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::B</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_native</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;title&quot;:&quot;ShortTrack2&quot;,&quot;tiles&quot;:[{&quot;q&quot;:0,&quot;r&quot;:1,&quot;id&quot;:&quot;102b&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:1,&quot;id&quot;:&quot;106b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;116b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;117b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:2,&quot;r&quot;:-1,&quot;id&quot;:&quot;111b-2&quot;,&quot;dir&quot;:5},{&quot;q&quot;:-1,&quot;r&quot;:0,&quot;id&quot;:&quot;125b-1&quot;,&quot;dir&quot;:0},{&quot;q&quot;:2,&quot;r&quot;:0,&quot;id&quot;:&quot;112b-1&quot;,&quot;dir&quot;:1},{&quot;q&quot;:-1,&quot;r&quot;:-1,&quot;id&quot;:&quot;128b&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-2,&quot;r&quot;:0,&quot;id&quot;:&quot;138b-1&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-1,&quot;r&quot;:1,&quot;id&quot;:&quot;104b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:-2,&quot;r&quot;:1,&quot;id&quot;:&quot;105b-1&quot;,&quot;dir&quot;:3}]}&quot;#</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>export_native_short_track() {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;ShortTrack2&quot;</span>);
+        map.insert(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C);
+        map.insert(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::C);
+        map.insert(TileId::new(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F);
+        map.insert(TileId::new(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).into(), Direction::B);
+        map.insert(TileId::new(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (-<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::D);
+        map.insert(TileId::new(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">0</span>).into(), Direction::D);
+        map.insert(TileId::new(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D);
+        <span class="kw">let </span>data = export_native(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;title&quot;:&quot;ShortTrack2&quot;,&quot;tiles&quot;:[{&quot;q&quot;:0,&quot;r&quot;:1,&quot;id&quot;:&quot;102b&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:1,&quot;id&quot;:&quot;106b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;116b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;117b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:2,&quot;r&quot;:-1,&quot;id&quot;:&quot;111b-2&quot;,&quot;dir&quot;:5},{&quot;q&quot;:-1,&quot;r&quot;:0,&quot;id&quot;:&quot;125b-1&quot;,&quot;dir&quot;:0},{&quot;q&quot;:2,&quot;r&quot;:0,&quot;id&quot;:&quot;112b-1&quot;,&quot;dir&quot;:1},{&quot;q&quot;:-1,&quot;r&quot;:-1,&quot;id&quot;:&quot;128b&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-2,&quot;r&quot;:0,&quot;id&quot;:&quot;138b-1&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-1,&quot;r&quot;:1,&quot;id&quot;:&quot;104b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:-2,&quot;r&quot;:1,&quot;id&quot;:&quot;105b-1&quot;,&quot;dir&quot;:3}]}&quot;#</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_rgt_chicane_example</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example1.rgt&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_rgt</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;Chicane Example 01&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>, <span class="macro">vec!</span>[
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_rgt_chicane_example() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example1.rgt&quot;</span>);
+        <span class="kw">let </span>map = import_rgt(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Chicane Example 01&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A, <span class="macro">vec!</span>[
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
             ]),
         ][..]);
 
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example2.rgt&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_rgt</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;Chicane Example 02&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>),
-            <span class="ident">PlacedTile::with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="macro">vec!</span>[
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-                <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/chicane-example2.rgt&quot;</span>);
+        <span class="kw">let </span>map = import_rgt(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Chicane Example 02&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::F),
+            PlacedTile::with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::F, <span class="macro">vec!</span>[
+                PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+                PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
             ]),
         ][..]);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">export_rgt_chicane_example</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;Chicane Example 01&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>, <span class="macro">vec!</span>[
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>export_rgt_chicane_example() {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;Chicane Example 01&quot;</span>);
+        map.insert(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>).into(), Direction::A);
+        map.insert_with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A, <span class="macro">vec!</span>[
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
         ]);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_rgt</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;Chicane Example 01&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;202A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;205A&quot;,&quot;Tokens&quot;:[{&quot;X&quot;:0.0,&quot;Y&quot;:0.0,&quot;Orientation&quot;:180.0,&quot;TokenId&quot;:&quot;dirt1&quot;},{&quot;X&quot;:-0.5715768,&quot;Y&quot;:0.0,&quot;Orientation&quot;:0.0,&quot;TokenId&quot;:&quot;dirt2&quot;}]}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
+        <span class="kw">let </span>data = export_rgt(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;Chicane Example 01&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;202A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;205A&quot;,&quot;Tokens&quot;:[{&quot;X&quot;:0.0,&quot;Y&quot;:0.0,&quot;Orientation&quot;:180.0,&quot;TokenId&quot;:&quot;dirt1&quot;},{&quot;X&quot;:-0.5715768,&quot;Y&quot;:0.0,&quot;Orientation&quot;:0.0,&quot;TokenId&quot;:&quot;dirt2&quot;}]}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;Chicane Example 02&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>);
-        <span class="ident">map</span>.<span class="ident">insert_with_tokens</span>(<span class="ident">TileId::new</span>(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>, <span class="macro">vec!</span>[
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::ChicaneWithLimit</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.0</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">3.0</span>)),
-            <span class="ident">PlacedToken::new</span>(<span class="ident">TokenId::Chicane</span>(<span class="ident">Terrain::Gravel</span>), (<span class="number">0.33</span>, <span class="number">0.0</span>).<span class="ident">into</span>(), <span class="ident">FloatDirection</span>(<span class="number">0.0</span>)),
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;Chicane Example 02&quot;</span>);
+        map.insert(TileId::new(<span class="number">202</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::F);
+        map.insert_with_tokens(TileId::new(<span class="number">205</span>, <span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::F, <span class="macro">vec!</span>[
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">0.33</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">0.0</span>)),
         ]);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_rgt</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;Chicane Example 02&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;202A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;205A&quot;,&quot;Tokens&quot;:[{&quot;X&quot;:0.0,&quot;Y&quot;:0.0,&quot;Orientation&quot;:180.0,&quot;TokenId&quot;:&quot;dirt1&quot;},{&quot;X&quot;:-0.5715768,&quot;Y&quot;:0.0,&quot;Orientation&quot;:0.0,&quot;TokenId&quot;:&quot;dirt2&quot;}]}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
+        <span class="kw">let </span>data = export_rgt(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;Chicane Example 02&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;202A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;205A&quot;,&quot;Tokens&quot;:[{&quot;X&quot;:0.0,&quot;Y&quot;:0.0,&quot;Orientation&quot;:180.0,&quot;TokenId&quot;:&quot;dirt1&quot;},{&quot;X&quot;:-0.5715768,&quot;Y&quot;:0.0,&quot;Orientation&quot;:0.0,&quot;TokenId&quot;:&quot;dirt2&quot;}]}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_rgt_short_track</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.rgt&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_rgt</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>(), <span class="kw-2">&amp;</span>[
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::B</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>),
-            <span class="ident">PlacedTile::new</span>(<span class="ident">TileId::new</span>(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>),
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_rgt_short_track() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.rgt&quot;</span>);
+        <span class="kw">let </span>map = import_rgt(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
+        <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
+            PlacedTile::new(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C),
+            PlacedTile::new(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::C),
+            PlacedTile::new(TileId::new(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F),
+            PlacedTile::new(TileId::new(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).into(), Direction::B),
+            PlacedTile::new(TileId::new(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (-<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::D),
+            PlacedTile::new(TileId::new(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">0</span>).into(), Direction::D),
+            PlacedTile::new(TileId::new(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::A),
+            PlacedTile::new(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D),
         ][..]);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">export_rgt_short_track</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map::new</span>();
-        <span class="ident">map</span>.<span class="ident">set_title</span>(<span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::C</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::F</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::B</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">0</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="op">-</span><span class="number">1</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::A</span>);
-        <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">TileId::new</span>(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">1</span>).<span class="ident">into</span>(), <span class="ident">Direction::D</span>);
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_rgt</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;ShortTrack2&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;102b&quot;},{&quot;X&quot;:53,&quot;Y&quot;:53,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;106b-2&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;116b-2&quot;},{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;117b-2&quot;},{&quot;X&quot;:53,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;111b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;125b-1&quot;},{&quot;X&quot;:53,&quot;Y&quot;:52,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;112b-1&quot;},{&quot;X&quot;:56,&quot;Y&quot;:51,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;128b&quot;},{&quot;X&quot;:57,&quot;Y&quot;:52,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;138b-1&quot;},{&quot;X&quot;:55,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;104b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:53,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;105b-1&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>export_rgt_short_track() {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
+        map.set_title(<span class="string">&quot;ShortTrack2&quot;</span>);
+        map.insert(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C);
+        map.insert(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">117</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::C);
+        map.insert(TileId::new(<span class="number">111</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F);
+        map.insert(TileId::new(<span class="number">125</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">112</span>, <span class="number">2</span>, <span class="number">1</span>), ( <span class="number">2</span>,  <span class="number">0</span>).into(), Direction::B);
+        map.insert(TileId::new(<span class="number">128</span>, <span class="number">2</span>, <span class="number">0</span>), (-<span class="number">1</span>, -<span class="number">1</span>).into(), Direction::D);
+        map.insert(TileId::new(<span class="number">138</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">0</span>).into(), Direction::D);
+        map.insert(TileId::new(<span class="number">104</span>, <span class="number">2</span>, <span class="number">2</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::A);
+        map.insert(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D);
+        <span class="kw">let </span>data = export_rgt(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;ShortTrack2&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;102b&quot;},{&quot;X&quot;:53,&quot;Y&quot;:53,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;106b-2&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;116b-2&quot;},{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;117b-2&quot;},{&quot;X&quot;:53,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;111b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;125b-1&quot;},{&quot;X&quot;:53,&quot;Y&quot;:52,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;112b-1&quot;},{&quot;X&quot;:56,&quot;Y&quot;:51,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;128b&quot;},{&quot;X&quot;:57,&quot;Y&quot;:52,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;138b-1&quot;},{&quot;X&quot;:55,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;104b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:53,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;105b-1&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_auto_short_track</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.json&quot;</span>);
-        <span class="kw">let</span> <span class="ident">native_map</span> <span class="op">=</span> <span class="ident">import_auto</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">native_map</span>.<span class="ident">title</span>(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">native_map</span>.<span class="ident">tiles</span>().<span class="ident">len</span>(), <span class="number">11</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_auto_short_track() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.json&quot;</span>);
+        <span class="kw">let </span>native_map = import_auto(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(native_map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
+        <span class="macro">assert_eq!</span>(native_map.tiles().len(), <span class="number">11</span>);
 
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.rgt&quot;</span>);
-        <span class="kw">let</span> <span class="ident">rgt_map</span> <span class="op">=</span> <span class="ident">import_auto</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">rgt_map</span>.<span class="ident">title</span>(), <span class="ident">native_map</span>.<span class="ident">title</span>());
-        <span class="macro">assert_abs_diff_eq!</span>(<span class="ident">rgt_map</span>.<span class="ident">tiles</span>(), <span class="ident">native_map</span>.<span class="ident">tiles</span>());
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.rgt&quot;</span>);
+        <span class="kw">let </span>rgt_map = import_auto(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(rgt_map.title(), native_map.title());
+        <span class="macro">assert_abs_diff_eq!</span>(rgt_map.tiles(), native_map.tiles());
 
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">&quot;{}&quot;</span>;
-        <span class="macro">assert!</span>(<span class="ident">import_auto</span>(<span class="ident">data</span>).<span class="ident">is_err</span>());
+        <span class="kw">let </span>data = <span class="string">&quot;{}&quot;</span>;
+        <span class="macro">assert!</span>(import_auto(data).is_err());
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">import_export_rx_track</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">include_str!</span>(<span class="string">&quot;tests/rx-finland.rgt&quot;</span>);
-        <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">import_auto</span>(<span class="ident">data</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot parse import file data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">title</span>(), <span class="string">&quot;RX Finland&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">map</span>.<span class="ident">tiles</span>().<span class="ident">len</span>(), <span class="number">16</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>import_export_rx_track() {
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/rx-finland.rgt&quot;</span>);
+        <span class="kw">let </span>map = import_auto(data)
+            .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;RX Finland&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.tiles().len(), <span class="number">16</span>);
 
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">export_rgt</span>(<span class="kw-2">&amp;</span><span class="ident">map</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">data</span>, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;RX Finland&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:56,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;403A&quot;},{&quot;X&quot;:54,&quot;Y&quot;:55,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;401A&quot;},{&quot;X&quot;:53,&quot;Y&quot;:57,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;119b&quot;},{&quot;X&quot;:54,&quot;Y&quot;:58,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;118b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:58,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;414B&quot;},{&quot;X&quot;:54,&quot;Y&quot;:57,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;137b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:56,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;126b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:55,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;905A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:59,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;206A&quot;},{&quot;X&quot;:56,&quot;Y&quot;:59,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;209B&quot;},{&quot;X&quot;:56,&quot;Y&quot;:60,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;402B&quot;},{&quot;X&quot;:57,&quot;Y&quot;:58,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;208A&quot;},{&quot;X&quot;:57,&quot;Y&quot;:59,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;209A&quot;},{&quot;X&quot;:57,&quot;Y&quot;:60,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;204A&quot;},{&quot;X&quot;:56,&quot;Y&quot;:61,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;410B&quot;},{&quot;X&quot;:56,&quot;Y&quot;:58,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;403B&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
+        <span class="kw">let </span>data = export_rgt(<span class="kw-2">&amp;</span>map)
+            .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;RX Finland&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:56,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;403A&quot;},{&quot;X&quot;:54,&quot;Y&quot;:55,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;401A&quot;},{&quot;X&quot;:53,&quot;Y&quot;:57,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;119b&quot;},{&quot;X&quot;:54,&quot;Y&quot;:58,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;118b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:58,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;414B&quot;},{&quot;X&quot;:54,&quot;Y&quot;:57,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;137b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:56,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;126b&quot;},{&quot;X&quot;:55,&quot;Y&quot;:55,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;905A&quot;},{&quot;X&quot;:55,&quot;Y&quot;:59,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;206A&quot;},{&quot;X&quot;:56,&quot;Y&quot;:59,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;209B&quot;},{&quot;X&quot;:56,&quot;Y&quot;:60,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;402B&quot;},{&quot;X&quot;:57,&quot;Y&quot;:58,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;208A&quot;},{&quot;X&quot;:57,&quot;Y&quot;:59,&quot;Orientation&quot;:4,&quot;TuileId&quot;:&quot;209A&quot;},{&quot;X&quot;:57,&quot;Y&quot;:60,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;204A&quot;},{&quot;X&quot;:56,&quot;Y&quot;:61,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;410B&quot;},{&quot;X&quot;:56,&quot;Y&quot;:58,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;403B&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">file_name</span>() {
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">build_file_name</span>(<span class="string">&quot;&quot;</span>), <span class="string">&quot;MyTrack&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">build_file_name</span>(<span class="string">&quot;\n&quot;</span>), <span class="string">&quot;MyTrack&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">build_file_name</span>(<span class="string">&quot;Short Track 2&quot;</span>), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">build_file_name</span>(<span class="string">&quot;\n\tShort Track 2 &quot;</span>), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">build_file_name</span>(<span class="string">&quot;&lt;/Short\\ Träck: 2&gt;&quot;</span>), <span class="string">&quot;_Short_ Träck 2&quot;</span>);
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>file_name() {
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>build_file_name(<span class="string">&quot;&quot;</span>), <span class="string">&quot;MyTrack&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>build_file_name(<span class="string">&quot;\n&quot;</span>), <span class="string">&quot;MyTrack&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>build_file_name(<span class="string">&quot;Short Track 2&quot;</span>), <span class="string">&quot;Short Track 2&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>build_file_name(<span class="string">&quot;\n\tShort Track 2 &quot;</span>), <span class="string">&quot;Short Track 2&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>build_file_name(<span class="string">&quot;&lt;/Short\\ Träck: 2&gt;&quot;</span>), <span class="string">&quot;_Short_ Träck 2&quot;</span>);
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

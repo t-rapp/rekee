@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/catalog_config.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog_config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/catalog_config.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>catalog_config.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rekee/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -248,255 +248,255 @@
 <span id="248">248</span>
 <span id="249">249</span>
 <span id="250">250</span>
-</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------</span>
-<span class="doccomment">//! Configuration of the available catalog tiles.</span>
-<span class="comment">//</span>
-<span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span>
-<span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
-<span class="comment">//----------------------------------------------------------------------------</span>
+</pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
+</span><span class="doccomment">//! Configuration of the available catalog tiles.
+</span><span class="comment">//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//----------------------------------------------------------------------------
 
-<span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="self">self</span>, <span class="ident">Document</span>, <span class="ident">Element</span>};
+</span><span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>wasm_bindgen::JsCast;
+<span class="kw">use </span>web_sys::{<span class="self">self</span>, Document, Element};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::check</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::controller::catalog_config</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::edition</span>::{<span class="ident">Edition</span>, <span class="ident">Series</span>};
-<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::check;
+<span class="kw">use </span><span class="kw">crate</span>::controller::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::catalog_config::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::edition::{Edition, Series};
+<span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">struct</span> <span class="ident">EditionCard</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">edition</span>: <span class="ident">Edition</span>,
-    <span class="ident">active</span>: <span class="ident">bool</span>,
-    <span class="ident">icon</span>: <span class="ident">Element</span>,
-    <span class="ident">toggle_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">struct </span>EditionCard {
+    inner: Element,
+    edition: Edition,
+    active: bool,
+    icon: Element,
+    toggle_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">EditionCard</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">document</span>: <span class="kw-2">&amp;</span><span class="ident">Document</span>, <span class="ident">edition</span>: <span class="ident">Edition</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">card</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">card</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;card is-clickable is-unselectable&quot;</span>)<span class="question-mark">?</span>;
+<span class="kw">impl </span>EditionCard {
+    <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document, edition: Edition) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>card = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        card.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;card is-clickable is-unselectable&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">card_content</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">card_content</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;card-content&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">card</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">card_content</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>card_content = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        card_content.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;card-content&quot;</span>)<span class="question-mark">?</span>;
+        card.append_child(<span class="kw-2">&amp;</span>card_content)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">media</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">card_content</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">media</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>media = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        media.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media&quot;</span>)<span class="question-mark">?</span>;
+        card_content.append_child(<span class="kw-2">&amp;</span>media)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">media_left</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media_left</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-left&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">media_left</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>media_left = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        media_left.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-left&quot;</span>)<span class="question-mark">?</span>;
+        media.append_child(<span class="kw-2">&amp;</span>media_left)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">figure</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;figure&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">figure</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;image is-48x48&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media_left</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">figure</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>figure = document.create_element(<span class="string">&quot;figure&quot;</span>)<span class="question-mark">?</span>;
+        figure.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;image is-48x48&quot;</span>)<span class="question-mark">?</span>;
+        media_left.append_child(<span class="kw-2">&amp;</span>figure)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;img&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;editions/thumb-{:x}.png&quot;</span>, <span class="ident">edition</span>))<span class="question-mark">?</span>;
-        <span class="ident">image</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;alt&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">edition</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
-        <span class="ident">figure</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>image = document.create_element(<span class="string">&quot;img&quot;</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;editions/thumb-{:x}.png&quot;</span>, edition))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">&quot;alt&quot;</span>, <span class="kw-2">&amp;</span>edition.to_string())<span class="question-mark">?</span>;
+        figure.append_child(<span class="kw-2">&amp;</span>image)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">media_content</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media_content</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-content&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">media_content</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>media_content = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        media_content.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-content&quot;</span>)<span class="question-mark">?</span>;
+        media.append_child(<span class="kw-2">&amp;</span>media_content)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">title_text</span>;
-        <span class="kw">let</span> <span class="ident">subtitle_text</span>;
-        <span class="kw">if</span> <span class="ident">edition</span>.<span class="ident">is_expansion</span>() {
-            <span class="ident">title_text</span> <span class="op">=</span> <span class="ident">edition</span>.<span class="ident">to_string</span>();
-            <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">title_text</span>.<span class="ident">find</span>(<span class="string">&#39; &#39;</span>).<span class="ident">unwrap_or</span>(<span class="number">0</span>);
-            <span class="ident">title_text</span>.<span class="ident">replace_range</span>(<span class="number">0</span>..<span class="ident">offset</span>, <span class="string">&quot;&quot;</span>);
-            <span class="ident">subtitle_text</span> <span class="op">=</span> <span class="string">&quot;Expansion&quot;</span>;
-        } <span class="kw">else</span> {
-            <span class="ident">title_text</span> <span class="op">=</span> <span class="ident">edition</span>.<span class="ident">series</span>().<span class="ident">to_string</span>();
-            <span class="ident">subtitle_text</span> <span class="op">=</span> <span class="string">&quot;Core Box&quot;</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>title_text;
+        <span class="kw">let </span>subtitle_text;
+        <span class="kw">if </span>edition.is_expansion() {
+            title_text = edition.to_string();
+            <span class="kw">let </span>offset = title_text.find(<span class="string">&#39; &#39;</span>).unwrap_or(<span class="number">0</span>);
+            title_text.replace_range(<span class="number">0</span>..offset, <span class="string">&quot;&quot;</span>);
+            subtitle_text = <span class="string">&quot;Expansion&quot;</span>;
+        } <span class="kw">else </span>{
+            title_text = edition.series().to_string();
+            subtitle_text = <span class="string">&quot;Core Box&quot;</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">title</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;p&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">title</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;title is-6&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">title</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>.<span class="ident">create_text_node</span>(<span class="kw-2">&amp;</span><span class="ident">title_text</span>))<span class="question-mark">?</span>;
-        <span class="ident">media_content</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">title</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>title = document.create_element(<span class="string">&quot;p&quot;</span>)<span class="question-mark">?</span>;
+        title.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;title is-6&quot;</span>)<span class="question-mark">?</span>;
+        title.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>title_text))<span class="question-mark">?</span>;
+        media_content.append_child(<span class="kw-2">&amp;</span>title)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">subtitle</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;p&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">subtitle</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;subtitle is-6&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">subtitle</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>.<span class="ident">create_text_node</span>(<span class="ident">subtitle_text</span>))<span class="question-mark">?</span>;
-        <span class="ident">media_content</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">subtitle</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>subtitle = document.create_element(<span class="string">&quot;p&quot;</span>)<span class="question-mark">?</span>;
+        subtitle.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;subtitle is-6&quot;</span>)<span class="question-mark">?</span>;
+        subtitle.append_child(<span class="kw-2">&amp;</span>document.create_text_node(subtitle_text))<span class="question-mark">?</span>;
+        media_content.append_child(<span class="kw-2">&amp;</span>subtitle)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">media_right</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media_right</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-right&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">media_right</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>media_right = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        media_right.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;media-right&quot;</span>)<span class="question-mark">?</span>;
+        media.append_child(<span class="kw-2">&amp;</span>media_right)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">icon</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;span&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;icon has-text-grey&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">media_right</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">icon</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>icon = document.create_element(<span class="string">&quot;span&quot;</span>)<span class="question-mark">?</span>;
+        icon.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;icon has-text-grey&quot;</span>)<span class="question-mark">?</span>;
+        media_right.append_child(<span class="kw-2">&amp;</span>icon)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">icon_svg</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;svg&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_svg</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;bi&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_svg</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;width&quot;</span>, <span class="string">&quot;16&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_svg</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;height&quot;</span>, <span class="string">&quot;16&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_svg</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;currentColor&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">icon_svg</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>icon_svg = document.create_element_ns(SVG_NS, <span class="string">&quot;svg&quot;</span>)<span class="question-mark">?</span>;
+        icon_svg.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;bi&quot;</span>)<span class="question-mark">?</span>;
+        icon_svg.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="string">&quot;16&quot;</span>)<span class="question-mark">?</span>;
+        icon_svg.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="string">&quot;16&quot;</span>)<span class="question-mark">?</span>;
+        icon_svg.set_attribute(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;currentColor&quot;</span>)<span class="question-mark">?</span>;
+        icon.append_child(<span class="kw-2">&amp;</span>icon_svg)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">icon_use</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element_ns</span>(<span class="ident">SVG_NS</span>, <span class="string">&quot;use&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_use</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="string">&quot;bootstrap-icons.svg#circle&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">icon_svg</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">icon_use</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>icon_use = document.create_element_ns(SVG_NS, <span class="string">&quot;use&quot;</span>)<span class="question-mark">?</span>;
+        icon_use.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="string">&quot;bootstrap-icons.svg#circle&quot;</span>)<span class="question-mark">?</span>;
+        icon_svg.append_child(<span class="kw-2">&amp;</span>icon_use)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">toggle_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogConfigController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">ToggleCatalogEditionEvent</span> { <span class="ident">edition</span> });
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">card</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="ident">toggle_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>toggle_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;CatalogConfigController, <span class="kw">_</span>&gt;(ToggleCatalogEditionEvent { edition });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        card.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            toggle_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">EditionCard</span> { <span class="ident">inner</span>: <span class="ident">card</span>, <span class="ident">edition</span>, <span class="ident">active</span>: <span class="bool-val">false</span>, <span class="ident">icon</span>, <span class="ident">toggle_cb</span> })
+        <span class="prelude-val">Ok</span>(EditionCard { inner: card, edition, active: <span class="bool-val">false</span>, icon, toggle_cb })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="macro">debug!</span>(<span class="string">&quot;edition {} set active={}&quot;</span>, <span class="self">self</span>.<span class="ident">edition</span>, <span class="ident">value</span>);
-        <span class="kw">let</span> <span class="ident">icon_use</span> <span class="op">=</span> <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">icon</span>.<span class="ident">query_selector</span>(<span class="string">&quot;use&quot;</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>());
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">edition</span>.<span class="ident">series</span>() <span class="op">==</span> <span class="ident">Series::Gt</span> {
-                <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;has-background-info&quot;</span>).<span class="ident">ok</span>());
-            } <span class="kw">else</span> {
-                <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;has-background-success&quot;</span>).<span class="ident">ok</span>());
+    <span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) {
+        <span class="macro">debug!</span>(<span class="string">&quot;edition {} set active={}&quot;</span>, <span class="self">self</span>.edition, value);
+        <span class="kw">let </span>icon_use = <span class="macro">check!</span>(<span class="self">self</span>.icon.query_selector(<span class="string">&quot;use&quot;</span>).ok().flatten());
+        <span class="kw">if </span>value {
+            <span class="kw">if </span><span class="self">self</span>.edition.series() == Series::Gt {
+                <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;has-background-info&quot;</span>).ok());
+            } <span class="kw">else </span>{
+                <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;has-background-success&quot;</span>).ok());
             }
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;has-text-white&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">icon</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;has-text-grey&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;has-background-info&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;has-background-success&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;has-text-white&quot;</span>).<span class="ident">ok</span>());
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">icon</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;has-text-grey&quot;</span>).<span class="ident">ok</span>());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;has-text-white&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.icon.class_list().remove_1(<span class="string">&quot;has-text-grey&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;has-background-info&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;has-background-success&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;has-text-white&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.icon.class_list().add_1(<span class="string">&quot;has-text-grey&quot;</span>).ok());
         }
-        <span class="kw">let</span> <span class="ident">icon_href</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="string">&quot;bootstrap-icons.svg#check-circle-fill&quot;</span>
-        } <span class="kw">else</span> {
-            <span class="string">&quot;bootstrap-icons.svg#circle&quot;</span>
-        };
-        <span class="macro">check!</span>(<span class="ident">icon_use</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;href&quot;</span>, <span class="ident">icon_href</span>).<span class="ident">ok</span>());
-        <span class="self">self</span>.<span class="ident">active</span> <span class="op">=</span> <span class="ident">value</span>;
+        <span class="kw">let </span>icon_href = <span class="kw">if </span>value {
+            <span class="string">&quot;bootstrap-icons.svg#check-circle-fill&quot;
+        </span>} <span class="kw">else </span>{
+            <span class="string">&quot;bootstrap-icons.svg#circle&quot;
+        </span>};
+        <span class="macro">check!</span>(icon_use.set_attribute(<span class="string">&quot;href&quot;</span>, icon_href).ok());
+        <span class="self">self</span>.active = value;
     }
 }
 
-<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Element</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">EditionCard</span> {
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Element</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>EditionCard {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">EditionCard</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">toggle_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>EditionCard {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.toggle_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
+<span class="comment">//----------------------------------------------------------------------------
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CatalogConfigView</span> {
-    <span class="ident">inner</span>: <span class="ident">Element</span>,
-    <span class="ident">editions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">EditionCard</span><span class="op">&gt;</span>,
-    <span class="ident">apply</span>: <span class="ident">Element</span>,
-    <span class="ident">apply_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
-    <span class="ident">close</span>: <span class="ident">Element</span>,
-    <span class="ident">close_cb</span>: <span class="ident">Closure</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">web_sys::Event</span>)<span class="op">&gt;</span>,
+</span><span class="kw">pub struct </span>CatalogConfigView {
+    inner: Element,
+    editions: Vec&lt;EditionCard&gt;,
+    apply: Element,
+    apply_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
+    close: Element,
+    close_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">CatalogConfigView</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">parent</span>: <span class="ident">Element</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parent</span>.<span class="ident">owner_document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">parent</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">editions</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+<span class="kw">impl </span>CatalogConfigView {
+    <span class="kw">pub fn </span>new(parent: Element) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>document = parent.owner_document().unwrap();
+        <span class="kw">let </span>inner = parent;
+        <span class="kw">let </span><span class="kw-2">mut </span>editions = Vec::new();
 
-        <span class="kw">let</span> <span class="ident">columns</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;.columns&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find columns of catalog config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>columns = inner.query_selector(<span class="string">&quot;.columns&quot;</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">&quot;Cannot find columns of catalog config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">column</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">column</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;column&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">columns</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">column</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>column = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        column.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;column&quot;</span>)<span class="question-mark">?</span>;
+        columns.append_child(<span class="kw-2">&amp;</span>column)<span class="question-mark">?</span>;
 
-        <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Gt</span>.<span class="ident">editions</span>() {
-            <span class="kw">let</span> <span class="ident">card</span> <span class="op">=</span> <span class="ident">EditionCard::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="ident">edition</span>)<span class="question-mark">?</span>;
-            <span class="ident">column</span>.<span class="ident">append_child</span>(<span class="ident">card</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
-            <span class="ident">editions</span>.<span class="ident">push</span>(<span class="ident">card</span>);
+        <span class="kw">for </span><span class="kw-2">&amp;</span>edition <span class="kw">in </span>Series::Gt.editions() {
+            <span class="kw">let </span>card = EditionCard::new(<span class="kw-2">&amp;</span>document, edition)<span class="question-mark">?</span>;
+            column.append_child(card.as_ref())<span class="question-mark">?</span>;
+            editions.push(card);
         }
 
-        <span class="kw">let</span> <span class="ident">column</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">create_element</span>(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">column</span>.<span class="ident">set_attribute</span>(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;column&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">columns</span>.<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">column</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>column = document.create_element(<span class="string">&quot;div&quot;</span>)<span class="question-mark">?</span>;
+        column.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;column&quot;</span>)<span class="question-mark">?</span>;
+        columns.append_child(<span class="kw-2">&amp;</span>column)<span class="question-mark">?</span>;
 
-        <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">edition</span> <span class="kw">in</span> <span class="ident">Series::Dirt</span>.<span class="ident">editions</span>() {
-            <span class="kw">let</span> <span class="ident">card</span> <span class="op">=</span> <span class="ident">EditionCard::new</span>(<span class="kw-2">&amp;</span><span class="ident">document</span>, <span class="ident">edition</span>)<span class="question-mark">?</span>;
-            <span class="ident">column</span>.<span class="ident">append_child</span>(<span class="ident">card</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
-            <span class="ident">editions</span>.<span class="ident">push</span>(<span class="ident">card</span>);
+        <span class="kw">for </span><span class="kw-2">&amp;</span>edition <span class="kw">in </span>Series::Dirt.editions() {
+            <span class="kw">let </span>card = EditionCard::new(<span class="kw-2">&amp;</span>document, edition)<span class="question-mark">?</span>;
+            column.append_child(card.as_ref())<span class="question-mark">?</span>;
+            editions.push(card);
         }
 
-        <span class="kw">let</span> <span class="ident">apply</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;apply-catalog-config&quot;</span>)
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find apply button of catalog config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>apply = document.get_element_by_id(<span class="string">&quot;apply-catalog-config&quot;</span>)
+            .ok_or(<span class="string">&quot;Cannot find apply button of catalog config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">apply_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::send_to</span>::<span class="op">&lt;</span><span class="ident">CatalogConfigController</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">ApplyCatalogEditionsEvent</span>);
-            <span class="ident">nuts::publish</span>(<span class="ident">HideCatalogConfigEvent</span>);
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">apply</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">apply_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>apply_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::send_to::&lt;CatalogConfigController, <span class="kw">_</span>&gt;(ApplyCatalogEditionsEvent);
+            nuts::publish(HideCatalogConfigEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        apply.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, apply_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">close</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">query_selector</span>(<span class="string">&quot;.modal-close&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">ok_or</span>(<span class="string">&quot;Cannot find close button of catalog config element&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>close = inner.query_selector(<span class="string">&quot;.modal-close&quot;</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">&quot;Cannot find close button of catalog config element&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">close_cb</span> <span class="op">=</span> <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">_event</span>: <span class="ident">web_sys::Event</span><span class="op">|</span> {
-            <span class="ident">nuts::publish</span>(<span class="ident">HideCatalogConfigEvent</span>);
-        }) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw">_</span>)<span class="op">&gt;</span>);
-        <span class="ident">close</span>.<span class="ident">add_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>, <span class="ident">close_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>())<span class="question-mark">?</span>;
+        <span class="kw">let </span>close_cb = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
+            nuts::publish(HideCatalogConfigEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        close.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">CatalogConfigView</span> { <span class="ident">inner</span>, <span class="ident">editions</span>, <span class="ident">apply</span>, <span class="ident">apply_cb</span>, <span class="ident">close</span>, <span class="ident">close_cb</span> })
+        <span class="prelude-val">Ok</span>(CatalogConfigView { inner, editions, apply, apply_cb, close, close_cb })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_active</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
-        <span class="kw">if</span> <span class="ident">value</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">add_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
-        } <span class="kw">else</span> {
-            <span class="macro">check!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">class_list</span>().<span class="ident">remove_1</span>(<span class="string">&quot;is-active&quot;</span>).<span class="ident">ok</span>());
-        }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">editions</span>: <span class="kw-2">&amp;</span>[<span class="ident">Edition</span>]) {
-        <span class="kw">for</span> <span class="ident">card</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter_mut</span>() {
-            <span class="ident">card</span>.<span class="ident">set_active</span>(<span class="ident">editions</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">card</span>.<span class="ident">edition</span>));
+    <span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
+        <span class="kw">if </span>value {
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-active&quot;</span>).ok());
+        } <span class="kw">else </span>{
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-active&quot;</span>).ok());
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toggle_edition</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">edition</span>: <span class="ident">Edition</span>) {
-        <span class="macro">debug!</span>(<span class="string">&quot;toggle edition {}&quot;</span>, <span class="ident">edition</span>);
-        <span class="kw">for</span> <span class="ident">card</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter_mut</span>() {
-            <span class="kw">if</span> <span class="ident">card</span>.<span class="ident">edition</span> <span class="op">==</span> <span class="ident">edition</span> {
-                <span class="ident">card</span>.<span class="ident">set_active</span>(<span class="op">!</span><span class="ident">card</span>.<span class="ident">active</span>);
+    <span class="kw">pub fn </span>set_editions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, editions: <span class="kw-2">&amp;</span>[Edition]) {
+        <span class="kw">for </span>card <span class="kw">in </span><span class="self">self</span>.editions.iter_mut() {
+            card.set_active(editions.contains(<span class="kw-2">&amp;</span>card.edition));
+        }
+    }
+
+    <span class="kw">pub fn </span>toggle_edition(<span class="kw-2">&amp;mut </span><span class="self">self</span>, edition: Edition) {
+        <span class="macro">debug!</span>(<span class="string">&quot;toggle edition {}&quot;</span>, edition);
+        <span class="kw">for </span>card <span class="kw">in </span><span class="self">self</span>.editions.iter_mut() {
+            <span class="kw">if </span>card.edition == edition {
+                card.set_active(!card.active);
             }
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apply_catalog_editions</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="ident">editions</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">editions</span>.<span class="ident">iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">card</span><span class="op">|</span> <span class="ident">card</span>.<span class="ident">active</span>)
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">card</span><span class="op">|</span> <span class="ident">card</span>.<span class="ident">edition</span>)
-            .<span class="ident">collect</span>();
-        <span class="ident">nuts::publish</span>(<span class="ident">UpdateCatalogEditionsEvent</span> { <span class="ident">editions</span> });
+    <span class="kw">pub fn </span>apply_catalog_editions(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>editions = <span class="self">self</span>.editions.iter()
+            .filter(|card| card.active)
+            .map(|card| card.edition)
+            .collect();
+        nuts::publish(UpdateCatalogEditionsEvent { editions });
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">CatalogConfigView</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">apply</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">apply_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">close</span>.<span class="ident">remove_event_listener_with_callback</span>(<span class="string">&quot;click&quot;</span>,
-            <span class="self">self</span>.<span class="ident">close_cb</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>());
+<span class="kw">impl </span>Drop <span class="kw">for </span>CatalogConfigView {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.apply.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.apply_cb.as_ref().unchecked_ref());
+        <span class="kw">let _ </span>= <span class="self">self</span>.close.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+            <span class="self">self</span>.close_cb.as_ref().unchecked_ref());
     }
 }
 
-<span class="comment">//----------------------------------------------------------------------------</span>
-</code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+<span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
