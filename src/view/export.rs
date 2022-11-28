@@ -82,7 +82,7 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, text: &str, pos:
     let pos_y = f64::from(pos.y());
 
     context.save();
-    context.set_font(&format!("bold {}px Overpass, sans-serif", height));
+    context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", height));
     context.set_text_align("center");
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
@@ -371,10 +371,18 @@ impl ExportView {
         anchor.set_hidden(true);
         parent.append_child(&anchor)?;
 
-        let label_font = FontFace::new_with_str("Overpass",
+        let title_font = FontFace::new_with_str("Overpass",
+            "url('overpass-bold.woff2') format('woff2')")?;
+        title_font.set_style("normal");
+        title_font.set_weight("bold");
+        document.fonts().add(&title_font)?;
+        let _ = title_font.load();
+
+        let label_font = FontFace::new_with_str("OverpassTnum",
             "url('overpass-bold.woff2') format('woff2')")?;
         label_font.set_style("normal");
         label_font.set_weight("bold");
+        label_font.set_feature_settings("\"tnum\" on");
         document.fonts().add(&label_font)?;
         let _ = label_font.load();
 
