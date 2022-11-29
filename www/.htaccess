@@ -1,12 +1,16 @@
 AddType application/wasm .wasm
 AddType font/woff .woff
+AddType font/woff2 .woff2
+AddType image/webp .webp
 
 # cache fonts and images
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType font/woff "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 month"
   ExpiresByType image/jpeg "access plus 1 week"
   ExpiresByType image/png "access plus 1 week"
+  ExpiresByType image/webp "access plus 1 week"
   ExpiresByType image/x-icon "access plus 1 week"
 </IfModule>
 
