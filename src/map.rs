@@ -11,6 +11,7 @@ use std::fmt;
 use serde::{Serialize, Deserialize, Deserializer};
 use serde::de::{self, Visitor};
 
+use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
 use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo};
 use crate::token::TokenId;
@@ -78,6 +79,17 @@ impl PlacedTile {
     /// ```
     pub fn terrain(&self) -> Option<Terrain> {
         self.info.map(|info| info.terrain())
+    }
+
+    /// Check whether the tile has tokens placed on it.
+    ///
+    /// Considers only "real" tokens that lay flat on the tile and change the
+    /// track spaces, ignores standee tokens from DIRT RX expansion.
+    ///
+    /// Used for rendering a "modified" indicator suffix on map tile labels.
+    pub fn has_flat_tokens(&self) -> bool {
+        self.tokens.iter()
+            .any(|token| token.id.edition() != Edition::DirtRx)
     }
 
     fn connection(&self, dir: Direction) -> Connection {

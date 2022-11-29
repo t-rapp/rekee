@@ -520,7 +520,11 @@ impl ExportView {
                 .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
             for tile in self.map.tiles() {
                 let pos = tile.pos.to_pixel(&self.export_layout);
-                check!(draw_tile_label(&context, &tile.id().base().to_string(), pos, export_scale.tile_label_height()).ok());
+                let mut text = tile.id().base().to_string();
+                if tile.has_flat_tokens() {
+                    text.push('*');
+                }
+                check!(draw_tile_label(&context, &text, pos, export_scale.tile_label_height()).ok());
             }
         }
 

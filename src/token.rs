@@ -13,6 +13,7 @@ use std::str::FromStr;
 
 use serde::{Serialize, Serializer, Deserialize};
 
+use crate::edition::Edition;
 use crate::tile::Terrain;
 
 //----------------------------------------------------------------------------
@@ -159,6 +160,50 @@ impl TokenId {
             TokenId::Finish,
         ];
         TOKENS.iter()
+    }
+
+    /// Edition that this token belongs to.
+    ///
+    /// Each token appears only within a single edition, this is different from
+    /// [TileInfo::editions()](crate::tile::TileInfo::editions).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::TokenId;
+    /// let token = TokenId::Jump(Terrain::Asphalt);
+    /// assert_eq!(token.edition(), Edition::DirtCopilotPack);
+    ///
+    /// let token = TokenId::JokerEntrance;
+    /// assert_eq!(token.edition(), Edition::DirtRx);
+    /// ```
+    pub fn edition(&self) -> Edition {
+        match self {
+            TokenId::Chicane(_) =>
+                Edition::DirtCopilotPack,
+            TokenId::ChicaneWithLimit(_) =>
+                Edition::DirtCopilotPack,
+            TokenId::Jump(_) =>
+                Edition::DirtCopilotPack,
+            TokenId::Water(_) =>
+                Edition::DirtCopilotPack,
+            TokenId::ClimbAscent =>
+                Edition::DirtClimb,
+            TokenId::ClimbDescent =>
+                Edition::DirtClimb,
+            TokenId::Cloud =>
+                Edition::DirtClimb,
+            TokenId::Oxygen(_) =>
+                Edition::DirtClimb,
+            TokenId::JokerEntrance =>
+                Edition::DirtRx,
+            TokenId::JokerExit =>
+                Edition::DirtRx,
+            TokenId::Finish =>
+                Edition::DirtRx,
+        }
     }
 }
 

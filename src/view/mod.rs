@@ -199,7 +199,7 @@ impl TileLabelElement {
         label.set_attribute("x", "0")?;
         label.set_attribute("y", "0")?;
         let mut text = tile.id().base().to_string();
-        if !tile.tokens.is_empty() {
+        if tile.has_flat_tokens() {
             text.push('*');
         }
         label.append_child(&document.create_text_node(&text))?;
