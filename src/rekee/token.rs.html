@@ -406,6 +406,51 @@
 <span id="406">406</span>
 <span id="407">407</span>
 <span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Token which can be added to tiles. Can be used to add effects like a jump or
 //! water hazard area to a track tile. They are also used to indicate entrance
@@ -421,6 +466,7 @@
 
 <span class="kw">use </span>serde::{Serialize, Serializer, Deserialize};
 
+<span class="kw">use </span><span class="kw">crate</span>::edition::Edition;
 <span class="kw">use </span><span class="kw">crate</span>::tile::Terrain;
 
 <span class="comment">//----------------------------------------------------------------------------
@@ -567,6 +613,50 @@
             TokenId::Finish,
         ];
         TOKENS.iter()
+    }
+
+    <span class="doccomment">/// Edition that this token belongs to.
+    ///
+    /// Each token appears only within a single edition, this is different from
+    /// [TileInfo::editions()](crate::tile::TileInfo::editions).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::TokenId;
+    /// let token = TokenId::Jump(Terrain::Asphalt);
+    /// assert_eq!(token.edition(), Edition::DirtCopilotPack);
+    ///
+    /// let token = TokenId::JokerEntrance;
+    /// assert_eq!(token.edition(), Edition::DirtRx);
+    /// ```
+    </span><span class="kw">pub fn </span>edition(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Edition {
+        <span class="kw">match </span><span class="self">self </span>{
+            TokenId::Chicane(<span class="kw">_</span>) =&gt;
+                Edition::DirtCopilotPack,
+            TokenId::ChicaneWithLimit(<span class="kw">_</span>) =&gt;
+                Edition::DirtCopilotPack,
+            TokenId::Jump(<span class="kw">_</span>) =&gt;
+                Edition::DirtCopilotPack,
+            TokenId::Water(<span class="kw">_</span>) =&gt;
+                Edition::DirtCopilotPack,
+            TokenId::ClimbAscent =&gt;
+                Edition::DirtClimb,
+            TokenId::ClimbDescent =&gt;
+                Edition::DirtClimb,
+            TokenId::Cloud =&gt;
+                Edition::DirtClimb,
+            TokenId::Oxygen(<span class="kw">_</span>) =&gt;
+                Edition::DirtClimb,
+            TokenId::JokerEntrance =&gt;
+                Edition::DirtRx,
+            TokenId::JokerExit =&gt;
+                Edition::DirtRx,
+            TokenId::Finish =&gt;
+                Edition::DirtRx,
+        }
     }
 }
 

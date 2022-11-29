@@ -577,6 +577,10 @@
 <span id="577">577</span>
 <span id="578">578</span>
 <span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Supports export of maps as an image.
 //!
@@ -1099,7 +1103,11 @@
                 .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
             <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.map.tiles() {
                 <span class="kw">let </span>pos = tile.pos.to_pixel(<span class="kw-2">&amp;</span><span class="self">self</span>.export_layout);
-                <span class="macro">check!</span>(draw_tile_label(<span class="kw-2">&amp;</span>context, <span class="kw-2">&amp;</span>tile.id().base().to_string(), pos, export_scale.tile_label_height()).ok());
+                <span class="kw">let </span><span class="kw-2">mut </span>text = tile.id().base().to_string();
+                <span class="kw">if </span>tile.has_flat_tokens() {
+                    text.push(<span class="string">&#39;*&#39;</span>);
+                }
+                <span class="macro">check!</span>(draw_tile_label(<span class="kw-2">&amp;</span>context, <span class="kw-2">&amp;</span>text, pos, export_scale.tile_label_height()).ok());
             }
         }
 

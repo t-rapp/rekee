@@ -560,7 +560,7 @@
         label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
         label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>text = tile.id().base().to_string();
-        <span class="kw">if </span>!tile.tokens.is_empty() {
+        <span class="kw">if </span>tile.has_flat_tokens() {
             text.push(<span class="string">&#39;*&#39;</span>);
         }
         label.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text))<span class="question-mark">?</span>;
