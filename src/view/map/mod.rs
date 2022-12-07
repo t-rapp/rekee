@@ -103,6 +103,7 @@ impl Drop for TitleInput {
 struct SelectedHex {
     inner: Element,
     pos: Option<Coordinate>,
+    dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
 }
 
 impl SelectedHex {
@@ -120,7 +121,15 @@ impl SelectedHex {
         hex.set_hidden(true);
         hex.append_child(&poly)?;
 
-        Ok(SelectedHex { inner: hex, pos: None })
+        let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            event.prevent_default();
+            event.stop_propagation();
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
+            nuts::publish(ShowMapDetailEvent);
+        }) as Box<dyn Fn(_)>);
+        hex.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
+
+        Ok(SelectedHex { inner: hex, pos: None, dblclick_cb })
     }
 
     fn pos(&self) -> Option<Coordinate> {
@@ -150,6 +159,13 @@ impl SelectedHex {
 impl AsRef<Element> for SelectedHex {
     fn as_ref(&self) -> &Element {
         &self.inner
+    }
+}
+
+impl Drop for SelectedHex {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("dblclick",
+            self.dblclick_cb.as_ref().unchecked_ref());
     }
 }
 
@@ -354,7 +370,6 @@ pub struct MapView {
     active: ActiveHex,
     tile_labels_visible: bool,
     keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
-    dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -468,14 +483,6 @@ impl MapView {
             keychange_cb.as_ref().unchecked_ref())?;
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
-
-        let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-            event.prevent_default();
-            event.stop_propagation();
-            nuts::send_to::<MapController, _>(SaveSettingsEvent);
-            nuts::publish(ShowMapDetailEvent);
-        }) as Box<dyn Fn(_)>);
-        canvas.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
@@ -614,9 +621,9 @@ impl MapView {
         let mut view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
             title, selected, selected_menu, active, tile_labels_visible,
-            keychange_cb, dblclick_cb, dragged, dragged_mousemove_cb,
-            dragged_mouseup_cb, dragged_mouseleave_cb, document_title,
-            download_button, export_button
+            keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb, document_title, download_button,
+            export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -1010,8 +1017,6 @@ impl Drop for MapView {
             self.keychange_cb.as_ref().unchecked_ref());
         let _ = document.remove_event_listener_with_callback("keyup",
             self.keychange_cb.as_ref().unchecked_ref());
-        let _ = self.canvas.remove_event_listener_with_callback("dblclick",
-            self.dblclick_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mousemove",
             self.dragged_mousemove_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mouseup",
