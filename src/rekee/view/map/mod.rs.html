@@ -1022,6 +1022,11 @@
 <span id="1022">1022</span>
 <span id="1023">1023</span>
 <span id="1024">1024</span>
+<span id="1025">1025</span>
+<span id="1026">1026</span>
+<span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of the map and according event handlers.
 </span><span class="comment">//
@@ -1127,6 +1132,7 @@
 </span><span class="kw">struct </span>SelectedHex {
     inner: Element,
     pos: <span class="prelude-ty">Option</span>&lt;Coordinate&gt;,
+    dblclick_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
 }
 
 <span class="kw">impl </span>SelectedHex {
@@ -1144,7 +1150,15 @@
         hex.set_hidden(<span class="bool-val">true</span>);
         hex.append_child(<span class="kw-2">&amp;</span>poly)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(SelectedHex { inner: hex, pos: <span class="prelude-val">None </span>})
+        <span class="kw">let </span>dblclick_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
+            event.prevent_default();
+            event.stop_propagation();
+            nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
+            nuts::publish(ShowMapDetailEvent);
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        hex.add_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>, dblclick_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(SelectedHex { inner: hex, pos: <span class="prelude-val">None</span>, dblclick_cb })
     }
 
     <span class="kw">fn </span>pos(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Coordinate&gt; {
@@ -1174,6 +1188,13 @@
 <span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>SelectedHex {
     <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
         <span class="kw-2">&amp;</span><span class="self">self</span>.inner
+    }
+}
+
+<span class="kw">impl </span>Drop <span class="kw">for </span>SelectedHex {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>,
+            <span class="self">self</span>.dblclick_cb.as_ref().unchecked_ref());
     }
 }
 
@@ -1378,7 +1399,6 @@
     active: ActiveHex,
     tile_labels_visible: bool,
     keychange_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::KeyboardEvent)&gt;,
-    dblclick_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
     dragged: <span class="prelude-ty">Option</span>&lt;DraggedTile&gt;,
     dragged_mousemove_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
     dragged_mouseup_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
@@ -1492,14 +1512,6 @@
             keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
         document.add_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
             keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>dblclick_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
-            event.prevent_default();
-            event.stop_propagation();
-            nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
-            nuts::publish(ShowMapDetailEvent);
-        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        canvas.add_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>, dblclick_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="comment">// add drag-n-drop event handlers to canvas element
         </span><span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
@@ -1638,9 +1650,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
             title, selected, selected_menu, active, tile_labels_visible,
-            keychange_cb, dblclick_cb, dragged, dragged_mousemove_cb,
-            dragged_mouseup_cb, dragged_mouseleave_cb, document_title,
-            download_button, export_button
+            keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
+            dragged_mouseleave_cb, document_title, download_button,
+            export_button
         };
         view.update_map();
         parent.set_hidden(<span class="bool-val">false</span>);
@@ -2034,8 +2046,6 @@
             <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
         <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
             <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>,
-            <span class="self">self</span>.dblclick_cb.as_ref().unchecked_ref());
         <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mousemove&quot;</span>,
             <span class="self">self</span>.dragged_mousemove_cb.as_ref().unchecked_ref());
         <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseup&quot;</span>,
