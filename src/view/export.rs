@@ -378,13 +378,52 @@ impl ExportView {
         document.fonts().add(&title_font)?;
         let _ = title_font.load();
 
+        // Not all browser + operating system combinations have support for enabling the tabular
+        // number glyph variants by using FontFace::set_feature_settings(). If such support is
+        // available it saves us from downloading an extra font file for tile labels, so we
+        // auto-detect browser support.
+        let font_load_cb = Closure::wrap(Box::new({
+            let canvas = canvas.clone();
+            move |font: JsValue| {
+
+                let context = check!(canvas.get_context("2d").ok().flatten()
+                    .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
+                context.save();
+                context.set_font("bold 16px OverpassTnum, sans-serif");
+                let width_str0 = check!(context.measure_text("0000").ok()).width();
+                let width_str1 = check!(context.measure_text("1111").ok()).width();
+                debug!("label font width 0/1: {:.3}/{:.3}, ratio: {:.3}",
+                    width_str0, width_str1, width_str0 / width_str1);
+                context.restore();
+
+                // compare widths of both numerical sample strings, trigger
+                // load of a replacement font if they differ by more than 20%
+                if (width_str0 - width_str1).abs() > 0.2 * width_str0 {
+                    warn!("Detected missing support for font settings configuration in the Canvas API of this browser. Loading a replacement font instead.");
+
+                    let document = canvas.owner_document().unwrap();
+                    let font = check!(font.dyn_into::<FontFace>().ok());
+                    document.fonts().delete(&font);
+
+                    let label_font = check!(FontFace::new_with_str("OverpassTnum",
+                        "url('overpass+tnum-bold.woff2') format('woff2')").ok());
+                    label_font.set_style("normal");
+                    label_font.set_weight("bold");
+                    check!(document.fonts().add(&label_font).ok());
+                    let _ = label_font.load();
+                }
+            }
+        }) as Box<dyn FnMut(_)>);
+
         let label_font = FontFace::new_with_str("OverpassTnum",
             "url('overpass-bold.woff2') format('woff2')")?;
         label_font.set_style("normal");
         label_font.set_weight("bold");
         label_font.set_feature_settings("\"tnum\" on");
         document.fonts().add(&label_font)?;
-        let _ = label_font.load();
+        let _ = label_font.load()?
+            .then(&font_load_cb);
+        font_load_cb.forget();
 
         Ok(ExportView {
             base_layout, export_layout, export_scale, map, tile_labels_visible,

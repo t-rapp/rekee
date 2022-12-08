@@ -60,6 +60,7 @@ features = [
   'Storage',
   'SvgElement',
   'Text',
+  'TextMetrics',
   'Window',
 ]
 
