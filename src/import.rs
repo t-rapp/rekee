@@ -292,28 +292,36 @@ mod rgt {
             match value {
                 TokenId::ChicaneWithLimit(Terrain::Asphalt) =>
                     Ok(ImportTokenId("asphalt1".into())),
-                TokenId::Chicane(Terrain::Asphalt) =>
-                    Ok(ImportTokenId("asphalt2".into())),
-                TokenId::Water(Terrain::Asphalt) =>
-                    Ok(ImportTokenId("asphalt3".into())),
-                TokenId::Jump(Terrain::Asphalt) =>
-                    Ok(ImportTokenId("asphalt4".into())),
                 TokenId::ChicaneWithLimit(Terrain::Gravel) =>
                     Ok(ImportTokenId("dirt1".into())),
-                TokenId::Chicane(Terrain::Gravel) =>
-                    Ok(ImportTokenId("dirt2".into())),
-                TokenId::Water(Terrain::Gravel) =>
-                    Ok(ImportTokenId("dirt3".into())),
-                TokenId::Jump(Terrain::Gravel) =>
-                    Ok(ImportTokenId("dirt4".into())),
                 TokenId::ChicaneWithLimit(Terrain::Snow) =>
                     Ok(ImportTokenId("ice1".into())),
+                TokenId::ChicaneWithLimit(_) =>
+                    Ok(ImportTokenId("dirt1".into())),
+                TokenId::Chicane(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt2".into())),
+                TokenId::Chicane(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt2".into())),
                 TokenId::Chicane(Terrain::Snow) =>
                     Ok(ImportTokenId("ice2".into())),
+                TokenId::Chicane(_) =>
+                    Ok(ImportTokenId("dirt2".into())),
+                TokenId::Water(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt3".into())),
+                TokenId::Water(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt3".into())),
                 TokenId::Water(Terrain::Snow) =>
                     Ok(ImportTokenId("ice3".into())),
+                TokenId::Water(_) =>
+                    Ok(ImportTokenId("dirt3".into())),
+                TokenId::Jump(Terrain::Asphalt) =>
+                    Ok(ImportTokenId("asphalt4".into())),
+                TokenId::Jump(Terrain::Gravel) =>
+                    Ok(ImportTokenId("dirt4".into())),
                 TokenId::Jump(Terrain::Snow) =>
                     Ok(ImportTokenId("ice4".into())),
+                TokenId::Jump(_) =>
+                    Ok(ImportTokenId("dirt4".into())),
                 TokenId::ClimbAscent =>
                     Ok(ImportTokenId("climbm1".into())),
                 TokenId::ClimbDescent =>
