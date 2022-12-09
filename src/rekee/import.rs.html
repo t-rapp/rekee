@@ -692,6 +692,14 @@
 <span id="692">692</span>
 <span id="693">693</span>
 <span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Import and export of map data.
 </span><span class="comment">//
@@ -986,28 +994,36 @@
             <span class="kw">match </span>value {
                 TokenId::ChicaneWithLimit(Terrain::Asphalt) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt1&quot;</span>.into())),
-                TokenId::Chicane(Terrain::Asphalt) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt2&quot;</span>.into())),
-                TokenId::Water(Terrain::Asphalt) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt3&quot;</span>.into())),
-                TokenId::Jump(Terrain::Asphalt) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt4&quot;</span>.into())),
                 TokenId::ChicaneWithLimit(Terrain::Gravel) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt1&quot;</span>.into())),
-                TokenId::Chicane(Terrain::Gravel) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt2&quot;</span>.into())),
-                TokenId::Water(Terrain::Gravel) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt3&quot;</span>.into())),
-                TokenId::Jump(Terrain::Gravel) =&gt;
-                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt4&quot;</span>.into())),
                 TokenId::ChicaneWithLimit(Terrain::Snow) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice1&quot;</span>.into())),
+                TokenId::ChicaneWithLimit(<span class="kw">_</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt1&quot;</span>.into())),
+                TokenId::Chicane(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt2&quot;</span>.into())),
+                TokenId::Chicane(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt2&quot;</span>.into())),
                 TokenId::Chicane(Terrain::Snow) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice2&quot;</span>.into())),
+                TokenId::Chicane(<span class="kw">_</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt2&quot;</span>.into())),
+                TokenId::Water(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt3&quot;</span>.into())),
+                TokenId::Water(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt3&quot;</span>.into())),
                 TokenId::Water(Terrain::Snow) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice3&quot;</span>.into())),
+                TokenId::Water(<span class="kw">_</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt3&quot;</span>.into())),
+                TokenId::Jump(Terrain::Asphalt) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;asphalt4&quot;</span>.into())),
+                TokenId::Jump(Terrain::Gravel) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt4&quot;</span>.into())),
                 TokenId::Jump(Terrain::Snow) =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;ice4&quot;</span>.into())),
+                TokenId::Jump(<span class="kw">_</span>) =&gt;
+                    <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;dirt4&quot;</span>.into())),
                 TokenId::ClimbAscent =&gt;
                     <span class="prelude-val">Ok</span>(ImportTokenId(<span class="string">&quot;climbm1&quot;</span>.into())),
                 TokenId::ClimbDescent =&gt;
