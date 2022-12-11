@@ -12,8 +12,9 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 use crate::edition::Series;
+use crate::hexagon::{FloatCoordinate, FloatDirection};
 use crate::map::{PlacedToken, Map};
-use crate::tile::*;
+use crate::tile::{Terrain, TileId, TileInfo};
 use crate::token::TokenId;
 use super::*;
 

@@ -42,7 +42,7 @@ use controller::welcome::WelcomeController;
 pub mod edition;
 
 pub mod hexagon;
-use hexagon::*;
+use hexagon::{Coordinate, Direction, Layout, Orientation, Point};
 
 pub mod import;
 
@@ -50,7 +50,7 @@ pub mod import;
 mod logger;
 
 pub mod map;
-use map::*;
+use map::PlacedToken;
 
 mod storage;
 
@@ -59,7 +59,7 @@ pub mod tile;
 use tile::Terrain;
 
 pub mod token;
-use token::*;
+use token::TokenId;
 
 #[macro_use]
 mod view;

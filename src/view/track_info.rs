@@ -13,6 +13,7 @@ use web_sys::{self, Element};
 use crate::check;
 use crate::controller::track_info::*;
 use crate::map::PlacedTile;
+use crate::tile::TileList;
 use super::*;
 
 //----------------------------------------------------------------------------

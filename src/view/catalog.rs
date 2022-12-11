@@ -14,11 +14,17 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::{
+    AppendTileEvent, DragCatalogTileBeginEvent, DragCatalogTileEndEvent,
+    DragCatalogTileMoveEvent, SaveSettingsEvent, UpdateConnectionHintEvent,
+    UpdateSelectedTileEvent
+};
 use crate::controller::catalog::*;
 use crate::controller::catalog_config::ShowCatalogConfigEvent;
 use crate::edition::{Edition, Series};
+use crate::hexagon::Direction;
 use crate::map::Map;
+use crate::tile::{ConnectionHint, TileId, TileInfo, TileList};
 use super::*;
 
 //----------------------------------------------------------------------------

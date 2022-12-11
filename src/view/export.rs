@@ -20,8 +20,9 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, FontFace, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::SaveSettingsEvent;
 use crate::controller::export::*;
+use crate::hexagon::Rect;
 use crate::import;
 use crate::map::{PlacedTile, PlacedToken, Map};
 use super::*;

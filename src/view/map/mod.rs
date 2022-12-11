@@ -12,13 +12,21 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::{
+    AlignCenterEvent, ClearMapEvent, ExportFileEvent, ExportImageEvent,
+    ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
+    RotateMapRightEvent, RotateSelectedTileLeftEvent,
+    RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
+    UpdateSelectedTileEvent, UpdateTileUsageEvent, UpdateTitleEvent
+};
 use crate::controller::map::*;
 use crate::controller::map_config::ShowMapConfigEvent;
 use crate::controller::map_detail::ShowMapDetailEvent;
 use crate::controller::track_info::ShowTrackInfoEvent;
+use crate::hexagon::{Direction, Rect};
 use crate::import;
 use crate::map::{Map, PlacedTile, PlacedToken};
+use crate::tile::{ConnectionHint, TileId};
 use super::*;
 
 pub mod config;

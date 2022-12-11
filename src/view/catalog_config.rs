@@ -11,7 +11,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::UpdateCatalogEditionsEvent;
 use crate::controller::catalog_config::*;
 use crate::edition::{Edition, Series};
 use super::*;

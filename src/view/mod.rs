@@ -14,10 +14,10 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
-use crate::hexagon::*;
+use crate::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Orientation, Point};
 use crate::map::PlacedTile;
 use crate::map::PlacedToken;
-use crate::tile::*;
+use crate::tile::Terrain;
 use crate::token::TokenId;
 
 mod catalog;

@@ -12,7 +12,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Element};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::{SaveSettingsEvent, UpdateCatalogEditionsEvent};
 use crate::controller::welcome::*;
 use crate::edition::{Edition, Series};
 use super::*;

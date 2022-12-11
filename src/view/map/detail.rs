@@ -11,7 +11,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element, Node};
 
 use crate::check;
-use crate::controller::*;
+use crate::controller::UpdateSelectedTileTokensEvent;
 use crate::controller::map_detail::*;
 use super::*;
 use super::polar::PolarCoordinate;
