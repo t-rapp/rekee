@@ -700,6 +700,7 @@
 <span id="700">700</span>
 <span id="701">701</span>
 <span id="702">702</span>
+<span id="703">703</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Import and export of map data.
 </span><span class="comment">//
@@ -714,8 +715,9 @@
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="kw">use </span><span class="kw">crate</span>::edition::Series;
+<span class="kw">use </span><span class="kw">crate</span>::hexagon::{FloatCoordinate, FloatDirection};
 <span class="kw">use </span><span class="kw">crate</span>::map::{PlacedToken, Map};
-<span class="kw">use </span><span class="kw">crate</span>::tile::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::tile::{Terrain, TileId, TileInfo};
 <span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
 

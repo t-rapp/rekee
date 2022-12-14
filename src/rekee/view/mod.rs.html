@@ -375,10 +375,10 @@
 <span class="kw">use </span>wasm_bindgen::JsCast;
 <span class="kw">use </span>web_sys::{<span class="self">self</span>, Document, Element};
 
-<span class="kw">use </span><span class="kw">crate</span>::hexagon::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Orientation, Point};
 <span class="kw">use </span><span class="kw">crate</span>::map::PlacedTile;
 <span class="kw">use </span><span class="kw">crate</span>::map::PlacedToken;
-<span class="kw">use </span><span class="kw">crate</span>::tile::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::tile::Terrain;
 <span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
 
 <span class="kw">mod </span>catalog;

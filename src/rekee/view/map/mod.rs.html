@@ -1027,6 +1027,14 @@
 <span id="1027">1027</span>
 <span id="1028">1028</span>
 <span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of the map and according event handlers.
 </span><span class="comment">//
@@ -1041,13 +1049,21 @@
 <span class="kw">use </span>web_sys::{<span class="self">self</span>, Document, Element};
 
 <span class="kw">use </span><span class="kw">crate</span>::check;
-<span class="kw">use </span><span class="kw">crate</span>::controller::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::{
+    AlignCenterEvent, ClearMapEvent, ExportFileEvent, ExportImageEvent,
+    ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
+    RotateMapRightEvent, RotateSelectedTileLeftEvent,
+    RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
+    UpdateSelectedTileEvent, UpdateTileUsageEvent, UpdateTitleEvent
+};
 <span class="kw">use </span><span class="kw">crate</span>::controller::map::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::controller::map_config::ShowMapConfigEvent;
 <span class="kw">use </span><span class="kw">crate</span>::controller::map_detail::ShowMapDetailEvent;
 <span class="kw">use </span><span class="kw">crate</span>::controller::track_info::ShowTrackInfoEvent;
+<span class="kw">use </span><span class="kw">crate</span>::hexagon::{Direction, Rect};
 <span class="kw">use </span><span class="kw">crate</span>::import;
 <span class="kw">use </span><span class="kw">crate</span>::map::{Map, PlacedTile, PlacedToken};
+<span class="kw">use </span><span class="kw">crate</span>::tile::{ConnectionHint, TileId};
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub mod </span>config;

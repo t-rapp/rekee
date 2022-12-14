@@ -188,7 +188,7 @@
 <span class="kw">pub mod </span>edition;
 
 <span class="kw">pub mod </span>hexagon;
-<span class="kw">use </span>hexagon::<span class="kw-2">*</span>;
+<span class="kw">use </span>hexagon::{Coordinate, Direction, Layout, Orientation, Point};
 
 <span class="kw">pub mod </span>import;
 
@@ -196,7 +196,7 @@
 </span><span class="kw">mod </span>logger;
 
 <span class="kw">pub mod </span>map;
-<span class="kw">use </span>map::<span class="kw-2">*</span>;
+<span class="kw">use </span>map::PlacedToken;
 
 <span class="kw">mod </span>storage;
 
@@ -205,7 +205,7 @@
 <span class="kw">use </span>tile::Terrain;
 
 <span class="kw">pub mod </span>token;
-<span class="kw">use </span>token::<span class="kw-2">*</span>;
+<span class="kw">use </span>token::TokenId;
 
 <span class="attribute">#[macro_use]
 </span><span class="kw">mod </span>view;

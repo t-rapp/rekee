@@ -620,6 +620,7 @@
 <span id="620">620</span>
 <span id="621">621</span>
 <span id="622">622</span>
+<span id="623">623</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Supports export of maps as an image.
 //!
@@ -642,8 +643,9 @@
 <span class="kw">use </span>web_sys::{<span class="self">self</span>, FontFace, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 
 <span class="kw">use </span><span class="kw">crate</span>::check;
-<span class="kw">use </span><span class="kw">crate</span>::controller::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::controller::SaveSettingsEvent;
 <span class="kw">use </span><span class="kw">crate</span>::controller::export::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::hexagon::Rect;
 <span class="kw">use </span><span class="kw">crate</span>::import;
 <span class="kw">use </span><span class="kw">crate</span>::map::{PlacedTile, PlacedToken, Map};
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
