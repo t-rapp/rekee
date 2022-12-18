@@ -289,6 +289,8 @@ impl approx::AbsDiffEq for PlacedToken {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Map {
     title: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    author: String,
     tiles: Vec<PlacedTile>,
     #[serde(default)]
     active_pos: Coordinate,
@@ -300,10 +302,11 @@ impl Map {
     /// Creates a new and empty map.
     pub fn new() -> Self {
         let title = "My Track".to_string();
+        let author = String::new();
         let tiles = Vec::new();
         let active_pos = Coordinate::default();
         let active_dir = Self::default_active_dir();
-        Map { title, tiles, active_pos, active_dir }
+        Map { title, author, tiles, active_pos, active_dir }
     }
 
     /// Map title.
@@ -314,6 +317,16 @@ impl Map {
     /// Updates the map title.
     pub fn set_title(&mut self, title: &str) {
         self.title = title.to_string();
+    }
+
+    /// Map author
+    pub fn author(&self) -> &str {
+        &self.author
+    }
+
+    /// Updates the map author.
+    pub fn set_author(&mut self, author: &str) {
+        self.author = author.to_string();
     }
 
     /// List of all tiles placed on the map.
@@ -805,6 +818,7 @@ mod tests {
     fn map_insert_and_append() {
         let mut map = Map::new();
         map.set_title("Short Track 2");
+        map.set_author("Yahuxo");
 
         map.insert(tile!(102, b), (0, 0).into(), Direction::D);
         assert_eq!(map.active_pos(), Some(Coordinate::new(1, 0)));
@@ -823,6 +837,7 @@ mod tests {
         assert_eq!(map.active_pos(), None);
 
         assert_eq!(map.title(), "Short Track 2");
+        assert_eq!(map.author(), "Yahuxo");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(tile!(102, b, 0), ( 0,  0).into(), Direction::D),
             PlacedTile::new(tile!(104, b, 1), (-1,  0).into(), Direction::A),
@@ -1066,6 +1081,7 @@ mod tests {
 
         let mut map = Map::new();
         map.set_title("Short Track 2");
+        map.set_author("Yahuxo");
         map.insert(tile!(102, b, 0), ( 1, -1).into(), Direction::E);
         map.insert(tile!(104, b, 1), ( 1,  0).into(), Direction::B);
         map.insert(tile!(113, b, 0), ( 1,  1).into(), Direction::E);
@@ -1080,6 +1096,7 @@ mod tests {
         let text = serde_json::to_string_pretty(&map).unwrap();
         assert_eq!(text, indoc!(r#"{
           "title": "Short Track 2",
+          "author": "Yahuxo",
           "tiles": [
             {
               "id": "102b",
@@ -1157,6 +1174,7 @@ mod tests {
 
         let text = indoc!(r#"{
             "title": "Short Track 2",
+            "author": "Yahuxo",
             "tiles": [
                 {"id": "102b",   "q":  1, "r": -1, "dir": 4},
                 {"id": "104b-1", "q":  1, "r":  0, "dir": 1},
@@ -1173,6 +1191,7 @@ mod tests {
         }"#);
         let map: Map = serde_json::from_str(text).unwrap();
         assert_eq!(map.title(), "Short Track 2");
+        assert_eq!(map.author(), "Yahuxo");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E),
             PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B),

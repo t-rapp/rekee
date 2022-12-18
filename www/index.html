@@ -95,16 +95,19 @@
             flex: 3 3 75%;
             overflow: auto;
         }
-        #map-title {
-            width: 50%;
-        }
-        #map-title .input {
+        #map-container .control .input {
             height: 2em;
         }
-        #map-title .input:not(:hover):not(:focus) {
+        #map-container .control .input:not(:hover):not(:focus) {
             background-color: transparent;
             border-color: transparent;
             box-shadow: none;
+        }
+        #map-title {
+            flex: 2 2 70%;
+        }
+        #map-author {
+            flex: 1 1 30%;
         }
         #map-detail-container .modal-content {
             min-width: 960px;
@@ -348,45 +351,48 @@
           </div>
         </article>
         <div class="field is-grouped">
-          <p id="map-title" class="control">
+          <div id="map-title" class="control">
             <input class="input is-medium" type="text" placeholder="Enter a title for your track" title="Track title">
-          </p>
-          <p class="control is-print-hidden">
-            <a id="rotate-map-left-button" class="button" title="Rotate map left">
-              <span class="icon">
-                <svg class="bi" width="16" height="16" fill="currentColor">
-                  <use xlink:href="bootstrap-icons.svg#arrow-counterclockwise"/>
-                </svg>
-              </span>
-            </a>
-          </p>
-          <p class="control is-print-hidden">
-            <a id="rotate-map-right-button" class="button" title="Rotate map right">
-              <span class="icon">
-                <svg class="bi" width="16" height="16" fill="currentColor">
-                  <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
-                </svg>
-              </span>
-            </a>
-          </p>
-          <p class="control is-print-hidden">
-            <a id="align-center-button" class="button" title="Center-align map">
+          </div>
+          <div id="map-author" class="control">
+            <input class="input is-medium" type="text" placeholder="Enter your author name" title="Track author">
+          </div>
+          <div class="control is-print-hidden">
+            <div class="buttons has-addons">
+              <button id="rotate-map-left-button" class="button" title="Rotate map left">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#arrow-counterclockwise"/>
+                  </svg>
+                </span>
+              </button>
+              <button id="rotate-map-right-button" class="button" title="Rotate map right">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#arrow-clockwise"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class="control is-print-hidden">
+            <button id="align-center-button" class="button" title="Center-align map">
               <span class="icon">
                 <svg class="bi" width="16" height="16" fill="currentColor">
                   <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
                 </svg>
               </span>
-            </a>
-          </p>
-          <p class="control is-print-hidden">
-            <a id="track-info-button" class="button" title="Show track info">
+            </button>
+          </div>
+          <div class="control is-print-hidden">
+            <button id="track-info-button" class="button" title="Show track info">
               <span class="icon">
                 <svg class="bi" width="16" height="16" fill="currentColor">
                   <use xlink:href="bootstrap-icons.svg#info-circle"/>
                 </svg>
               </span>
-            </a>
-          </p>
+            </button>
+          </div>
         </div>
         <!-- map elements added here by WASM -->
       </div>

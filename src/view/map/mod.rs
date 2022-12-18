@@ -17,7 +17,8 @@ use crate::controller::{
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
-    UpdateSelectedTileEvent, UpdateTileUsageEvent, UpdateTitleEvent
+    UpdateAuthorEvent, UpdateSelectedTileEvent, UpdateTileUsageEvent,
+    UpdateTitleEvent
 };
 use crate::controller::map::*;
 use crate::controller::map_config::ShowMapConfigEvent;
@@ -100,6 +101,49 @@ impl AsRef<Element> for TitleInput {
 }
 
 impl Drop for TitleInput {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("change",
+            self.change_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct AuthorInput {
+    inner: web_sys::HtmlInputElement,
+    change_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl AuthorInput {
+    fn new(document: &Document) -> Result<Self> {
+        let inner = document.query_selector("#map-author .input")?
+            .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
+            .ok_or("Cannot find map author input element")?;
+
+        let change_cb = Closure::wrap(Box::new(move |event: web_sys::Event| {
+            let input = check!(event.target()
+                .and_then(|target| target.dyn_into::<web_sys::HtmlInputElement>().ok()));
+            let author = input.value();
+            debug!("map author changed: {}", &author);
+            nuts::publish(UpdateAuthorEvent { author });
+        }) as Box<dyn Fn(_)>);
+        inner.add_event_listener_with_callback("change", change_cb.as_ref().unchecked_ref())?;
+
+        Ok(AuthorInput { inner, change_cb })
+    }
+
+    fn set_value(&self, value: &str) {
+        self.inner.set_value(value)
+    }
+}
+
+impl AsRef<Element> for AuthorInput {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for AuthorInput {
     fn drop(&mut self) {
         let _ = self.inner.remove_event_listener_with_callback("change",
             self.change_cb.as_ref().unchecked_ref());
@@ -373,6 +417,7 @@ pub struct MapView {
     tokens: Element,
     labels: Element,
     title: TitleInput,
+    author: AuthorInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
@@ -446,6 +491,9 @@ impl MapView {
 
         let title = TitleInput::new(&document)?;
         title.set_value(map.title());
+
+        let author = AuthorInput::new(&document)?;
+        author.set_value(map.author());
 
         let selected = SelectedHex::new(&document, &layout)?;
         canvas.append_child(selected.as_ref())?;
@@ -628,7 +676,7 @@ impl MapView {
 
         let mut view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
-            title, selected, selected_menu, active, tile_labels_visible,
+            title, author, selected, selected_menu, active, tile_labels_visible,
             keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, document_title, download_button,
             export_button
@@ -787,8 +835,9 @@ impl MapView {
         // update tile label visibility
         self.labels.set_hidden(!self.tile_labels_visible);
 
-        // update title input control
+        // update title and author input controls
         self.title.set_value(self.map.title());
+        self.author.set_value(self.map.author());
 
         // update HTML document title, use original title (application name) as a suffix
         let mut document_title = String::with_capacity(100);
@@ -822,6 +871,13 @@ impl MapView {
         if title != self.map.title() {
             self.map.set_title(title);
             self.update_map();
+        }
+    }
+
+    pub fn update_author(&mut self, author: &str) {
+        if author != self.map.author() {
+            self.map.set_author(author);
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
         }
     }
 

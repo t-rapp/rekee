@@ -70,6 +70,8 @@ mod native {
     struct ImportRoot {
         #[serde(default)]
         title: String,
+        #[serde(default, skip_serializing_if = "String::is_empty")]
+        author: String,
         tiles: Vec<ImportTile>,
     }
 
@@ -120,6 +122,9 @@ mod native {
         if !data.title.is_empty() {
             map.set_title(&data.title);
         }
+        if !data.author.is_empty() {
+            map.set_author(&data.author);
+        }
         for tile in data.tiles {
             let pos = Coordinate::new(tile.q, tile.r);
             let id = tile.id.parse::<TileId>()
@@ -140,6 +145,7 @@ mod native {
     pub fn export(map: &Map) -> Result<String> {
         let mut data = ImportRoot {
             title: map.title().to_string(),
+            author: map.author().to_string(),
             tiles: Vec::with_capacity(map.tiles().len()),
         };
 
@@ -184,6 +190,8 @@ mod rgt {
         path: String,
         #[serde(rename = "Name", default)]
         title: String,
+        #[serde(rename = "Author", default, skip_serializing_if = "String::is_empty")]
+        author: String,
         #[serde(rename = "Tuiles")]
         tiles: Vec<ImportTile>,
         #[serde(rename = "lowResWidth", default)]
@@ -356,6 +364,9 @@ mod rgt {
         if !data.title.is_empty() {
             map.set_title(&data.title);
         }
+        if !data.author.is_empty() {
+            map.set_author(&data.author);
+        }
         for tile in data.tiles {
             // convert from offset to axial coordinates
             let q = -tile.x - ((tile.y & 1) + tile.y) / 2;
@@ -382,6 +393,7 @@ mod rgt {
         let mut data = ImportRoot {
             path: "C:\\Applications\\RallymanGT Track Editor\\My Tracks".to_string(),
             title: map.title().to_string(),
+            author: map.author().to_string(),
             tiles: Vec::with_capacity(map.tiles().len()),
             low_res_width: 2480,
             low_res_height: 1748,
@@ -531,6 +543,7 @@ mod tests {
         let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
+        assert_eq!(map.author(), "Yahuxo");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
             PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
@@ -550,6 +563,7 @@ mod tests {
     fn export_native_short_track() {
         let mut map = Map::new();
         map.set_title("ShortTrack2");
+        map.set_author("Yahuxo");
         map.insert(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A);
         map.insert(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C);
         map.insert(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A);
@@ -563,7 +577,7 @@ mod tests {
         map.insert(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D);
         let data = export_native(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"title":"ShortTrack2","tiles":[{"q":0,"r":1,"id":"102b","dir":0},{"q":1,"r":1,"id":"106b-2","dir":2},{"q":0,"r":0,"id":"116b-2","dir":0},{"q":1,"r":0,"id":"117b-2","dir":2},{"q":2,"r":-1,"id":"111b-2","dir":5},{"q":-1,"r":0,"id":"125b-1","dir":0},{"q":2,"r":0,"id":"112b-1","dir":1},{"q":-1,"r":-1,"id":"128b","dir":3},{"q":-2,"r":0,"id":"138b-1","dir":3},{"q":-1,"r":1,"id":"104b-2","dir":0},{"q":-2,"r":1,"id":"105b-1","dir":3}]}"#);
+        assert_eq!(data, r#"{"title":"ShortTrack2","author":"Yahuxo","tiles":[{"q":0,"r":1,"id":"102b","dir":0},{"q":1,"r":1,"id":"106b-2","dir":2},{"q":0,"r":0,"id":"116b-2","dir":0},{"q":1,"r":0,"id":"117b-2","dir":2},{"q":2,"r":-1,"id":"111b-2","dir":5},{"q":-1,"r":0,"id":"125b-1","dir":0},{"q":2,"r":0,"id":"112b-1","dir":1},{"q":-1,"r":-1,"id":"128b","dir":3},{"q":-2,"r":0,"id":"138b-1","dir":3},{"q":-1,"r":1,"id":"104b-2","dir":0},{"q":-2,"r":1,"id":"105b-1","dir":3}]}"#);
     }
 
     #[test]
@@ -572,6 +586,7 @@ mod tests {
         let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "Chicane Example 01");
+        assert_eq!(map.author(), "Holy Grail Games");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(202, 1, 0), (1, 0).into(), Direction::A),
             PlacedTile::with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
@@ -584,6 +599,7 @@ mod tests {
         let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "Chicane Example 02");
+        assert_eq!(map.author(), "Holy Grail Games");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(202, 1, 0), (0, 0).into(), Direction::F),
             PlacedTile::with_tokens(TileId::new(205, 1, 0), (-1,  1).into(), Direction::F, vec![
@@ -597,6 +613,7 @@ mod tests {
     fn export_rgt_chicane_example() {
         let mut map = Map::new();
         map.set_title("Chicane Example 01");
+        map.set_author("Holy Grail Games");
         map.insert(TileId::new(202, 1, 0), (1, 0).into(), Direction::A);
         map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::A, vec![
             PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
@@ -604,10 +621,11 @@ mod tests {
         ]);
         let data = export_rgt(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 01","Tuiles":[{"X":54,"Y":52,"Orientation":0,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":0,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 01","Author":"Holy Grail Games","Tuiles":[{"X":54,"Y":52,"Orientation":0,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":0,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
 
         let mut map = Map::new();
         map.set_title("Chicane Example 02");
+        map.set_author("Holy Grail Games");
         map.insert(TileId::new(202, 1, 0), (1, -1).into(), Direction::F);
         map.insert_with_tokens(TileId::new(205, 1, 0), (0, 0).into(), Direction::F, vec![
             PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (0.0, 0.0).into(), FloatDirection(3.0)),
@@ -615,7 +633,7 @@ mod tests {
         ]);
         let data = export_rgt(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 02","Tuiles":[{"X":54,"Y":51,"Orientation":5,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":5,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"Chicane Example 02","Author":"Holy Grail Games","Tuiles":[{"X":54,"Y":51,"Orientation":5,"TuileId":"202A"},{"X":55,"Y":52,"Orientation":5,"TuileId":"205A","Tokens":[{"X":0.0,"Y":0.0,"Orientation":180.0,"TokenId":"dirt1"},{"X":-0.5715768,"Y":0.0,"Orientation":0.0,"TokenId":"dirt2"}]}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
@@ -624,6 +642,7 @@ mod tests {
         let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
+        assert_eq!(map.author(), "Yahuxo");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
             PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
@@ -643,6 +662,7 @@ mod tests {
     fn export_rgt_short_track() {
         let mut map = Map::new();
         map.set_title("ShortTrack2");
+        map.set_author("Yahuxo");
         map.insert(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A);
         map.insert(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C);
         map.insert(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A);
@@ -656,7 +676,7 @@ mod tests {
         map.insert(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D);
         let data = export_rgt(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#);
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Author":"Yahuxo","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
@@ -665,12 +685,14 @@ mod tests {
         let native_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(native_map.title(), "ShortTrack2");
+        assert_eq!(native_map.author(), "Yahuxo");
         assert_eq!(native_map.tiles().len(), 11);
 
         let data = include_str!("tests/short-track2.rgt");
         let rgt_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(rgt_map.title(), native_map.title());
+        assert_eq!(rgt_map.author(), native_map.author());
         assert_abs_diff_eq!(rgt_map.tiles(), native_map.tiles());
 
         let data = "{}";
@@ -683,6 +705,7 @@ mod tests {
         let map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "RX Finland");
+        assert_eq!(map.author(), "");
         assert_eq!(map.tiles().len(), 16);
 
         let data = export_rgt(&map)
