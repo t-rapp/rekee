@@ -1191,6 +1191,25 @@
 <span id="1191">1191</span>
 <span id="1192">1192</span>
 <span id="1193">1193</span>
+<span id="1194">1194</span>
+<span id="1195">1195</span>
+<span id="1196">1196</span>
+<span id="1197">1197</span>
+<span id="1198">1198</span>
+<span id="1199">1199</span>
+<span id="1200">1200</span>
+<span id="1201">1201</span>
+<span id="1202">1202</span>
+<span id="1203">1203</span>
+<span id="1204">1204</span>
+<span id="1205">1205</span>
+<span id="1206">1206</span>
+<span id="1207">1207</span>
+<span id="1208">1208</span>
+<span id="1209">1209</span>
+<span id="1210">1210</span>
+<span id="1211">1211</span>
+<span id="1212">1212</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Map of tiles within a hexagon grid.
 </span><span class="comment">//
@@ -1482,6 +1501,8 @@
 </span><span class="attribute">#[derive(Debug, Clone, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>Map {
     title: String,
+    <span class="attribute">#[serde(default, skip_serializing_if = <span class="string">&quot;String::is_empty&quot;</span>)]
+    </span>author: String,
     tiles: Vec&lt;PlacedTile&gt;,
     <span class="attribute">#[serde(default)]
     </span>active_pos: Coordinate,
@@ -1493,10 +1514,11 @@
     <span class="doccomment">/// Creates a new and empty map.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>title = <span class="string">&quot;My Track&quot;</span>.to_string();
+        <span class="kw">let </span>author = String::new();
         <span class="kw">let </span>tiles = Vec::new();
         <span class="kw">let </span>active_pos = Coordinate::default();
         <span class="kw">let </span>active_dir = <span class="self">Self</span>::default_active_dir();
-        Map { title, tiles, active_pos, active_dir }
+        Map { title, author, tiles, active_pos, active_dir }
     }
 
     <span class="doccomment">/// Map title.
@@ -1507,6 +1529,16 @@
     <span class="doccomment">/// Updates the map title.
     </span><span class="kw">pub fn </span>set_title(<span class="kw-2">&amp;mut </span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) {
         <span class="self">self</span>.title = title.to_string();
+    }
+
+    <span class="doccomment">/// Map author
+    </span><span class="kw">pub fn </span>author(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.author
+    }
+
+    <span class="doccomment">/// Updates the map author.
+    </span><span class="kw">pub fn </span>set_author(<span class="kw-2">&amp;mut </span><span class="self">self</span>, author: <span class="kw-2">&amp;</span>str) {
+        <span class="self">self</span>.author = author.to_string();
     }
 
     <span class="doccomment">/// List of all tiles placed on the map.
@@ -1998,6 +2030,7 @@
     </span><span class="kw">fn </span>map_insert_and_append() {
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
+        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
 
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::D);
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">Some</span>(Coordinate::new(<span class="number">1</span>, <span class="number">0</span>)));
@@ -2016,6 +2049,7 @@
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">None</span>);
 
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::D),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A),
@@ -2259,6 +2293,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
+        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E);
         map.insert(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B);
         map.insert(<span class="macro">tile!</span>(<span class="number">113</span>, b, <span class="number">0</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::E);
@@ -2273,6 +2308,7 @@
         <span class="kw">let </span>text = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>map).unwrap();
         <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#&quot;{
           &quot;title&quot;: &quot;Short Track 2&quot;,
+          &quot;author&quot;: &quot;Yahuxo&quot;,
           &quot;tiles&quot;: [
             {
               &quot;id&quot;: &quot;102b&quot;,
@@ -2350,6 +2386,7 @@
 
         <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#&quot;{
             &quot;title&quot;: &quot;Short Track 2&quot;,
+            &quot;author&quot;: &quot;Yahuxo&quot;,
             &quot;tiles&quot;: [
                 {&quot;id&quot;: &quot;102b&quot;,   &quot;q&quot;:  1, &quot;r&quot;: -1, &quot;dir&quot;: 4},
                 {&quot;id&quot;: &quot;104b-1&quot;, &quot;q&quot;:  1, &quot;r&quot;:  0, &quot;dir&quot;: 1},
@@ -2366,6 +2403,7 @@
         }&quot;#</span>);
         <span class="kw">let </span>map: Map = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B),

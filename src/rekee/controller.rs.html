@@ -811,6 +811,15 @@
 <span id="811">811</span>
 <span id="812">812</span>
 <span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Definition and distribution of user events.
 //!
@@ -870,6 +879,10 @@
 
 <span class="kw">pub struct </span>UpdateTitleEvent {
     <span class="kw">pub </span>title: String,
+}
+
+<span class="kw">pub struct </span>UpdateAuthorEvent {
+    <span class="kw">pub </span>author: String,
 }
 
 <span class="kw">pub struct </span>UpdateBackgroundGridEvent {
@@ -1083,6 +1096,7 @@
             activity.subscribe(MapController::rotate_map_left);
             activity.subscribe(MapController::rotate_map_right);
             activity.subscribe(MapController::update_title);
+            activity.subscribe(MapController::update_author);
             activity.subscribe(MapController::update_background_grid);
             activity.subscribe(MapController::update_tile_labels);
             activity.subscribe(MapController::toggle_tile_labels);
@@ -1144,6 +1158,10 @@
 
         <span class="kw">fn </span>update_title(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateTitleEvent) {
             <span class="self">self</span>.view.update_title(<span class="kw-2">&amp;</span>event.title);
+        }
+
+        <span class="kw">fn </span>update_author(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateAuthorEvent) {
+            <span class="self">self</span>.view.update_author(<span class="kw-2">&amp;</span>event.author);
         }
 
         <span class="kw">fn </span>update_background_grid(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateBackgroundGridEvent) {

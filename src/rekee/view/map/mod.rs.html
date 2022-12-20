@@ -1035,6 +1035,62 @@
 <span id="1035">1035</span>
 <span id="1036">1036</span>
 <span id="1037">1037</span>
+<span id="1038">1038</span>
+<span id="1039">1039</span>
+<span id="1040">1040</span>
+<span id="1041">1041</span>
+<span id="1042">1042</span>
+<span id="1043">1043</span>
+<span id="1044">1044</span>
+<span id="1045">1045</span>
+<span id="1046">1046</span>
+<span id="1047">1047</span>
+<span id="1048">1048</span>
+<span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of the map and according event handlers.
 </span><span class="comment">//
@@ -1054,7 +1110,8 @@
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
-    UpdateSelectedTileEvent, UpdateTileUsageEvent, UpdateTitleEvent
+    UpdateAuthorEvent, UpdateSelectedTileEvent, UpdateTileUsageEvent,
+    UpdateTitleEvent
 };
 <span class="kw">use </span><span class="kw">crate</span>::controller::map::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::controller::map_config::ShowMapConfigEvent;
@@ -1137,6 +1194,49 @@
 }
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>TitleInput {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;change&quot;</span>,
+            <span class="self">self</span>.change_cb.as_ref().unchecked_ref());
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+
+</span><span class="kw">struct </span>AuthorInput {
+    inner: web_sys::HtmlInputElement,
+    change_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
+}
+
+<span class="kw">impl </span>AuthorInput {
+    <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>inner = document.query_selector(<span class="string">&quot;#map-author .input&quot;</span>)<span class="question-mark">?
+            </span>.and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
+            .ok_or(<span class="string">&quot;Cannot find map author input element&quot;</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>change_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::Event| {
+            <span class="kw">let </span>input = <span class="macro">check!</span>(event.target()
+                .and_then(|target| target.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok()));
+            <span class="kw">let </span>author = input.value();
+            <span class="macro">debug!</span>(<span class="string">&quot;map author changed: {}&quot;</span>, <span class="kw-2">&amp;</span>author);
+            nuts::publish(UpdateAuthorEvent { author });
+        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
+        inner.add_event_listener_with_callback(<span class="string">&quot;change&quot;</span>, change_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(AuthorInput { inner, change_cb })
+    }
+
+    <span class="kw">fn </span>set_value(<span class="kw-2">&amp;</span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>str) {
+        <span class="self">self</span>.inner.set_value(value)
+    }
+}
+
+<span class="kw">impl </span>AsRef&lt;Element&gt; <span class="kw">for </span>AuthorInput {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Element {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
+    }
+}
+
+<span class="kw">impl </span>Drop <span class="kw">for </span>AuthorInput {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;change&quot;</span>,
             <span class="self">self</span>.change_cb.as_ref().unchecked_ref());
@@ -1410,6 +1510,7 @@
     tokens: Element,
     labels: Element,
     title: TitleInput,
+    author: AuthorInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
@@ -1483,6 +1584,9 @@
 
         <span class="kw">let </span>title = TitleInput::new(<span class="kw-2">&amp;</span>document)<span class="question-mark">?</span>;
         title.set_value(map.title());
+
+        <span class="kw">let </span>author = AuthorInput::new(<span class="kw-2">&amp;</span>document)<span class="question-mark">?</span>;
+        author.set_value(map.author());
 
         <span class="kw">let </span>selected = SelectedHex::new(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>;
         canvas.append_child(selected.as_ref())<span class="question-mark">?</span>;
@@ -1665,7 +1769,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
-            title, selected, selected_menu, active, tile_labels_visible,
+            title, author, selected, selected_menu, active, tile_labels_visible,
             keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
             dragged_mouseleave_cb, document_title, download_button,
             export_button
@@ -1824,8 +1928,9 @@
         <span class="comment">// update tile label visibility
         </span><span class="self">self</span>.labels.set_hidden(!<span class="self">self</span>.tile_labels_visible);
 
-        <span class="comment">// update title input control
+        <span class="comment">// update title and author input controls
         </span><span class="self">self</span>.title.set_value(<span class="self">self</span>.map.title());
+        <span class="self">self</span>.author.set_value(<span class="self">self</span>.map.author());
 
         <span class="comment">// update HTML document title, use original title (application name) as a suffix
         </span><span class="kw">let </span><span class="kw-2">mut </span>document_title = String::with_capacity(<span class="number">100</span>);
@@ -1859,6 +1964,13 @@
         <span class="kw">if </span>title != <span class="self">self</span>.map.title() {
             <span class="self">self</span>.map.set_title(title);
             <span class="self">self</span>.update_map();
+        }
+    }
+
+    <span class="kw">pub fn </span>update_author(<span class="kw-2">&amp;mut </span><span class="self">self</span>, author: <span class="kw-2">&amp;</span>str) {
+        <span class="kw">if </span>author != <span class="self">self</span>.map.author() {
+            <span class="self">self</span>.map.set_author(author);
+            nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
         }
     }
 
