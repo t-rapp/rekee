@@ -31,6 +31,11 @@ use super::*;
 
 const PADDING: i32 = 2;
 
+const BACKGROUND_COLOR: &str = "#FFF";
+const MAP_TITLE_COLOR: &str = "#444";
+const MISSING_IMAGE_COLOR: &str = "#EEE";
+const TILE_LABEL_COLOR: &str = "#444";
+
 fn draw_tile_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlImageElement,
     pos: Point, size: Point, angle: f32) -> Result<()>
 {
@@ -71,7 +76,7 @@ fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, pos: Point, s
     context.set_font(&format!("bold {}px Overpass, sans-serif", height));
     context.set_text_align("center");
     context.set_text_baseline("middle");
-    context.set_fill_style(&JsValue::from_str("#EEE"));
+    context.set_fill_style(&JsValue::from_str(MISSING_IMAGE_COLOR));
     context.fill_text("?", pos_x, pos_y)?;
     context.restore();
 
@@ -88,9 +93,9 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, text: &str, pos:
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
     context.set_miter_limit(2.0);
-    context.set_stroke_style(&JsValue::from_str("#FFF"));
+    context.set_stroke_style(&JsValue::from_str(BACKGROUND_COLOR));
     context.stroke_text(text, pos_x, pos_y)?;
-    context.set_fill_style(&JsValue::from_str("#444"));
+    context.set_fill_style(&JsValue::from_str(TILE_LABEL_COLOR));
     context.fill_text(text, pos_x, pos_y)?;
     context.restore();
 
@@ -493,14 +498,14 @@ impl ExportView {
 
         context.save();
         // draw background color
-        context.set_fill_style(&JsValue::from_str("#FFF"));
+        context.set_fill_style(&JsValue::from_str(BACKGROUND_COLOR));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
         // draw map title
         if has_title {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
             context.set_text_baseline("top");
-            context.set_fill_style(&JsValue::from_str("#444"));
+            context.set_fill_style(&JsValue::from_str(MAP_TITLE_COLOR));
             check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
         }
         context.restore();
