@@ -33,6 +33,8 @@ const PADDING: i32 = 2;
 
 const BACKGROUND_COLOR: &str = "#FFF";
 const MAP_TITLE_COLOR: &str = "#444";
+const MAP_AUTHOR_COLOR: &str = "#444";
+const MAP_PREPOSITION_COLOR: &str = "#666";
 const MISSING_IMAGE_COLOR: &str = "#EEE";
 const TILE_LABEL_COLOR: &str = "#444";
 
@@ -121,6 +123,15 @@ impl ExportScale {
             ExportScale::Medium => 24,
             ExportScale::Large => 30,
             ExportScale::ExtraLarge => 40,
+        }
+    }
+
+    const fn author_height(&self) -> i32 {
+        match self {
+            ExportScale::Small => 16,
+            ExportScale::Medium => 20,
+            ExportScale::Large => 24,
+            ExportScale::ExtraLarge => 32,
         }
     }
 
@@ -482,6 +493,8 @@ impl ExportView {
 
         let mut header_area = Rect::new(0.0, 0.0, 0.0, 0.0);
         let mut header_baseline = 0.0_f64;
+        let mut author_width = 0_i32;
+        let preposition_text = " by ";
 
         let title_text = if !map.title().is_empty() {
             Some(map.title().to_string())
@@ -495,10 +508,30 @@ impl ExportView {
             let metrics = check!(context.measure_text(title_text).ok());
             context.restore();
 
-            header_area.width = metrics.width() as f32;
-            header_area.height = export_scale.title_height() as f32;
+            header_area.width += metrics.width() as f32;
+            header_area.height = header_area.height.max(export_scale.title_height() as f32);
             header_baseline = header_baseline.max(metrics.actual_bounding_box_ascent());
         }
+
+        let author_text = if !map.author().is_empty() {
+            Some(map.author().to_string())
+        } else {
+            None
+        };
+        if let Some(ref author_text) = author_text {
+            // measure width of the author text
+            context.save();
+            context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.author_height()));
+            let metrics = check!(context.measure_text(author_text).ok());
+            let preposition_width = check!(context.measure_text(preposition_text).ok()).width() as f32;
+            context.restore();
+
+            header_area.width += metrics.width() as f32 + preposition_width;
+            header_area.height = header_area.height.max(export_scale.author_height() as f32);
+            header_baseline = header_baseline.max(metrics.actual_bounding_box_ascent());
+            author_width = metrics.width().ceil() as i32;
+        }
+
         header_area.width = header_area.width.ceil();
         header_area.height = header_area.height.ceil();
 
@@ -526,12 +559,21 @@ impl ExportView {
         // draw background color
         context.set_fill_style(&JsValue::from_str(BACKGROUND_COLOR));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
-        // draw map title
+        // draw map title text
         if let Some(ref title_text) = title_text {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
             context.set_fill_style(&JsValue::from_str(MAP_TITLE_COLOR));
-            check!(context.fill_text(&title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
+            check!(context.fill_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
+        }
+        // draw map author text
+        if let Some(ref author_text) = author_text {
+            context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.author_height()));
+            context.set_text_align("right");
+            context.set_fill_style(&JsValue::from_str(MAP_AUTHOR_COLOR));
+            check!(context.fill_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
+            context.set_fill_style(&JsValue::from_str(MAP_PREPOSITION_COLOR));
+            check!(context.fill_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         context.restore();
 
