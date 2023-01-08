@@ -466,6 +466,9 @@ impl ExportView {
         let export_layout = self.base_layout
             .with_size(self.base_layout.size() * f32::from(export_scale));
 
+        let context = check!(self.canvas.get_context("2d").ok().flatten()
+            .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
+
         // calculate rectangular map area that is covered with tiles
         let mut map_area = Rect::new(f32::NAN, f32::NAN, 0.0, 0.0);
         for tile in map.tiles() {
@@ -477,36 +480,58 @@ impl ExportView {
         map_area.height = map_area.height.ceil();
         debug!("map area: {:?}, layout origin: {:?}", map_area, export_layout.origin());
 
-        let width = map_area.width as i32 + 2 * PADDING;
+        let mut header_area = Rect::new(0.0, 0.0, 0.0, 0.0);
+        let mut header_baseline = 0.0_f64;
+
+        let title_text = if !map.title().is_empty() {
+            Some(map.title().to_string())
+        } else {
+            None
+        };
+        if let Some(ref title_text) = title_text {
+            // measure width of the title text
+            context.save();
+            context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
+            let metrics = check!(context.measure_text(title_text).ok());
+            context.restore();
+
+            header_area.width = metrics.width() as f32;
+            header_area.height = export_scale.title_height() as f32;
+            header_baseline = header_baseline.max(metrics.actual_bounding_box_ascent());
+        }
+        header_area.width = header_area.width.ceil();
+        header_area.height = header_area.height.ceil();
+
+        let width = f32::max(map_area.width, header_area.width) as i32 + 2 * PADDING;
         let mut height = map_area.height as i32 + 2 * PADDING;
-        let has_title = !map.title().is_empty();
-        if has_title {
-            height = height + export_scale.title_height() + PADDING;
+        if header_area.height > 0.0 {
+            height += header_area.height as i32 + PADDING;
         }
         check!(self.canvas.set_attribute("width", &width.to_string()).ok());
         check!(self.canvas.set_attribute("height", &height.to_string()).ok());
 
         let mut origin = export_layout.origin() - Point(map_area.left, map_area.top) +
             Point(PADDING as f32, PADDING as f32);
-        if has_title {
-            origin = origin + Point(0.0, (export_scale.title_height() + PADDING) as f32);
+        if header_area.width > map_area.width {
+            // center-align map with title text
+            origin = origin + Point((header_area.width - map_area.width) / 2.0, 0.0);
+        }
+        if header_area.height > 0.0 {
+            // move map below title text
+            origin = origin + Point(0.0, header_area.height + PADDING as f32);
         }
         let export_layout = export_layout.with_origin(origin);
-
-        let context = check!(self.canvas.get_context("2d").ok().flatten()
-            .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
 
         context.save();
         // draw background color
         context.set_fill_style(&JsValue::from_str(BACKGROUND_COLOR));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
         // draw map title
-        if has_title {
+        if let Some(ref title_text) = title_text {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
-            context.set_text_baseline("top");
             context.set_fill_style(&JsValue::from_str(MAP_TITLE_COLOR));
-            check!(context.fill_text(map.title(), f64::from(PADDING), f64::from(PADDING)).ok());
+            check!(context.fill_text(&title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         context.restore();
 
