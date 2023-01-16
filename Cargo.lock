@@ -85,9 +85,9 @@ checksum = "de140f855243e190552367bac713a5e7092966db4b79bf5aff2ef1bddebadcd9"
 
 [[package]]
 name = "once_cell"
-version = "1.17.0"
+version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
+checksum = "2f7254b99e31cad77da24b08ebf628882739a608578bb1bcdfc1f9c21260d7c0"
 
 [[package]]
 name = "proc-macro2"
