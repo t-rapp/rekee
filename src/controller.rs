@@ -71,6 +71,10 @@ pub struct UpdateExportScaleEvent {
     pub scale: Option<ExportScale>,
 }
 
+pub struct UpdateExportHeaderEvent {
+    pub visible: bool,
+}
+
 pub struct UpdateTileLabelsEvent {
     pub visible: bool,
 }
@@ -712,6 +716,7 @@ pub mod export {
             activity.subscribe(ExportController::load_settings);
             activity.subscribe(ExportController::save_settings);
             activity.subscribe(ExportController::update_export_scale);
+            activity.subscribe(ExportController::update_export_header);
             activity.subscribe_domained(ExportController::export_image);
         }
 
@@ -730,6 +735,10 @@ pub mod export {
 
         fn update_export_scale(&mut self, event: &UpdateExportScaleEvent) {
             self.view.update_export_scale(event.scale);
+        }
+
+        fn update_export_header(&mut self, event: &UpdateExportHeaderEvent) {
+            self.view.update_export_header(event.visible);
         }
 
         fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {

@@ -351,6 +351,7 @@ impl Drop for TokenImage {
 #[serde(default)]
 pub struct ExportSettings {
     pub export_scale: Option<ExportScale>,
+    pub header_visible: bool,
 }
 
 //----------------------------------------------------------------------------
@@ -362,6 +363,7 @@ pub struct ExportView {
     export_layout: Layout,
     export_scale: Option<ExportScale>,
     map: Map,
+    header_visible: bool,
     tile_labels_visible: bool,
     tile_images: Vec<TileImage>,
     token_images: Vec<TokenImage>,
@@ -375,6 +377,7 @@ impl ExportView {
         let export_layout = layout.clone();
         let export_scale = None;
         let map = Map::new();
+        let header_visible = true;
         let tile_labels_visible = true;
         let tile_images = Vec::new();
         let token_images = Vec::new();
@@ -444,22 +447,29 @@ impl ExportView {
         font_load_cb.forget();
 
         Ok(ExportView {
-            base_layout, export_layout, export_scale, map, tile_labels_visible,
-            tile_images, token_images, canvas, anchor
+            base_layout, export_layout, export_scale, map, header_visible,
+            tile_labels_visible, tile_images, token_images, canvas, anchor
         })
     }
 
     pub fn load_settings(&mut self, settings: &ExportSettings) {
         self.export_scale = settings.export_scale;
+        self.header_visible = settings.header_visible;
     }
 
     pub fn save_settings(&mut self) -> ExportSettings {
         let export_scale = self.export_scale;
-        ExportSettings { export_scale }
+        let header_visible = self.header_visible;
+        ExportSettings { export_scale, header_visible }
     }
 
     pub fn update_export_scale(&mut self, scale: Option<ExportScale>) {
         self.export_scale = scale;
+        nuts::send_to::<ExportController, _>(SaveSettingsEvent);
+    }
+
+    pub fn update_export_header(&mut self, visible: bool) {
+        self.header_visible = visible;
         nuts::send_to::<ExportController, _>(SaveSettingsEvent);
     }
 
@@ -497,7 +507,7 @@ impl ExportView {
         let mut author_width = 0_i32;
         let preposition_text = " by ";
 
-        let title_text = if !map.title().is_empty() {
+        let title_text = if self.header_visible && !map.title().is_empty() {
             Some(map.title().to_string())
         } else {
             None
@@ -514,7 +524,7 @@ impl ExportView {
             header_baseline = header_baseline.max(metrics.actual_bounding_box_ascent());
         }
 
-        let author_text = if !map.author().is_empty() {
+        let author_text = if self.header_visible && !map.author().is_empty() {
             Some(map.author().to_string())
         } else {
             None
