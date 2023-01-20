@@ -578,6 +578,26 @@ impl Iterator for GroupByDangerLevel {
 
 //----------------------------------------------------------------------------
 
+/// Count information for a specific base tile.
+///
+/// This struct is created by the [`tile_summary`] method on [`TileList`].
+/// See its documentation for more.
+///
+/// [`tile_summary`]: TileList::tile_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TileSummary {
+    pub tile: TileId,
+    pub count: u32,
+}
+
+impl TileSummary {
+    const fn new(tile: TileId, count: u32) -> Self {
+        TileSummary { tile, count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Edition and tile count information for a specific edition.
 ///
 /// This struct is created by the [`edition_summary`] method on [`TileList`].
@@ -774,6 +794,25 @@ pub trait TileList {
     /// ```
     fn group_by_danger_level(&self) -> GroupByDangerLevel;
 
+    /// Returns a summary about the tiles that are necessary to build the
+    /// current list of tiles.
+    ///
+    /// For each base tile the entry contains the number of tile instances that
+    /// are included in the current list of tiles. The returned array is always
+    /// sorted by tile number.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(103, a, 1), tile!(103, a, 2), tile!(124, a)];
+    /// for row in tiles.tile_summary() {
+    ///     println!("{}x tile {}", row.count, row.tile);
+    /// }
+    /// ```
+    fn tile_summary(&self) -> Vec<TileSummary>;
+
     /// Returns a summary about the editions that are necessary to build the
     /// current list of tiles.
     ///
@@ -937,6 +976,21 @@ impl<T: AsRef<TileId> + Clone> TileList for [T] {
 
     fn group_by_danger_level(&self) -> GroupByDangerLevel {
         GroupByDangerLevel::new(self)
+    }
+
+    fn tile_summary(&self) -> Vec<TileSummary> {
+        let mut summary = BTreeMap::new();
+        for tile in self.iter() {
+            let base_tile = tile.as_ref().base();
+            let entry = summary.entry(base_tile).or_insert(0);
+            *entry += 1;
+        }
+        let summary: Vec<_> = summary.iter()
+            .map(|(&tile, &count)|
+                TileSummary::new(tile, count)
+            )
+            .collect();
+        summary
     }
 }
 
@@ -1942,6 +1996,26 @@ mod tests {
         let text = r#""a-1""#;
         let result: Result<TileId, _> = serde_json::from_str(text);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn tile_list_summary() {
+        let tiles: &[TileId] = &[][..];
+        let summary = tiles.tile_summary();
+        assert_eq!(summary, vec![]);
+
+        let tiles = vec![tile!(101)];
+        let summary = tiles.tile_summary();
+        assert_eq!(summary, vec![
+            TileSummary::new(tile!(101), 1),
+        ]);
+
+        let tiles = vec![tile!(101), tile!(103, a, 1), tile!(103, a, 2)];
+        let summary = tiles.tile_summary();
+        assert_eq!(summary, vec![
+            TileSummary::new(tile!(101), 1),
+            TileSummary::new(tile!(103, a), 2),
+        ]);
     }
 
     #[test]
