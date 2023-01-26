@@ -288,6 +288,7 @@ impl approx::AbsDiffEq for PlacedToken {
 /// Map for storing track tiles.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Map {
+    #[serde(default)]
     title: String,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     author: String,
@@ -301,7 +302,7 @@ pub struct Map {
 impl Map {
     /// Creates a new and empty map.
     pub fn new() -> Self {
-        let title = "My Track".to_string();
+        let title = String::new();
         let author = String::new();
         let tiles = Vec::new();
         let active_pos = Coordinate::default();
@@ -1070,7 +1071,7 @@ mod tests {
         let map = Map::new();
         let text = serde_json::to_string_pretty(&map).unwrap();
         assert_eq!(text, indoc!(r#"{
-          "title": "My Track",
+          "title": "",
           "tiles": [],
           "active_pos": {
             "q": 0,
