@@ -1210,6 +1210,7 @@
 <span id="1210">1210</span>
 <span id="1211">1211</span>
 <span id="1212">1212</span>
+<span id="1213">1213</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Map of tiles within a hexagon grid.
 </span><span class="comment">//
@@ -1500,7 +1501,8 @@
 </span><span class="doccomment">/// Map for storing track tiles.
 </span><span class="attribute">#[derive(Debug, Clone, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>Map {
-    title: String,
+    <span class="attribute">#[serde(default)]
+    </span>title: String,
     <span class="attribute">#[serde(default, skip_serializing_if = <span class="string">&quot;String::is_empty&quot;</span>)]
     </span>author: String,
     tiles: Vec&lt;PlacedTile&gt;,
@@ -1513,7 +1515,7 @@
 <span class="kw">impl </span>Map {
     <span class="doccomment">/// Creates a new and empty map.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>title = <span class="string">&quot;My Track&quot;</span>.to_string();
+        <span class="kw">let </span>title = String::new();
         <span class="kw">let </span>author = String::new();
         <span class="kw">let </span>tiles = Vec::new();
         <span class="kw">let </span>active_pos = Coordinate::default();
@@ -2282,7 +2284,7 @@
         <span class="kw">let </span>map = Map::new();
         <span class="kw">let </span>text = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>map).unwrap();
         <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#&quot;{
-          &quot;title&quot;: &quot;My Track&quot;,
+          &quot;title&quot;: &quot;&quot;,
           &quot;tiles&quot;: [],
           &quot;active_pos&quot;: {
             &quot;q&quot;: 0,
@@ -2423,4 +2425,4 @@
 
 <span class="comment">//----------------------------------------------------------------------------
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rekee" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>
