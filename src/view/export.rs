@@ -25,6 +25,7 @@ use crate::controller::export::*;
 use crate::hexagon::Rect;
 use crate::import;
 use crate::map::{PlacedTile, PlacedToken, Map};
+use crate::tile::TileList;
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -38,6 +39,12 @@ const MAP_PREPOSITION_COLOR: &str = "hsl(93, 27%, 63%)";
 const MAP_BORDER_COLOR: &str = "hsl(93, 49%, 38%)";
 const MISSING_IMAGE_COLOR: &str = "hsl(0, 0%, 90%)";
 const TILE_LABEL_COLOR: &str = "hsl(0, 0%, 30%)";
+const TILE_COUNT_COLOR: &str = MAP_BORDER_COLOR;
+const TILE_NUMBER_COLOR: &str = MAP_TITLE_COLOR;
+const LISTING_BACKGROUND_COLOR: &str = "hsl(23, 53%, 94%)";
+const LISTING_BORDER_COLOR: &str = MAP_BORDER_COLOR;
+const LISTING_PADDING: i32 = 8;
+const LISTING_MARGIN_LEFT: i32 = 12;
 
 fn draw_tile_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlImageElement,
     pos: Point, size: Point, angle: f32) -> Result<()>
@@ -352,6 +359,7 @@ impl Drop for TokenImage {
 pub struct ExportSettings {
     pub export_scale: Option<ExportScale>,
     pub header_visible: bool,
+    pub listing_visible: bool,
 }
 
 //----------------------------------------------------------------------------
@@ -364,6 +372,7 @@ pub struct ExportView {
     export_scale: Option<ExportScale>,
     map: Map,
     header_visible: bool,
+    listing_visible: bool,
     tile_labels_visible: bool,
     tile_images: Vec<TileImage>,
     token_images: Vec<TokenImage>,
@@ -378,6 +387,7 @@ impl ExportView {
         let export_scale = None;
         let map = Map::new();
         let header_visible = true;
+        let listing_visible = false;
         let tile_labels_visible = true;
         let tile_images = Vec::new();
         let token_images = Vec::new();
@@ -448,19 +458,22 @@ impl ExportView {
 
         Ok(ExportView {
             base_layout, export_layout, export_scale, map, header_visible,
-            tile_labels_visible, tile_images, token_images, canvas, anchor
+            listing_visible, tile_labels_visible, tile_images, token_images,
+            canvas, anchor
         })
     }
 
     pub fn load_settings(&mut self, settings: &ExportSettings) {
         self.export_scale = settings.export_scale;
         self.header_visible = settings.header_visible;
+        self.listing_visible = settings.listing_visible;
     }
 
     pub fn save_settings(&mut self) -> ExportSettings {
         let export_scale = self.export_scale;
         let header_visible = self.header_visible;
-        ExportSettings { export_scale, header_visible }
+        let listing_visible = self.listing_visible;
+        ExportSettings { export_scale, header_visible, listing_visible }
     }
 
     pub fn update_export_scale(&mut self, scale: Option<ExportScale>) {
@@ -470,6 +483,11 @@ impl ExportView {
 
     pub fn update_export_header(&mut self, visible: bool) {
         self.header_visible = visible;
+        nuts::send_to::<ExportController, _>(SaveSettingsEvent);
+    }
+
+    pub fn update_export_listing(&mut self, visible: bool) {
+        self.listing_visible = visible;
         nuts::send_to::<ExportController, _>(SaveSettingsEvent);
     }
 
@@ -546,8 +564,49 @@ impl ExportView {
         header_area.width = header_area.width.ceil();
         header_area.height = header_area.height.ceil();
 
-        let width = f32::max(map_area.width, header_area.width) as i32 + 2 * PADDING;
-        let mut height = map_area.height as i32 + 2 * PADDING;
+        let mut listing_area = Rect::new(0.0, 0.0, 0.0, 0.0);
+        let mut listing_baseline = 0.0_f64;
+        let listing_lineheight = export_scale.tile_label_height() * 5 / 4;
+        let mut count_width = 0_i32;
+        let mut number_width = 0_i32;
+
+        let mut listing_text = Vec::new();
+        if self.listing_visible {
+            for entry in map.tiles().tile_summary() {
+                let count_text = format!(" {}×", entry.count);
+                let number_text = format!(" {} ", entry.tile);
+                listing_text.push((count_text, number_text));
+            }
+        }
+        if !listing_text.is_empty() {
+            // measure width of the tile count and identifier text
+            context.save();
+            context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", export_scale.tile_label_height()));
+            for (count_text, number_text) in &listing_text {
+                let count_metrics = check!(context.measure_text(count_text).ok());
+                count_width = count_width.max(count_metrics.width().floor() as i32);
+                let number_metrics = check!(context.measure_text(number_text).ok());
+                number_width = number_width.max(number_metrics.width().floor() as i32);
+                listing_baseline = listing_baseline.max(number_metrics.actual_bounding_box_ascent());
+            }
+            context.restore();
+
+            listing_area.width += count_width as f32 + number_width as f32;
+            listing_area.width += 2.0 * LISTING_PADDING as f32;
+            listing_area.height += (export_scale.tile_label_height() + listing_lineheight * (listing_text.len() as i32 - 1)) as f32;
+            listing_area.height += 2.0 * LISTING_PADDING as f32;
+        }
+
+        listing_area.width = listing_area.width.ceil();
+        listing_area.height = listing_area.height.ceil();
+
+        let mut map_listing_width = map_area.width;
+        if listing_area.width > 0.0 {
+            map_listing_width += listing_area.width + LISTING_MARGIN_LEFT as f32;
+        }
+
+        let width = f32::max(map_listing_width, header_area.width) as i32 + 2 * PADDING;
+        let mut height = f32::max(map_area.height, listing_area.height) as i32 + 2 * PADDING;
         if header_area.height > 0.0 {
             height += header_area.height as i32 + PADDING;
         }
@@ -556,9 +615,9 @@ impl ExportView {
 
         let mut origin = export_layout.origin() - Point(map_area.left, map_area.top) +
             Point(PADDING as f32, PADDING as f32);
-        if header_area.width > map_area.width {
+        if header_area.width > map_listing_width {
             // center-align map with title text
-            origin = origin + Point((header_area.width - map_area.width) / 2.0, 0.0);
+            origin = origin + Point((header_area.width - map_listing_width) / 2.0, 0.0);
         }
         if header_area.height > 0.0 {
             // move map below title text
@@ -609,6 +668,52 @@ impl ExportView {
             check!(context.fill_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         context.restore();
+
+        // draw tile listing box
+        if listing_area.height > 0.0 {
+            listing_area.left = width as f32 - listing_area.width - PADDING as f32;
+            listing_area.top = PADDING as f32;
+            if header_area.height > 0.0 {
+                listing_area.top += header_area.height + PADDING as f32;
+            }
+
+            context.save();
+            context.begin_path();
+            context.set_line_width(1.0);
+            check!(context.translate(-0.5, -0.5).ok()); // align thin border line on pixel center
+            context.move_to(f64::from(listing_area.left), f64::from(listing_area.top));
+            check!(context.arc_to(
+                f64::from(listing_area.right()), f64::from(listing_area.top),
+                f64::from(listing_area.right()), f64::from(listing_area.bottom()),
+                10.0
+            ).ok());
+            context.line_to(f64::from(listing_area.right()), f64::from(listing_area.bottom()));
+            check!(context.arc_to(
+                f64::from(listing_area.left), f64::from(listing_area.bottom()),
+                f64::from(listing_area.left), f64::from(listing_area.top),
+                10.0
+            ).ok());
+            context.line_to(f64::from(listing_area.left), f64::from(listing_area.top));
+            context.close_path();
+            check!(context.translate(0.5, 0.5).ok()); // undo border line alignment
+            context.set_fill_style(&JsValue::from_str(LISTING_BACKGROUND_COLOR));
+            context.fill();
+            context.set_stroke_style(&JsValue::from_str(LISTING_BORDER_COLOR));
+            context.stroke();
+            context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", export_scale.tile_label_height()));
+            let listing_x = f64::from(listing_area.left) + f64::from(count_width) + f64::from(LISTING_PADDING);
+            let mut listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
+            for (count_text, number_text) in &listing_text {
+                context.set_text_align("right");
+                context.set_fill_style(&JsValue::from_str(TILE_COUNT_COLOR));
+                check!(context.fill_text(count_text, listing_x, listing_y).ok());
+                context.set_text_align("left");
+                context.set_fill_style(&JsValue::from_str(TILE_NUMBER_COLOR));
+                check!(context.fill_text(number_text, listing_x, listing_y).ok());
+                listing_y += f64::from(listing_lineheight);
+            }
+            context.restore();
+        }
 
         // draw each tile image asynchronously
         self.tile_images.clear();
