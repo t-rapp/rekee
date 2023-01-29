@@ -2514,6 +2514,80 @@
 <span id="2514">2514</span>
 <span id="2515">2515</span>
 <span id="2516">2516</span>
+<span id="2517">2517</span>
+<span id="2518">2518</span>
+<span id="2519">2519</span>
+<span id="2520">2520</span>
+<span id="2521">2521</span>
+<span id="2522">2522</span>
+<span id="2523">2523</span>
+<span id="2524">2524</span>
+<span id="2525">2525</span>
+<span id="2526">2526</span>
+<span id="2527">2527</span>
+<span id="2528">2528</span>
+<span id="2529">2529</span>
+<span id="2530">2530</span>
+<span id="2531">2531</span>
+<span id="2532">2532</span>
+<span id="2533">2533</span>
+<span id="2534">2534</span>
+<span id="2535">2535</span>
+<span id="2536">2536</span>
+<span id="2537">2537</span>
+<span id="2538">2538</span>
+<span id="2539">2539</span>
+<span id="2540">2540</span>
+<span id="2541">2541</span>
+<span id="2542">2542</span>
+<span id="2543">2543</span>
+<span id="2544">2544</span>
+<span id="2545">2545</span>
+<span id="2546">2546</span>
+<span id="2547">2547</span>
+<span id="2548">2548</span>
+<span id="2549">2549</span>
+<span id="2550">2550</span>
+<span id="2551">2551</span>
+<span id="2552">2552</span>
+<span id="2553">2553</span>
+<span id="2554">2554</span>
+<span id="2555">2555</span>
+<span id="2556">2556</span>
+<span id="2557">2557</span>
+<span id="2558">2558</span>
+<span id="2559">2559</span>
+<span id="2560">2560</span>
+<span id="2561">2561</span>
+<span id="2562">2562</span>
+<span id="2563">2563</span>
+<span id="2564">2564</span>
+<span id="2565">2565</span>
+<span id="2566">2566</span>
+<span id="2567">2567</span>
+<span id="2568">2568</span>
+<span id="2569">2569</span>
+<span id="2570">2570</span>
+<span id="2571">2571</span>
+<span id="2572">2572</span>
+<span id="2573">2573</span>
+<span id="2574">2574</span>
+<span id="2575">2575</span>
+<span id="2576">2576</span>
+<span id="2577">2577</span>
+<span id="2578">2578</span>
+<span id="2579">2579</span>
+<span id="2580">2580</span>
+<span id="2581">2581</span>
+<span id="2582">2582</span>
+<span id="2583">2583</span>
+<span id="2584">2584</span>
+<span id="2585">2585</span>
+<span id="2586">2586</span>
+<span id="2587">2587</span>
+<span id="2588">2588</span>
+<span id="2589">2589</span>
+<span id="2590">2590</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Tile identifier and characteristics.
 </span><span class="comment">//
@@ -3094,6 +3168,26 @@
 
 <span class="comment">//----------------------------------------------------------------------------
 
+</span><span class="doccomment">/// Count information for a specific base tile.
+///
+/// This struct is created by the [`tile_summary`] method on [`TileList`].
+/// See its documentation for more.
+///
+/// [`tile_summary`]: TileList::tile_summary
+</span><span class="attribute">#[derive(Debug, Clone, PartialEq, Eq)]
+</span><span class="kw">pub struct </span>TileSummary {
+    <span class="kw">pub </span>tile: TileId,
+    <span class="kw">pub </span>count: u32,
+}
+
+<span class="kw">impl </span>TileSummary {
+    <span class="kw">const fn </span>new(tile: TileId, count: u32) -&gt; <span class="self">Self </span>{
+        TileSummary { tile, count }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+
 </span><span class="doccomment">/// Edition and tile count information for a specific edition.
 ///
 /// This struct is created by the [`edition_summary`] method on [`TileList`].
@@ -3290,6 +3384,25 @@
     /// ```
     </span><span class="kw">fn </span>group_by_danger_level(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GroupByDangerLevel;
 
+    <span class="doccomment">/// Returns a summary about the tiles that are necessary to build the
+    /// current list of tiles.
+    ///
+    /// For each base tile the entry contains the number of tile instances that
+    /// are included in the current list of tiles. The returned array is always
+    /// sorted by tile number.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::tile::{TileId, TileList};
+    /// let tiles = vec![tile!(101), tile!(103, a, 1), tile!(103, a, 2), tile!(124, a)];
+    /// for row in tiles.tile_summary() {
+    ///     println!(&quot;{}x tile {}&quot;, row.count, row.tile);
+    /// }
+    /// ```
+    </span><span class="kw">fn </span>tile_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;TileSummary&gt;;
+
     <span class="doccomment">/// Returns a summary about the editions that are necessary to build the
     /// current list of tiles.
     ///
@@ -3453,6 +3566,21 @@
 
     <span class="kw">fn </span>group_by_danger_level(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GroupByDangerLevel {
         GroupByDangerLevel::new(<span class="self">self</span>)
+    }
+
+    <span class="kw">fn </span>tile_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;TileSummary&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>summary = BTreeMap::new();
+        <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.iter() {
+            <span class="kw">let </span>base_tile = tile.as_ref().base();
+            <span class="kw">let </span>entry = summary.entry(base_tile).or_insert(<span class="number">0</span>);
+            <span class="kw-2">*</span>entry += <span class="number">1</span>;
+        }
+        <span class="kw">let </span>summary: Vec&lt;<span class="kw">_</span>&gt; = summary.iter()
+            .map(|(<span class="kw-2">&amp;</span>tile, <span class="kw-2">&amp;</span>count)|
+                TileSummary::new(tile, count)
+            )
+            .collect();
+        summary
     }
 }
 
@@ -4458,6 +4586,26 @@
         <span class="kw">let </span>text = <span class="string">r#&quot;&quot;a-1&quot;&quot;#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;TileId, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
+    }
+
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>tile_list_summary() {
+        <span class="kw">let </span>tiles: <span class="kw-2">&amp;</span>[TileId] = <span class="kw-2">&amp;</span>[][..];
+        <span class="kw">let </span>summary = tiles.tile_summary();
+        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[]);
+
+        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>)];
+        <span class="kw">let </span>summary = tiles.tile_summary();
+        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+            TileSummary::new(<span class="macro">tile!</span>(<span class="number">101</span>), <span class="number">1</span>),
+        ]);
+
+        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">2</span>)];
+        <span class="kw">let </span>summary = tiles.tile_summary();
+        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+            TileSummary::new(<span class="macro">tile!</span>(<span class="number">101</span>), <span class="number">1</span>),
+            TileSummary::new(<span class="macro">tile!</span>(<span class="number">103</span>, a), <span class="number">2</span>),
+        ]);
     }
 
     <span class="attribute">#[test]

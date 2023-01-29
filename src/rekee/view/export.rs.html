@@ -715,6 +715,122 @@
 <span id="715">715</span>
 <span id="716">716</span>
 <span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Supports export of maps as an image.
 //!
@@ -742,6 +858,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::hexagon::Rect;
 <span class="kw">use </span><span class="kw">crate</span>::import;
 <span class="kw">use </span><span class="kw">crate</span>::map::{PlacedTile, PlacedToken, Map};
+<span class="kw">use </span><span class="kw">crate</span>::tile::TileList;
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="comment">//----------------------------------------------------------------------------
@@ -751,10 +868,16 @@
 <span class="kw">const </span>BACKGROUND_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(0, 0%, 100%)&quot;</span>;
 <span class="kw">const </span>MAP_TITLE_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(12, 71%, 43%)&quot;</span>;
 <span class="kw">const </span>MAP_AUTHOR_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(12, 56%, 67%)&quot;</span>;
-<span class="kw">const </span>MAP_PREPOSITION_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(0, 0%, 40%)&quot;</span>;
+<span class="kw">const </span>MAP_PREPOSITION_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(93, 27%, 63%)&quot;</span>;
 <span class="kw">const </span>MAP_BORDER_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(93, 49%, 38%)&quot;</span>;
 <span class="kw">const </span>MISSING_IMAGE_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(0, 0%, 90%)&quot;</span>;
 <span class="kw">const </span>TILE_LABEL_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(0, 0%, 30%)&quot;</span>;
+<span class="kw">const </span>TILE_COUNT_COLOR: <span class="kw-2">&amp;</span>str = MAP_BORDER_COLOR;
+<span class="kw">const </span>TILE_NUMBER_COLOR: <span class="kw-2">&amp;</span>str = MAP_TITLE_COLOR;
+<span class="kw">const </span>LISTING_BACKGROUND_COLOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;hsl(23, 53%, 94%)&quot;</span>;
+<span class="kw">const </span>LISTING_BORDER_COLOR: <span class="kw-2">&amp;</span>str = MAP_BORDER_COLOR;
+<span class="kw">const </span>LISTING_PADDING: i32 = <span class="number">8</span>;
+<span class="kw">const </span>LISTING_MARGIN_LEFT: i32 = <span class="number">12</span>;
 
 <span class="kw">fn </span>draw_tile_image(context: <span class="kw-2">&amp;</span>web_sys::CanvasRenderingContext2d, image: <span class="kw-2">&amp;</span>HtmlImageElement,
     pos: Point, size: Point, angle: f32) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt;
@@ -1068,6 +1191,8 @@
 #[serde(default)]
 </span><span class="kw">pub struct </span>ExportSettings {
     <span class="kw">pub </span>export_scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
+    <span class="kw">pub </span>header_visible: bool,
+    <span class="kw">pub </span>listing_visible: bool,
 }
 
 <span class="comment">//----------------------------------------------------------------------------
@@ -1079,6 +1204,8 @@
     </span>export_layout: Layout,
     export_scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
     map: Map,
+    header_visible: bool,
+    listing_visible: bool,
     tile_labels_visible: bool,
     tile_images: Vec&lt;TileImage&gt;,
     token_images: Vec&lt;TokenImage&gt;,
@@ -1092,6 +1219,8 @@
         <span class="kw">let </span>export_layout = layout.clone();
         <span class="kw">let </span>export_scale = <span class="prelude-val">None</span>;
         <span class="kw">let </span>map = Map::new();
+        <span class="kw">let </span>header_visible = <span class="bool-val">true</span>;
+        <span class="kw">let </span>listing_visible = <span class="bool-val">false</span>;
         <span class="kw">let </span>tile_labels_visible = <span class="bool-val">true</span>;
         <span class="kw">let </span>tile_images = Vec::new();
         <span class="kw">let </span>token_images = Vec::new();
@@ -1161,22 +1290,37 @@
         font_load_cb.forget();
 
         <span class="prelude-val">Ok</span>(ExportView {
-            base_layout, export_layout, export_scale, map, tile_labels_visible,
-            tile_images, token_images, canvas, anchor
+            base_layout, export_layout, export_scale, map, header_visible,
+            listing_visible, tile_labels_visible, tile_images, token_images,
+            canvas, anchor
         })
     }
 
     <span class="kw">pub fn </span>load_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, settings: <span class="kw-2">&amp;</span>ExportSettings) {
         <span class="self">self</span>.export_scale = settings.export_scale;
+        <span class="self">self</span>.header_visible = settings.header_visible;
+        <span class="self">self</span>.listing_visible = settings.listing_visible;
     }
 
     <span class="kw">pub fn </span>save_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExportSettings {
         <span class="kw">let </span>export_scale = <span class="self">self</span>.export_scale;
-        ExportSettings { export_scale }
+        <span class="kw">let </span>header_visible = <span class="self">self</span>.header_visible;
+        <span class="kw">let </span>listing_visible = <span class="self">self</span>.listing_visible;
+        ExportSettings { export_scale, header_visible, listing_visible }
     }
 
     <span class="kw">pub fn </span>update_export_scale(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;) {
         <span class="self">self</span>.export_scale = scale;
+        nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
+    }
+
+    <span class="kw">pub fn </span>update_export_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.header_visible = visible;
+        nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
+    }
+
+    <span class="kw">pub fn </span>update_export_listing(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.listing_visible = visible;
         nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
     }
 
@@ -1214,7 +1358,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>author_width = <span class="number">0_i32</span>;
         <span class="kw">let </span>preposition_text = <span class="string">&quot; by &quot;</span>;
 
-        <span class="kw">let </span>title_text = <span class="kw">if </span>!map.title().is_empty() {
+        <span class="kw">let </span>title_text = <span class="kw">if </span><span class="self">self</span>.header_visible &amp;&amp; !map.title().is_empty() {
             <span class="prelude-val">Some</span>(map.title().to_string())
         } <span class="kw">else </span>{
             <span class="prelude-val">None
@@ -1231,7 +1375,7 @@
             header_baseline = header_baseline.max(metrics.actual_bounding_box_ascent());
         }
 
-        <span class="kw">let </span>author_text = <span class="kw">if </span>!map.author().is_empty() {
+        <span class="kw">let </span>author_text = <span class="kw">if </span><span class="self">self</span>.header_visible &amp;&amp; !map.author().is_empty() {
             <span class="prelude-val">Some</span>(map.author().to_string())
         } <span class="kw">else </span>{
             <span class="prelude-val">None
@@ -1253,8 +1397,49 @@
         header_area.width = header_area.width.ceil();
         header_area.height = header_area.height.ceil();
 
-        <span class="kw">let </span>width = f32::max(map_area.width, header_area.width) <span class="kw">as </span>i32 + <span class="number">2 </span>* PADDING;
-        <span class="kw">let </span><span class="kw-2">mut </span>height = map_area.height <span class="kw">as </span>i32 + <span class="number">2 </span>* PADDING;
+        <span class="kw">let </span><span class="kw-2">mut </span>listing_area = Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>listing_baseline = <span class="number">0.0_f64</span>;
+        <span class="kw">let </span>listing_lineheight = export_scale.tile_label_height() * <span class="number">5 </span>/ <span class="number">4</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>count_width = <span class="number">0_i32</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>number_width = <span class="number">0_i32</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>listing_text = Vec::new();
+        <span class="kw">if </span><span class="self">self</span>.listing_visible {
+            <span class="kw">for </span>entry <span class="kw">in </span>map.tiles().tile_summary() {
+                <span class="kw">let </span>count_text = <span class="macro">format!</span>(<span class="string">&quot; {}×&quot;</span>, entry.count);
+                <span class="kw">let </span>number_text = <span class="macro">format!</span>(<span class="string">&quot; {} &quot;</span>, entry.tile);
+                listing_text.push((count_text, number_text));
+            }
+        }
+        <span class="kw">if </span>!listing_text.is_empty() {
+            <span class="comment">// measure width of the tile count and identifier text
+            </span>context.save();
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px OverpassTnum, Overpass, sans-serif&quot;</span>, export_scale.tile_label_height()));
+            <span class="kw">for </span>(count_text, number_text) <span class="kw">in </span><span class="kw-2">&amp;</span>listing_text {
+                <span class="kw">let </span>count_metrics = <span class="macro">check!</span>(context.measure_text(count_text).ok());
+                count_width = count_width.max(count_metrics.width().floor() <span class="kw">as </span>i32);
+                <span class="kw">let </span>number_metrics = <span class="macro">check!</span>(context.measure_text(number_text).ok());
+                number_width = number_width.max(number_metrics.width().floor() <span class="kw">as </span>i32);
+                listing_baseline = listing_baseline.max(number_metrics.actual_bounding_box_ascent());
+            }
+            context.restore();
+
+            listing_area.width += count_width <span class="kw">as </span>f32 + number_width <span class="kw">as </span>f32;
+            listing_area.width += <span class="number">2.0 </span>* LISTING_PADDING <span class="kw">as </span>f32;
+            listing_area.height += (export_scale.tile_label_height() + listing_lineheight * (listing_text.len() <span class="kw">as </span>i32 - <span class="number">1</span>)) <span class="kw">as </span>f32;
+            listing_area.height += <span class="number">2.0 </span>* LISTING_PADDING <span class="kw">as </span>f32;
+        }
+
+        listing_area.width = listing_area.width.ceil();
+        listing_area.height = listing_area.height.ceil();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>map_listing_width = map_area.width;
+        <span class="kw">if </span>listing_area.width &gt; <span class="number">0.0 </span>{
+            map_listing_width += listing_area.width + LISTING_MARGIN_LEFT <span class="kw">as </span>f32;
+        }
+
+        <span class="kw">let </span>width = f32::max(map_listing_width, header_area.width) <span class="kw">as </span>i32 + <span class="number">2 </span>* PADDING;
+        <span class="kw">let </span><span class="kw-2">mut </span>height = f32::max(map_area.height, listing_area.height) <span class="kw">as </span>i32 + <span class="number">2 </span>* PADDING;
         <span class="kw">if </span>header_area.height &gt; <span class="number">0.0 </span>{
             height += header_area.height <span class="kw">as </span>i32 + PADDING;
         }
@@ -1263,9 +1448,9 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>origin = export_layout.origin() - Point(map_area.left, map_area.top) +
             Point(PADDING <span class="kw">as </span>f32, PADDING <span class="kw">as </span>f32);
-        <span class="kw">if </span>header_area.width &gt; map_area.width {
+        <span class="kw">if </span>header_area.width &gt; map_listing_width {
             <span class="comment">// center-align map with title text
-            </span>origin = origin + Point((header_area.width - map_area.width) / <span class="number">2.0</span>, <span class="number">0.0</span>);
+            </span>origin = origin + Point((header_area.width - map_listing_width) / <span class="number">2.0</span>, <span class="number">0.0</span>);
         }
         <span class="kw">if </span>header_area.height &gt; <span class="number">0.0 </span>{
             <span class="comment">// move map below title text
@@ -1286,6 +1471,7 @@
                 .map(|<span class="kw-2">&amp;</span>val| JsValue::from_f64(val))
                 .collect::&lt;js_sys::Array&gt;();
             <span class="macro">check!</span>(context.set_line_dash(<span class="kw-2">&amp;</span>JsValue::from(dash_segments)).ok());
+            context.set_line_dash_offset(<span class="number">2.0</span>);
             context.move_to(f64::from(PADDING), header_baseline + f64::from(<span class="number">2 </span>* PADDING));
             context.line_to(f64::from(width - PADDING), header_baseline + f64::from(<span class="number">2 </span>* PADDING));
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(MAP_BORDER_COLOR));
@@ -1295,7 +1481,7 @@
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>title_text) = title_text {
             context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.title_height()));
             context.set_text_align(<span class="string">&quot;left&quot;</span>);
-            context.set_line_width(<span class="number">4.0</span>);
+            context.set_line_width(<span class="number">6.0</span>);
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(BACKGROUND_COLOR));
             <span class="macro">check!</span>(context.stroke_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
             context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(MAP_TITLE_COLOR));
@@ -1305,7 +1491,7 @@
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>author_text) = author_text {
             context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.author_height()));
             context.set_text_align(<span class="string">&quot;right&quot;</span>);
-            context.set_line_width(<span class="number">4.0</span>);
+            context.set_line_width(<span class="number">6.0</span>);
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(BACKGROUND_COLOR));
             <span class="macro">check!</span>(context.stroke_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
             <span class="macro">check!</span>(context.stroke_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
@@ -1315,6 +1501,52 @@
             <span class="macro">check!</span>(context.fill_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         context.restore();
+
+        <span class="comment">// draw tile listing box
+        </span><span class="kw">if </span>listing_area.height &gt; <span class="number">0.0 </span>{
+            listing_area.left = width <span class="kw">as </span>f32 - listing_area.width - PADDING <span class="kw">as </span>f32;
+            listing_area.top = PADDING <span class="kw">as </span>f32;
+            <span class="kw">if </span>header_area.height &gt; <span class="number">0.0 </span>{
+                listing_area.top += header_area.height + PADDING <span class="kw">as </span>f32;
+            }
+
+            context.save();
+            context.begin_path();
+            context.set_line_width(<span class="number">1.0</span>);
+            <span class="macro">check!</span>(context.translate(-<span class="number">0.5</span>, -<span class="number">0.5</span>).ok()); <span class="comment">// align thin border line on pixel center
+            </span>context.move_to(f64::from(listing_area.left), f64::from(listing_area.top));
+            <span class="macro">check!</span>(context.arc_to(
+                f64::from(listing_area.right()), f64::from(listing_area.top),
+                f64::from(listing_area.right()), f64::from(listing_area.bottom()),
+                <span class="number">10.0
+            </span>).ok());
+            context.line_to(f64::from(listing_area.right()), f64::from(listing_area.bottom()));
+            <span class="macro">check!</span>(context.arc_to(
+                f64::from(listing_area.left), f64::from(listing_area.bottom()),
+                f64::from(listing_area.left), f64::from(listing_area.top),
+                <span class="number">10.0
+            </span>).ok());
+            context.line_to(f64::from(listing_area.left), f64::from(listing_area.top));
+            context.close_path();
+            <span class="macro">check!</span>(context.translate(<span class="number">0.5</span>, <span class="number">0.5</span>).ok()); <span class="comment">// undo border line alignment
+            </span>context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(LISTING_BACKGROUND_COLOR));
+            context.fill();
+            context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(LISTING_BORDER_COLOR));
+            context.stroke();
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px OverpassTnum, Overpass, sans-serif&quot;</span>, export_scale.tile_label_height()));
+            <span class="kw">let </span>listing_x = f64::from(listing_area.left) + f64::from(count_width) + f64::from(LISTING_PADDING);
+            <span class="kw">let </span><span class="kw-2">mut </span>listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
+            <span class="kw">for </span>(count_text, number_text) <span class="kw">in </span><span class="kw-2">&amp;</span>listing_text {
+                context.set_text_align(<span class="string">&quot;right&quot;</span>);
+                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(TILE_COUNT_COLOR));
+                <span class="macro">check!</span>(context.fill_text(count_text, listing_x, listing_y).ok());
+                context.set_text_align(<span class="string">&quot;left&quot;</span>);
+                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(TILE_NUMBER_COLOR));
+                <span class="macro">check!</span>(context.fill_text(number_text, listing_x, listing_y).ok());
+                listing_y += f64::from(listing_lineheight);
+            }
+            context.restore();
+        }
 
         <span class="comment">// draw each tile image asynchronously
         </span><span class="self">self</span>.tile_images.clear();

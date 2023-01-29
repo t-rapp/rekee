@@ -820,6 +820,26 @@
 <span id="820">820</span>
 <span id="821">821</span>
 <span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Definition and distribution of user events.
 //!
@@ -891,6 +911,14 @@
 
 <span class="kw">pub struct </span>UpdateExportScaleEvent {
     <span class="kw">pub </span>scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
+}
+
+<span class="kw">pub struct </span>UpdateExportHeaderEvent {
+    <span class="kw">pub </span>visible: bool,
+}
+
+<span class="kw">pub struct </span>UpdateExportListingEvent {
+    <span class="kw">pub </span>visible: bool,
 }
 
 <span class="kw">pub struct </span>UpdateTileLabelsEvent {
@@ -1343,6 +1371,8 @@
             }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(settings) = domain.try_get::&lt;ExportSettings&gt;() {
                 <span class="self">self</span>.view.set_export_scale(settings.export_scale);
+                <span class="self">self</span>.view.set_export_header(settings.header_visible);
+                <span class="self">self</span>.view.set_export_listing(settings.listing_visible);
             }
             <span class="self">self</span>.view.set_active(<span class="bool-val">true</span>);
         }
@@ -1534,6 +1564,8 @@
             </span>activity.subscribe(ExportController::load_settings);
             activity.subscribe(ExportController::save_settings);
             activity.subscribe(ExportController::update_export_scale);
+            activity.subscribe(ExportController::update_export_header);
+            activity.subscribe(ExportController::update_export_listing);
             activity.subscribe_domained(ExportController::export_image);
         }
 
@@ -1552,6 +1584,14 @@
 
         <span class="kw">fn </span>update_export_scale(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateExportScaleEvent) {
             <span class="self">self</span>.view.update_export_scale(event.scale);
+        }
+
+        <span class="kw">fn </span>update_export_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateExportHeaderEvent) {
+            <span class="self">self</span>.view.update_export_header(event.visible);
+        }
+
+        <span class="kw">fn </span>update_export_listing(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>UpdateExportListingEvent) {
+            <span class="self">self</span>.view.update_export_listing(event.visible);
         }
 
         <span class="kw">fn </span>export_image(<span class="kw-2">&amp;mut </span><span class="self">self</span>, domain: <span class="kw-2">&amp;mut </span>DomainState, _event: <span class="kw-2">&amp;</span>ExportImageEvent) {

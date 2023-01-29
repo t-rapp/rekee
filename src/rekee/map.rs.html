@@ -1211,6 +1211,7 @@
 <span id="1211">1211</span>
 <span id="1212">1212</span>
 <span id="1213">1213</span>
+<span id="1214">1214</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Map of tiles within a hexagon grid.
 </span><span class="comment">//
@@ -1974,9 +1975,10 @@
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
         <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;124a&quot;,&quot;q&quot;:2,&quot;r&quot;:0,&quot;dir&quot;:2}&quot;#</span>);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>tokens = Vec::new();
-        tokens.push(PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into()));
-        tokens.push(PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">1.0</span>, <span class="number">0.5</span>).into(), <span class="number">0.0</span>.into()));
+        <span class="kw">let </span>tokens = <span class="macro">vec!</span>[
+            PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into()),
+            PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">1.0</span>, <span class="number">0.5</span>).into(), <span class="number">0.0</span>.into()),
+        ];
         <span class="kw">let </span>tile = PlacedTile::with_tokens(<span class="macro">tile!</span>(<span class="number">205</span>, a), (<span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F, tokens);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
         <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;205a&quot;,&quot;q&quot;:2,&quot;r&quot;:-1,&quot;dir&quot;:5,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:1.0,&quot;r&quot;:0.5,&quot;dir&quot;:0.0}]}&quot;#</span>);

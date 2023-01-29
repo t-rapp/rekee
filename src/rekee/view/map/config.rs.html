@@ -173,6 +173,32 @@
 <span id="173">173</span>
 <span id="174">174</span>
 <span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Configuration of general track settings used for display and export.
 </span><span class="comment">//
@@ -186,7 +212,10 @@
 <span class="kw">use </span>web_sys::{<span class="self">self</span>, Element};
 
 <span class="kw">use </span><span class="kw">crate</span>::check;
-<span class="kw">use </span><span class="kw">crate</span>::controller::{UpdateBackgroundGridEvent, UpdateExportScaleEvent, UpdateTileLabelsEvent};
+<span class="kw">use </span><span class="kw">crate</span>::controller::{
+    UpdateBackgroundGridEvent, UpdateExportScaleEvent, UpdateExportHeaderEvent,
+    UpdateExportListingEvent, UpdateTileLabelsEvent
+};
 <span class="kw">use </span><span class="kw">crate</span>::controller::map_config::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::view::export::ExportScale;
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -252,6 +281,8 @@
     background_grid: web_sys::HtmlInputElement,
     export_scale: <span class="prelude-ty">Option</span>&lt;ExportScale&gt;,
     export_scale_elements: Vec&lt;ExportScaleElement&gt;,
+    export_header: web_sys::HtmlInputElement,
+    export_listing: web_sys::HtmlInputElement,
     tile_labels: web_sys::HtmlInputElement,
     apply: Element,
     apply_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::Event)&gt;,
@@ -277,6 +308,14 @@
                 export_scale_elements.push(ExportScaleElement::new(element)<span class="question-mark">?</span>);
         }
 
+        <span class="kw">let </span>export_header = document.get_element_by_id(<span class="string">&quot;export-header&quot;</span>)
+            .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
+            .ok_or(<span class="string">&quot;Cannot find export header input of map config element&quot;</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>export_listing = document.get_element_by_id(<span class="string">&quot;export-listing&quot;</span>)
+            .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
+            .ok_or(<span class="string">&quot;Cannot find export listing input of map config element&quot;</span>)<span class="question-mark">?</span>;
+
         <span class="kw">let </span>tile_labels = document.get_element_by_id(<span class="string">&quot;tile-labels&quot;</span>)
             .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
             .ok_or(<span class="string">&quot;Cannot find tile labels input of map config element&quot;</span>)<span class="question-mark">?</span>;
@@ -300,7 +339,8 @@
 
         <span class="prelude-val">Ok</span>(MapConfigView {
             inner, background_grid, export_scale, export_scale_elements,
-            tile_labels, apply, apply_cb, close, close_cb
+            export_header, export_listing, tile_labels, apply, apply_cb, close,
+            close_cb
         })
     }
 
@@ -324,6 +364,14 @@
         <span class="self">self</span>.export_scale = scale;
     }
 
+    <span class="kw">pub fn </span>set_export_header(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.export_header.set_checked(visible);
+    }
+
+    <span class="kw">pub fn </span>set_export_listing(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
+        <span class="self">self</span>.export_listing.set_checked(visible);
+    }
+
     <span class="kw">pub fn </span>set_tile_labels(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
         <span class="self">self</span>.tile_labels.set_checked(visible);
     }
@@ -333,6 +381,10 @@
         nuts::publish(UpdateBackgroundGridEvent { visible });
         <span class="kw">let </span>scale = <span class="self">self</span>.export_scale;
         nuts::publish(UpdateExportScaleEvent { scale });
+        <span class="kw">let </span>visible = <span class="self">self</span>.export_header.checked();
+        nuts::publish(UpdateExportHeaderEvent { visible });
+        <span class="kw">let </span>visible = <span class="self">self</span>.export_listing.checked();
+        nuts::publish(UpdateExportListingEvent { visible });
         <span class="kw">let </span>visible = <span class="self">self</span>.tile_labels.checked();
         nuts::publish(UpdateTileLabelsEvent { visible });
     }
