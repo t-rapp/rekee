@@ -30,6 +30,10 @@ clean:
 doc:
 	cargo doc --lib --no-deps
 
+.PHONY: examples
+examples:
+	cargo build --release --examples
+
 .PHONY: run
 run: build style
 	cd www && python3 -m http.server 8080
