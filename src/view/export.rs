@@ -34,7 +34,7 @@ const PADDING: i32 = 4;
 const BACKGROUND_COLOR: &str = "hsl(0, 0%, 100%)";
 const MAP_TITLE_COLOR: &str = "hsl(12, 71%, 43%)";
 const MAP_AUTHOR_COLOR: &str = "hsl(12, 56%, 67%)";
-const MAP_PREPOSITION_COLOR: &str = "hsl(0, 0%, 40%)";
+const MAP_PREPOSITION_COLOR: &str = "hsl(93, 27%, 63%)";
 const MAP_BORDER_COLOR: &str = "hsl(93, 49%, 38%)";
 const MISSING_IMAGE_COLOR: &str = "hsl(0, 0%, 90%)";
 const TILE_LABEL_COLOR: &str = "hsl(0, 0%, 30%)";
@@ -579,6 +579,7 @@ impl ExportView {
                 .map(|&val| JsValue::from_f64(val))
                 .collect::<js_sys::Array>();
             check!(context.set_line_dash(&JsValue::from(dash_segments)).ok());
+            context.set_line_dash_offset(2.0);
             context.move_to(f64::from(PADDING), header_baseline + f64::from(2 * PADDING));
             context.line_to(f64::from(width - PADDING), header_baseline + f64::from(2 * PADDING));
             context.set_stroke_style(&JsValue::from_str(MAP_BORDER_COLOR));
@@ -588,7 +589,7 @@ impl ExportView {
         if let Some(ref title_text) = title_text {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
-            context.set_line_width(4.0);
+            context.set_line_width(6.0);
             context.set_stroke_style(&JsValue::from_str(BACKGROUND_COLOR));
             check!(context.stroke_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
             context.set_fill_style(&JsValue::from_str(MAP_TITLE_COLOR));
@@ -598,7 +599,7 @@ impl ExportView {
         if let Some(ref author_text) = author_text {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.author_height()));
             context.set_text_align("right");
-            context.set_line_width(4.0);
+            context.set_line_width(6.0);
             context.set_stroke_style(&JsValue::from_str(BACKGROUND_COLOR));
             check!(context.stroke_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
             check!(context.stroke_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
