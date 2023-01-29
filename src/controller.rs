@@ -529,6 +529,8 @@ pub mod map_config {
             }
             if let Some(settings) = domain.try_get::<ExportSettings>() {
                 self.view.set_export_scale(settings.export_scale);
+                self.view.set_export_header(settings.header_visible);
+                self.view.set_export_listing(settings.listing_visible);
             }
             self.view.set_active(true);
         }

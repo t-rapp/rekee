@@ -11,7 +11,10 @@ use wasm_bindgen::JsCast;
 use web_sys::{self, Element};
 
 use crate::check;
-use crate::controller::{UpdateBackgroundGridEvent, UpdateExportScaleEvent, UpdateTileLabelsEvent};
+use crate::controller::{
+    UpdateBackgroundGridEvent, UpdateExportScaleEvent, UpdateExportHeaderEvent,
+    UpdateExportListingEvent, UpdateTileLabelsEvent
+};
 use crate::controller::map_config::*;
 use crate::view::export::ExportScale;
 use super::*;
@@ -77,6 +80,8 @@ pub struct MapConfigView {
     background_grid: web_sys::HtmlInputElement,
     export_scale: Option<ExportScale>,
     export_scale_elements: Vec<ExportScaleElement>,
+    export_header: web_sys::HtmlInputElement,
+    export_listing: web_sys::HtmlInputElement,
     tile_labels: web_sys::HtmlInputElement,
     apply: Element,
     apply_cb: Closure<dyn Fn(web_sys::Event)>,
@@ -102,6 +107,14 @@ impl MapConfigView {
                 export_scale_elements.push(ExportScaleElement::new(element)?);
         }
 
+        let export_header = document.get_element_by_id("export-header")
+            .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
+            .ok_or("Cannot find export header input of map config element")?;
+
+        let export_listing = document.get_element_by_id("export-listing")
+            .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
+            .ok_or("Cannot find export listing input of map config element")?;
+
         let tile_labels = document.get_element_by_id("tile-labels")
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
             .ok_or("Cannot find tile labels input of map config element")?;
@@ -125,7 +138,8 @@ impl MapConfigView {
 
         Ok(MapConfigView {
             inner, background_grid, export_scale, export_scale_elements,
-            tile_labels, apply, apply_cb, close, close_cb
+            export_header, export_listing, tile_labels, apply, apply_cb, close,
+            close_cb
         })
     }
 
@@ -149,6 +163,14 @@ impl MapConfigView {
         self.export_scale = scale;
     }
 
+    pub fn set_export_header(&self, visible: bool) {
+        self.export_header.set_checked(visible);
+    }
+
+    pub fn set_export_listing(&self, visible: bool) {
+        self.export_listing.set_checked(visible);
+    }
+
     pub fn set_tile_labels(&self, visible: bool) {
         self.tile_labels.set_checked(visible);
     }
@@ -158,6 +180,10 @@ impl MapConfigView {
         nuts::publish(UpdateBackgroundGridEvent { visible });
         let scale = self.export_scale;
         nuts::publish(UpdateExportScaleEvent { scale });
+        let visible = self.export_header.checked();
+        nuts::publish(UpdateExportHeaderEvent { visible });
+        let visible = self.export_listing.checked();
+        nuts::publish(UpdateExportListingEvent { visible });
         let visible = self.tile_labels.checked();
         nuts::publish(UpdateTileLabelsEvent { visible });
     }
