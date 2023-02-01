@@ -2,12 +2,12 @@
 // Example that reads a Rekee or RGT track file, and outputs an ordered list of used tiles
 //----------------------------------------------------------------------------
 
-use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 
 use rekee::import;
 use rekee::map::Map;
+use rekee::tile::TileList;
 
 //----------------------------------------------------------------------------
 
@@ -21,23 +21,23 @@ fn load_file(filename: &str) -> Result<Map, String> {
 
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
-    if let Some(filename) = args.get(1) {
-        let map = load_file(filename)?;
-        let mut list = BTreeMap::new();
-        for tile in map.tiles() {
-            let base_id = tile.id().base();
-            let count = list.entry(base_id).or_insert(0);
-            *count += 1;
-        }
-        println!("Count per tile:");
-        for (id, count) in list.iter() {
-            println!("{:<4}: {}", id.to_string(), count);
-        }
+    let map = if let Some(filename) = args.get(1) {
+        load_file(filename)?
     } else {
         // FIXME: better use CARGO_BIN_NAME here instead, but this seems to be unset for examples
         let program = env!("CARGO_CRATE_NAME");
         eprintln!("Usage: {} <input-file.json>", program);
+        return Ok(());
+    };
+
+    println!("= Count per tile =");
+    for row in map.tiles().tile_summary() {
+        println!("{:<4}: {}x", row.tile, row.count);
     }
+
+    let total_count = map.tiles().len();
+    println!("\nTotal: {} tiles", total_count);
+
     Ok(())
 }
 
