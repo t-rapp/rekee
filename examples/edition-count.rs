@@ -2,7 +2,6 @@
 // Example that reads a track file, and outputs the list of necessary editions
 //----------------------------------------------------------------------------
 
-use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 
@@ -31,22 +30,8 @@ fn main() -> Result<(), String> {
         return Ok(());
     };
 
-    let mut map_tiles = BTreeMap::new();
-    for tile in map.tiles() {
-        let tile_num = tile.id().num();
-        let count = map_tiles.entry(tile_num).or_insert(0);
-        *count += 1;
-    }
-    let total_count = map.tiles().len();
-
-    println!("= Count per Tile =");
-    for (tile, count) in map_tiles.iter() {
-        println!("{}: {}x", tile, count);
-    }
-    println!("Total: {} tiles\n", total_count);
-
     let editions = map.tiles().edition_summary();
-    println!("= Count per Edition =");
+    println!("= Count per edition =");
     for item in &editions {
         if let Some(edition) = item.edition {
             println!("{:18}: {}x ({} tiles)", edition.to_string(), item.edition_count, item.tile_count);
