@@ -1601,7 +1601,7 @@ impl TileInfo {
     /// ```
     pub fn editions(&self) -> Vec<Edition> {
         Edition::iter()
-            .filter(|edition| edition.contains_base(self.id))
+            .filter(|edition| edition.contains_base_tile(self.id))
             .copied()
             .collect()
     }
