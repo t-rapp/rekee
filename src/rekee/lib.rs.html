@@ -144,6 +144,8 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Library providing track editor functions for the Rekee web application.
 //!
@@ -276,6 +278,8 @@
         <span class="kw">let </span>token = PlacedToken::new(TokenId::Finish, (<span class="number">0.5</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
         nuts::publish(AlignCenterEvent);
+        nuts::publish(UpdateTitleEvent { title: String::from(<span class="string">&quot;Short Track&quot;</span>) });
+        nuts::publish(UpdateAuthorEvent { author: String::from(<span class="string">&quot;CarmLima&quot;</span>) });
     }
 
     <span class="comment">// initialize after all other controllers are completed to ignore events during setup

@@ -2034,7 +2034,7 @@
     </span><span class="kw">fn </span>map_insert_and_append() {
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
-        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
+        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
 
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::D);
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">Some</span>(Coordinate::new(<span class="number">1</span>, <span class="number">0</span>)));
@@ -2053,7 +2053,7 @@
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">None</span>);
 
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::D),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A),
@@ -2297,7 +2297,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
-        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
+        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E);
         map.insert(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B);
         map.insert(<span class="macro">tile!</span>(<span class="number">113</span>, b, <span class="number">0</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::E);
@@ -2312,7 +2312,7 @@
         <span class="kw">let </span>text = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>map).unwrap();
         <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#&quot;{
           &quot;title&quot;: &quot;Short Track 2&quot;,
-          &quot;author&quot;: &quot;Yahuxo&quot;,
+          &quot;author&quot;: &quot;CarmLima&quot;,
           &quot;tiles&quot;: [
             {
               &quot;id&quot;: &quot;102b&quot;,
@@ -2390,7 +2390,7 @@
 
         <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#&quot;{
             &quot;title&quot;: &quot;Short Track 2&quot;,
-            &quot;author&quot;: &quot;Yahuxo&quot;,
+            &quot;author&quot;: &quot;CarmLima&quot;,
             &quot;tiles&quot;: [
                 {&quot;id&quot;: &quot;102b&quot;,   &quot;q&quot;:  1, &quot;r&quot;: -1, &quot;dir&quot;: 4},
                 {&quot;id&quot;: &quot;104b-1&quot;, &quot;q&quot;:  1, &quot;r&quot;:  0, &quot;dir&quot;: 1},
@@ -2407,7 +2407,7 @@
         }&quot;#</span>);
         <span class="kw">let </span>map: Map = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B),

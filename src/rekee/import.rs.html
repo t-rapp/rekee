@@ -1269,7 +1269,7 @@
         <span class="kw">let </span>map = import_native(data)
             .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A),
             PlacedTile::new(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C),
@@ -1289,7 +1289,7 @@
     </span><span class="kw">fn </span>export_native_short_track() {
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;ShortTrack2&quot;</span>);
-        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
+        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
         map.insert(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A);
         map.insert(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C);
         map.insert(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A);
@@ -1303,7 +1303,7 @@
         map.insert(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D);
         <span class="kw">let </span>data = export_native(<span class="kw-2">&amp;</span>map)
             .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;title&quot;:&quot;ShortTrack2&quot;,&quot;author&quot;:&quot;Yahuxo&quot;,&quot;tiles&quot;:[{&quot;q&quot;:0,&quot;r&quot;:1,&quot;id&quot;:&quot;102b&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:1,&quot;id&quot;:&quot;106b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;116b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;117b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:2,&quot;r&quot;:-1,&quot;id&quot;:&quot;111b-2&quot;,&quot;dir&quot;:5},{&quot;q&quot;:-1,&quot;r&quot;:0,&quot;id&quot;:&quot;125b-1&quot;,&quot;dir&quot;:0},{&quot;q&quot;:2,&quot;r&quot;:0,&quot;id&quot;:&quot;112b-1&quot;,&quot;dir&quot;:1},{&quot;q&quot;:-1,&quot;r&quot;:-1,&quot;id&quot;:&quot;128b&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-2,&quot;r&quot;:0,&quot;id&quot;:&quot;138b-1&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-1,&quot;r&quot;:1,&quot;id&quot;:&quot;104b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:-2,&quot;r&quot;:1,&quot;id&quot;:&quot;105b-1&quot;,&quot;dir&quot;:3}]}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;title&quot;:&quot;ShortTrack2&quot;,&quot;author&quot;:&quot;CarmLima&quot;,&quot;tiles&quot;:[{&quot;q&quot;:0,&quot;r&quot;:1,&quot;id&quot;:&quot;102b&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:1,&quot;id&quot;:&quot;106b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:0,&quot;r&quot;:0,&quot;id&quot;:&quot;116b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:1,&quot;r&quot;:0,&quot;id&quot;:&quot;117b-2&quot;,&quot;dir&quot;:2},{&quot;q&quot;:2,&quot;r&quot;:-1,&quot;id&quot;:&quot;111b-2&quot;,&quot;dir&quot;:5},{&quot;q&quot;:-1,&quot;r&quot;:0,&quot;id&quot;:&quot;125b-1&quot;,&quot;dir&quot;:0},{&quot;q&quot;:2,&quot;r&quot;:0,&quot;id&quot;:&quot;112b-1&quot;,&quot;dir&quot;:1},{&quot;q&quot;:-1,&quot;r&quot;:-1,&quot;id&quot;:&quot;128b&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-2,&quot;r&quot;:0,&quot;id&quot;:&quot;138b-1&quot;,&quot;dir&quot;:3},{&quot;q&quot;:-1,&quot;r&quot;:1,&quot;id&quot;:&quot;104b-2&quot;,&quot;dir&quot;:0},{&quot;q&quot;:-2,&quot;r&quot;:1,&quot;id&quot;:&quot;105b-1&quot;,&quot;dir&quot;:3}]}&quot;#</span>);
     }
 
     <span class="attr">#[test]
@@ -1368,7 +1368,7 @@
         <span class="kw">let </span>map = import_rgt(data)
             .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
         <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A),
             PlacedTile::new(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C),
@@ -1388,7 +1388,7 @@
     </span><span class="kw">fn </span>export_rgt_short_track() {
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
         map.set_title(<span class="string">&quot;ShortTrack2&quot;</span>);
-        map.set_author(<span class="string">&quot;Yahuxo&quot;</span>);
+        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
         map.insert(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">1</span>).into(), Direction::A);
         map.insert(TileId::new(<span class="number">106</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::C);
         map.insert(TileId::new(<span class="number">116</span>, <span class="number">2</span>, <span class="number">2</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::A);
@@ -1402,7 +1402,7 @@
         map.insert(TileId::new(<span class="number">105</span>, <span class="number">2</span>, <span class="number">1</span>), (-<span class="number">2</span>,  <span class="number">1</span>).into(), Direction::D);
         <span class="kw">let </span>data = export_rgt(<span class="kw-2">&amp;</span>map)
             .expect(<span class="string">&quot;Cannot export track data&quot;</span>);
-        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;ShortTrack2&quot;,&quot;Author&quot;:&quot;Yahuxo&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;102b&quot;},{&quot;X&quot;:53,&quot;Y&quot;:53,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;106b-2&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;116b-2&quot;},{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;117b-2&quot;},{&quot;X&quot;:53,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;111b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;125b-1&quot;},{&quot;X&quot;:53,&quot;Y&quot;:52,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;112b-1&quot;},{&quot;X&quot;:56,&quot;Y&quot;:51,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;128b&quot;},{&quot;X&quot;:57,&quot;Y&quot;:52,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;138b-1&quot;},{&quot;X&quot;:55,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;104b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:53,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;105b-1&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(data, <span class="string">r#&quot;{&quot;Path&quot;:&quot;C:\\Applications\\RallymanGT Track Editor\\My Tracks&quot;,&quot;Name&quot;:&quot;ShortTrack2&quot;,&quot;Author&quot;:&quot;CarmLima&quot;,&quot;Tuiles&quot;:[{&quot;X&quot;:54,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;102b&quot;},{&quot;X&quot;:53,&quot;Y&quot;:53,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;106b-2&quot;},{&quot;X&quot;:55,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;116b-2&quot;},{&quot;X&quot;:54,&quot;Y&quot;:52,&quot;Orientation&quot;:2,&quot;TuileId&quot;:&quot;117b-2&quot;},{&quot;X&quot;:53,&quot;Y&quot;:51,&quot;Orientation&quot;:5,&quot;TuileId&quot;:&quot;111b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:52,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;125b-1&quot;},{&quot;X&quot;:53,&quot;Y&quot;:52,&quot;Orientation&quot;:1,&quot;TuileId&quot;:&quot;112b-1&quot;},{&quot;X&quot;:56,&quot;Y&quot;:51,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;128b&quot;},{&quot;X&quot;:57,&quot;Y&quot;:52,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;138b-1&quot;},{&quot;X&quot;:55,&quot;Y&quot;:53,&quot;Orientation&quot;:0,&quot;TuileId&quot;:&quot;104b-2&quot;},{&quot;X&quot;:56,&quot;Y&quot;:53,&quot;Orientation&quot;:3,&quot;TuileId&quot;:&quot;105b-1&quot;}],&quot;lowResWidth&quot;:2480,&quot;lowResHeight&quot;:1748}&quot;#</span>);
     }
 
     <span class="attr">#[test]
@@ -1411,7 +1411,7 @@
         <span class="kw">let </span>native_map = import_auto(data)
             .expect(<span class="string">&quot;Cannot parse import file data&quot;</span>);
         <span class="macro">assert_eq!</span>(native_map.title(), <span class="string">&quot;ShortTrack2&quot;</span>);
-        <span class="macro">assert_eq!</span>(native_map.author(), <span class="string">&quot;Yahuxo&quot;</span>);
+        <span class="macro">assert_eq!</span>(native_map.author(), <span class="string">&quot;CarmLima&quot;</span>);
         <span class="macro">assert_eq!</span>(native_map.tiles().len(), <span class="number">11</span>);
 
         <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">&quot;tests/short-track2.rgt&quot;</span>);
