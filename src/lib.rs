@@ -130,6 +130,8 @@ pub fn main() -> Result<(), JsValue> {
         let token = PlacedToken::new(TokenId::Finish, (0.5, 0.0).into(), 3.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
         nuts::publish(AlignCenterEvent);
+        nuts::publish(UpdateTitleEvent { title: String::from("Short Track") });
+        nuts::publish(UpdateAuthorEvent { author: String::from("CarmLima") });
     }
 
     // initialize after all other controllers are completed to ignore events during setup

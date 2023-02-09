@@ -543,7 +543,7 @@ mod tests {
         let map = import_native(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
-        assert_eq!(map.author(), "Yahuxo");
+        assert_eq!(map.author(), "CarmLima");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
             PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
@@ -563,7 +563,7 @@ mod tests {
     fn export_native_short_track() {
         let mut map = Map::new();
         map.set_title("ShortTrack2");
-        map.set_author("Yahuxo");
+        map.set_author("CarmLima");
         map.insert(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A);
         map.insert(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C);
         map.insert(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A);
@@ -577,7 +577,7 @@ mod tests {
         map.insert(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D);
         let data = export_native(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"title":"ShortTrack2","author":"Yahuxo","tiles":[{"q":0,"r":1,"id":"102b","dir":0},{"q":1,"r":1,"id":"106b-2","dir":2},{"q":0,"r":0,"id":"116b-2","dir":0},{"q":1,"r":0,"id":"117b-2","dir":2},{"q":2,"r":-1,"id":"111b-2","dir":5},{"q":-1,"r":0,"id":"125b-1","dir":0},{"q":2,"r":0,"id":"112b-1","dir":1},{"q":-1,"r":-1,"id":"128b","dir":3},{"q":-2,"r":0,"id":"138b-1","dir":3},{"q":-1,"r":1,"id":"104b-2","dir":0},{"q":-2,"r":1,"id":"105b-1","dir":3}]}"#);
+        assert_eq!(data, r#"{"title":"ShortTrack2","author":"CarmLima","tiles":[{"q":0,"r":1,"id":"102b","dir":0},{"q":1,"r":1,"id":"106b-2","dir":2},{"q":0,"r":0,"id":"116b-2","dir":0},{"q":1,"r":0,"id":"117b-2","dir":2},{"q":2,"r":-1,"id":"111b-2","dir":5},{"q":-1,"r":0,"id":"125b-1","dir":0},{"q":2,"r":0,"id":"112b-1","dir":1},{"q":-1,"r":-1,"id":"128b","dir":3},{"q":-2,"r":0,"id":"138b-1","dir":3},{"q":-1,"r":1,"id":"104b-2","dir":0},{"q":-2,"r":1,"id":"105b-1","dir":3}]}"#);
     }
 
     #[test]
@@ -642,7 +642,7 @@ mod tests {
         let map = import_rgt(data)
             .expect("Cannot parse import file data");
         assert_eq!(map.title(), "ShortTrack2");
-        assert_eq!(map.author(), "Yahuxo");
+        assert_eq!(map.author(), "CarmLima");
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A),
             PlacedTile::new(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C),
@@ -662,7 +662,7 @@ mod tests {
     fn export_rgt_short_track() {
         let mut map = Map::new();
         map.set_title("ShortTrack2");
-        map.set_author("Yahuxo");
+        map.set_author("CarmLima");
         map.insert(TileId::new(102, 2, 0), ( 0,  1).into(), Direction::A);
         map.insert(TileId::new(106, 2, 2), ( 1,  1).into(), Direction::C);
         map.insert(TileId::new(116, 2, 2), ( 0,  0).into(), Direction::A);
@@ -676,7 +676,7 @@ mod tests {
         map.insert(TileId::new(105, 2, 1), (-2,  1).into(), Direction::D);
         let data = export_rgt(&map)
             .expect("Cannot export track data");
-        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Author":"Yahuxo","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#);
+        assert_eq!(data, r#"{"Path":"C:\\Applications\\RallymanGT Track Editor\\My Tracks","Name":"ShortTrack2","Author":"CarmLima","Tuiles":[{"X":54,"Y":53,"Orientation":0,"TuileId":"102b"},{"X":53,"Y":53,"Orientation":2,"TuileId":"106b-2"},{"X":55,"Y":52,"Orientation":0,"TuileId":"116b-2"},{"X":54,"Y":52,"Orientation":2,"TuileId":"117b-2"},{"X":53,"Y":51,"Orientation":5,"TuileId":"111b-2"},{"X":56,"Y":52,"Orientation":0,"TuileId":"125b-1"},{"X":53,"Y":52,"Orientation":1,"TuileId":"112b-1"},{"X":56,"Y":51,"Orientation":3,"TuileId":"128b"},{"X":57,"Y":52,"Orientation":3,"TuileId":"138b-1"},{"X":55,"Y":53,"Orientation":0,"TuileId":"104b-2"},{"X":56,"Y":53,"Orientation":3,"TuileId":"105b-1"}],"lowResWidth":2480,"lowResHeight":1748}"#);
     }
 
     #[test]
@@ -685,7 +685,7 @@ mod tests {
         let native_map = import_auto(data)
             .expect("Cannot parse import file data");
         assert_eq!(native_map.title(), "ShortTrack2");
-        assert_eq!(native_map.author(), "Yahuxo");
+        assert_eq!(native_map.author(), "CarmLima");
         assert_eq!(native_map.tiles().len(), 11);
 
         let data = include_str!("tests/short-track2.rgt");
