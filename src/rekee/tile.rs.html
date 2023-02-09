@@ -4191,7 +4191,7 @@
     /// ```
     </span><span class="kw">pub fn </span>editions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;Edition&gt; {
         Edition::iter()
-            .filter(|edition| edition.contains_base(<span class="self">self</span>.id))
+            .filter(|edition| edition.contains_base_tile(<span class="self">self</span>.id))
             .copied()
             .collect()
     }
