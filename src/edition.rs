@@ -172,7 +172,7 @@ impl Edition {
     /// Returns `true` when the identifier is found in the list of tiles.
     ///
     /// Compares the full tile identifier, including the graphical variant. To
-    /// compare the base identifier only use [`Edition::contains_base()`]
+    /// compare the base identifier only use [`Edition::contains_base_tile()`]
     /// instead. See [`TileId::base()`] for more information on the difference
     /// between base and full tile identifiers.
     ///
@@ -208,7 +208,7 @@ impl Edition {
     /// list of tiles.
     ///
     /// Compares the base tile identifier, with graphical variant excluded. To
-    /// compare the full identifier use [`Edition::contains()`] instead. See
+    /// compare the full identifier use [`Edition::contains_tile()`] instead. See
     /// [`TileId::base()`] for more information on the difference between base
     /// and full tile identifiers.
     ///
