@@ -21,17 +21,17 @@ Building requires installation of:
    with the `wasm32-unknown-unknown` target
  * [Wasm-Pack](https://rustwasm.github.io/wasm-pack/installer/)
 
-Command for building the WebAssembly module:
+Command for building the WebAssembly module and CSS file:
 ```
-wasm-pack build --target web --release --out-dir www/pkg
+make build
 ```
 
-(Replace the `--release` flag with `--dev` to include more verbose debug
-information within the generated module).
+(Use `make build-release` to create an optimzed WASM module with stripped debug
+symbols).
 
 Command for running a local instance of the web application:
 ```
-(cd www/ && python3 -m http.server 8000)
+make run
 ```
 
 ### Examples
@@ -44,7 +44,7 @@ the files in the `examples` subfolder for some simple stand-alone applications.
 
 To generate HTML code documentation for the library sources use command:
 ```
-cargo doc --lib --no-deps
+make doc
 ```
 Then open the file `target/doc/rekee/index.html` in your web browser.
 
@@ -56,7 +56,7 @@ branch on GitHub at <https://t-rapp.github.io/rekee/rekee/index.html>.
 The source files contain a set of unit tests. Before committing any code
 changes it is recommended to run these tests with:
 ```
-cargo test
+make test
 ```
 
 (Note that this will compile and run test code using the default native Rust

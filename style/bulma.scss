@@ -7,26 +7,26 @@ $navbar-breakpoint: 0;
 $tabs-link-padding: 0.5em;
 
 // Import only what we need from Bulma
-@import "node_modules/bulma/sass/utilities/_all.sass";
-@import "node_modules/bulma/sass/base/_all.sass";
-@import "node_modules/bulma/sass/elements/box.sass";
-@import "node_modules/bulma/sass/elements/button.sass";
-@import "node_modules/bulma/sass/elements/content.sass";
-@import "node_modules/bulma/sass/elements/icon.sass";
-@import "node_modules/bulma/sass/elements/image.sass";
-@import "node_modules/bulma/sass/elements/other.sass";
-@import "node_modules/bulma/sass/elements/tag.sass";
-@import "node_modules/bulma/sass/elements/title.sass";
-@import "node_modules/bulma/sass/form/_all.sass";
-@import "node_modules/bulma/sass/components/card.sass";
-@import "node_modules/bulma/sass/components/level.sass";
-@import "node_modules/bulma/sass/components/media.sass";
-@import "node_modules/bulma/sass/components/message.sass";
-@import "node_modules/bulma/sass/components/modal.sass";
-@import "node_modules/bulma/sass/components/navbar.sass";
-@import "node_modules/bulma/sass/components/tabs.sass";
-@import "node_modules/bulma/sass/grid/columns.sass";
-@import "node_modules/bulma/sass/helpers/_all.sass";
+@import "bulma/sass/utilities/_all.sass";
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/elements/box.sass";
+@import "bulma/sass/elements/button.sass";
+@import "bulma/sass/elements/content.sass";
+@import "bulma/sass/elements/icon.sass";
+@import "bulma/sass/elements/image.sass";
+@import "bulma/sass/elements/other.sass";
+@import "bulma/sass/elements/tag.sass";
+@import "bulma/sass/elements/title.sass";
+@import "bulma/sass/form/_all.sass";
+@import "bulma/sass/components/card.sass";
+@import "bulma/sass/components/level.sass";
+@import "bulma/sass/components/media.sass";
+@import "bulma/sass/components/message.sass";
+@import "bulma/sass/components/modal.sass";
+@import "bulma/sass/components/navbar.sass";
+@import "bulma/sass/components/tabs.sass";
+@import "bulma/sass/grid/columns.sass";
+@import "bulma/sass/helpers/_all.sass";
 
 // Update and extend the Bulma card component
 .card {

@@ -3,17 +3,19 @@
 # ---------------------------------------------------------------------------
 
 .PHONY: all
-all: build doc style
+all: build doc
 
 .PHONY: build
 build:
-	wasm-pack build --target web --dev --out-dir www/pkg --no-typescript --features logger
+	$(MAKE) -C style fetch
+	wasm-pack build --target web --dev --out-dir www/pkg --no-typescript --features logger,style
 	@# Fix the missing trailing newline
 	@echo "" >> www/pkg/.gitignore
 
 .PHONY: build-release
 build-release:
-	wasm-pack build --target web --release --out-dir www/pkg --no-typescript
+	$(MAKE) -C style fetch
+	wasm-pack build --target web --release --out-dir www/pkg --no-typescript --features style
 	@# Fix the missing trailing newline
 	@echo "" >> www/pkg/.gitignore
 	# Binary size of the generated WASM module
@@ -24,6 +26,7 @@ check: build test
 
 .PHONY: clean
 clean:
+	$(MAKE) -C style clean
 	cargo clean
 
 .PHONY: doc
@@ -37,10 +40,6 @@ examples:
 .PHONY: run
 run: build style
 	cd www && python3 -m http.server 8080
-
-.PHONY: style
-style:
-	cd style && npm run build
 
 .PHONY: test
 test:
