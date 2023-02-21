@@ -2,6 +2,8 @@
 # Makefile for building the Rekee WASM module
 # ---------------------------------------------------------------------------
 
+WASMOPT_VERSION := $(shell wasm-opt --version 2>/dev/null)
+
 .PHONY: all
 all: build doc
 
@@ -18,6 +20,11 @@ build-release:
 	wasm-pack build --target web --release --out-dir www/pkg --no-typescript --features style
 	@# Fix the missing trailing newline
 	@echo "" >> www/pkg/.gitignore
+ifdef WASMOPT_VERSION
+	# Second WASM optimization run
+	wasm-opt www/pkg/rekee_bg.wasm -o www/pkg/rekee_bg.wasm.tmp -O -Oz
+	mv www/pkg/rekee_bg.wasm.tmp www/pkg/rekee_bg.wasm
+endif
 	# Binary size of the generated WASM module
 	@ls --size --human-readable -1 www/pkg/*.wasm
 

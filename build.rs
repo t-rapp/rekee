@@ -20,8 +20,6 @@ fn write_bulma_style(src_dir: &str, dest_dir: &str) {
     let css = grass::from_path(src_file, &options)
         .unwrap();
     fs::write(dest_file, &css).unwrap();
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed={}", dest_dir);
 }
 
 fn main() {
@@ -29,4 +27,5 @@ fn main() {
     if style_enabled {
         write_bulma_style("style", "www");
     }
+    println!("cargo:rerun-if-changed=style");
 }
