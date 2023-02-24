@@ -17,6 +17,7 @@ use std::str::FromStr;
 use serde::{Serialize, Deserialize};
 
 use crate::tile::TileId;
+use crate::token::TokenId;
 
 //----------------------------------------------------------------------------
 
@@ -137,7 +138,7 @@ impl Edition {
             Edition::DirtCopilotPack =>
                 &DIRT_COPILOT_PACK,
         }
-     }
+    }
 
     /// Returns the tiles of a specific game edition.
     ///
@@ -247,6 +248,28 @@ impl Edition {
     #[deprecated(note = "Please use Edition::contains_base_tile() instead")]
     pub fn contains_base(&self, tile: TileId) -> bool {
         self.contains_base_tile(tile)
+    }
+
+    /// Check whether the edition contains a specific token.
+    ///
+    /// Returns `true` when the identifier belongs to the given edition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::TokenId;
+    /// let edition = Edition::DirtCopilotPack;
+    /// assert_eq!(edition.contains_token(TokenId::Chicane(Terrain::Gravel)), true);
+    /// assert_eq!(edition.contains_token(TokenId::Oxygen(1)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains_token(TokenId::Chicane(Terrain::Gravel)), false);
+    /// assert_eq!(edition.contains_token(TokenId::Oxygen(1)), true);
+    /// ```
+    pub fn contains_token(&self, token: TokenId) -> bool {
+        *self == token.edition()
     }
 
     /// Check whether the edition is a stand-alone game, or an expansion module.
