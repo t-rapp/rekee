@@ -19,7 +19,7 @@ fn write_bulma_style(src_dir: &str, dest_dir: &str) {
         .style(OutputStyle::Compressed);
     let css = grass::from_path(src_file, &options)
         .unwrap();
-    fs::write(dest_file, &css).unwrap();
+    fs::write(dest_file, css).unwrap();
 }
 
 fn main() {
