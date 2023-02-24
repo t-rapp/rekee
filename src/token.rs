@@ -8,6 +8,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::collections::BTreeMap;
 use std::fmt;
 use std::str::FromStr;
 
@@ -353,6 +354,57 @@ impl Serialize for TokenId {
     }
 }
 
+impl AsRef<TokenId> for TokenId {
+    fn as_ref(&self) -> &TokenId {
+        self
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Count information for a specific base token.
+///
+/// This struct is created by the [`token_summary`] method on [`TokenList`].
+/// See its documentation for more.
+///
+/// [`token_summary`]: TokenList::token_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TokenSummary {
+    pub token: TokenId,
+    pub count: u32,
+}
+
+impl TokenSummary {
+    const fn new(token: TokenId, count: u32) -> Self {
+        TokenSummary { token, count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Utility methods on any list of [`TokenId`]s.
+pub trait TokenList {
+    fn token_summary(&self) -> Vec<TokenSummary>;
+}
+
+impl<T: AsRef<TokenId> + Clone> TokenList for [T] {
+    fn token_summary(&self) -> Vec<TokenSummary> {
+        let mut summary = BTreeMap::new();
+        for token in self.iter() {
+            let base_token = token.as_ref().base();
+            let entry = summary.entry(base_token)
+                .or_insert(0);
+            *entry += 1;
+        }
+        let summary: Vec<_> = summary.iter()
+            .map(|(&token, &count)|
+                TokenSummary::new(token, count)
+            )
+            .collect();
+        summary
+    }
+}
+
 //----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -446,6 +498,32 @@ mod tests {
         let text = r#""water-x""#;
         let result: Result<TokenId, _> = serde_json::from_str(text);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn token_list_summary() {
+        let tokens: &[TokenId] = &[][..];
+        let summary = tokens.token_summary();
+        assert_eq!(summary, vec![]);
+
+        let tokens = vec![
+            TokenId::JokerEntrance,
+        ];
+        let summary = tokens.token_summary();
+        assert_eq!(summary, vec![
+            TokenSummary::new(TokenId::JokerEntrance, 1),
+        ]);
+
+        let tokens = vec![
+            TokenId::JokerEntrance,
+            TokenId::Chicane(Terrain::Gravel),
+            TokenId::Chicane(Terrain::Asphalt),
+        ];
+        let summary = tokens.token_summary();
+        assert_eq!(summary, vec![
+            TokenSummary::new(TokenId::Chicane(Terrain::None), 2),
+            TokenSummary::new(TokenId::JokerEntrance, 1),
+        ]);
     }
 }
 

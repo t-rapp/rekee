@@ -8,6 +8,7 @@ use std::fs;
 use rekee::import;
 use rekee::map::Map;
 use rekee::tile::TileList;
+use rekee::token::TokenList;
 
 //----------------------------------------------------------------------------
 
@@ -35,8 +36,24 @@ fn main() -> Result<(), String> {
         println!("{:<4}: {}x", row.tile, row.count);
     }
 
-    let total_count = map.tiles().len();
-    println!("\nTotal: {} tiles", total_count);
+    let mut tokens = Vec::new();
+    for tile in map.tiles() {
+        tokens.extend_from_slice(&tile.tokens);
+    }
+    if !tokens.is_empty() {
+        println!("\n= Count per token =");
+        for row in tokens.token_summary() {
+            println!("{}: {}x", row.token, row.count);
+        }
+    }
+
+    let tile_count = map.tiles().len();
+    let token_count = tokens.len();
+    print!("\nTotal: {} tiles", tile_count);
+    if token_count > 0 {
+        print!(", {} tokens", token_count);
+    }
+    println!();
 
     Ok(())
 }

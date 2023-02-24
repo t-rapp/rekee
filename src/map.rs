@@ -283,6 +283,12 @@ impl approx::AbsDiffEq for PlacedToken {
     }
 }
 
+impl AsRef<TokenId> for PlacedToken {
+    fn as_ref(&self) -> &TokenId {
+        &self.id
+    }
+}
+
 //----------------------------------------------------------------------------
 
 /// Map for storing track tiles.
