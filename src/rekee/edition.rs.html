@@ -810,6 +810,29 @@
 <a href="#810" id="810">810</a>
 <a href="#811" id="811">811</a>
 <a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Set of tiles that belong to the same game edition (core box or expansion).
 //!
@@ -829,6 +852,7 @@
 <span class="kw">use </span>serde::{Serialize, Deserialize};
 
 <span class="kw">use </span><span class="kw">crate</span>::tile::TileId;
+<span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
 
 <span class="comment">//----------------------------------------------------------------------------
 
@@ -949,7 +973,7 @@
             Edition::DirtCopilotPack =&gt;
                 <span class="kw-2">&amp;</span>DIRT_COPILOT_PACK,
         }
-     }
+    }
 
     <span class="doccomment">/// Returns the tiles of a specific game edition.
     ///
@@ -1059,6 +1083,28 @@
     <span class="attr">#[deprecated(note = <span class="string">&quot;Please use Edition::contains_base_tile() instead&quot;</span>)]
     </span><span class="kw">pub fn </span>contains_base(<span class="kw-2">&amp;</span><span class="self">self</span>, tile: TileId) -&gt; bool {
         <span class="self">self</span>.contains_base_tile(tile)
+    }
+
+    <span class="doccomment">/// Check whether the edition contains a specific token.
+    ///
+    /// Returns `true` when the identifier belongs to the given edition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::TokenId;
+    /// let edition = Edition::DirtCopilotPack;
+    /// assert_eq!(edition.contains_token(TokenId::Chicane(Terrain::Gravel)), true);
+    /// assert_eq!(edition.contains_token(TokenId::Oxygen(1)), false);
+    ///
+    /// let edition = Edition::DirtClimb;
+    /// assert_eq!(edition.contains_token(TokenId::Chicane(Terrain::Gravel)), false);
+    /// assert_eq!(edition.contains_token(TokenId::Oxygen(1)), true);
+    /// ```
+    </span><span class="kw">pub fn </span>contains_token(<span class="kw-2">&amp;</span><span class="self">self</span>, token: TokenId) -&gt; bool {
+        <span class="kw-2">*</span><span class="self">self </span>== token.edition()
     }
 
     <span class="doccomment">/// Check whether the edition is a stand-alone game, or an expansion module.

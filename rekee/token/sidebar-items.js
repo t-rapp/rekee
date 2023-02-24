@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ParseTokenError",""],["TokenId","Identifier for a token which can be placed on tiles."]]};
+window.SIDEBAR_ITEMS = {"enum":[["ParseTokenError",""],["TokenId","Identifier for a token which can be placed on tiles."]],"struct":[["TokenSummary","Count information for a specific base token."]],"trait":[["TokenList","Utility methods on any list of [`TokenId`]s."]]};

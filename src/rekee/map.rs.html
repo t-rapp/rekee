@@ -1212,6 +1212,12 @@
 <a href="#1212" id="1212">1212</a>
 <a href="#1213" id="1213">1213</a>
 <a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Map of tiles within a hexagon grid.
 </span><span class="comment">//
@@ -1494,6 +1500,12 @@
         <span class="self">self</span>.id.eq(<span class="kw-2">&amp;</span>other.id) &amp;&amp;
         <span class="self">self</span>.pos.abs_diff_eq(<span class="kw-2">&amp;</span>other.pos, epsilon) &amp;&amp;
         <span class="self">self</span>.dir.abs_diff_eq(<span class="kw-2">&amp;</span>other.dir, epsilon)
+    }
+}
+
+<span class="kw">impl </span>AsRef&lt;TokenId&gt; <span class="kw">for </span>PlacedToken {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>TokenId {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.id
     }
 }
 
