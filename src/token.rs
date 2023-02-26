@@ -384,6 +384,30 @@ impl TokenSummary {
 
 /// Utility methods on any list of [`TokenId`]s.
 pub trait TokenList {
+
+    /// Returns a summary about the tokens that are contained within the current
+    /// list of tokens.
+    ///
+    /// For each token the entry contains the number of instances that occur in
+    /// the current list of tiles. Note that terrain information is ignored when
+    /// building the token summary. The returned array is always sorted by token
+    /// identifier.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::{TokenId, TokenList};
+    /// let tokens = vec![
+    ///     TokenId::JokerEntrance,
+    ///     TokenId::Chicane(Terrain::Gravel),
+    ///     TokenId::Chicane(Terrain::Asphalt),
+    ///     TokenId::Oxygen(1),
+    /// ];
+    /// for row in tokens.token_summary() {
+    ///     println!("{}x token {}", row.count, row.token);
+    /// }
+    /// ```
     fn token_summary(&self) -> Vec<TokenSummary>;
 }
 
@@ -391,7 +415,8 @@ impl<T: AsRef<TokenId> + Clone> TokenList for [T] {
     fn token_summary(&self) -> Vec<TokenSummary> {
         let mut summary = BTreeMap::new();
         for token in self.iter() {
-            let base_token = token.as_ref().base();
+            let base_token = token.as_ref()
+                .with_terrain(Terrain::None);
             let entry = summary.entry(base_token)
                 .or_insert(0);
             *entry += 1;
@@ -518,10 +543,14 @@ mod tests {
             TokenId::JokerEntrance,
             TokenId::Chicane(Terrain::Gravel),
             TokenId::Chicane(Terrain::Asphalt),
+            TokenId::Oxygen(2),
+            TokenId::Oxygen(1),
         ];
         let summary = tokens.token_summary();
         assert_eq!(summary, vec![
             TokenSummary::new(TokenId::Chicane(Terrain::None), 2),
+            TokenSummary::new(TokenId::Oxygen(1), 1),
+            TokenSummary::new(TokenId::Oxygen(2), 1),
             TokenSummary::new(TokenId::JokerEntrance, 1),
         ]);
     }
