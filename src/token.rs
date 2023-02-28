@@ -382,6 +382,26 @@ impl TokenSummary {
 
 //----------------------------------------------------------------------------
 
+/// Edition and token count information for a specific edition.
+///
+/// This struct is created by the [`edition_summary`] method on [`TokenList`].
+/// See its documentation for more.
+///
+/// [`edition_summary`]: TokenList::edition_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EditionSummary {
+    pub edition: Edition,
+    pub token_count: u32,
+}
+
+impl EditionSummary {
+    const fn new(edition: Edition, token_count: u32) -> Self {
+        EditionSummary { edition, token_count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 /// Utility methods on any list of [`TokenId`]s.
 pub trait TokenList {
 
@@ -409,6 +429,29 @@ pub trait TokenList {
     /// }
     /// ```
     fn token_summary(&self) -> Vec<TokenSummary>;
+
+    /// Returns a summary about the editions that are necessary to build the
+    /// current list of tokens.
+    ///
+    /// For each edition the entry contains the number of tokens that belong to
+    /// the edition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::tile::Terrain;
+    /// # use rekee::token::{TokenId, TokenList};
+    /// let tokens = vec![
+    ///     TokenId::JokerEntrance,
+    ///     TokenId::Chicane(Terrain::Gravel),
+    ///     TokenId::Chicane(Terrain::Asphalt),
+    ///     TokenId::Oxygen(1),
+    /// ];
+    /// for row in tokens.edition_summary() {
+    ///     println!("{}: {} tokens", row.edition, row.token_count);
+    /// }
+    /// ```
+    fn edition_summary(&self) -> Vec<EditionSummary>;
 }
 
 impl<T: AsRef<TokenId> + Clone> TokenList for [T] {
@@ -424,6 +467,22 @@ impl<T: AsRef<TokenId> + Clone> TokenList for [T] {
         let summary: Vec<_> = summary.iter()
             .map(|(&token, &count)|
                 TokenSummary::new(token, count)
+            )
+            .collect();
+        summary
+    }
+
+    fn edition_summary(&self) -> Vec<EditionSummary> {
+        let mut summary = BTreeMap::new();
+        for token in self.iter() {
+            let edition = token.as_ref().edition();
+            let entry = summary.entry(edition)
+                .or_insert(0);
+            *entry += 1;
+        }
+        let summary: Vec<_> = summary.iter()
+            .map(|(&edition, &count)|
+                EditionSummary::new(edition, count)
             )
             .collect();
         summary

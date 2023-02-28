@@ -6,6 +6,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::collections::BTreeMap;
 use std::fmt;
 
 use serde::{Serialize, Deserialize, Deserializer};
@@ -13,8 +14,8 @@ use serde::de::{self, Visitor};
 
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
-use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo};
-use crate::token::TokenId;
+use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo, TileList};
+use crate::token::{TokenId, TokenList};
 
 //----------------------------------------------------------------------------
 
@@ -150,6 +151,12 @@ impl approx::AbsDiffEq for PlacedTile {
         self.pos.eq(&other.pos) &&
         self.dir.eq(&other.dir) &&
         self.tokens[..].abs_diff_eq(&other.tokens[..], epsilon)
+    }
+}
+
+impl AsRef<PlacedTile> for PlacedTile {
+    fn as_ref(&self) -> &PlacedTile {
+        self
     }
 }
 
@@ -630,6 +637,88 @@ impl Map {
 impl Default for Map {
     fn default() -> Self {
         Map::new()
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Edition, tile count and token count information for a specific edition.
+///
+/// This struct is created by the [`edition_summary`] method on [`PlacedTileList`].
+/// See its documentation for more.
+///
+/// [`edition_summary`]: PlacedTileList::edition_summary
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EditionSummary {
+    pub edition: Option<Edition>,
+    pub edition_count: u32,
+    pub tile_count: u32,
+    pub token_count: u32,
+}
+
+impl EditionSummary {
+    const fn new(edition: Option<Edition>, edition_count: u32, tile_count: u32, token_count: u32) -> Self {
+        EditionSummary { edition, edition_count, tile_count, token_count }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+pub trait PlacedTileList {
+    /// Returns a summary about the editions that are necessary to build the
+    /// current list of tiles.
+    ///
+    /// For each edition the entry contains the number of edition instances
+    /// (boxes) required, and the number of tiles and tokens that belong to the
+    /// edition. It basically merges the information provided by
+    /// [`TileList::edition_summary`] and [`TokenList::edition_summary`].
+    ///
+    /// The returned array is always sorted by edition. If the tile list
+    /// contains unknown tiles an entry with [`edition`] set to `None` is put
+    /// at the end of the summary.
+    ///
+    /// # Limitations
+    ///
+    /// When tokens are used the current implementation will always assume that
+    /// a single edition instance is sufficient for the tokens. This is done
+    /// to reduce complexity, as some tokens have different types on front and
+    /// back side. So it would be difficult to choose the optimal combination of
+    /// token sides to achieve the minimum result.
+    ///
+    /// [`edition`]: EditionSummary::edition
+    fn edition_summary(&self) -> Vec<EditionSummary>;
+}
+
+impl<T: AsRef<PlacedTile>> PlacedTileList for [T] {
+    fn edition_summary(&self) -> Vec<EditionSummary> {
+        // aggregate separate lists for tiles and tokens
+        let mut tiles = Vec::with_capacity(self.len());
+        let mut tokens = Vec::with_capacity(self.len());
+        for placed_tile in self.iter() {
+            let placed_tile = placed_tile.as_ref();
+            tiles.push(placed_tile.id());
+            tokens.extend_from_slice(&placed_tile.tokens);
+        }
+        // request separate edition summary for tiles and tokens, then merge it
+        let mut summary = BTreeMap::new();
+        for row in tiles.edition_summary() {
+            let entry = summary.entry(row.edition)
+                .or_insert((0, 0, 0));
+            entry.0 = entry.0.max(row.edition_count);
+            entry.1 += row.tile_count;
+        }
+        for row in tokens.edition_summary() {
+            let entry = summary.entry(Some(row.edition))
+                .or_insert((0, 0, 0));
+            entry.0 = entry.0.max(1);
+            entry.2 += row.token_count;
+        }
+        let summary: Vec<_> = summary.iter()
+            .map(|(&edition, &(edition_count, tile_count, token_count))|
+                EditionSummary::new(edition, edition_count, tile_count, token_count)
+            )
+            .collect();
+        summary
     }
 }
 
@@ -1214,6 +1303,54 @@ mod tests {
             PlacedTile::new(tile!(101, a, 0), (-1,  1).into(), Direction::E),
         ][..]);
         assert_eq!(map.active_pos(), None);
+    }
+
+    #[test]
+    fn placed_tile_list_edition_summary() {
+        let map = Map::new();
+        let summary = PlacedTileList::edition_summary(map.tiles());
+        assert_eq!(summary, vec![]);
+
+        let mut map = Map::new();
+        map.insert(tile!(999, a, 0), (0, 0).into(), Direction::A);
+        let summary = PlacedTileList::edition_summary(map.tiles());
+        assert_eq!(summary, vec![
+            EditionSummary::new(None, 1, 1, 0),
+        ]);
+
+        let mut map = Map::new();
+        map.insert(tile!(102, b, 0), ( 1, -1).into(), Direction::E);
+        map.insert(tile!(104, b, 1), ( 1,  0).into(), Direction::B);
+        map.insert(tile!(113, b, 0), ( 1,  1).into(), Direction::E);
+        map.insert(tile!(117, b, 1), ( 0,  2).into(), Direction::F);
+        map.insert(tile!(114, b, 0), (-1,  2).into(), Direction::A);
+        map.insert(tile!(115, b, 1), ( 0,  1).into(), Direction::E);
+        map.insert(tile!(115, b, 2), ( 0,  0).into(), Direction::D);
+        map.insert(tile!(108, b, 0), (-1,  0).into(), Direction::A);
+        map.insert(tile!(110, b, 0), ( 0, -1).into(), Direction::C);
+        map.insert(tile!(107, b, 1), ( 1, -2).into(), Direction::C);
+        map.insert(tile!(101, a, 0), (-1,  1).into(), Direction::E);
+        let summary = PlacedTileList::edition_summary(map.tiles());
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::GtCoreBox), 1, 11, 0),
+        ]);
+
+        let mut map = Map::new();
+        map.insert(tile!(202, a), ( 0, -1).into(), Direction::D);
+        map.insert(tile!(224, a), ( 1, -1).into(), Direction::A);
+        map.insert_with_tokens(tile!(304, a), (1, 0).into(), Direction::B, vec![
+            PlacedToken::new(TokenId::Finish, (0.16, 0.0).into(), FloatDirection::from(0.0)),
+            PlacedToken::new(TokenId::Oxygen(1), (0.14, -0.4).into(), FloatDirection::from(3.5)),
+        ]);
+        map.insert(tile!(903, b), (0, 0).into(), Direction::A);
+        let summary = PlacedTileList::edition_summary(map.tiles());
+        assert_eq!(summary, vec![
+            EditionSummary::new(Some(Edition::DirtCoreBox), 1, 2, 0),
+            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 1, 0),
+            EditionSummary::new(Some(Edition::DirtRx), 1, 0, 1),
+            EditionSummary::new(Some(Edition::DirtClimb), 1, 0, 1),
+            EditionSummary::new(Some(Edition::DirtCopilotPack), 1, 1, 0),
+        ]);
     }
 }
 
