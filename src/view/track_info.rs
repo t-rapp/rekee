@@ -12,7 +12,8 @@ use web_sys::{self, Element};
 
 use crate::check;
 use crate::controller::track_info::*;
-use crate::map::PlacedTile;
+use crate::edition::Edition;
+use crate::map::{PlacedTile, PlacedTileList};
 use crate::tile::TileList;
 use super::*;
 
@@ -63,23 +64,49 @@ impl TrackInfoView {
             let list = check!(document.create_element("ul").ok());
             check!(parent.append_child(&list).ok());
 
-            let summary = map_tiles.edition_summary();
+            let summary = PlacedTileList::edition_summary(map_tiles);
             for row in summary {
+                let mut info = String::new();
+                if row.edition_count > 1 {
+                    info.push_str(&row.edition_count.to_string());
+                    info.push('×');
+                }
+                if row.tile_count > 0 {
+                    if !info.is_empty() {
+                        info.push_str(", ");
+                    }
+                    info.push_str(&row.tile_count.to_string());
+                    if row.tile_count == 1 {
+                        info.push_str(" tile");
+                    } else {
+                        info.push_str(" tiles");
+                    }
+                }
+                if row.token_count > 0 {
+                    if !info.is_empty() {
+                        info.push_str(", ");
+                    }
+                    info.push_str(&row.token_count.to_string());
+                    if row.edition == Some(Edition::DirtRx) {
+                        if row.token_count == 1 {
+                            info.push_str(" standee");
+                        } else {
+                            info.push_str(" standees");
+                        }
+                    } else if row.token_count == 1 {
+                        info.push_str(" token");
+                    } else {
+                        info.push_str(" tokens");
+                    }
+                }
+
                 let mut text = match row.edition {
                     Some(val) => val.to_string(),
                     None => "Unknown".to_string(),
                 };
                 text.push_str(" (");
-                if row.edition_count > 1 {
-                    text.push_str(&row.edition_count.to_string());
-                    text.push_str("x , ");
-                }
-                text.push_str(&row.tile_count.to_string());
-                if row.tile_count == 1 {
-                    text.push_str(" tile)");
-                } else {
-                    text.push_str(" tiles)");
-                }
+                text.push_str(&info);
+                text.push(')');
 
                 let item = check!(document.create_element("li").ok());
                 check!(item.append_child(&document.create_text_node(&text)).ok());
@@ -132,7 +159,6 @@ impl TrackInfoView {
             let linebreak = check!(document.create_element("br").ok());
             check!(lines.append_child(&linebreak).ok());
         }
-
 
         if let Some(parent) = self.inner.query_selector("#track-info-terrain-data").ok().flatten() {
             // remove all previous data
