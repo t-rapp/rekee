@@ -38,10 +38,7 @@ impl PolarCoordinate {
         self.angle
     }
 
-    pub fn from_coordinate<C>( pos: C ) -> Self
-        where C: Into<FloatCoordinate>
-    {
-        let pos = pos.into();
+    pub fn from_coordinate( pos: FloatCoordinate ) -> Self {
         let distance = (pos.q() * pos.q() + pos.r() * pos.r() + pos.q() * pos.r()).sqrt();
         let phi = f32::atan2(pos.r() * SQRT_3 / 2.0, pos.q() + pos.r() / 2.0);
         let angle = phi.to_degrees();
@@ -88,16 +85,16 @@ mod tests {
 
     #[test]
     fn polar_from_coordinate() {
-        let polar = PolarCoordinate::from_coordinate((1.0, 0.0));
+        let polar = PolarCoordinate::from_coordinate((1.0, 0.0).into());
         assert_abs_diff_eq!(polar, PolarCoordinate::new(1.0, 0.0));
 
-        let polar = PolarCoordinate::from_coordinate((0.0, 1.0));
+        let polar = PolarCoordinate::from_coordinate((0.0, 1.0).into());
         assert_abs_diff_eq!(polar, PolarCoordinate::new(1.0, 60.0));
 
-        let polar = PolarCoordinate::from_coordinate((2.0, -1.0));
+        let polar = PolarCoordinate::from_coordinate((2.0, -1.0).into());
         assert_abs_diff_eq!(polar, PolarCoordinate::new(SQRT_3, -30.0));
 
-        let polar = PolarCoordinate::from_coordinate((-2.0, 1.5));
+        let polar = PolarCoordinate::from_coordinate((-2.0, 1.5).into());
         assert_abs_diff_eq!(polar, PolarCoordinate::new(1.802776, 133.89789));
     }
 

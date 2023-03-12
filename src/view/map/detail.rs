@@ -18,10 +18,8 @@ use super::polar::PolarCoordinate;
 
 //----------------------------------------------------------------------------
 
-fn draw_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
-    where C: Into<Coordinate>
-{
-    let corners = layout.hexagon_corners(pos.into());
+fn draw_grid_hex(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Element> {
+    let corners = layout.hexagon_corners(pos);
     let points: Vec<String> = corners.iter()
         .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
         .collect();

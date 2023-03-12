@@ -39,10 +39,8 @@ mod polar;
 const MAP_STYLE: &str = include_str!("style.css");
 const MAP_PADDING: f32 = 15.0;
 
-fn draw_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Element>
-    where C: Into<Coordinate>
-{
-    let corners = layout.hexagon_corners(pos.into());
+fn draw_grid_hex(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Element> {
+    let corners = layout.hexagon_corners(pos);
     let points: Vec<String> = corners.iter()
         .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
         .collect();
@@ -52,10 +50,8 @@ fn draw_grid_hex<C>(document: &Document, layout: &Layout, pos: C) -> Result<Elem
     Ok(hex)
 }
 
-fn draw_label<C>(document: &Document, layout: &Layout, pos: C, text: &str) -> Result<Element>
-    where C: Into<Coordinate>
-{
-    let pos = pos.into().to_pixel(layout);
+fn draw_label(document: &Document, layout: &Layout, pos: Coordinate, text: &str) -> Result<Element> {
+    let pos = pos.to_pixel(layout);
     let label = document.create_element_ns(SVG_NS, "text")?;
     label.set_attribute("class", "label")?;
     label.set_attribute("x", &pos.x().to_string())?;
@@ -464,16 +460,20 @@ impl MapView {
             let r1 = i32::max(-map_radius, -q - map_radius);
             let r2 = i32::min(map_radius, -q + map_radius);
             for r in r1..=r2 {
-                grid.append_child(&draw_grid_hex(&document, &layout, (q, r))?.into())?;
+                grid.append_child(&draw_grid_hex(&document, &layout, Coordinate::new(q, r))?.into())?;
             }
         }
         // add some hexagon grid axis labels when compiling in development mode
         if cfg!(debug_assertions) {
             let label_radius = 4;
-            grid.append_child(&draw_label(&document, &layout, (label_radius, 0), "+q")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (-label_radius, 0), "-q")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (0, label_radius), "+r")?.into())?;
-            grid.append_child(&draw_label(&document, &layout, (0, -label_radius), "-r")?.into())?;
+            let label = draw_label(&document, &layout, Coordinate::new(label_radius, 0), "+q")?;
+            grid.append_child(&label)?;
+            let label = draw_label(&document, &layout, Coordinate::new(-label_radius, 0), "-q")?;
+            grid.append_child(&label)?;
+            let label = draw_label(&document, &layout, Coordinate::new(0, label_radius), "+r")?;
+            grid.append_child(&label)?;
+            let label = draw_label(&document, &layout, Coordinate::new(0, -label_radius), "-r")?;
+            grid.append_child(&label)?;
         }
         canvas.append_child(&grid)?;
 
