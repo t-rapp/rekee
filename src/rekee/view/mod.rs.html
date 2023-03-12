@@ -440,7 +440,7 @@
     <span class="kw">match </span>token_id {
         TokenId::Chicane(<span class="kw">_</span>) | TokenId::ChicaneWithLimit(<span class="kw">_</span>) | TokenId::Jump(<span class="kw">_</span>) | TokenId::Water(<span class="kw">_</span>) =&gt;
             Point(<span class="number">0.500 </span>* layout.size().x(), <span class="number">0.350 </span>* layout.size().y()),
-        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
+        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
             Point(<span class="number">0.315 </span>* layout.size().x(), <span class="number">0.315 </span>* layout.size().y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =&gt;
             Point(<span class="number">1.200 </span>* layout.size().x(), <span class="number">0.585 </span>* layout.size().y()),
@@ -452,7 +452,7 @@
     <span class="kw">match </span>token_id {
         TokenId::Chicane(<span class="kw">_</span>) | TokenId::ChicaneWithLimit(<span class="kw">_</span>) | TokenId::Jump(<span class="kw">_</span>) | TokenId::Water(<span class="kw">_</span>) =&gt;
             Point(<span class="number">0.5 </span>* size.x(), <span class="number">0.5 </span>* size.y()),
-        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
+        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(<span class="kw">_</span>) =&gt;
             Point(<span class="number">0.5 </span>* size.x(), <span class="number">0.5 </span>* size.y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =&gt;
             Point(<span class="number">0.5 </span>* size.x(), size.y()),
