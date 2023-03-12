@@ -79,7 +79,7 @@ fn token_image_size(layout: &Layout, token_id: TokenId) -> Point {
     match token_id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
             Point(0.500 * layout.size().x(), 0.350 * layout.size().y()),
-        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
+        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
             Point(0.315 * layout.size().x(), 0.315 * layout.size().y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
             Point(1.200 * layout.size().x(), 0.585 * layout.size().y()),
@@ -91,7 +91,7 @@ fn token_image_center(layout: &Layout, token_id: TokenId) -> Point {
     match token_id {
         TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
             Point(0.5 * size.x(), 0.5 * size.y()),
-        TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
+        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
             Point(0.5 * size.x(), 0.5 * size.y()),
         TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
             Point(0.5 * size.x(), size.y()),

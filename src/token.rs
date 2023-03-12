@@ -58,6 +58,8 @@ pub enum TokenId {
     JokerExit,
     /// Finishing line arch, part of the RX expansion for Rallyman DIRT.
     Finish,
+    /// Shortcut mud spray, part of the Rallyman DIRT core box.
+    MudSpray,
 }
 
 impl TokenId {
@@ -144,10 +146,11 @@ impl TokenId {
     ///     "Oxygen",
     ///     "Joker Entrance",
     ///     "Joker Exit",
-    ///     "Finish"]);
+    ///     "Finish",
+    ///     "Mud Spray"]);
     /// ```
     pub fn iter() -> std::slice::Iter<'static, Self> {
-        const TOKENS: [TokenId; 11] = [
+        const TOKENS: [TokenId; 12] = [
             TokenId::Chicane(Terrain::None),
             TokenId::ChicaneWithLimit(Terrain::None),
             TokenId::Jump(Terrain::None),
@@ -159,6 +162,7 @@ impl TokenId {
             TokenId::JokerEntrance,
             TokenId::JokerExit,
             TokenId::Finish,
+            TokenId::MudSpray,
         ];
         TOKENS.iter()
     }
@@ -204,6 +208,8 @@ impl TokenId {
                 Edition::DirtRx,
             TokenId::Finish =>
                 Edition::DirtRx,
+            TokenId::MudSpray =>
+                Edition::DirtCoreBox,
         }
     }
 }
@@ -252,6 +258,8 @@ impl fmt::Display for TokenId {
                 write!(fmt, "Joker Exit")?,
             TokenId::Finish =>
                 write!(fmt, "Finish")?,
+            TokenId::MudSpray =>
+                write!(fmt, "Mud Spray")?,
         };
         if terrain != Terrain::None {
             write!(fmt, " {}", terrain)?;
@@ -314,6 +322,8 @@ impl FromStr for TokenId {
                 Ok(TokenId::JokerExit),
             "finish" =>
                 Ok(TokenId::Finish),
+            "mud-spray" =>
+                Ok(TokenId::MudSpray),
             _ =>
                 Err(ParseTokenError::UnknownName(name.to_string())),
         }
@@ -508,6 +518,7 @@ mod tests {
         assert_eq!(TokenId::JokerEntrance.to_string(), "Joker Entrance");
         assert_eq!(TokenId::JokerExit.to_string(), "Joker Exit");
         assert_eq!(TokenId::Finish.to_string(), "Finish");
+        assert_eq!(TokenId::MudSpray.to_string(), "Mud Spray");
 
         let text = format!("{:x}", TokenId::Chicane(Terrain::Gravel));
         assert_eq!(text, "chicane-gravel");
@@ -533,6 +544,7 @@ mod tests {
         assert_eq!("Joker-Entrance".parse::<TokenId>(), Ok(TokenId::JokerEntrance));
         assert_eq!("jOKER-eXIT".parse::<TokenId>(), Ok(TokenId::JokerExit));
         assert_eq!("FiNiSh".parse::<TokenId>(), Ok(TokenId::Finish));
+        assert_eq!("MUD-SPRAY".parse::<TokenId>(), Ok(TokenId::MudSpray));
 
         assert!("".parse::<TokenId>().is_err());
         assert!("jump-*".parse::<TokenId>().is_err());
@@ -574,6 +586,10 @@ mod tests {
         let text = r#""joker-exit""#;
         let token: TokenId = serde_json::from_str(text).unwrap();
         assert_eq!(token, TokenId::JokerExit);
+
+        let text = r#""mud-spray""#;
+        let token: TokenId = serde_json::from_str(text).unwrap();
+        assert_eq!(token, TokenId::MudSpray);
 
         let text = r#""#;
         let result: Result<TokenId, _> = serde_json::from_str(text);
