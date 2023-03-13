@@ -1132,10 +1132,8 @@
 </span><span class="kw">const </span>MAP_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">&quot;style.css&quot;</span>);
 <span class="kw">const </span>MAP_PADDING: f32 = <span class="number">15.0</span>;
 
-<span class="kw">fn </span>draw_grid_hex&lt;C&gt;(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: C) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt;
-    <span class="kw">where </span>C: Into&lt;Coordinate&gt;
-{
-    <span class="kw">let </span>corners = layout.hexagon_corners(pos.into());
+<span class="kw">fn </span>draw_grid_hex(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
+    <span class="kw">let </span>corners = layout.hexagon_corners(pos);
     <span class="kw">let </span>points: Vec&lt;String&gt; = corners.iter()
         .map(|p| <span class="macro">format!</span>(<span class="string">&quot;{:.1},{:.1}&quot;</span>, p.x(), p.y()))
         .collect();
@@ -1145,10 +1143,8 @@
     <span class="prelude-val">Ok</span>(hex)
 }
 
-<span class="kw">fn </span>draw_label&lt;C&gt;(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: C, text: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt;
-    <span class="kw">where </span>C: Into&lt;Coordinate&gt;
-{
-    <span class="kw">let </span>pos = pos.into().to_pixel(layout);
+<span class="kw">fn </span>draw_label(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate, text: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
+    <span class="kw">let </span>pos = pos.to_pixel(layout);
     <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
     label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)<span class="question-mark">?</span>;
     label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="kw-2">&amp;</span>pos.x().to_string())<span class="question-mark">?</span>;
@@ -1557,16 +1553,20 @@
             <span class="kw">let </span>r1 = i32::max(-map_radius, -q - map_radius);
             <span class="kw">let </span>r2 = i32::min(map_radius, -q + map_radius);
             <span class="kw">for </span>r <span class="kw">in </span>r1..=r2 {
-                grid.append_child(<span class="kw-2">&amp;</span>draw_grid_hex(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, (q, r))<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
+                grid.append_child(<span class="kw-2">&amp;</span>draw_grid_hex(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(q, r))<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
             }
         }
         <span class="comment">// add some hexagon grid axis labels when compiling in development mode
         </span><span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions) {
             <span class="kw">let </span>label_radius = <span class="number">4</span>;
-            grid.append_child(<span class="kw-2">&amp;</span>draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, (label_radius, <span class="number">0</span>), <span class="string">&quot;+q&quot;</span>)<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
-            grid.append_child(<span class="kw-2">&amp;</span>draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, (-label_radius, <span class="number">0</span>), <span class="string">&quot;-q&quot;</span>)<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
-            grid.append_child(<span class="kw-2">&amp;</span>draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, (<span class="number">0</span>, label_radius), <span class="string">&quot;+r&quot;</span>)<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
-            grid.append_child(<span class="kw-2">&amp;</span>draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, (<span class="number">0</span>, -label_radius), <span class="string">&quot;-r&quot;</span>)<span class="question-mark">?</span>.into())<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(label_radius, <span class="number">0</span>), <span class="string">&quot;+q&quot;</span>)<span class="question-mark">?</span>;
+            grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(-label_radius, <span class="number">0</span>), <span class="string">&quot;-q&quot;</span>)<span class="question-mark">?</span>;
+            grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, label_radius), <span class="string">&quot;+r&quot;</span>)<span class="question-mark">?</span>;
+            grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, -label_radius), <span class="string">&quot;-r&quot;</span>)<span class="question-mark">?</span>;
+            grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
         }
         canvas.append_child(<span class="kw-2">&amp;</span>grid)<span class="question-mark">?</span>;
 

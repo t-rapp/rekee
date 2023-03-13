@@ -1112,8 +1112,6 @@
 <a href="#1112" id="1112">1112</a>
 <a href="#1113" id="1113">1113</a>
 <a href="#1114" id="1114">1114</a>
-<a href="#1115" id="1115">1115</a>
-<a href="#1116" id="1116">1116</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Display of map details and configuration of track tokens.
 </span><span class="comment">//
@@ -1134,10 +1132,8 @@
 
 <span class="comment">//----------------------------------------------------------------------------
 
-</span><span class="kw">fn </span>draw_grid_hex&lt;C&gt;(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: C) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt;
-    <span class="kw">where </span>C: Into&lt;Coordinate&gt;
-{
-    <span class="kw">let </span>corners = layout.hexagon_corners(pos.into());
+</span><span class="kw">fn </span>draw_grid_hex(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
+    <span class="kw">let </span>corners = layout.hexagon_corners(pos);
     <span class="kw">let </span>points: Vec&lt;String&gt; = corners.iter()
         .map(|p| <span class="macro">format!</span>(<span class="string">&quot;{:.1},{:.1}&quot;</span>, p.x(), p.y()))
         .collect();

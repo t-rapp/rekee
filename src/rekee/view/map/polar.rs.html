@@ -115,9 +115,6 @@
 <a href="#115" id="115">115</a>
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Polar coordinates and their mapping to/from hexagon coordinates.
 </span><span class="comment">//
@@ -158,10 +155,7 @@
         <span class="self">self</span>.angle
     }
 
-    <span class="kw">pub fn </span>from_coordinate&lt;C&gt;( pos: C ) -&gt; <span class="self">Self
-        </span><span class="kw">where </span>C: Into&lt;FloatCoordinate&gt;
-    {
-        <span class="kw">let </span>pos = pos.into();
+    <span class="kw">pub fn </span>from_coordinate( pos: FloatCoordinate ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>distance = (pos.q() * pos.q() + pos.r() * pos.r() + pos.q() * pos.r()).sqrt();
         <span class="kw">let </span>phi = f32::atan2(pos.r() * SQRT_3 / <span class="number">2.0</span>, pos.q() + pos.r() / <span class="number">2.0</span>);
         <span class="kw">let </span>angle = phi.to_degrees();
@@ -208,16 +202,16 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>polar_from_coordinate() {
-        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">1.0</span>, <span class="number">0.0</span>));
+        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">1.0</span>, <span class="number">0.0</span>).into());
         <span class="macro">assert_abs_diff_eq!</span>(polar, PolarCoordinate::new(<span class="number">1.0</span>, <span class="number">0.0</span>));
 
-        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">0.0</span>, <span class="number">1.0</span>));
+        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">0.0</span>, <span class="number">1.0</span>).into());
         <span class="macro">assert_abs_diff_eq!</span>(polar, PolarCoordinate::new(<span class="number">1.0</span>, <span class="number">60.0</span>));
 
-        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">2.0</span>, -<span class="number">1.0</span>));
+        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((<span class="number">2.0</span>, -<span class="number">1.0</span>).into());
         <span class="macro">assert_abs_diff_eq!</span>(polar, PolarCoordinate::new(SQRT_3, -<span class="number">30.0</span>));
 
-        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((-<span class="number">2.0</span>, <span class="number">1.5</span>));
+        <span class="kw">let </span>polar = PolarCoordinate::from_coordinate((-<span class="number">2.0</span>, <span class="number">1.5</span>).into());
         <span class="macro">assert_abs_diff_eq!</span>(polar, PolarCoordinate::new(<span class="number">1.802776</span>, <span class="number">133.89789</span>));
     }
 
