@@ -552,7 +552,7 @@ pub struct FloatDirection(pub f32);
 impl FloatDirection {
     /// Convert this hexagon grid direction into an angle in degrees.
     ///
-    /// The retuned value is wrapped within a range of 0° to 360°.
+    /// The returned value is wrapped within a range of 0° to 360°.
     ///
     /// # Examples
     ///
@@ -1034,7 +1034,7 @@ impl Layout {
 
     /// Convert a hexagon grid direction into an angle in degrees.
     ///
-    /// Applies the layout `start_angle` to the given direction. The retuned
+    /// Applies the layout `start_angle` to the given direction. The returned
     /// value is wrapped within a range of 0° to 360°.
     ///
     /// # Examples
