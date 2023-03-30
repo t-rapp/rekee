@@ -77,3 +77,4 @@ indoc = "1.0.3"
 [profile.release]
 lto = "thin"
 opt-level = "z"
+codegen-units = 1
