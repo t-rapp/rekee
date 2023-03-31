@@ -989,7 +989,8 @@ impl MapDetailView {
             let terrain = tile.terrain().unwrap_or_default();
             token_id.with_terrain(terrain)
         };
-        let token = PlacedToken::new(token_id, FloatCoordinate::default(), FloatDirection::default());
+        let dir = self.tile_layout.direction_from_angle(0.0) - FloatDirection::from(tile.dir);
+        let token = PlacedToken::new(token_id, FloatCoordinate::default(), dir);
         let index = self.token_properties.iter()
             .map(|item| item.index)
             .max()

@@ -609,6 +609,14 @@ impl Sub for FloatDirection {
     }
 }
 
+impl Neg for FloatDirection {
+    type Output = Self;
+
+    fn neg(self) -> FloatDirection {
+        FloatDirection(-self.0)
+    }
+}
+
 impl From<f32> for FloatDirection {
     fn from(value: f32) -> FloatDirection {
         FloatDirection(value)
@@ -1058,6 +1066,30 @@ impl Layout {
         let angle = dir.into().to_angle() + self.orientation.start_angle.to_angle();
         angle.rem_euclid(360.0)
     }
+
+    /// Convert an angle in degrees into a hexagon grid direction.
+    ///
+    /// Subtracts the layout `start_angle` from the given angle.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::hexagon::*;
+    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+    ///
+    /// let angle = 90.0;
+    /// assert_eq!(layout.direction_from_angle(angle), Direction::A.into());
+    ///
+    /// let angle = 150.0;
+    /// assert_eq!(layout.direction_from_angle(angle), Direction::B.into());
+    ///
+    /// let angle = 180.0;
+    /// assert_eq!(layout.direction_from_angle(angle), FloatDirection(1.5));
+    /// ```
+    pub fn direction_from_angle(&self, value: f32) -> FloatDirection {
+        let dir = FloatDirection::from_angle(value) - self.orientation.start_angle;
+        FloatDirection(dir.0.rem_euclid(6.0))
+    }
 }
 
 impl Default for Layout {
@@ -1341,6 +1373,42 @@ mod tests {
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::D), 180.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::E), 240.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::F), 300.0);
+    }
+
+    #[test]
+    fn direction_from_angle() {
+        assert_abs_diff_eq!(FloatDirection::from_angle(0.0), Direction::A.into());
+        assert_abs_diff_eq!(FloatDirection::from_angle(60.0), Direction::B.into());
+        assert_abs_diff_eq!(FloatDirection::from_angle(120.0), Direction::C.into());
+        assert_abs_diff_eq!(FloatDirection::from_angle(180.0), Direction::D.into());
+        assert_abs_diff_eq!(FloatDirection::from_angle(240.0), Direction::E.into());
+        assert_abs_diff_eq!(FloatDirection::from_angle(300.0), Direction::F.into());
+
+        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        assert_abs_diff_eq!(layout.direction_from_angle(90.0), Direction::A.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(150.0), Direction::B.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(210.0), Direction::C.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(270.0), Direction::D.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(330.0), Direction::E.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(30.0), Direction::F.into());
+
+        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        assert_abs_diff_eq!(layout.direction_from_angle(30.0), Direction::F.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(90.0), Direction::A.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(150.0), Direction::B.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(210.0), Direction::C.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(270.0), Direction::D.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(330.0), Direction::E.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(390.0), Direction::F.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(450.0), Direction::A.into());
+
+        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        assert_abs_diff_eq!(layout.direction_from_angle(0.0), Direction::A.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(60.0), Direction::B.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(120.0), Direction::C.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(180.0), Direction::D.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(240.0), Direction::E.into());
+        assert_abs_diff_eq!(layout.direction_from_angle(300.0), Direction::F.into());
     }
 
     #[test]
