@@ -1112,6 +1112,7 @@
 <a href="#1112" id="1112">1112</a>
 <a href="#1113" id="1113">1113</a>
 <a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
 </pre><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Display of map details and configuration of track tokens.
 </span><span class="comment">//
@@ -2103,7 +2104,8 @@
             <span class="kw">let </span>terrain = tile.terrain().unwrap_or_default();
             token_id.with_terrain(terrain)
         };
-        <span class="kw">let </span>token = PlacedToken::new(token_id, FloatCoordinate::default(), FloatDirection::default());
+        <span class="kw">let </span>dir = <span class="self">self</span>.tile_layout.direction_from_angle(<span class="number">0.0</span>) - FloatDirection::from(tile.dir);
+        <span class="kw">let </span>token = PlacedToken::new(token_id, FloatCoordinate::default(), dir);
         <span class="kw">let </span>index = <span class="self">self</span>.token_properties.iter()
             .map(|item| item.index)
             .max()
