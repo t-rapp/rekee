@@ -1,6 +1,6 @@
 [package]
 name = "rekee"
-version = "0.7.4"
+version = "0.7.5"
 authors = ["Tobias Rapp"]
 edition = "2021"
 description = "Track editor for the Rallyman:GT and Rallyman:DIRT boardgames"
