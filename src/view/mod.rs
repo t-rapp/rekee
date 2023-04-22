@@ -14,7 +14,8 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
 
-use crate::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Orientation, Point};
+use crate::export::util;
+use crate::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Point};
 use crate::map::PlacedTile;
 use crate::map::PlacedToken;
 use crate::tile::Terrain;
@@ -63,43 +64,6 @@ const TILE_STYLE: &str = include_str!("tile.css");
 
 //----------------------------------------------------------------------------
 
-fn tile_image_size(layout: &Layout) -> Point {
-    // use flat layout orientation as we confine us to the image size without rotation applied yet
-    let rect = layout.with_orientation(Orientation::flat())
-        .hexagon_rect(Coordinate::new(0, 0));
-    Point(rect.width.round(), rect.height.round())
-}
-
-fn tile_image_center(layout: &Layout) -> Point {
-    let size = tile_image_size(layout);
-    Point(0.5 * size.x(), 0.5 * size.y())
-}
-
-fn token_image_size(layout: &Layout, token_id: TokenId) -> Point {
-    match token_id {
-        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
-            Point(0.500 * layout.size().x(), 0.350 * layout.size().y()),
-        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
-            Point(0.315 * layout.size().x(), 0.315 * layout.size().y()),
-        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
-            Point(1.200 * layout.size().x(), 0.585 * layout.size().y()),
-    }
-}
-
-fn token_image_center(layout: &Layout, token_id: TokenId) -> Point {
-    let size = token_image_size(layout, token_id);
-    match token_id {
-        TokenId::Chicane(_) | TokenId::ChicaneWithLimit(_) | TokenId::Jump(_) | TokenId::Water(_) =>
-            Point(0.5 * size.x(), 0.5 * size.y()),
-        TokenId::MudSpray | TokenId::ClimbAscent | TokenId::ClimbDescent | TokenId::Cloud | TokenId::Oxygen(_) =>
-            Point(0.5 * size.x(), 0.5 * size.y()),
-        TokenId::Finish | TokenId::JokerEntrance | TokenId::JokerExit =>
-            Point(0.5 * size.x(), size.y()),
-    }
-}
-
-//----------------------------------------------------------------------------
-
 fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
     let element = event.current_target()
         .and_then(|target| target.dyn_into::<web_sys::Element>().ok())?;
@@ -138,8 +102,8 @@ impl TileImageElement {
         inner.set_attribute("class", "tile")?;
         inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
 
-        let size = tile_image_size(layout);
-        let center = tile_image_center(layout);
+        let size = util::tile_image_size(layout);
+        let center = util::tile_image_center(layout);
         let angle = layout.direction_to_angle(tile.dir);
         let image = document.create_element_ns(SVG_NS, "image")?;
         if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
@@ -242,8 +206,8 @@ impl TokenImageElement {
         let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
         check!(self.inner.set_attribute("transform", &format!("translate({:.3} {:.3})", pos.x(), pos.y())).ok());
 
-        let size = token_image_size(layout, token.id);
-        let center = token_image_center(layout, token.id);
+        let size = util::token_image_size(layout, token.id);
+        let center = util::token_image_center(layout, token.id);
         let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
         if layout.size().x() >= 150.0 || layout.size().y() >= 150.0 {
             check!(self.image.set_attribute("href", &format!("tokens/{:x}.webp", token.id)).ok());
@@ -289,72 +253,6 @@ impl<T: AsRef<Element>> ElementHidden for T {
         } else {
             check!(elm.class_list().remove_1("is-hidden").ok());
         }
-    }
-}
-
-//----------------------------------------------------------------------------
-
-#[cfg(test)]
-mod tests {
-    use approx::assert_abs_diff_eq;
-    use super::*;
-
-    #[test]
-    fn tile_image_size_and_center() {
-        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
-        let size = tile_image_size(&layout);
-        assert_abs_diff_eq!(size, Point(120.0, 104.0));
-        let center = tile_image_center(&layout);
-        assert_abs_diff_eq!(center, Point(60.0, 52.0));
-
-        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
-        let size = tile_image_size(&layout);
-        assert_abs_diff_eq!(size, Point(120.0, 104.0));
-        let center = tile_image_center(&layout);
-        assert_abs_diff_eq!(center, Point(60.0, 52.0));
-    }
-
-    #[test]
-    fn token_image_size_and_center() {
-        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
-
-        let token_id = TokenId::Chicane(Terrain::Asphalt);
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(30.0, 21.0));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(15.0, 10.5));
-
-        let token_id = TokenId::ClimbAscent;
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(18.9, 18.9));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(9.45, 9.45));
-
-        let token_id = TokenId::JokerEntrance;
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(72.0, 35.1));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(36.0, 35.1));
-
-        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
-
-        let token_id = TokenId::Chicane(Terrain::Asphalt);
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(30.0, 21.0));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(15.0, 10.5));
-
-        let token_id = TokenId::ClimbAscent;
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(18.9, 18.9));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(9.45, 9.45));
-
-        let token_id = TokenId::JokerExit;
-        let size = token_image_size(&layout, token_id);
-        assert_abs_diff_eq!(size, Point(72.0, 35.1));
-        let center = token_image_center(&layout, token_id);
-        assert_abs_diff_eq!(center, Point(36.0, 35.1));
     }
 }
 

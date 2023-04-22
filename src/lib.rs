@@ -41,6 +41,8 @@ use controller::welcome::WelcomeController;
 
 pub mod edition;
 
+pub mod export;
+
 pub mod hexagon;
 use hexagon::{Coordinate, Direction, Layout, Orientation, Point};
 

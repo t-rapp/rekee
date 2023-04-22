@@ -22,6 +22,7 @@ use web_sys::{self, FontFace, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 use crate::check;
 use crate::controller::SaveSettingsEvent;
 use crate::controller::export::*;
+use crate::export::util;
 use crate::hexagon::Rect;
 use crate::import;
 use crate::map::{PlacedTile, PlacedToken, Map};
@@ -247,7 +248,7 @@ struct TileImage {
 impl TileImage {
     fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile) -> Result<Self> {
         let pos = tile.pos.to_pixel(layout);
-        let size = tile_image_size(layout);
+        let size = util::tile_image_size(layout);
         let angle = layout.direction_to_angle(tile.dir);
         let image = HtmlImageElement::new()?;
 
@@ -305,8 +306,8 @@ impl TokenImage {
     fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, tile: PlacedTile, token: PlacedToken) -> Result<Self> {
         let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir))
             .to_pixel(layout);
-        let size = token_image_size(layout, token.id);
-        let center = token_image_center(layout, token.id);
+        let size = util::token_image_size(layout, token.id);
+        let center = util::token_image_center(layout, token.id);
         let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
         let image = HtmlImageElement::new()?;
 
