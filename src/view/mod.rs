@@ -36,7 +36,6 @@ pub type CatalogView = catalog::CatalogView;
 
 pub type CatalogConfigView = catalog_config::CatalogConfigView;
 
-pub type ExportScale = export::ExportScale;
 pub type ExportSettings = export::ExportSettings;
 pub type ExportView = export::ExportView;
 

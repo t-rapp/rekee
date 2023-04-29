@@ -16,7 +16,7 @@ use crate::controller::{
     UpdateExportListingEvent, UpdateTileLabelsEvent
 };
 use crate::controller::map_config::*;
-use crate::view::export::ExportScale;
+use crate::export::ExportScale;
 use super::*;
 
 //----------------------------------------------------------------------------

@@ -11,9 +11,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
-use std::fmt;
-use std::str::FromStr;
-
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -22,6 +19,7 @@ use web_sys::{self, FontFace, HtmlCanvasElement, HtmlImageElement, HtmlElement};
 use crate::check;
 use crate::controller::SaveSettingsEvent;
 use crate::controller::export::*;
+use crate::export::ExportScale;
 use crate::export::util;
 use crate::hexagon::Rect;
 use crate::import;
@@ -111,129 +109,6 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, text: &str, pos:
     context.restore();
 
     Ok(())
-}
-
-//----------------------------------------------------------------------------
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "kebab-case", try_from = "&str")]
-pub enum ExportScale {
-    Small,
-    Medium,
-    Large,
-    ExtraLarge,
-}
-
-impl ExportScale {
-    const fn title_height(&self) -> i32 {
-        match self {
-            ExportScale::Small => 20,
-            ExportScale::Medium => 24,
-            ExportScale::Large => 30,
-            ExportScale::ExtraLarge => 40,
-        }
-    }
-
-    const fn author_height(&self) -> i32 {
-        match self {
-            ExportScale::Small => 14,
-            ExportScale::Medium => 16,
-            ExportScale::Large => 21,
-            ExportScale::ExtraLarge => 28,
-        }
-    }
-
-    const fn tile_label_height(&self) -> i32 {
-        match self {
-            ExportScale::Small => 14,
-            ExportScale::Medium => 16,
-            ExportScale::Large => 20,
-            ExportScale::ExtraLarge => 26,
-        }
-    }
-}
-
-impl Default for ExportScale {
-    fn default() -> Self {
-        ExportScale::Medium
-    }
-}
-
-impl fmt::Display for ExportScale {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            ExportScale::Small =>
-                write!(fmt, "Small")?,
-            ExportScale::Medium =>
-                write!(fmt, "Medium")?,
-            ExportScale::Large =>
-                write!(fmt, "Large")?,
-            ExportScale::ExtraLarge =>
-                write!(fmt, "Extra Large")?,
-        }
-        Ok(())
-    }
-}
-
-impl FromStr for ExportScale {
-    type Err = ParseExportScaleError;
-
-    fn from_str(val: &str) -> std::result::Result<Self, Self::Err> {
-        // match strings from both trait implementations, std::fmt::Display and serde::Serialize
-        let mut s = val.replace(char::is_whitespace, "-");
-        s.make_ascii_lowercase();
-
-        match s.as_ref() {
-            "small" =>
-                Ok(ExportScale::Small),
-            "medium" =>
-                Ok(ExportScale::Medium),
-            "large" =>
-                Ok(ExportScale::Large),
-            "extra-large" =>
-                Ok(ExportScale::ExtraLarge),
-            _ =>
-                Err(ParseExportScaleError::Unknown(val.to_string())),
-        }
-    }
-}
-
-impl From<ExportScale> for f32 {
-    fn from(val: ExportScale) -> f32 {
-        match val {
-            ExportScale::Small =>
-                1.0,
-            ExportScale::Medium =>
-                1.2,
-            ExportScale::Large =>
-                1.5,
-            ExportScale::ExtraLarge =>
-                2.0,
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub enum ParseExportScaleError {
-    Unknown(String),
-}
-
-impl fmt::Display for ParseExportScaleError {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            ParseExportScaleError::Unknown(val) =>
-                write!(fmt, "Unknown export scale value \"{}\"", val),
-        }
-    }
-}
-
-impl std::convert::TryFrom<&str> for ExportScale {
-    type Error = ParseExportScaleError;
-
-    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
-        ExportScale::from_str(value)
-    }
 }
 
 //----------------------------------------------------------------------------

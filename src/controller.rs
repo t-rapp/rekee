@@ -14,6 +14,7 @@
 //----------------------------------------------------------------------------
 
 use crate::edition::Edition;
+use crate::export::ExportScale;
 use crate::hexagon::{Coordinate, Direction, Point};
 use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::storage::Storage;
