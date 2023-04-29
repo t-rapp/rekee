@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Edition","Rallyman game edition (core box or one of the expansions)."],["ParseEditionError",""],["ParseSeriesError",""],["Series","Rallyman game series (GT or DIRT)."]]};
+window.SIDEBAR_ITEMS = {"enum":["Edition","ParseEditionError","ParseSeriesError","Series"]};
