@@ -380,7 +380,7 @@ impl ExportView {
 
         let export_scale = self.export_scale.unwrap_or_default();
         let export_layout = self.base_layout
-            .with_size(self.base_layout.size() * f32::from(export_scale));
+            .with_size(export_scale.tile_size());
 
         let context = check!(self.canvas.get_context("2d").ok().flatten()
             .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));

@@ -11,6 +11,8 @@ use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
 
+use crate::hexagon::Point;
+
 //----------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -39,6 +41,15 @@ impl ExportScale {
             ExportScale::Medium => 16,
             ExportScale::Large => 21,
             ExportScale::ExtraLarge => 28,
+        }
+    }
+
+    pub const fn tile_size(&self) -> Point {
+        match self {
+            ExportScale::Small => Point(60.0, 60.0),
+            ExportScale::Medium => Point(72.0, 72.0),
+            ExportScale::Large => Point(90.0, 90.0),
+            ExportScale::ExtraLarge => Point(120.0, 120.0),
         }
     }
 
@@ -244,6 +255,20 @@ mod tests {
         assert_abs_diff_eq!(size, Point(72.0, 35.1));
         let center = util::token_image_center(&layout, token_id);
         assert_abs_diff_eq!(center, Point(36.0, 35.1));
+    }
+
+    #[test]
+    fn export_scale_tile_size() {
+        const BASE_SIZE: Point = Point(60.0, 60.0);
+
+        let tile_size = ExportScale::Small.tile_size();
+        assert_abs_diff_eq!(tile_size, BASE_SIZE * f32::from(ExportScale::Small));
+        let tile_size = ExportScale::Medium.tile_size();
+        assert_abs_diff_eq!(tile_size, BASE_SIZE * f32::from(ExportScale::Medium));
+        let tile_size = ExportScale::Large.tile_size();
+        assert_abs_diff_eq!(tile_size, BASE_SIZE * f32::from(ExportScale::Large));
+        let tile_size = ExportScale::ExtraLarge.tile_size();
+        assert_abs_diff_eq!(tile_size, BASE_SIZE * f32::from(ExportScale::ExtraLarge));
     }
 }
 
