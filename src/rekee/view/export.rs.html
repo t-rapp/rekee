@@ -1089,7 +1089,7 @@
 
         <span class="kw">let </span>export_scale = <span class="self">self</span>.export_scale.unwrap_or_default();
         <span class="kw">let </span>export_layout = <span class="self">self</span>.base_layout
-            .with_size(<span class="self">self</span>.base_layout.size() * f32::from(export_scale));
+            .with_size(export_scale.tile_size());
 
         <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">&quot;2d&quot;</span>).ok().flatten()
             .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
