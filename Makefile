@@ -42,7 +42,7 @@ doc:
 
 .PHONY: examples
 examples:
-	cargo build --release --examples
+	cargo build --release --examples --features svg
 
 .PHONY: run
 run: build style

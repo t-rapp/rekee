@@ -147,6 +147,124 @@ impl std::convert::TryFrom<&str> for ExportScale {
 
 //----------------------------------------------------------------------------
 
+#[cfg(feature = "svg")]
+pub mod svg {
+    use ::svg::node::element::{Group, Image, Text};
+
+    use crate::hexagon::{FloatCoordinate, FloatDirection, Layout};
+    use crate::map::{PlacedTile, PlacedToken};
+    use super::*;
+
+    pub const BASE_URL_PATTERN: &str = "{base-url}";
+    pub const TILE_ID_PATTERN: &str = "{tile-id}";
+    pub const TOKEN_ID_PATTERN: &str = "{token-id}";
+
+    pub struct TileImageGroup {
+        inner: Group,
+    }
+
+    impl TileImageGroup {
+        pub fn new(layout: &Layout, tile: &PlacedTile, image_url: &str) -> TileImageGroup {
+            let pos = tile.pos.to_pixel(layout);
+            let mut inner = Group::new()
+                .set("class", "tile")
+                .set("transform", format!("translate({:.3} {:.3})", pos.x(), pos.y()));
+
+            let image_url = image_url
+                .replace(TILE_ID_PATTERN, &format!("{:x}", tile.id()));
+            let size = util::tile_image_size(layout);
+            let center = util::tile_image_center(layout);
+            let angle = layout.direction_to_angle(tile.dir);
+
+            let image = Image::new()
+                .set("href", image_url)
+                .set("width", size.x())
+                .set("height", size.y())
+                .set("image-rendering", "optimizeQuality")
+                .set("transform", format!("rotate({:.0}) translate({:.3} {:.3})", angle, -center.x(), -center.y()));
+            inner = inner.add(image);
+
+            TileImageGroup { inner }
+        }
+    }
+
+    impl From<TileImageGroup> for Group {
+        fn from(value: TileImageGroup) -> Group {
+            value.inner
+        }
+    }
+
+    pub struct TileLabelGroup {
+        inner: Group,
+    }
+
+    impl TileLabelGroup {
+        pub fn new(layout: &Layout, tile: &PlacedTile) -> TileLabelGroup {
+            let pos = tile.pos.to_pixel(layout);
+            let mut inner = Group::new()
+                .set("class", "tile")
+                .set("transform", format!("translate({:.3} {:.3})", pos.x(), pos.y()));
+
+            let mut text = tile.id().base().to_string();
+            if tile.has_flat_tokens() {
+                text.push('*');
+            }
+            let label = Text::new()
+                .set("class", "label")
+                .set("x", 0)
+                .set("y", 0)
+                .add(::svg::node::Text::new(text));
+            inner = inner.add(label);
+
+            TileLabelGroup { inner }
+        }
+    }
+
+    impl From<TileLabelGroup> for Group {
+        fn from(value: TileLabelGroup) -> Group {
+            value.inner
+        }
+    }
+
+    pub struct TokenImageGroup {
+        inner: Group,
+    }
+
+    impl TokenImageGroup {
+        pub fn new(layout: &Layout, tile: &PlacedTile, token: &PlacedToken, image_url: &str) -> TokenImageGroup {
+            let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
+            let mut inner = Group::new()
+                .set("class", "token")
+                .set("transform", format!("translate({:.3} {:.3})", pos.x(), pos.y()));
+
+            let image_url = image_url
+                .replace(TILE_ID_PATTERN, &format!("{:x}", tile.id()))
+                .replace(TOKEN_ID_PATTERN, &format!("{:x}", token.id));
+            let size = util::token_image_size(layout, token.id);
+            let center = util::token_image_center(layout, token.id);
+            let angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
+
+            let image = Image::new()
+                .set("href", image_url)
+                .set("width", size.x())
+                .set("height", size.y())
+                .set("image-rendering", "optimizeQuality")
+                .set("transform", format!("rotate({:.1}) translate({:.3} {:.3})", angle, -center.x(), -center.y()));
+            inner = inner.add(image);
+
+            TokenImageGroup { inner }
+        }
+    }
+
+    impl From<TokenImageGroup> for Group {
+        fn from(value: TokenImageGroup) -> Group {
+            value.inner
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub mod util {
     use crate::hexagon::{Coordinate, Layout, Orientation, Point};
     use crate::token::TokenId;
