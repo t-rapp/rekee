@@ -1759,9 +1759,9 @@ const TILE_INFOS: [TileInfo; 271] = [
     TileInfo::new(tile!(149, b), 1, TA, DM, [CN, CS1P, CL2, CR2, CN, CS1M], [EN, ER3, ES3, ES3, EN, EL3]),
     TileInfo::new(tile!(150, a), 1, TA, DM, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES3, ER3, EL3, ES3, ER3, EL3]),
     TileInfo::new(tile!(150, b), 1, TA, DH, [CS0, CS1P, CS1M, CS0, CS1P, CS1M], [ES2, ER2, EL2, ES2, ER2, EL2]),
-    TileInfo::new(tile!(151, a), 1, TA, DL, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES3, EN, ES3, EN, EN]),
+    TileInfo::new(tile!(151, a), 1, TA, DM, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES3, ES3, EN, ES3, EN, EN]),
     TileInfo::new(tile!(151, b), 1, TA, DH, [CJS0L2, CJL1R2, CN, CJS0R1, CN, CN], [ES2, ES2, EN, ES2, EN, EN]),
-    TileInfo::new(tile!(152, a), 1, TA, DL, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES3]),
+    TileInfo::new(tile!(152, a), 1, TA, DM, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES3, EN, EN, ES3, EN, ES3]),
     TileInfo::new(tile!(152, b), 1, TA, DH, [CJS0R2, CN, CN, CJS0L1, CN, CJR1L2], [ES2, EN, EN, ES2, EN, ES2]),
     TileInfo::new(tile!(153, a), 1, TA, DH, [CS0, CS0, CN, CS0, CS0, CN], [ES3, ES2, EN, ES3, ES2, EN]),
     TileInfo::new(tile!(153, b), 1, TA, DH, [CS0, CN, CS0, CS0, CN, CS0], [ES2, EN, ES2, ES2, EN, ES2]),
@@ -2250,8 +2250,8 @@ mod tests {
         let summary = tiles.danger_level_summary();
         assert_eq!(summary, vec![
             DangerLevelSummary::new(Some(DangerLevel::None), 13),
-            DangerLevelSummary::new(Some(DangerLevel::Low), 83),
-            DangerLevelSummary::new(Some(DangerLevel::Medium), 113),
+            DangerLevelSummary::new(Some(DangerLevel::Low), 81),
+            DangerLevelSummary::new(Some(DangerLevel::Medium), 115),
             DangerLevelSummary::new(Some(DangerLevel::High), 62),
         ]);
     }
