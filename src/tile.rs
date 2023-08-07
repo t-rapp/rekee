@@ -1204,6 +1204,8 @@ impl Default for Edge {
 ///
 /// Use [`TileInfo::danger_level()`] to get the danger level data of a specific tile.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase", try_from = "&str")]
 pub enum DangerLevel {
     /// Tile has no danger level assigned.
     None,
@@ -1233,6 +1235,55 @@ impl fmt::Display for DangerLevel {
             DangerLevel::High =>
                 write!(fmt, "High"),
         }
+    }
+}
+
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for DangerLevel {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
+impl FromStr for DangerLevel {
+    type Err = ParseDangerLevelError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.eq_ignore_ascii_case("none") {
+            Ok(DangerLevel::None)
+        } else if s.eq_ignore_ascii_case("low") {
+            Ok(DangerLevel::Low)
+        } else if s.eq_ignore_ascii_case("medium") {
+            Ok(DangerLevel::Medium)
+        } else if s.eq_ignore_ascii_case("high") {
+            Ok(DangerLevel::High)
+        } else {
+            Err(ParseDangerLevelError::UnknownDangerLevel(s.to_string()))
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ParseDangerLevelError {
+    UnknownDangerLevel(String),
+}
+
+impl fmt::Display for ParseDangerLevelError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseDangerLevelError::UnknownDangerLevel(val) =>
+                write!(fmt, "Unknown danger level \"{}\"", val),
+        }
+    }
+}
+
+impl std::convert::TryFrom<&str> for DangerLevel {
+    type Error = ParseDangerLevelError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        DangerLevel::from_str(value)
     }
 }
 
@@ -2496,6 +2547,59 @@ mod tests {
 
         let text = r#""none-1""#;
         let result: Result<Terrain, _> = serde_json::from_str(text);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn danger_level_to_str() {
+        assert_eq!(DangerLevel::None.to_string(), "None");
+        assert_eq!(DangerLevel::Low.to_string(), "Low");
+        assert_eq!(DangerLevel::Medium.to_string(), "Medium");
+        assert_eq!(DangerLevel::High.to_string(), "High");
+
+        let text = format!("{:x}", DangerLevel::Medium);
+        assert_eq!(text, "medium");
+        let text = format!("{:x}", DangerLevel::High);
+        assert_eq!(text, "high");
+    }
+
+    #[test]
+    fn danger_level_from_str() {
+        assert_eq!("None".parse::<DangerLevel>(), Ok(DangerLevel::None));
+        assert_eq!("low".parse::<DangerLevel>(), Ok(DangerLevel::Low));
+        assert_eq!("Medium".parse::<DangerLevel>(), Ok(DangerLevel::Medium));
+        assert_eq!("HIGH".parse::<DangerLevel>(), Ok(DangerLevel::High));
+
+        assert!("".parse::<DangerLevel>().is_err());
+        assert!("x".parse::<DangerLevel>().is_err());
+        assert!("None-1".parse::<DangerLevel>().is_err());
+        assert!("Low x".parse::<DangerLevel>().is_err());
+    }
+
+    #[test]
+    fn danger_level_serde() {
+        let danger_level = DangerLevel::None;
+        let text = serde_json::to_string(&danger_level).unwrap();
+        assert_eq!(text, r#""none""#);
+
+        let danger_level = DangerLevel::Low;
+        let text = serde_json::to_string(&danger_level).unwrap();
+        assert_eq!(text, r#""low""#);
+
+        let danger_level = DangerLevel::Medium;
+        let text = serde_json::to_string(&danger_level).unwrap();
+        assert_eq!(text, r#""medium""#);
+
+        let text = r#""high""#;
+        let danger_level: DangerLevel = serde_json::from_str(text).unwrap();
+        assert_eq!(danger_level, DangerLevel::High);
+
+        let text = r#""#;
+        let result: Result<DangerLevel, _> = serde_json::from_str(text);
+        assert!(result.is_err());
+
+        let text = r#""none-1""#;
+        let result: Result<DangerLevel, _> = serde_json::from_str(text);
         assert!(result.is_err());
     }
 

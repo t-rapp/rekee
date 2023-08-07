@@ -14,7 +14,7 @@ use serde::de::{self, Visitor};
 
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
-use crate::tile::{Connection, ConnectionHint, Edge, Terrain, TileId, TileInfo, TileList};
+use crate::tile::{Connection, ConnectionHint, DangerLevel, Edge, Terrain, TileId, TileInfo, TileList};
 use crate::token::{TokenId, TokenList};
 
 //----------------------------------------------------------------------------
@@ -80,6 +80,33 @@ impl PlacedTile {
     /// ```
     pub fn terrain(&self) -> Option<Terrain> {
         self.info.map(|info| info.terrain())
+    }
+
+    /// Danger level information for a tile.
+    ///
+    /// Returns `Some(DangerLevel)` for tiles that have internal danger level information,
+    /// otherwise returns `None`.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::{Coordinate, Direction};
+    /// # use rekee::map::PlacedTile;
+    /// # use rekee::tile::{DangerLevel, TileId};
+    ///
+    /// let tile = PlacedTile::new(tile!(301, a), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.danger_level(), Some(DangerLevel::Low));
+    ///
+    /// let tile = PlacedTile::new(tile!(302, b), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.danger_level(), Some(DangerLevel::Medium));
+    ///
+    /// let tile = PlacedTile::new(tile!(999, a), Coordinate::new(0, 0), Direction::A);
+    /// assert_eq!(tile.danger_level(), None);
+    /// ```
+    pub fn danger_level(&self) -> Option<DangerLevel> {
+        self.info.map(|info| info.danger_level())
     }
 
     /// Check whether the tile has tokens placed on it.
