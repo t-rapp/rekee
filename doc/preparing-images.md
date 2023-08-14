@@ -37,7 +37,8 @@ cwebp -q 80 -m 6 -o $OUTPUT -short -- $INPUT
 
 ## Thumbnail Size Images
 
-For thumbnail images the original images are resized to 240x208 pixels using the [Unsharped Resizing] feature of ImageMagick:
+For thumbnail images the original images are resized to 240x208 pixels using the
+[Unsharped Resizing] feature of ImageMagick:
 
 ```
 convert $INPUT -resize 240x -unsharp 0x0.75+0.75+0.008 -strip $OUTPUT
@@ -49,5 +50,34 @@ The resized images are then converted to WebP format:
 cwebp -q 80 -m 6 -o $OUTPUT -short -- $INPUT
 ```
 
+## Appendix: How to extract tile images from the Windows Track Editor
+
+The Rallyman Track Editor software for Windows can be downloaded from the
+[webpage of the boardgame author][Rallyman GT]. After the software is unpacked
+/ installed it contains a file named `Database1.2.db` in the target installation
+folder. Use [sqlite-cli] to open this database file:
+
+```
+sqlite3 Database1.2.db
+```
+
+In the interactive prompt that is displayed enter the following command to
+write each tile image into a file in the current folder:
+
+```
+select id, writefile('tile-' || lower(id) || '.png', image) from tuiles;
+```
+
+The SQLite command can be terminated by entering:
+
+```
+.quit
+```
+
+If everything went fine the current folder will contain all the high-res tile
+images in PNG format.
+
 [Unsharped Resizing]: https://legacy.imagemagick.org/Usage/resize/#resize_unsharp
 [pngquant]: https://pngquant.org/
+[Rallyman GT]: https://www.bouvier-international.com/index.php/rallyman/rallyman-gt
+[sqlite-cli]: https://sqlite.org/cli.html
