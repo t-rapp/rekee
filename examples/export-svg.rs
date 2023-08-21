@@ -57,11 +57,11 @@ fn print_usage(program: &str, opts: &Options) {
     println!("    {:<12} token identifier (like \"jump-gravel\")", TOKEN_ID_PATTERN);
     println!();
     println!("For example when using the following command options:");
-    println!("");
+    println!();
     println!("    {} --base-url \"http://example/path\" \\", program);
     println!("        --tile-image-url \"{}/tile-{}.png\" \\", BASE_URL_PATTERN, TILE_ID_PATTERN);
     println!("        --token-image-url \"{}/tokens/{}.png\"", BASE_URL_PATTERN, TOKEN_ID_PATTERN);
-    println!("");
+    println!();
     println!("The full image URL of tile 204a will be:");
     println!("    \"http://example/path/tile-204a.png\"");
     println!("and the full image URL of a jump token on gravel will be:");
