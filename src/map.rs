@@ -14,7 +14,7 @@ use serde::de::{self, Visitor};
 
 use crate::edition::Edition;
 use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
-use crate::tile::{Connection, ConnectionHint, DangerLevel, Edge, Terrain, TileId, TileInfo, TileList};
+use crate::tile::{Connection, ConnectionHint, DangerLevel, Edge, Pacenote, Terrain, TileId, TileInfo, TileList};
 use crate::token::{TokenId, TokenList};
 
 //----------------------------------------------------------------------------
@@ -107,6 +107,65 @@ impl PlacedTile {
     /// ```
     pub fn danger_level(&self) -> Option<DangerLevel> {
         self.info.map(|info| info.danger_level())
+    }
+
+    /// Pacenote information for a tile.
+    ///
+    /// Returns joined pacenote information for the tile, and possible tokens
+    /// placed onto it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::{Coordinate, Direction};
+    /// # use rekee::map::{PlacedTile, PlacedToken};
+    /// # use rekee::tile::{Pacenote, Terrain, TileId};
+    /// # use rekee::token::TokenId;
+    ///
+    /// let tile = PlacedTile::new(tile!(107, a), (0, 0).into(), Direction::A);
+    /// assert_eq!(tile.pacenotes(), vec![Pacenote::Limit(1), Pacenote::Hazard]);
+    ///
+    /// let mut tile = PlacedTile::new(tile!(205, b), (0, 0).into(), Direction::A);
+    /// tile.tokens.push(PlacedToken::new(TokenId::Water(Terrain::Gravel), (0.32, 0.0).into(), Direction::D.into()));
+    /// assert_eq!(tile.pacenotes(), vec![Pacenote::Jump(4), Pacenote::Water]);
+    ///
+    /// let tile = PlacedTile::new(tile!(999, a), (0, 0).into(), Direction::A);
+    /// assert!(tile.pacenotes().is_empty());
+    /// ```
+    pub fn pacenotes(&self) -> Vec<Pacenote> {
+        let mut pacenotes = Vec::new();
+        if let Some(info) = self.info {
+            pacenotes.append(&mut info.pacenotes());
+        }
+        for token in &self.tokens {
+            match token.id {
+                TokenId::Chicane(_) =>
+                    pacenotes.push(Pacenote::Chicane),
+                TokenId::ChicaneWithLimit(_) => {
+                    pacenotes.push(Pacenote::Chicane);
+                    pacenotes.push(Pacenote::Limit(2));
+                },
+                TokenId::Jump(_) =>
+                    pacenotes.push(Pacenote::Jump(4)),
+                TokenId::Water(_) =>
+                    pacenotes.push(Pacenote::Water),
+                TokenId::ClimbAscent | TokenId::ClimbDescent =>
+                    pacenotes.push(Pacenote::Climb),
+                TokenId::Cloud =>
+                    pacenotes.push(Pacenote::Cloud),
+                TokenId::Oxygen(val) =>
+                    pacenotes.push(Pacenote::Oxygen(val)),
+                TokenId::JokerEntrance | TokenId::JokerExit | TokenId::Finish =>
+                    (), // ignore standees
+                TokenId::MudSpray =>
+                    pacenotes.push(Pacenote::MudSpray),
+
+            }
+        }
+        pacenotes.sort();
+        pacenotes.dedup();
+        pacenotes
     }
 
     /// Check whether the tile has tokens placed on it.
