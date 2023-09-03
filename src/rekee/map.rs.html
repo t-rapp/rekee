@@ -1382,6 +1382,65 @@
 <a href="#1382" id="1382">1382</a>
 <a href="#1383" id="1383">1383</a>
 <a href="#1384" id="1384">1384</a>
+<a href="#1385" id="1385">1385</a>
+<a href="#1386" id="1386">1386</a>
+<a href="#1387" id="1387">1387</a>
+<a href="#1388" id="1388">1388</a>
+<a href="#1389" id="1389">1389</a>
+<a href="#1390" id="1390">1390</a>
+<a href="#1391" id="1391">1391</a>
+<a href="#1392" id="1392">1392</a>
+<a href="#1393" id="1393">1393</a>
+<a href="#1394" id="1394">1394</a>
+<a href="#1395" id="1395">1395</a>
+<a href="#1396" id="1396">1396</a>
+<a href="#1397" id="1397">1397</a>
+<a href="#1398" id="1398">1398</a>
+<a href="#1399" id="1399">1399</a>
+<a href="#1400" id="1400">1400</a>
+<a href="#1401" id="1401">1401</a>
+<a href="#1402" id="1402">1402</a>
+<a href="#1403" id="1403">1403</a>
+<a href="#1404" id="1404">1404</a>
+<a href="#1405" id="1405">1405</a>
+<a href="#1406" id="1406">1406</a>
+<a href="#1407" id="1407">1407</a>
+<a href="#1408" id="1408">1408</a>
+<a href="#1409" id="1409">1409</a>
+<a href="#1410" id="1410">1410</a>
+<a href="#1411" id="1411">1411</a>
+<a href="#1412" id="1412">1412</a>
+<a href="#1413" id="1413">1413</a>
+<a href="#1414" id="1414">1414</a>
+<a href="#1415" id="1415">1415</a>
+<a href="#1416" id="1416">1416</a>
+<a href="#1417" id="1417">1417</a>
+<a href="#1418" id="1418">1418</a>
+<a href="#1419" id="1419">1419</a>
+<a href="#1420" id="1420">1420</a>
+<a href="#1421" id="1421">1421</a>
+<a href="#1422" id="1422">1422</a>
+<a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
+<a href="#1436" id="1436">1436</a>
+<a href="#1437" id="1437">1437</a>
+<a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Map of tiles within a hexagon grid.
 </span><span class="comment">//
@@ -1398,7 +1457,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::edition::Edition;
 <span class="kw">use </span><span class="kw">crate</span>::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
-<span class="kw">use </span><span class="kw">crate</span>::tile::{Connection, ConnectionHint, DangerLevel, Edge, Terrain, TileId, TileInfo, TileList};
+<span class="kw">use </span><span class="kw">crate</span>::tile::{Connection, ConnectionHint, DangerLevel, Edge, Pacenote, Terrain, TileId, TileInfo, TileList};
 <span class="kw">use </span><span class="kw">crate</span>::token::{TokenId, TokenList};
 
 <span class="comment">//----------------------------------------------------------------------------
@@ -1491,6 +1550,65 @@
     /// ```
     </span><span class="kw">pub fn </span>danger_level(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DangerLevel&gt; {
         <span class="self">self</span>.info.map(|info| info.danger_level())
+    }
+
+    <span class="doccomment">/// Pacenote information for a tile.
+    ///
+    /// Returns joined pacenote information for the tile, and possible tokens
+    /// placed onto it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::hexagon::{Coordinate, Direction};
+    /// # use rekee::map::{PlacedTile, PlacedToken};
+    /// # use rekee::tile::{Pacenote, Terrain, TileId};
+    /// # use rekee::token::TokenId;
+    ///
+    /// let tile = PlacedTile::new(tile!(107, a), (0, 0).into(), Direction::A);
+    /// assert_eq!(tile.pacenotes(), vec![Pacenote::Limit(1), Pacenote::Hazard]);
+    ///
+    /// let mut tile = PlacedTile::new(tile!(205, b), (0, 0).into(), Direction::A);
+    /// tile.tokens.push(PlacedToken::new(TokenId::Water(Terrain::Gravel), (0.32, 0.0).into(), Direction::D.into()));
+    /// assert_eq!(tile.pacenotes(), vec![Pacenote::Jump(4), Pacenote::Water]);
+    ///
+    /// let tile = PlacedTile::new(tile!(999, a), (0, 0).into(), Direction::A);
+    /// assert!(tile.pacenotes().is_empty());
+    /// ```
+    </span><span class="kw">pub fn </span>pacenotes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;Pacenote&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>pacenotes = Vec::new();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(info) = <span class="self">self</span>.info {
+            pacenotes.append(<span class="kw-2">&amp;mut </span>info.pacenotes());
+        }
+        <span class="kw">for </span>token <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.tokens {
+            <span class="kw">match </span>token.id {
+                TokenId::Chicane(<span class="kw">_</span>) =&gt;
+                    pacenotes.push(Pacenote::Chicane),
+                TokenId::ChicaneWithLimit(<span class="kw">_</span>) =&gt; {
+                    pacenotes.push(Pacenote::Chicane);
+                    pacenotes.push(Pacenote::Limit(<span class="number">2</span>));
+                },
+                TokenId::Jump(<span class="kw">_</span>) =&gt;
+                    pacenotes.push(Pacenote::Jump(<span class="number">4</span>)),
+                TokenId::Water(<span class="kw">_</span>) =&gt;
+                    pacenotes.push(Pacenote::Water),
+                TokenId::ClimbAscent | TokenId::ClimbDescent =&gt;
+                    pacenotes.push(Pacenote::Climb),
+                TokenId::Cloud =&gt;
+                    pacenotes.push(Pacenote::Cloud),
+                TokenId::Oxygen(val) =&gt;
+                    pacenotes.push(Pacenote::Oxygen(val)),
+                TokenId::JokerEntrance | TokenId::JokerExit | TokenId::Finish =&gt;
+                    (), <span class="comment">// ignore standees
+                </span>TokenId::MudSpray =&gt;
+                    pacenotes.push(Pacenote::MudSpray),
+
+            }
+        }
+        pacenotes.sort();
+        pacenotes.dedup();
+        pacenotes
     }
 
     <span class="doccomment">/// Check whether the tile has tokens placed on it.
