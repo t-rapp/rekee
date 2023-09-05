@@ -2764,6 +2764,32 @@ mod tests {
     }
 
     #[test]
+    fn tile_info_pacenotes() {
+        for info in TILE_INFOS.iter() {
+            let pacenotes = info.pacenotes();
+            for note in pacenotes {
+                match note {
+                    Pacenote::Limit(val) | Pacenote::LimitHazard(val) => {
+                        assert!(val > 0 && val <= 6, "tile info {} has pacenote with invalid speed limit", info.id);
+                    },
+                    Pacenote::Hazard => (),
+                    Pacenote::Shortcut(val) => {
+                        assert!(val > 0 && val <= 6, "tile info {} has pacenote with invalid shortcut speed limit", info.id);
+                    },
+                    Pacenote::Jump(val) => {
+                        assert!(val > 0 && val <= 6, "tile info {} has pacenote with invalid jump value", info.id);
+                    },
+                    Pacenote::Water | Pacenote::Climb | Pacenote::Chicane | Pacenote::Cloud => (),
+                    Pacenote::Oxygen(val) => {
+                        assert!(val > 0 && val <= 3, "tile info {} has pacenote with invalid oxygen value", info.id);
+                    },
+                    Pacenote::MudSpray => (),
+                }
+            }
+        }
+    }
+
+    #[test]
     fn tile_info_connection_edge() {
         for tile in TILE_INFOS.iter() {
             for dir in Direction::iter() {
