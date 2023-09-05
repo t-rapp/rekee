@@ -18,7 +18,7 @@ use crate::export::util;
 use crate::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Point};
 use crate::map::PlacedTile;
 use crate::map::PlacedToken;
-use crate::tile::Terrain;
+use crate::tile::{DangerLevel, Terrain};
 use crate::token::TokenId;
 
 mod catalog;
@@ -99,6 +99,9 @@ impl TileImageElement {
         let pos = tile.pos.to_pixel(layout);
         let inner = document.create_element_ns(SVG_NS, "g")?;
         inner.set_attribute("class", "tile")?;
+        if let Some(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
         inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
 
         let size = util::tile_image_size(layout);
@@ -125,6 +128,9 @@ impl TileImageElement {
         let label = TileLabelElement::create_label_element(document, tile)?;
         element.append_child(&label)?;
 
+        let pacenote = TilePacenoteElement::create_pacenote_element(document, tile)?;
+        element.append_child(&pacenote)?;
+
         Ok(element)
     }
 }
@@ -148,6 +154,9 @@ impl TileLabelElement {
         let pos = tile.pos.to_pixel(layout);
         let inner = document.create_element_ns(SVG_NS, "g")?;
         inner.set_attribute("class", "tile")?;
+        if let Some(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
         inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
 
         let label = Self::create_label_element(document, tile)?;
@@ -169,10 +178,54 @@ impl TileLabelElement {
 
         Ok(label)
     }
-
 }
 
 impl Deref for TileLabelElement {
+    type Target = Element;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct TilePacenoteElement {
+    inner: Element,
+}
+
+impl TilePacenoteElement {
+    pub fn new(document: &Document, layout: &Layout, tile: &PlacedTile) -> Result<Self> {
+        let pos = tile.pos.to_pixel(layout);
+        let inner = document.create_element_ns(SVG_NS, "g")?;
+        inner.set_attribute("class", "tile")?;
+        if let Some(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
+        inner.set_attribute("transform", &format!("translate({:.1} {:.1})", pos.x(), pos.y()))?;
+
+        let pacenote = Self::create_pacenote_element(document, tile)?;
+        inner.append_child(&pacenote)?;
+
+        Ok(TilePacenoteElement { inner })
+    }
+
+    fn create_pacenote_element(document: &Document, tile: &PlacedTile) -> Result<Element> {
+        let label = document.create_element_ns(SVG_NS, "text")?;
+        label.set_attribute("class", "pacenote")?;
+        label.set_attribute("x", "0")?;
+        label.set_attribute("y", "0")?;
+        let pacenotes: Vec<String> = tile.pacenotes().into_iter()
+            .map(|note| note.to_string())
+            .collect();
+        let text = pacenotes.join(", ");
+        label.append_child(&document.create_text_node(&text))?;
+
+        Ok(label)
+    }
+}
+
+impl Deref for TilePacenoteElement {
     type Target = Element;
 
     fn deref(&self) -> &Self::Target {
@@ -252,6 +305,20 @@ impl<T: AsRef<Element>> ElementHidden for T {
         } else {
             check!(elm.class_list().remove_1("is-hidden").ok());
         }
+    }
+}
+
+//----------------------------------------------------------------------------
+
+trait ElementDangerLevel {
+    fn set_danger_level_class(&self, danger_level: DangerLevel);
+}
+
+impl<T: AsRef<Element>> ElementDangerLevel for T {
+    fn set_danger_level_class(&self, danger_level: DangerLevel) {
+        let element = self.as_ref();
+        let class_name = format!("danger-level-{:x}", danger_level);
+        check!(element.class_list().add_1(&class_name).ok());
     }
 }
 

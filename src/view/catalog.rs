@@ -314,6 +314,7 @@ pub struct CatalogView {
     filter_terrain: Option<Terrain>,
     filter_terrain_elements: Vec<TerrainFilterElement>,
     tile_labels_visible: bool,
+    tile_pacenotes_visible: bool,
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -339,6 +340,7 @@ impl CatalogView {
         } else if layout.is_flat() {
             catalog.class_list().add_1("is-flat")?;
         }
+        catalog.class_list().add_1("tile-pacenotes-hidden")?;
 
         let editions: Vec<_> = Series::Gt.editions()
             .cloned()
@@ -384,6 +386,7 @@ impl CatalogView {
         let filter_terrain = None;
 
         let tile_labels_visible = true;
+        let tile_pacenotes_visible = false;
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -434,8 +437,8 @@ impl CatalogView {
 
         let mut view = CatalogView {
             catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
-            filter_terrain_elements, tile_labels_visible, map: None, dragover_cb, dragdrop_cb,
-            keychange_cb, config_button, config_show_cb
+            filter_terrain_elements, tile_labels_visible, tile_pacenotes_visible, map: None,
+            dragover_cb, dragdrop_cb, keychange_cb, config_button, config_show_cb
         };
         view.load_settings(&CatalogSettings::default());
         parent.set_hidden(false);
@@ -603,6 +606,42 @@ impl CatalogView {
         let visible = self.tile_labels_visible ^ inverted;
         info!("toggle catalog tile labels: {:?}", visible);
         if visible {
+            check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
+        } else {
+            check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
+        }
+        if inverted {
+            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
+        } else if self.tile_pacenotes_visible {
+            check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
+        } else {
+            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
+        }
+    }
+
+    pub fn update_tile_pacenotes(&mut self, visible: bool) {
+        if visible != self.tile_pacenotes_visible {
+            info!("update catalog tile pacenotes: {:?}", visible);
+            self.tile_pacenotes_visible = visible;
+            if visible {
+                check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
+            } else {
+                check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
+            }
+        }
+    }
+
+    pub fn toggle_tile_pacenotes(&mut self, inverted: bool) {
+        let visible = self.tile_pacenotes_visible ^ inverted;
+        info!("toggle catalog tile pacenotes: {:?}", visible);
+        if visible {
+            check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
+        } else {
+            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
+        }
+        if inverted {
+            check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
+        } else if self.tile_labels_visible {
             check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
         } else {
             check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());

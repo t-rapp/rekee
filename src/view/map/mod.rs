@@ -17,8 +17,8 @@ use crate::controller::{
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
-    UpdateAuthorEvent, UpdateSelectedTileEvent, UpdateTileUsageEvent,
-    UpdateTitleEvent
+    ToggleTilePacenotesEvent, UpdateAuthorEvent, UpdateSelectedTileEvent,
+    UpdateTileUsageEvent, UpdateTitleEvent
 };
 use crate::controller::map::*;
 use crate::controller::map_config::ShowMapConfigEvent;
@@ -412,12 +412,14 @@ pub struct MapView {
     tiles: Element,
     tokens: Element,
     labels: Element,
+    pacenotes: Element,
     title: TitleInput,
     author: AuthorInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
     tile_labels_visible: bool,
+    tile_pacenotes_visible: bool,
     keychange_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
     dragged: Option<DraggedTile>,
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
@@ -489,6 +491,10 @@ impl MapView {
         labels.set_attribute("class", "labels")?;
         canvas.append_child(&labels)?;
 
+        let pacenotes = document.create_element_ns(SVG_NS, "g")?;
+        pacenotes.set_attribute("class", "pacenotes")?;
+        canvas.append_child(&pacenotes)?;
+
         let title = TitleInput::new(&document)?;
         title.set_value(map.title());
 
@@ -506,6 +512,7 @@ impl MapView {
         canvas.append_child(active.as_ref())?;
 
         let tile_labels_visible = true;
+        let tile_pacenotes_visible = false;
         let dragged = None;
 
         let keychange_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
@@ -533,6 +540,14 @@ impl MapView {
                     _ => return,
                 };
                 nuts::publish(ToggleTileLabelsEvent { inverted });
+            }
+            if event.key().eq_ignore_ascii_case("n") {
+                let inverted = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
+                    _ => return,
+                };
+                nuts::publish(ToggleTilePacenotesEvent { inverted });
             }
         }) as Box<dyn Fn(_)>);
         document.add_event_listener_with_callback("keydown",
@@ -676,10 +691,10 @@ impl MapView {
 
         let mut view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
-            title, author, selected, selected_menu, active, tile_labels_visible,
-            keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb, document_title, download_button,
-            export_button
+            pacenotes, title, author, selected, selected_menu, active,
+            tile_labels_visible, tile_pacenotes_visible, keychange_cb, dragged,
+            dragged_mousemove_cb, dragged_mouseup_cb, dragged_mouseleave_cb,
+            document_title, download_button, export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -800,13 +815,15 @@ impl MapView {
             canvas_viewbox.width as i32, canvas_viewbox.height as i32)).ok());
         self.canvas_viewbox = canvas_viewbox;
 
-        // remove all existing tiles, tokens, and labels
+        // remove all existing tiles, tokens, labels and pacenotes
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
         check!(range.delete_contents().ok());
         check!(range.select_node_contents(&self.tokens).ok());
         check!(range.delete_contents().ok());
         check!(range.select_node_contents(&self.labels).ok());
+        check!(range.delete_contents().ok());
+        check!(range.select_node_contents(&self.pacenotes).ok());
         check!(range.delete_contents().ok());
 
         // then add updated tiles
@@ -822,6 +839,9 @@ impl MapView {
             if let Ok(el) = TileLabelElement::new(&document, &self.layout, tile) {
                 self.labels.append_child(&el).unwrap();
             }
+            if let Ok(el) = TilePacenoteElement::new(&document, &self.layout, tile) {
+                self.pacenotes.append_child(&el).unwrap();
+            }
         }
 
         // update active tile append position
@@ -834,6 +854,9 @@ impl MapView {
 
         // update tile label visibility
         self.labels.set_hidden(!self.tile_labels_visible);
+
+        // update tile pacenote visibility
+        self.pacenotes.set_hidden(!self.tile_pacenotes_visible);
 
         // update title and author input controls
         self.title.set_value(self.map.title());
@@ -901,6 +924,30 @@ impl MapView {
         let visible = self.tile_labels_visible ^ inverted;
         info!("toggle map tile labels: {:?}", visible);
         self.labels.set_hidden(!visible);
+        if inverted {
+            self.pacenotes.set_hidden(true);
+        } else {
+            self.pacenotes.set_hidden(!self.tile_pacenotes_visible);
+        }
+    }
+
+    pub fn update_tile_pacenotes(&mut self, visible: bool) {
+        if visible != self.tile_pacenotes_visible {
+            debug!("update map tile pacenotes: {:?}", visible);
+            self.tile_pacenotes_visible = visible;
+            self.update_map();
+        }
+    }
+
+    pub fn toggle_tile_pacenotes(&mut self, inverted: bool) {
+        let visible = self.tile_pacenotes_visible ^ inverted;
+        info!("toggle map tile pacenotes: {:?}", visible);
+        self.pacenotes.set_hidden(!visible);
+        if inverted {
+            self.labels.set_hidden(true);
+        } else {
+            self.labels.set_hidden(!self.tile_labels_visible);
+        }
     }
 
     pub fn clear_selected(&mut self) {

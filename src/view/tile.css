@@ -12,3 +12,26 @@
     user-select: none;
     pointer-events: none;
 }
+.pacenote {
+    font-family: Caveat, sans-serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: bold;
+    fill: #444;
+    paint-order: stroke;
+    stroke: white;
+    stroke-width: 2.0;
+    dominant-baseline: middle;
+    text-anchor: middle;
+    user-select: none;
+    pointer-events: none;
+}
+.danger-level-low .pacenote {
+    fill: #cc0;
+}
+.danger-level-medium .pacenote {
+    fill: #c80;
+}
+.danger-level-high .pacenote {
+    fill: #c20;
+}

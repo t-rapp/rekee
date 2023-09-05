@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="bulma.min.css">
     <style>
         @font-face {
+            font-family: 'Caveat';
+            src: url('caveat-bold.woff') format('woff');
+            font-style: italic;
+            font-weight: bold;
+            font-display: swap;
+        }
+        @font-face {
             font-family: 'Edo Regular';
             src: url('edo-regular.woff') format('woff');
             font-style: normal;
@@ -89,6 +96,9 @@
             user-select: none;
         }
         #catalog.tile-labels-hidden .tile .label {
+            display: none;
+        }
+        #catalog.tile-pacenotes-hidden .tile .pacenote {
             display: none;
         }
         #map-container {

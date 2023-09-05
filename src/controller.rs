@@ -88,6 +88,14 @@ pub struct ToggleTileLabelsEvent {
     pub inverted: bool,
 }
 
+pub struct UpdateTilePacenotesEvent {
+    pub visible: bool,
+}
+
+pub struct ToggleTilePacenotesEvent {
+    pub inverted: bool,
+}
+
 pub struct UpdateSelectedTileEvent {
     pub pos: Point,
 }
@@ -177,6 +185,8 @@ pub mod catalog {
             activity.subscribe(CatalogController::update_catalog_editions);
             activity.subscribe(CatalogController::update_tile_labels);
             activity.subscribe(CatalogController::toggle_tile_labels);
+            activity.subscribe(CatalogController::update_tile_pacenotes);
+            activity.subscribe(CatalogController::toggle_tile_pacenotes);
             activity.subscribe(CatalogController::update_tile_usage);
             activity.subscribe(CatalogController::drag_catalog_tile_begin);
         }
@@ -208,6 +218,14 @@ pub mod catalog {
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
             self.view.toggle_tile_labels(event.inverted);
+        }
+
+        fn update_tile_pacenotes(&mut self, event: &UpdateTilePacenotesEvent) {
+            self.view.update_tile_pacenotes(event.visible);
+        }
+
+        fn toggle_tile_pacenotes(&mut self, event: &ToggleTilePacenotesEvent) {
+            self.view.toggle_tile_pacenotes(event.inverted);
         }
 
         fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
@@ -287,6 +305,8 @@ pub mod map {
             activity.subscribe(MapController::update_background_grid);
             activity.subscribe(MapController::update_tile_labels);
             activity.subscribe(MapController::toggle_tile_labels);
+            activity.subscribe(MapController::update_tile_pacenotes);
+            activity.subscribe(MapController::toggle_tile_pacenotes);
             activity.subscribe(MapController::update_selected_tile);
             activity.subscribe(MapController::add_selected_tile_token);
             activity.subscribe(MapController::update_selected_tile_tokens);
@@ -361,6 +381,14 @@ pub mod map {
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
             self.view.toggle_tile_labels(event.inverted);
+        }
+
+        fn update_tile_pacenotes(&mut self, event: &UpdateTilePacenotesEvent) {
+            self.view.update_tile_pacenotes(event.visible);
+        }
+
+        fn toggle_tile_pacenotes(&mut self, event: &ToggleTilePacenotesEvent) {
+            self.view.toggle_tile_pacenotes(event.inverted);
         }
 
         fn update_selected_tile(&mut self, event: &UpdateSelectedTileEvent) {
