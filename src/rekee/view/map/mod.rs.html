@@ -1091,6 +1091,53 @@
 <a href="#1091" id="1091">1091</a>
 <a href="#1092" id="1092">1092</a>
 <a href="#1093" id="1093">1093</a>
+<a href="#1094" id="1094">1094</a>
+<a href="#1095" id="1095">1095</a>
+<a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of the map and according event handlers.
 </span><span class="comment">//
@@ -1110,8 +1157,8 @@
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
-    UpdateAuthorEvent, UpdateSelectedTileEvent, UpdateTileUsageEvent,
-    UpdateTitleEvent
+    ToggleTilePacenotesEvent, UpdateAuthorEvent, UpdateSelectedTileEvent,
+    UpdateTileUsageEvent, UpdateTitleEvent
 };
 <span class="kw">use </span><span class="kw">crate</span>::controller::map::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::controller::map_config::ShowMapConfigEvent;
@@ -1505,12 +1552,14 @@
     tiles: Element,
     tokens: Element,
     labels: Element,
+    pacenotes: Element,
     title: TitleInput,
     author: AuthorInput,
     selected: SelectedHex,
     selected_menu: SelectedMenu,
     active: ActiveHex,
     tile_labels_visible: bool,
+    tile_pacenotes_visible: bool,
     keychange_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::KeyboardEvent)&gt;,
     dragged: <span class="prelude-ty">Option</span>&lt;DraggedTile&gt;,
     dragged_mousemove_cb: Closure&lt;<span class="kw">dyn </span>Fn(web_sys::MouseEvent)&gt;,
@@ -1582,6 +1631,10 @@
         labels.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;labels&quot;</span>)<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>labels)<span class="question-mark">?</span>;
 
+        <span class="kw">let </span>pacenotes = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
+        pacenotes.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;pacenotes&quot;</span>)<span class="question-mark">?</span>;
+        canvas.append_child(<span class="kw-2">&amp;</span>pacenotes)<span class="question-mark">?</span>;
+
         <span class="kw">let </span>title = TitleInput::new(<span class="kw-2">&amp;</span>document)<span class="question-mark">?</span>;
         title.set_value(map.title());
 
@@ -1599,6 +1652,7 @@
         canvas.append_child(active.as_ref())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>tile_labels_visible = <span class="bool-val">true</span>;
+        <span class="kw">let </span>tile_pacenotes_visible = <span class="bool-val">false</span>;
         <span class="kw">let </span>dragged = <span class="prelude-val">None</span>;
 
         <span class="kw">let </span>keychange_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::KeyboardEvent| {
@@ -1626,6 +1680,14 @@
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 };
                 nuts::publish(ToggleTileLabelsEvent { inverted });
+            }
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;n&quot;</span>) {
+                <span class="kw">let </span>inverted = <span class="kw">match </span>event.type_().as_ref() {
+                    <span class="string">&quot;keydown&quot; </span>=&gt; <span class="bool-val">true</span>,
+                    <span class="string">&quot;keyup&quot; </span>=&gt; <span class="bool-val">false</span>,
+                    <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
+                };
+                nuts::publish(ToggleTilePacenotesEvent { inverted });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
         document.add_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
@@ -1769,10 +1831,10 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
-            title, author, selected, selected_menu, active, tile_labels_visible,
-            keychange_cb, dragged, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb, document_title, download_button,
-            export_button
+            pacenotes, title, author, selected, selected_menu, active,
+            tile_labels_visible, tile_pacenotes_visible, keychange_cb, dragged,
+            dragged_mousemove_cb, dragged_mouseup_cb, dragged_mouseleave_cb,
+            document_title, download_button, export_button
         };
         view.update_map();
         parent.set_hidden(<span class="bool-val">false</span>);
@@ -1893,13 +1955,15 @@
             canvas_viewbox.width <span class="kw">as </span>i32, canvas_viewbox.height <span class="kw">as </span>i32)).ok());
         <span class="self">self</span>.canvas_viewbox = canvas_viewbox;
 
-        <span class="comment">// remove all existing tiles, tokens, and labels
+        <span class="comment">// remove all existing tiles, tokens, labels and pacenotes
         </span><span class="kw">let </span>range = <span class="macro">check!</span>(document.create_range().ok());
         <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span><span class="self">self</span>.tiles).ok());
         <span class="macro">check!</span>(range.delete_contents().ok());
         <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span><span class="self">self</span>.tokens).ok());
         <span class="macro">check!</span>(range.delete_contents().ok());
         <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span><span class="self">self</span>.labels).ok());
+        <span class="macro">check!</span>(range.delete_contents().ok());
+        <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span><span class="self">self</span>.pacenotes).ok());
         <span class="macro">check!</span>(range.delete_contents().ok());
 
         <span class="comment">// then add updated tiles
@@ -1915,6 +1979,9 @@
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(el) = TileLabelElement::new(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span><span class="self">self</span>.layout, tile) {
                 <span class="self">self</span>.labels.append_child(<span class="kw-2">&amp;</span>el).unwrap();
             }
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(el) = TilePacenoteElement::new(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span><span class="self">self</span>.layout, tile) {
+                <span class="self">self</span>.pacenotes.append_child(<span class="kw-2">&amp;</span>el).unwrap();
+            }
         }
 
         <span class="comment">// update active tile append position
@@ -1927,6 +1994,9 @@
 
         <span class="comment">// update tile label visibility
         </span><span class="self">self</span>.labels.set_hidden(!<span class="self">self</span>.tile_labels_visible);
+
+        <span class="comment">// update tile pacenote visibility
+        </span><span class="self">self</span>.pacenotes.set_hidden(!<span class="self">self</span>.tile_pacenotes_visible);
 
         <span class="comment">// update title and author input controls
         </span><span class="self">self</span>.title.set_value(<span class="self">self</span>.map.title());
@@ -1994,6 +2064,30 @@
         <span class="kw">let </span>visible = <span class="self">self</span>.tile_labels_visible ^ inverted;
         <span class="macro">info!</span>(<span class="string">&quot;toggle map tile labels: {:?}&quot;</span>, visible);
         <span class="self">self</span>.labels.set_hidden(!visible);
+        <span class="kw">if </span>inverted {
+            <span class="self">self</span>.pacenotes.set_hidden(<span class="bool-val">true</span>);
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.pacenotes.set_hidden(!<span class="self">self</span>.tile_pacenotes_visible);
+        }
+    }
+
+    <span class="kw">pub fn </span>update_tile_pacenotes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
+        <span class="kw">if </span>visible != <span class="self">self</span>.tile_pacenotes_visible {
+            <span class="macro">debug!</span>(<span class="string">&quot;update map tile pacenotes: {:?}&quot;</span>, visible);
+            <span class="self">self</span>.tile_pacenotes_visible = visible;
+            <span class="self">self</span>.update_map();
+        }
+    }
+
+    <span class="kw">pub fn </span>toggle_tile_pacenotes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inverted: bool) {
+        <span class="kw">let </span>visible = <span class="self">self</span>.tile_pacenotes_visible ^ inverted;
+        <span class="macro">info!</span>(<span class="string">&quot;toggle map tile pacenotes: {:?}&quot;</span>, visible);
+        <span class="self">self</span>.pacenotes.set_hidden(!visible);
+        <span class="kw">if </span>inverted {
+            <span class="self">self</span>.labels.set_hidden(<span class="bool-val">true</span>);
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.labels.set_hidden(!<span class="self">self</span>.tile_labels_visible);
+        }
     }
 
     <span class="kw">pub fn </span>clear_selected(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {

@@ -256,6 +256,73 @@
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of objects and common functions.
 </span><span class="comment">//
@@ -276,7 +343,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::hexagon::{Coordinate, FloatCoordinate, FloatDirection, Layout, Point};
 <span class="kw">use </span><span class="kw">crate</span>::map::PlacedTile;
 <span class="kw">use </span><span class="kw">crate</span>::map::PlacedToken;
-<span class="kw">use </span><span class="kw">crate</span>::tile::Terrain;
+<span class="kw">use </span><span class="kw">crate</span>::tile::{DangerLevel, Terrain};
 <span class="kw">use </span><span class="kw">crate</span>::token::TokenId;
 
 <span class="kw">mod </span>catalog;
@@ -357,6 +424,9 @@
         <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
         <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
         inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
         inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>size = util::tile_image_size(layout);
@@ -383,6 +453,9 @@
         <span class="kw">let </span>label = TileLabelElement::create_label_element(document, tile)<span class="question-mark">?</span>;
         element.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
 
+        <span class="kw">let </span>pacenote = TilePacenoteElement::create_pacenote_element(document, tile)<span class="question-mark">?</span>;
+        element.append_child(<span class="kw-2">&amp;</span>pacenote)<span class="question-mark">?</span>;
+
         <span class="prelude-val">Ok</span>(element)
     }
 }
@@ -406,6 +479,9 @@
         <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
         <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
         inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
         inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>label = <span class="self">Self</span>::create_label_element(document, tile)<span class="question-mark">?</span>;
@@ -427,10 +503,54 @@
 
         <span class="prelude-val">Ok</span>(label)
     }
-
 }
 
 <span class="kw">impl </span>Deref <span class="kw">for </span>TileLabelElement {
+    <span class="kw">type </span>Target = Element;
+
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.inner
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+
+</span><span class="kw">struct </span>TilePacenoteElement {
+    inner: Element,
+}
+
+<span class="kw">impl </span>TilePacenoteElement {
+    <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
+            inner.set_danger_level_class(danger_level);
+        }
+        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>pacenote = <span class="self">Self</span>::create_pacenote_element(document, tile)<span class="question-mark">?</span>;
+        inner.append_child(<span class="kw-2">&amp;</span>pacenote)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(TilePacenoteElement { inner })
+    }
+
+    <span class="kw">fn </span>create_pacenote_element(document: <span class="kw-2">&amp;</span>Document, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
+        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;pacenote&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>pacenotes: Vec&lt;String&gt; = tile.pacenotes().into_iter()
+            .map(|note| note.to_string())
+            .collect();
+        <span class="kw">let </span>text = pacenotes.join(<span class="string">&quot;, &quot;</span>);
+        label.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text))<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(label)
+    }
+}
+
+<span class="kw">impl </span>Deref <span class="kw">for </span>TilePacenoteElement {
     <span class="kw">type </span>Target = Element;
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
@@ -510,6 +630,20 @@
         } <span class="kw">else </span>{
             <span class="macro">check!</span>(elm.class_list().remove_1(<span class="string">&quot;is-hidden&quot;</span>).ok());
         }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+
+</span><span class="kw">trait </span>ElementDangerLevel {
+    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel);
+}
+
+<span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementDangerLevel <span class="kw">for </span>T {
+    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) {
+        <span class="kw">let </span>element = <span class="self">self</span>.as_ref();
+        <span class="kw">let </span>class_name = <span class="macro">format!</span>(<span class="string">&quot;danger-level-{:x}&quot;</span>, danger_level);
+        <span class="macro">check!</span>(element.class_list().add_1(<span class="kw-2">&amp;</span>class_name).ok());
     }
 }
 
