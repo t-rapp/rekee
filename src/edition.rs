@@ -618,7 +618,7 @@ const DIRT_EDITIONS: [Edition; 5] = [
 //----------------------------------------------------------------------------
 
 /// Rallyman game series (GT or DIRT).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Series {
     /// Rallyman: GT
     Gt,

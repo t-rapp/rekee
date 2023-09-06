@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------
 
 use std::cmp::Reverse;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::collections::btree_map::Iter;
 use std::fmt;
 use std::num::ParseIntError;
@@ -963,6 +963,17 @@ pub trait TileList {
         }
         summary
     }
+
+    /// Detects whether the given list of tiles belongs to the Rallyman GT or
+    /// DIRT series.
+    ///
+    /// Start/Finish tiles are considered first when detecting the game series.
+    /// When no such tiles are found the tiles are checked whether they all
+    /// belong to the same series.
+    ///
+    /// Returns `Some(Series)` when detection was successful, otherwise returns
+    /// `None`.
+    fn detect_series(&self) -> Option<Series>;
 }
 
 impl<T: AsRef<TileId> + Clone> TileList for [T] {
@@ -991,6 +1002,47 @@ impl<T: AsRef<TileId> + Clone> TileList for [T] {
             )
             .collect();
         summary
+    }
+
+    fn detect_series(&self) -> Option<Series> {
+        const START_FINISH_TILES: [TileId; 19] = [
+            // Rallyman GT
+            tile!(102, a), tile!(102, b),
+            tile!(131, a), tile!(131, b),
+            tile!(139, a), tile!(139, b),
+            tile!(140, b),
+            tile!(143, b),
+            tile!(144, b),
+            // Rallyman DIRT
+            tile!(202, a), tile!(202, b),
+            tile!(203, a), tile!(203, b),
+            tile!(301, a), tile!(301, b),
+            tile!(302, a), tile!(302, b),
+            tile!(401, a), tile!(401, b),
+        ];
+        let mut start_series = HashSet::new();
+        let mut tile_series = HashSet::new();
+        for tile in self.iter() {
+            let tile = tile.as_ref();
+            let info = match TileInfo::get(*tile) {
+                Some(val) => val,
+                None => continue,
+            };
+            let series = info.series();
+            if START_FINISH_TILES.contains(tile) {
+                start_series.insert(series);
+            }
+            tile_series.insert(series);
+        }
+        if start_series.len() == 1 {
+            // At least one start/finish tile was used and all of them are from the same series
+            start_series.into_iter().next()
+        } else if tile_series.len() == 1 {
+            // At least one tile was used and all of them are from the same series
+            tile_series.into_iter().next()
+        } else {
+            None
+        }
     }
 }
 
@@ -2205,18 +2257,24 @@ mod tests {
         let tiles: &[TileId] = &[][..];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![]);
+        let series = tiles.detect_series();
+        assert_eq!(series, None);
 
         let tiles = vec![tile!(101)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Gt));
 
         let tiles = vec![tile!(101), tile!(103, a), tile!(103, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 3),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Gt));
 
         let tiles = vec![tile!(101), tile!(121, a), tile!(121, b)];
         let summary = tiles.edition_summary();
@@ -2224,6 +2282,8 @@ mod tests {
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
             EditionSummary::new(Some(Edition::GtChampionship), 1, 2),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Gt));
 
         let tiles = vec![tile!(101), tile!(124, a), tile!(124, b)];
         let summary = tiles.edition_summary();
@@ -2232,6 +2292,8 @@ mod tests {
             EditionSummary::new(Some(Edition::GtChampionship), 1, 1),
             EditionSummary::new(Some(Edition::GtWorldTour), 1, 1),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Gt));
 
         let tiles = vec![tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
         let summary = tiles.edition_summary();
@@ -2240,6 +2302,8 @@ mod tests {
             EditionSummary::new(Some(Edition::Dirt110Percent), 1, 1),
             EditionSummary::new(Some(Edition::DirtCopilotPack), 1, 1),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Dirt));
 
         let tiles = vec![tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
         let summary = tiles.edition_summary();
@@ -2247,12 +2311,16 @@ mod tests {
             EditionSummary::new(Some(Edition::DirtCoreBox), 2, 3),
             EditionSummary::new(Some(Edition::DirtRx), 1, 1),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, Some(Series::Dirt));
 
         let tiles = vec![tile!(999, a)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(None, 1, 1),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, None);
 
         let tiles: Vec<TileId> = TileInfo::iter()
             .map(|info| info.full_id())
@@ -2270,6 +2338,8 @@ mod tests {
             EditionSummary::new(Some(Edition::DirtClimb), 2, 8),
             EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 12),
         ]);
+        let series = tiles.detect_series();
+        assert_eq!(series, None);
     }
 
     #[test]
