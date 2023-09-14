@@ -2010,7 +2010,7 @@ const TILE_INFOS: [TileInfo; 271] = [
     TileInfo::new(tile!(221, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL2, NL3]),
     TileInfo::new(tile!(221, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL2, NL3, NS4]),
     TileInfo::new(tile!(222, a), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4]),
-    TileInfo::new(tile!(222, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4, NJ4]),
+    TileInfo::new(tile!(222, b), 1, TG, DH, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4, NS4]),
     TileInfo::new(tile!(223, a), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4]),
     TileInfo::new(tile!(223, b), 1, TG, DL, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4, NS4]),
     TileInfo::new(tile!(224, a), 1, TG, DM, [CN, CL1, CN, CR1, CN, CN], [EN, ES2, EN, ES2, EN, EN], &[NL3, NL4]),
