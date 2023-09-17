@@ -11,6 +11,7 @@ use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
 
+use crate::edition::Series;
 use crate::hexagon::Point;
 
 //----------------------------------------------------------------------------
@@ -142,6 +143,92 @@ impl std::convert::TryFrom<&str> for ExportScale {
 
     fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
         ExportScale::from_str(value)
+    }
+}
+
+//----------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct ExportColorScheme {
+    series: Series,
+}
+
+impl ExportColorScheme {
+    pub fn new(series: Series) -> Self {
+        ExportColorScheme { series }
+    }
+
+    pub fn background_color(&self) -> &'static str {
+        "hsl(0, 0%, 100%)"
+    }
+
+    pub fn map_title_color(&self) -> &'static str {
+        "hsl(12, 71%, 43%)"
+    }
+
+    pub fn map_author_color(&self) -> &'static str {
+        "hsl(12, 56%, 67%)"
+    }
+
+    pub fn map_preposition_color(&self) -> &'static str {
+        match self.series {
+            Series::Gt => "hsl(206, 59%, 65%)",
+            Series::Dirt => "hsl(93, 27%, 63%)",
+        }
+    }
+
+    pub fn map_border_color(&self) -> &'static str {
+        match self.series {
+            Series::Gt => "hsl(206, 59%, 55%)",
+            Series::Dirt => "hsl(93, 49%, 38%)",
+        }
+    }
+
+    pub fn missing_image_color(&self) -> &'static str {
+        "hsl(0, 0%, 90%)"
+    }
+
+    pub fn tile_label_color(&self) -> &'static str {
+        "hsl(0, 0%, 30%)"
+    }
+
+    pub fn tile_count_color(&self) -> &'static str {
+        self.map_border_color()
+    }
+
+    pub fn tile_number_color(&self) -> &'static str {
+        self.map_title_color()
+    }
+
+    pub fn listing_background_color(&self) -> &'static str {
+        "hsl(23, 53%, 94%)"
+    }
+
+    pub fn listing_border_color(&self) -> &'static str {
+        self.map_border_color()
+    }
+}
+
+impl Default for ExportColorScheme {
+    fn default() -> Self {
+        ExportColorScheme::new(Series::Dirt)
+    }
+}
+
+impl fmt::Display for ExportColorScheme {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        write!(fmt, "{}", self.series)
+    }
+}
+
+impl FromStr for ExportColorScheme {
+    type Err = crate::edition::ParseSeriesError;
+
+    fn from_str(val: &str) -> std::result::Result<Self, Self::Err> {
+        let series = Series::from_str(val)?;
+        Ok(ExportColorScheme::new(series))
     }
 }
 

@@ -20,6 +20,7 @@ use crate::check;
 use crate::controller::SaveSettingsEvent;
 use crate::controller::export::*;
 use crate::edition::Series;
+use crate::export::ExportColorScheme;
 use crate::export::ExportScale;
 use crate::export::util;
 use crate::hexagon::Rect;
@@ -65,7 +66,7 @@ fn draw_token_image(context: &web_sys::CanvasRenderingContext2d, image: &HtmlIma
     Ok(())
 }
 
-fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, color_scheme: &ColorScheme, pos: Point, size: Point) -> Result<()> {
+fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, pos: Point, size: Point) -> Result<()> {
     let pos_x = f64::from(pos.x());
     let pos_y = f64::from(pos.y());
     let height = (0.8 * f32::max(size.x(), size.y())).round() as i32;
@@ -74,14 +75,14 @@ fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, color_scheme:
     context.set_font(&format!("bold {}px Overpass, sans-serif", height));
     context.set_text_align("center");
     context.set_text_baseline("middle");
-    context.set_fill_style(&JsValue::from_str(color_scheme.missing_image_color));
+    context.set_fill_style(&JsValue::from_str(color_scheme.missing_image_color()));
     context.fill_text("?", pos_x, pos_y)?;
     context.restore();
 
     Ok(())
 }
 
-fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: &ColorScheme, text: &str, pos: Point, height: i32) -> Result<()> {
+fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, text: &str, pos: Point, height: i32) -> Result<()> {
     let pos_x = f64::from(pos.x());
     let pos_y = f64::from(pos.y());
 
@@ -91,59 +92,13 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: &C
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
     context.set_miter_limit(2.0);
-    context.set_stroke_style(&JsValue::from_str(color_scheme.background_color));
+    context.set_stroke_style(&JsValue::from_str(color_scheme.background_color()));
     context.stroke_text(text, pos_x, pos_y)?;
-    context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color));
+    context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color()));
     context.fill_text(text, pos_x, pos_y)?;
     context.restore();
 
     Ok(())
-}
-
-//----------------------------------------------------------------------------
-
-#[derive(Clone)]
-struct ColorScheme {
-    background_color: &'static str,
-    map_title_color: &'static str,
-    map_author_color: &'static str,
-    map_preposition_color: &'static str,
-    map_border_color: &'static str,
-    missing_image_color: &'static str,
-    tile_label_color: &'static str,
-    tile_count_color: &'static str,
-    tile_number_color: &'static str,
-    listing_background_color: &'static str,
-    listing_border_color: &'static str,
-}
-
-impl ColorScheme {
-    const fn new(series: Series) -> Self {
-        let background_color = "hsl(0, 0%, 100%)";
-        let map_title_color = "hsl(12, 71%, 43%)";
-        let map_author_color = "hsl(12, 56%, 67%)";
-        let map_preposition_color = match series {
-            Series::Gt => "hsl(206, 59%, 65%)",
-            Series::Dirt => "hsl(93, 27%, 63%)",
-        };
-        let map_border_color = match series {
-            Series::Gt => "hsl(206, 59%, 55%)",
-            Series::Dirt => "hsl(93, 49%, 38%)",
-        };
-        let missing_image_color = "hsl(0, 0%, 90%)";
-        let tile_label_color = "hsl(0, 0%, 30%)";
-        let tile_count_color = map_border_color;
-        let tile_number_color = map_title_color;
-        let listing_background_color = "hsl(23, 53%, 94%)";
-        let listing_border_color = map_border_color;
-
-        ColorScheme {
-            background_color, map_title_color, map_author_color,
-            map_preposition_color, map_border_color, missing_image_color,
-            tile_label_color, tile_count_color, tile_number_color,
-            listing_background_color, listing_border_color
-        }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -156,7 +111,7 @@ struct TileImage {
 }
 
 impl TileImage {
-    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, color_scheme: &ColorScheme, tile: PlacedTile) -> Result<Self> {
+    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, color_scheme: ExportColorScheme, tile: PlacedTile) -> Result<Self> {
         let pos = tile.pos.to_pixel(layout);
         let size = util::tile_image_size(layout);
         let angle = layout.direction_to_angle(tile.dir);
@@ -177,10 +132,9 @@ impl TileImage {
         let error_cb = Closure::wrap(Box::new({
             let tile = tile.clone();
             let context = context.clone();
-            let color_scheme = color_scheme.clone();
             move |_event: web_sys::Event| {
                 debug!("loading of tile image {} failed", &tile.id());
-                check!(draw_missing_image(&context, &color_scheme, pos, size).ok());
+                check!(draw_missing_image(&context, color_scheme, pos, size).ok());
                 nuts::send_to::<ExportController, _>(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) as Box<dyn Fn(_)>);
@@ -214,7 +168,7 @@ struct TokenImage {
 }
 
 impl TokenImage {
-    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, color_scheme: &ColorScheme, tile: PlacedTile, token: PlacedToken) -> Result<Self> {
+    fn new(context: &web_sys::CanvasRenderingContext2d, layout: &Layout, color_scheme: ExportColorScheme, tile: PlacedTile, token: PlacedToken) -> Result<Self> {
         let pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir))
             .to_pixel(layout);
         let size = util::token_image_size(layout, token.id);
@@ -239,10 +193,9 @@ impl TokenImage {
             let tile = tile.clone();
             let token = token.clone();
             let context = context.clone();
-            let color_scheme = color_scheme.clone();
             move |_event: web_sys::Event| {
                 debug!("loading of token image {} failed", &token.id);
-                check!(draw_missing_image(&context, &color_scheme, pos, size).ok());
+                check!(draw_missing_image(&context, color_scheme, pos, size).ok());
                 nuts::send_to::<ExportController, _>(DrawExportTokenDoneEvent { tile: tile.clone(), token: token.clone() });
             }
         }) as Box<dyn Fn(_)>);
@@ -273,6 +226,7 @@ pub struct ExportSettings {
     pub export_scale: Option<ExportScale>,
     pub header_visible: bool,
     pub listing_visible: bool,
+    pub export_color_scheme: Option<ExportColorScheme>,
 }
 
 //----------------------------------------------------------------------------
@@ -283,7 +237,8 @@ pub struct ExportView {
     /// Layout for the currently active export
     export_layout: Layout,
     export_scale: Option<ExportScale>,
-    color_scheme: ColorScheme,
+    export_color_scheme: Option<ExportColorScheme>,
+    active_color_scheme: ExportColorScheme,
     map: Map,
     header_visible: bool,
     listing_visible: bool,
@@ -299,7 +254,8 @@ impl ExportView {
         let base_layout = layout.clone();
         let export_layout = layout.clone();
         let export_scale = None;
-        let color_scheme = ColorScheme::new(Series::Dirt);
+        let export_color_scheme = None;
+        let active_color_scheme = ExportColorScheme::new(Series::Dirt);
         let map = Map::new();
         let header_visible = true;
         let listing_visible = false;
@@ -372,9 +328,9 @@ impl ExportView {
         font_load_cb.forget();
 
         Ok(ExportView {
-            base_layout, export_layout, export_scale, color_scheme, map,
-            header_visible, listing_visible, tile_labels_visible, tile_images,
-            token_images, canvas, anchor
+            base_layout, export_layout, export_scale, export_color_scheme,
+            active_color_scheme, map, header_visible, listing_visible,
+            tile_labels_visible, tile_images, token_images, canvas, anchor
         })
     }
 
@@ -382,13 +338,15 @@ impl ExportView {
         self.export_scale = settings.export_scale;
         self.header_visible = settings.header_visible;
         self.listing_visible = settings.listing_visible;
+        self.export_color_scheme = settings.export_color_scheme;
     }
 
     pub fn save_settings(&mut self) -> ExportSettings {
         let export_scale = self.export_scale;
         let header_visible = self.header_visible;
         let listing_visible = self.listing_visible;
-        ExportSettings { export_scale, header_visible, listing_visible }
+        let export_color_scheme = self.export_color_scheme;
+        ExportSettings { export_scale, header_visible, listing_visible, export_color_scheme }
     }
 
     pub fn update_export_scale(&mut self, scale: Option<ExportScale>) {
@@ -403,6 +361,11 @@ impl ExportView {
 
     pub fn update_export_listing(&mut self, visible: bool) {
         self.listing_visible = visible;
+        nuts::send_to::<ExportController, _>(SaveSettingsEvent);
+    }
+
+    pub fn update_export_color_scheme(&mut self, color_scheme: Option<ExportColorScheme>) {
+        self.export_color_scheme = color_scheme;
         nuts::send_to::<ExportController, _>(SaveSettingsEvent);
     }
 
@@ -421,10 +384,17 @@ impl ExportView {
         let export_layout = self.base_layout
             .with_size(export_scale.tile_size());
 
-        let series = map.tiles().detect_series()
-            .unwrap_or(Series::Dirt);
-        let color_scheme = ColorScheme::new(series);
-        debug!("color scheme: {}", series);
+        let active_color_scheme = match self.export_color_scheme {
+            Some(val) => val,
+            None => {
+                if let Some(series) = map.tiles().detect_series() {
+                    ExportColorScheme::new(series)
+                } else {
+                    ExportColorScheme::default()
+                }
+            }
+        };
+        debug!("active color scheme: {}", active_color_scheme);
 
         let context = check!(self.canvas.get_context("2d").ok().flatten()
             .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
@@ -547,7 +517,7 @@ impl ExportView {
 
         context.save();
         // draw background color
-        context.set_fill_style(&JsValue::from_str(color_scheme.background_color));
+        context.set_fill_style(&JsValue::from_str(active_color_scheme.background_color()));
         context.fill_rect(0.0, 0.0, f64::from(width), f64::from(height));
         // draw map header line
         if header_area.height > 0.0 {
@@ -561,7 +531,7 @@ impl ExportView {
             context.set_line_dash_offset(2.0);
             context.move_to(f64::from(PADDING), header_baseline + f64::from(2 * PADDING));
             context.line_to(f64::from(width - PADDING), header_baseline + f64::from(2 * PADDING));
-            context.set_stroke_style(&JsValue::from_str(color_scheme.map_border_color));
+            context.set_stroke_style(&JsValue::from_str(active_color_scheme.map_border_color()));
             context.stroke();
         }
         // draw map title text
@@ -569,9 +539,9 @@ impl ExportView {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.title_height()));
             context.set_text_align("left");
             context.set_line_width(6.0);
-            context.set_stroke_style(&JsValue::from_str(color_scheme.background_color));
+            context.set_stroke_style(&JsValue::from_str(active_color_scheme.background_color()));
             check!(context.stroke_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
-            context.set_fill_style(&JsValue::from_str(color_scheme.map_title_color));
+            context.set_fill_style(&JsValue::from_str(active_color_scheme.map_title_color()));
             check!(context.fill_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         // draw map author text
@@ -579,12 +549,12 @@ impl ExportView {
             context.set_font(&format!("bold {}px Overpass, sans-serif", export_scale.author_height()));
             context.set_text_align("right");
             context.set_line_width(6.0);
-            context.set_stroke_style(&JsValue::from_str(color_scheme.background_color));
+            context.set_stroke_style(&JsValue::from_str(active_color_scheme.background_color()));
             check!(context.stroke_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
             check!(context.stroke_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
-            context.set_fill_style(&JsValue::from_str(color_scheme.map_author_color));
+            context.set_fill_style(&JsValue::from_str(active_color_scheme.map_author_color()));
             check!(context.fill_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
-            context.set_fill_style(&JsValue::from_str(color_scheme.map_preposition_color));
+            context.set_fill_style(&JsValue::from_str(active_color_scheme.map_preposition_color()));
             check!(context.fill_text(preposition_text, f64::from(width - author_width - PADDING), header_baseline + f64::from(PADDING)).ok());
         }
         context.restore();
@@ -616,19 +586,19 @@ impl ExportView {
             context.line_to(f64::from(listing_area.left), f64::from(listing_area.top));
             context.close_path();
             check!(context.translate(0.5, 0.5).ok()); // undo border line alignment
-            context.set_fill_style(&JsValue::from_str(color_scheme.listing_background_color));
+            context.set_fill_style(&JsValue::from_str(active_color_scheme.listing_background_color()));
             context.fill();
-            context.set_stroke_style(&JsValue::from_str(color_scheme.listing_border_color));
+            context.set_stroke_style(&JsValue::from_str(active_color_scheme.listing_border_color()));
             context.stroke();
             context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", export_scale.tile_label_height()));
             let listing_x = f64::from(listing_area.left) + f64::from(count_width) + f64::from(LISTING_PADDING);
             let mut listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
             for (count_text, number_text) in &listing_text {
                 context.set_text_align("right");
-                context.set_fill_style(&JsValue::from_str(color_scheme.tile_count_color));
+                context.set_fill_style(&JsValue::from_str(active_color_scheme.tile_count_color()));
                 check!(context.fill_text(count_text, listing_x, listing_y).ok());
                 context.set_text_align("left");
-                context.set_fill_style(&JsValue::from_str(color_scheme.tile_number_color));
+                context.set_fill_style(&JsValue::from_str(active_color_scheme.tile_number_color()));
                 check!(context.fill_text(number_text, listing_x, listing_y).ok());
                 listing_y += f64::from(listing_lineheight);
             }
@@ -638,12 +608,12 @@ impl ExportView {
         // draw each tile image asynchronously
         self.tile_images.clear();
         for tile in map.tiles() {
-            let image = check!(TileImage::new(&context, &export_layout, &color_scheme, tile.clone()).ok());
+            let image = check!(TileImage::new(&context, &export_layout, active_color_scheme, tile.clone()).ok());
             self.tile_images.push(image);
         }
 
         self.export_layout = export_layout;
-        self.color_scheme = color_scheme;
+        self.active_color_scheme = active_color_scheme;
     }
 
     pub fn draw_export_tile_done(&mut self, tile: &PlacedTile) {
@@ -660,7 +630,7 @@ impl ExportView {
             for tile in self.map.tiles() {
                 debug!("adding tokens for tile {:?}", &tile);
                 for token in &tile.tokens {
-                    let image = check!(TokenImage::new(&context, &self.export_layout, &self.color_scheme, tile.clone(), token.clone()).ok());
+                    let image = check!(TokenImage::new(&context, &self.export_layout, self.active_color_scheme, tile.clone(), token.clone()).ok());
                     self.token_images.push(image);
                 }
             }
@@ -695,7 +665,7 @@ impl ExportView {
                 if tile.has_flat_tokens() {
                     text.push('*');
                 }
-                check!(draw_tile_label(&context, &self.color_scheme, &text, pos, export_scale.tile_label_height()).ok());
+                check!(draw_tile_label(&context, self.active_color_scheme, &text, pos, export_scale.tile_label_height()).ok());
             }
         }
 

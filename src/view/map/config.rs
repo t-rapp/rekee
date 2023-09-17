@@ -13,10 +13,10 @@ use web_sys::{self, Element};
 use crate::check;
 use crate::controller::{
     UpdateBackgroundGridEvent, UpdateExportScaleEvent, UpdateExportHeaderEvent,
-    UpdateExportListingEvent, UpdateTileLabelsEvent
+    UpdateExportListingEvent, UpdateExportColorSchemeEvent, UpdateTileLabelsEvent
 };
 use crate::controller::map_config::*;
-use crate::export::ExportScale;
+use crate::export::{ExportColorScheme, ExportScale};
 use super::*;
 
 //----------------------------------------------------------------------------
@@ -75,6 +75,60 @@ impl Drop for ExportScaleElement {
 
 //----------------------------------------------------------------------------
 
+struct ExportColorSchemeElement {
+    inner: Element,
+    value: Option<ExportColorScheme>,
+    click_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl ExportColorSchemeElement {
+    fn new(inner: Element) -> Result<Self> {
+        let value = inner.get_attribute("data-value")
+            .and_then(|val| val.parse::<ExportColorScheme>().ok());
+
+        let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<MapConfigController, _>(UpdateExportColorSchemeEvent { color_scheme: value });
+        }) as Box<dyn Fn(_)>);
+        inner.add_event_listener_with_callback("click",
+            click_cb.as_ref().unchecked_ref())?;
+
+        Ok(ExportColorSchemeElement { inner, value, click_cb })
+    }
+
+    fn value(&self) -> Option<ExportColorScheme> {
+        self.value
+    }
+
+    fn set_active(&self, value: bool) {
+        let color_class = match self.value {
+            None => "is-dark",
+            Some(_) => "is-info",
+        };
+        if value {
+            check!(self.inner.class_list().add_1(color_class).ok());
+            check!(self.inner.class_list().add_1("is-selected").ok());
+        } else {
+            check!(self.inner.class_list().remove_1(color_class).ok());
+            check!(self.inner.class_list().remove_1("is-selected").ok());
+        }
+    }
+}
+
+impl AsRef<Element> for ExportColorSchemeElement {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for ExportColorSchemeElement {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapConfigView {
     inner: Element,
     background_grid: web_sys::HtmlInputElement,
@@ -82,6 +136,8 @@ pub struct MapConfigView {
     export_scale_elements: Vec<ExportScaleElement>,
     export_header: web_sys::HtmlInputElement,
     export_listing: web_sys::HtmlInputElement,
+    export_color_scheme: Option<ExportColorScheme>,
+    export_color_scheme_elements: Vec<ExportColorSchemeElement>,
     tile_labels: web_sys::HtmlInputElement,
     apply: Element,
     apply_cb: Closure<dyn Fn(web_sys::Event)>,
@@ -99,12 +155,12 @@ impl MapConfigView {
             .ok_or("Cannot find background grid input of map config element")?;
 
         let export_scale = None;
-        let mut export_scale_elements = Vec::with_capacity(4);
+        let mut export_scale_elements = Vec::with_capacity(5);
         let node_list = inner.query_selector_all("#export-scale button")?;
         for i in 0..node_list.length() {
             let element = node_list.get(i).unwrap()
                 .dyn_into::<web_sys::Element>().unwrap();
-                export_scale_elements.push(ExportScaleElement::new(element)?);
+            export_scale_elements.push(ExportScaleElement::new(element)?);
         }
 
         let export_header = document.get_element_by_id("export-header")
@@ -114,6 +170,15 @@ impl MapConfigView {
         let export_listing = document.get_element_by_id("export-listing")
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
             .ok_or("Cannot find export listing input of map config element")?;
+
+        let export_color_scheme = None;
+        let mut export_color_scheme_elements = Vec::with_capacity(3);
+        let node_list = inner.query_selector_all("#export-color-scheme button")?;
+        for i in 0..node_list.length() {
+            let element = node_list.get(i).unwrap()
+                .dyn_into::<web_sys::Element>().unwrap();
+            export_color_scheme_elements.push(ExportColorSchemeElement::new(element)?);
+        }
 
         let tile_labels = document.get_element_by_id("tile-labels")
             .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
@@ -138,7 +203,8 @@ impl MapConfigView {
 
         Ok(MapConfigView {
             inner, background_grid, export_scale, export_scale_elements,
-            export_header, export_listing, tile_labels, apply, apply_cb, close,
+            export_header, export_listing, export_color_scheme,
+            export_color_scheme_elements, tile_labels, apply, apply_cb, close,
             close_cb
         })
     }
@@ -171,6 +237,14 @@ impl MapConfigView {
         self.export_listing.set_checked(visible);
     }
 
+    pub fn set_export_color_scheme(&mut self, color_scheme: Option<ExportColorScheme>) {
+        for item in &self.export_color_scheme_elements {
+            let active = item.value() == color_scheme;
+            item.set_active(active);
+        }
+        self.export_color_scheme = color_scheme;
+    }
+
     pub fn set_tile_labels(&self, visible: bool) {
         self.tile_labels.set_checked(visible);
     }
@@ -184,6 +258,8 @@ impl MapConfigView {
         nuts::publish(UpdateExportHeaderEvent { visible });
         let visible = self.export_listing.checked();
         nuts::publish(UpdateExportListingEvent { visible });
+        let color_scheme = self.export_color_scheme;
+        nuts::publish(UpdateExportColorSchemeEvent { color_scheme });
         let visible = self.tile_labels.checked();
         nuts::publish(UpdateTileLabelsEvent { visible });
     }

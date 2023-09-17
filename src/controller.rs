@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------
 
 use crate::edition::Edition;
-use crate::export::ExportScale;
+use crate::export::{ExportScale, ExportColorScheme};
 use crate::hexagon::{Coordinate, Direction, Point};
 use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::storage::Storage;
@@ -78,6 +78,10 @@ pub struct UpdateExportHeaderEvent {
 
 pub struct UpdateExportListingEvent {
     pub visible: bool,
+}
+
+pub struct UpdateExportColorSchemeEvent {
+    pub color_scheme: Option<ExportColorScheme>,
 }
 
 pub struct UpdateTileLabelsEvent {
@@ -542,6 +546,9 @@ pub mod map_config {
             activity.private_channel(|controller, event: UpdateExportScaleEvent| {
                 controller.view.set_export_scale(event.scale);
             });
+            activity.private_channel(|controller, event: UpdateExportColorSchemeEvent| {
+                controller.view.set_export_color_scheme(event.color_scheme);
+            });
             activity.private_channel(|controller, _event: ApplyMapConfigEvent| {
                 controller.view.apply_map_config();
             });
@@ -753,6 +760,7 @@ pub mod export {
             activity.subscribe(ExportController::update_export_scale);
             activity.subscribe(ExportController::update_export_header);
             activity.subscribe(ExportController::update_export_listing);
+            activity.subscribe(ExportController::update_export_color_scheme);
             activity.subscribe_domained(ExportController::export_image);
         }
 
@@ -779,6 +787,10 @@ pub mod export {
 
         fn update_export_listing(&mut self, event: &UpdateExportListingEvent) {
             self.view.update_export_listing(event.visible);
+        }
+
+        fn update_export_color_scheme(&mut self, event: &UpdateExportColorSchemeEvent) {
+            self.view.update_export_color_scheme(event.color_scheme);
         }
 
         fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {

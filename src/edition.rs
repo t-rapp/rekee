@@ -619,6 +619,8 @@ const DIRT_EDITIONS: [Edition; 5] = [
 
 /// Rallyman game series (GT or DIRT).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase", try_from = "&str")]
 pub enum Series {
     /// Rallyman: GT
     Gt,
@@ -660,6 +662,15 @@ impl fmt::Display for Series {
     }
 }
 
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for Series {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
 impl FromStr for Series {
     type Err = ParseSeriesError;
 
@@ -687,6 +698,14 @@ impl fmt::Display for ParseSeriesError {
             ParseSeriesError::Unknown(val) =>
                 write!(fmt, "Unknown series token \"{}\"", val),
         }
+    }
+}
+
+impl std::convert::TryFrom<&str> for Series {
+    type Error = ParseSeriesError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Series::from_str(value)
     }
 }
 
@@ -817,6 +836,11 @@ mod tests {
     fn series_to_str() {
         assert_eq!(Series::Gt.to_string(), "Rallyman: GT");
         assert_eq!(Series::Dirt.to_string(), "Rallyman: DIRT");
+
+        let text = format!("{:x}", Series::Gt);
+        assert_eq!(text, "gt");
+        let text = format!("{:x}", Series::Dirt);
+        assert_eq!(text, "dirt");
     }
 
     #[test]
@@ -829,6 +853,29 @@ mod tests {
 
         assert!("".parse::<Series>().is_err());
         assert!("Rallyman".parse::<Series>().is_err());
+    }
+
+    #[test]
+    fn series_serde() {
+        let series = Series::Gt;
+        let text = serde_json::to_string(&series).unwrap();
+        assert_eq!(text, r#""gt""#);
+
+        let series = Series::Dirt;
+        let text = serde_json::to_string(&series).unwrap();
+        assert_eq!(text, r#""dirt""#);
+
+        let text = r#""Rallyman GT""#;
+        let series: Series = serde_json::from_str(text).unwrap();
+        assert_eq!(series, Series::Gt);
+
+        let text = r#""Dirt""#;
+        let series: Series = serde_json::from_str(text).unwrap();
+        assert_eq!(series, Series::Dirt);
+
+        let text = r#""#;
+        let result: Result<Series, _> = serde_json::from_str(text);
+        assert!(result.is_err());
     }
 }
 
