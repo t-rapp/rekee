@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ExportScale","ParseExportScaleError"],"mod":["util"]};
+window.SIDEBAR_ITEMS = {"enum":["ExportScale","ParseExportScaleError"],"mod":["util"],"struct":["ExportColorScheme"]};
