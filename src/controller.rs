@@ -85,19 +85,11 @@ pub struct UpdateExportColorSchemeEvent {
 }
 
 pub struct UpdateTileLabelsEvent {
-    pub visible: bool,
+    pub label_type: LabelType,
 }
 
 pub struct ToggleTileLabelsEvent {
-    pub inverted: bool,
-}
-
-pub struct UpdateTilePacenotesEvent {
-    pub visible: bool,
-}
-
-pub struct ToggleTilePacenotesEvent {
-    pub inverted: bool,
+    pub label_type: LabelType,
 }
 
 pub struct UpdateSelectedTileEvent {
@@ -189,8 +181,6 @@ pub mod catalog {
             activity.subscribe(CatalogController::update_catalog_editions);
             activity.subscribe(CatalogController::update_tile_labels);
             activity.subscribe(CatalogController::toggle_tile_labels);
-            activity.subscribe(CatalogController::update_tile_pacenotes);
-            activity.subscribe(CatalogController::toggle_tile_pacenotes);
             activity.subscribe(CatalogController::update_tile_usage);
             activity.subscribe(CatalogController::drag_catalog_tile_begin);
         }
@@ -217,19 +207,11 @@ pub mod catalog {
         }
 
         fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
-            self.view.update_tile_labels(event.visible);
+            self.view.update_tile_labels(event.label_type);
         }
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
-            self.view.toggle_tile_labels(event.inverted);
-        }
-
-        fn update_tile_pacenotes(&mut self, event: &UpdateTilePacenotesEvent) {
-            self.view.update_tile_pacenotes(event.visible);
-        }
-
-        fn toggle_tile_pacenotes(&mut self, event: &ToggleTilePacenotesEvent) {
-            self.view.toggle_tile_pacenotes(event.inverted);
+            self.view.toggle_tile_labels(event.label_type);
         }
 
         fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
@@ -309,8 +291,6 @@ pub mod map {
             activity.subscribe(MapController::update_background_grid);
             activity.subscribe(MapController::update_tile_labels);
             activity.subscribe(MapController::toggle_tile_labels);
-            activity.subscribe(MapController::update_tile_pacenotes);
-            activity.subscribe(MapController::toggle_tile_pacenotes);
             activity.subscribe(MapController::update_selected_tile);
             activity.subscribe(MapController::add_selected_tile_token);
             activity.subscribe(MapController::update_selected_tile_tokens);
@@ -380,19 +360,11 @@ pub mod map {
         }
 
         fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {
-            self.view.update_tile_labels(event.visible);
+            self.view.update_tile_labels(event.label_type);
         }
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
-            self.view.toggle_tile_labels(event.inverted);
-        }
-
-        fn update_tile_pacenotes(&mut self, event: &UpdateTilePacenotesEvent) {
-            self.view.update_tile_pacenotes(event.visible);
-        }
-
-        fn toggle_tile_pacenotes(&mut self, event: &ToggleTilePacenotesEvent) {
-            self.view.toggle_tile_pacenotes(event.inverted);
+            self.view.toggle_tile_labels(event.label_type);
         }
 
         fn update_selected_tile(&mut self, event: &UpdateSelectedTileEvent) {
@@ -549,6 +521,9 @@ pub mod map_config {
             activity.private_channel(|controller, event: UpdateExportColorSchemeEvent| {
                 controller.view.set_export_color_scheme(event.color_scheme);
             });
+            activity.private_channel(|controller, event: UpdateTileLabelsEvent| {
+                controller.view.set_label_type(event.label_type);
+            });
             activity.private_channel(|controller, _event: ApplyMapConfigEvent| {
                 controller.view.apply_map_config();
             });
@@ -561,7 +536,7 @@ pub mod map_config {
         fn show(&mut self, domain: &mut DomainState, _event: &ShowMapConfigEvent) {
             if let Some(settings) = domain.try_get::<MapSettings>() {
                 self.view.set_background_grid(settings.background_grid_visible);
-                self.view.set_tile_labels(settings.tile_labels_visible);
+                self.view.set_label_type(settings.label_type);
             }
             if let Some(settings) = domain.try_get::<ExportSettings>() {
                 self.view.set_export_scale(settings.export_scale);
@@ -795,7 +770,7 @@ pub mod export {
 
         fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {
             if let Some(settings) = domain.try_get::<MapSettings>() {
-                self.view.draw_export_image(&settings.map, settings.tile_labels_visible);
+                self.view.draw_export_image(&settings.map, settings.label_type == LabelType::Number);
             }
         }
     }

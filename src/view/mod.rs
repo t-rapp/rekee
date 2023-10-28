@@ -8,8 +8,11 @@
 
 #![allow(clippy::needless_return)]
 
+use std::fmt;
 use std::ops::Deref;
+use std::str::FromStr;
 
+use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{self, Document, Element};
@@ -86,6 +89,79 @@ macro_rules! check {
             Some(val) => val,
         }
     };
+}
+
+//----------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase", try_from = "&str")]
+pub enum LabelType {
+    None,
+    Number,
+    Pacenote,
+}
+
+impl Default for LabelType {
+    fn default() -> Self {
+        LabelType::Number
+    }
+}
+
+impl fmt::Display for LabelType {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            LabelType::None =>
+                write!(fmt, "None")?,
+            LabelType::Number =>
+                write!(fmt, "Number")?,
+            LabelType::Pacenote =>
+                write!(fmt, "Pacenote")?,
+        }
+        Ok(())
+    }
+}
+
+impl FromStr for LabelType {
+    type Err = ParseLabelTypeError;
+
+    fn from_str(val: &str) -> std::result::Result<Self, Self::Err> {
+        // match strings from both trait implementations, std::fmt::Display and serde::Serialize
+        let s = val.to_ascii_lowercase();
+
+        match s.as_ref() {
+            "none" =>
+                Ok(LabelType::None),
+            "number" =>
+                Ok(LabelType::Number),
+            "pacenote" =>
+                Ok(LabelType::Pacenote),
+            _ =>
+                Err(ParseLabelTypeError::Unknown(val.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ParseLabelTypeError {
+    Unknown(String),
+}
+
+impl fmt::Display for ParseLabelTypeError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseLabelTypeError::Unknown(val) =>
+                write!(fmt, "Unknown label type value \"{}\"", val),
+        }
+    }
+}
+
+impl std::convert::TryFrom<&str> for LabelType {
+    type Error = ParseLabelTypeError;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        LabelType::from_str(value)
+    }
 }
 
 //----------------------------------------------------------------------------

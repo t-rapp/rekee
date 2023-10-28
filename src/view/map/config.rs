@@ -129,6 +129,61 @@ impl Drop for ExportColorSchemeElement {
 
 //----------------------------------------------------------------------------
 
+struct LabelTypeElement {
+    inner: Element,
+    value: LabelType,
+    click_cb: Closure<dyn Fn(web_sys::Event)>,
+}
+
+impl LabelTypeElement {
+    fn new(inner: Element) -> Result<Self> {
+        let value = inner.get_attribute("data-value")
+            .and_then(|val| val.parse::<LabelType>().ok())
+            .unwrap_or_default();
+
+        let click_cb = Closure::wrap(Box::new(move |_event: web_sys::Event| {
+            nuts::send_to::<MapConfigController, _>(UpdateTileLabelsEvent { label_type: value });
+        }) as Box<dyn Fn(_)>);
+        inner.add_event_listener_with_callback("click",
+            click_cb.as_ref().unchecked_ref())?;
+
+        Ok(LabelTypeElement { inner, value, click_cb })
+    }
+
+    fn value(&self) -> LabelType {
+        self.value
+    }
+
+    fn set_active(&self, value: bool) {
+        let color_class = match self.value {
+            LabelType::None => "is-dark",
+            _ => "is-info",
+        };
+        if value {
+            check!(self.inner.class_list().add_1(color_class).ok());
+            check!(self.inner.class_list().add_1("is-selected").ok());
+        } else {
+            check!(self.inner.class_list().remove_1(color_class).ok());
+            check!(self.inner.class_list().remove_1("is-selected").ok());
+        }
+    }
+}
+
+impl AsRef<Element> for LabelTypeElement {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for LabelTypeElement {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
 pub struct MapConfigView {
     inner: Element,
     background_grid: web_sys::HtmlInputElement,
@@ -138,7 +193,8 @@ pub struct MapConfigView {
     export_listing: web_sys::HtmlInputElement,
     export_color_scheme: Option<ExportColorScheme>,
     export_color_scheme_elements: Vec<ExportColorSchemeElement>,
-    tile_labels: web_sys::HtmlInputElement,
+    label_type: LabelType,
+    label_type_elements: Vec<LabelTypeElement>,
     apply: Element,
     apply_cb: Closure<dyn Fn(web_sys::Event)>,
     close: Element,
@@ -180,9 +236,14 @@ impl MapConfigView {
             export_color_scheme_elements.push(ExportColorSchemeElement::new(element)?);
         }
 
-        let tile_labels = document.get_element_by_id("tile-labels")
-            .and_then(|elm| elm.dyn_into::<web_sys::HtmlInputElement>().ok())
-            .ok_or("Cannot find tile labels input of map config element")?;
+        let label_type = LabelType::default();
+        let mut label_type_elements = Vec::with_capacity(3);
+        let node_list = inner.query_selector_all("#label-type button")?;
+        for i in 0..node_list.length() {
+            let element = node_list.get(i).unwrap()
+                .dyn_into::<web_sys::Element>().unwrap();
+            label_type_elements.push(LabelTypeElement::new(element)?);
+        }
 
         let apply = document.get_element_by_id("apply-map-config")
             .ok_or("Cannot find apply button of map config element")?;
@@ -204,8 +265,8 @@ impl MapConfigView {
         Ok(MapConfigView {
             inner, background_grid, export_scale, export_scale_elements,
             export_header, export_listing, export_color_scheme,
-            export_color_scheme_elements, tile_labels, apply, apply_cb, close,
-            close_cb
+            export_color_scheme_elements, label_type, label_type_elements,
+            apply, apply_cb, close, close_cb
         })
     }
 
@@ -245,8 +306,12 @@ impl MapConfigView {
         self.export_color_scheme = color_scheme;
     }
 
-    pub fn set_tile_labels(&self, visible: bool) {
-        self.tile_labels.set_checked(visible);
+    pub fn set_label_type(&mut self, label_type: LabelType) {
+        for item in &self.label_type_elements {
+            let active = item.value() == label_type;
+            item.set_active(active);
+        }
+        self.label_type = label_type;
     }
 
     pub fn apply_map_config(&mut self) {
@@ -260,8 +325,8 @@ impl MapConfigView {
         nuts::publish(UpdateExportListingEvent { visible });
         let color_scheme = self.export_color_scheme;
         nuts::publish(UpdateExportColorSchemeEvent { color_scheme });
-        let visible = self.tile_labels.checked();
-        nuts::publish(UpdateTileLabelsEvent { visible });
+        let label_type = self.label_type;
+        nuts::publish(UpdateTileLabelsEvent { label_type });
     }
 }
 

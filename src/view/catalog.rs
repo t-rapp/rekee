@@ -313,8 +313,7 @@ pub struct CatalogView {
     filter_lanes_elements: Vec<LanesFilterElement>,
     filter_terrain: Option<Terrain>,
     filter_terrain_elements: Vec<TerrainFilterElement>,
-    tile_labels_visible: bool,
-    tile_pacenotes_visible: bool,
+    label_type: LabelType,
     map: Option<Element>,
     dragover_cb: Closure<dyn Fn(web_sys::DragEvent)>,
     dragdrop_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -385,8 +384,7 @@ impl CatalogView {
         }
         let filter_terrain = None;
 
-        let tile_labels_visible = true;
-        let tile_pacenotes_visible = false;
+        let label_type = LabelType::default();
 
         let dragover_cb = Closure::wrap(Box::new(move |event: web_sys::DragEvent| {
             let data = event.data_transfer()
@@ -436,8 +434,8 @@ impl CatalogView {
         config_button.remove_attribute("disabled").unwrap();
 
         let mut view = CatalogView {
-            catalog, tiles, editions, filter_lanes, filter_lanes_elements, filter_terrain,
-            filter_terrain_elements, tile_labels_visible, tile_pacenotes_visible, map: None,
+            catalog, tiles, editions, filter_lanes, filter_lanes_elements,
+            filter_terrain, filter_terrain_elements, label_type, map: None,
             dragover_cb, dragdrop_cb, keychange_cb, config_button, config_show_cb
         };
         view.load_settings(&CatalogSettings::default());
@@ -590,40 +588,16 @@ impl CatalogView {
         self.filter_terrain = terrain;
     }
 
-    pub fn update_tile_labels(&mut self, visible: bool) {
-        if visible != self.tile_labels_visible {
-            info!("update catalog tile labels: {:?}", visible);
-            self.tile_labels_visible = visible;
-            if visible {
+    pub fn update_tile_labels(&mut self, label_type: LabelType) {
+        if label_type != self.label_type {
+            info!("update catalog tile labels: {:?}", label_type);
+            self.label_type = label_type;
+            if label_type == LabelType::Number {
                 check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
             } else {
                 check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
             }
-        }
-    }
-
-    pub fn toggle_tile_labels(&mut self, inverted: bool) {
-        let visible = self.tile_labels_visible ^ inverted;
-        info!("toggle catalog tile labels: {:?}", visible);
-        if visible {
-            check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
-        } else {
-            check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
-        }
-        if inverted {
-            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
-        } else if self.tile_pacenotes_visible {
-            check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
-        } else {
-            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
-        }
-    }
-
-    pub fn update_tile_pacenotes(&mut self, visible: bool) {
-        if visible != self.tile_pacenotes_visible {
-            info!("update catalog tile pacenotes: {:?}", visible);
-            self.tile_pacenotes_visible = visible;
-            if visible {
+            if label_type == LabelType::Pacenote {
                 check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
             } else {
                 check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
@@ -631,20 +605,24 @@ impl CatalogView {
         }
     }
 
-    pub fn toggle_tile_pacenotes(&mut self, inverted: bool) {
-        let visible = self.tile_pacenotes_visible ^ inverted;
-        info!("toggle catalog tile pacenotes: {:?}", visible);
-        if visible {
-            check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
+    pub fn toggle_tile_labels(&mut self, label_type: LabelType) {
+        let label_type = if label_type == LabelType::None {
+            self.label_type // revert
+        } else if label_type == self.label_type {
+            LabelType::None // invert
         } else {
-            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
-        }
-        if inverted {
-            check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
-        } else if self.tile_labels_visible {
+            label_type // override
+        };
+        info!("toggle catalog tile labels: {:?}", label_type);
+        if label_type == LabelType::Number {
             check!(self.catalog.class_list().remove_1("tile-labels-hidden").ok());
         } else {
             check!(self.catalog.class_list().add_1("tile-labels-hidden").ok());
+        }
+        if label_type == LabelType::Pacenote {
+            check!(self.catalog.class_list().remove_1("tile-pacenotes-hidden").ok());
+        } else {
+            check!(self.catalog.class_list().add_1("tile-pacenotes-hidden").ok());
         }
     }
 

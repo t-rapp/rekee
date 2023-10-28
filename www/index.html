@@ -566,14 +566,16 @@
           <div class="field">
             <label class="label">Tile Labels</label>
             <div class="control">
-              <label class="checkbox">
-                <input id="tile-labels" type="checkbox" checked>
-                Visible
-              </label>
+              <div id="label-type" class="buttons has-addons">
+                <button class="button is-dark is-selected" data-value="none">None</button>
+                <button class="button" data-value="number">Number</button>
+                <button class="button" data-value="pacenote">Pacenote</button>
+              </div>
             </div>
             <p class="help">
-              Whether to show tile information or not. This setting affects the
-              tiles shown in catalog and map view, as well as the image export.
+              What kind of information to use for tile labels. This setting
+              affects the tiles shown in catalog and map view, as well as the
+              image export.
             </p>
             <p class="help">
               Use the <kbd>L</kbd> keyboard shortcut to temporarily toggle
