@@ -82,19 +82,25 @@ fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, color_scheme:
     Ok(())
 }
 
-fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, text: &str, pos: Point, height: i32) -> Result<()> {
+fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, label_type: LabelType, text: &str, pos: Point, height: i32, danger_level: DangerLevel) -> Result<()> {
     let pos_x = f64::from(pos.x());
     let pos_y = f64::from(pos.y());
 
     context.save();
-    context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", height));
+    if label_type == LabelType::Pacenote {
+        // compensate for the visually smaller font height
+        let height = height * 5 / 4;
+        context.set_font(&format!("bold {}px Caveat, sans-serif", height));
+    } else {
+        context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", height));
+    }
     context.set_text_align("center");
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
     context.set_miter_limit(2.0);
     context.set_stroke_style(&JsValue::from_str(color_scheme.background_color()));
     context.stroke_text(text, pos_x, pos_y)?;
-    context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color()));
+    context.set_fill_style(&JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
     context.fill_text(text, pos_x, pos_y)?;
     context.restore();
 
@@ -242,7 +248,7 @@ pub struct ExportView {
     map: Map,
     header_visible: bool,
     listing_visible: bool,
-    tile_labels_visible: bool,
+    label_type: LabelType,
     tile_images: Vec<TileImage>,
     token_images: Vec<TokenImage>,
     canvas: HtmlCanvasElement,
@@ -259,7 +265,7 @@ impl ExportView {
         let map = Map::new();
         let header_visible = true;
         let listing_visible = false;
-        let tile_labels_visible = true;
+        let label_type = LabelType::default();
         let tile_images = Vec::new();
         let token_images = Vec::new();
         let document = parent.owner_document().unwrap();
@@ -327,10 +333,17 @@ impl ExportView {
             .then(&font_load_cb);
         font_load_cb.forget();
 
+        let pacenote_font = FontFace::new_with_str("Caveat",
+            "url('caveat-bold.woff') format('woff')")?;
+        pacenote_font.set_style("normal");
+        pacenote_font.set_weight("bold");
+        document.fonts().add(&pacenote_font)?;
+        let _ = pacenote_font.load();
+
         Ok(ExportView {
             base_layout, export_layout, export_scale, export_color_scheme,
             active_color_scheme, map, header_visible, listing_visible,
-            tile_labels_visible, tile_images, token_images, canvas, anchor
+            label_type, tile_images, token_images, canvas, anchor
         })
     }
 
@@ -369,11 +382,11 @@ impl ExportView {
         nuts::send_to::<ExportController, _>(SaveSettingsEvent);
     }
 
-    pub fn draw_export_image(&mut self, map: &Map, tile_labels_visible: bool) {
+    pub fn draw_export_image(&mut self, map: &Map, label_type: LabelType) {
         debug!("start export of map image with {} tiles and {} scale", map.tiles().len(),
             self.export_scale.map(|val| val.to_string()).unwrap_or_else(|| String::from("default")));
         self.map = map.clone();
-        self.tile_labels_visible = tile_labels_visible;
+        self.label_type = label_type;
 
         // update download filename attribute
         let mut file_name = import::build_file_name(map.title());
@@ -655,17 +668,19 @@ impl ExportView {
         let export_scale = self.export_scale.unwrap_or_default();
 
         // finally draw tile labels on top of everything other
-        if self.tile_labels_visible {
+        if self.label_type != LabelType::None {
             debug!("drawing tile labels");
             let context = check!(self.canvas.get_context("2d").ok().flatten()
                 .and_then(|obj| obj.dyn_into::<web_sys::CanvasRenderingContext2d>().ok()));
             for tile in self.map.tiles() {
                 let pos = tile.pos.to_pixel(&self.export_layout);
-                let mut text = tile.id().base().to_string();
-                if tile.has_flat_tokens() {
-                    text.push('*');
-                }
-                check!(draw_tile_label(&context, self.active_color_scheme, &text, pos, export_scale.tile_label_height()).ok());
+                let danger_level = tile.danger_level().unwrap_or_default();
+                let text = match self.label_type {
+                    LabelType::None => String::new(),
+                    LabelType::Number => tile_number_text(tile),
+                    LabelType::Pacenote => tile_pacenote_text(tile),
+                };
+                check!(draw_tile_label(&context, self.active_color_scheme, self.label_type, &text, pos, export_scale.tile_label_height(), danger_level).ok());
             }
         }
 

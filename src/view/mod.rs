@@ -79,6 +79,22 @@ fn mouse_position_element(event: &web_sys::MouseEvent, element: &Element) -> Opt
     Some(Point(x, y))
 }
 
+fn tile_number_text(tile: &PlacedTile) -> String {
+    let mut text = tile.id().base().to_string();
+    if tile.has_flat_tokens() {
+        text.push('*');
+    }
+    text
+}
+
+fn tile_pacenote_text(tile: &PlacedTile) -> String {
+    let pacenotes: Vec<String> = tile.pacenotes().into_iter()
+        .map(|note| note.to_string())
+        .collect();
+    let text = pacenotes.join(", ");
+    text
+}
+
 // Helper macro that checks an option result and aborts the current function in case of an error.
 #[doc(hidden)]
 #[macro_export]
@@ -246,10 +262,7 @@ impl TileLabelElement {
         label.set_attribute("class", "label")?;
         label.set_attribute("x", "0")?;
         label.set_attribute("y", "0")?;
-        let mut text = tile.id().base().to_string();
-        if tile.has_flat_tokens() {
-            text.push('*');
-        }
+        let text = tile_number_text(tile);
         label.append_child(&document.create_text_node(&text))?;
 
         Ok(label)
@@ -291,10 +304,7 @@ impl TilePacenoteElement {
         label.set_attribute("class", "pacenote")?;
         label.set_attribute("x", "0")?;
         label.set_attribute("y", "0")?;
-        let pacenotes: Vec<String> = tile.pacenotes().into_iter()
-            .map(|note| note.to_string())
-            .collect();
-        let text = pacenotes.join(", ");
+        let text = tile_pacenote_text(tile);
         label.append_child(&document.create_text_node(&text))?;
 
         Ok(label)

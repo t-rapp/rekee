@@ -13,6 +13,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::edition::Series;
 use crate::hexagon::Point;
+use crate::tile::DangerLevel;
 
 //----------------------------------------------------------------------------
 
@@ -200,6 +201,15 @@ impl ExportColorScheme {
 
     pub fn tile_number_color(&self) -> &'static str {
         self.map_title_color()
+    }
+
+    pub fn tile_pacenote_color(&self, danger_level: DangerLevel) -> &'static str {
+        match danger_level {
+            DangerLevel::None => self.map_title_color(),
+            DangerLevel::Low => "hsl(60, 100%, 42%)",
+            DangerLevel::Medium => "hsl(40, 100%, 45%)",
+            DangerLevel::High => "hsl(10, 100%, 45%)",
+        }
     }
 
     pub fn listing_background_color(&self) -> &'static str {

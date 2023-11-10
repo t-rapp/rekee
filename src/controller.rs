@@ -770,7 +770,7 @@ pub mod export {
 
         fn export_image(&mut self, domain: &mut DomainState, _event: &ExportImageEvent) {
             if let Some(settings) = domain.try_get::<MapSettings>() {
-                self.view.draw_export_image(&settings.map, settings.label_type == LabelType::Number);
+                self.view.draw_export_image(&settings.map, settings.label_type);
             }
         }
     }
