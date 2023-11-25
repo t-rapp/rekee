@@ -64,6 +64,9 @@ const SVG_NS_STR: &str = "http://www.w3.org/2000/svg";
 
 const TILE_STYLE: &str = include_str!("tile.css");
 
+const PACENOTE_LINE_HEIGHT: i32 = 18;
+const PACENOTE_WRAP_WIDTH: usize = 12;
+
 //----------------------------------------------------------------------------
 
 fn mouse_position(event: &web_sys::MouseEvent) -> Option<Point> {
@@ -87,12 +90,26 @@ fn tile_number_text(tile: &PlacedTile) -> String {
     text
 }
 
-fn tile_pacenote_text(tile: &PlacedTile) -> String {
-    let pacenotes: Vec<String> = tile.pacenotes().into_iter()
-        .map(|note| note.to_string())
-        .collect();
-    
-    pacenotes.join(", ")
+fn tile_pacenote_text(tile: &PlacedTile, wrap_width: usize) -> Vec<String> {
+    let mut text: Vec<String> = Vec::with_capacity(4);
+    let mut line = String::new();
+    for pacenote in tile.pacenotes() {
+        let pacenote = pacenote.to_string();
+        if !line.is_empty() && line.len() + pacenote.len() + 1 >= wrap_width {
+            line.push(',');
+            text.push(line);
+            line = String::new();
+        }
+        if !line.is_empty() {
+            line.push(',');
+            line.push(' ');
+        }
+        line.push_str(&pacenote);
+    }
+    if !line.is_empty() {
+        text.push(line);
+    }
+    text
 }
 
 // Helper macro that checks an option result and aborts the current function in case of an error.
@@ -304,8 +321,18 @@ impl TilePacenoteElement {
         label.set_attribute("class", "pacenote")?;
         label.set_attribute("x", "0")?;
         label.set_attribute("y", "0")?;
-        let text = tile_pacenote_text(tile);
-        label.append_child(&document.create_text_node(&text))?;
+
+        let text = tile_pacenote_text(tile, PACENOTE_WRAP_WIDTH);
+        let text_height = PACENOTE_LINE_HEIGHT * text.len().saturating_sub(1) as i32;
+        let mut line_y = -text_height / 2;
+        for line in &text {
+            let tspan = document.create_element_ns(SVG_NS, "tspan")?;
+            tspan.append_child(&document.create_text_node(line))?;
+            tspan.set_attribute("x", "0")?;
+            tspan.set_attribute("y", &line_y.to_string())?;
+            label.append_child(&tspan)?;
+            line_y += PACENOTE_LINE_HEIGHT;
+        }
 
         Ok(label)
     }

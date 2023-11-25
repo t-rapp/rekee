@@ -82,14 +82,22 @@ fn draw_missing_image(context: &web_sys::CanvasRenderingContext2d, color_scheme:
     Ok(())
 }
 
-fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, label_type: LabelType, text: &str, pos: Point, height: i32, danger_level: DangerLevel) -> Result<()> {
+fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: ExportColorScheme, label_type: LabelType, text: &[String], pos: Point, height: i32, danger_level: DangerLevel) -> Result<()> {
     let pos_x = f64::from(pos.x());
     let pos_y = f64::from(pos.y());
 
+    let height = if label_type == LabelType::Pacenote {
+        // compensate for the visually smaller font height
+        height * 7 / 6
+    } else {
+        height
+    };
+    let line_height = (f64::from(height) * 1.2).round();
+    let text_height = line_height * text.len().saturating_sub(1) as f64;
+    let mut line_y = -text_height / 2.0;
+
     context.save();
     if label_type == LabelType::Pacenote {
-        // compensate for the visually smaller font height
-        let height = height * 7 / 6;
         context.set_font(&format!("bold {}px Caveat, sans-serif", height));
     } else {
         context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", height));
@@ -99,13 +107,16 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: Ex
     context.set_line_width(2.0);
     context.set_miter_limit(2.0);
     context.set_stroke_style(&JsValue::from_str(color_scheme.background_color()));
-    context.stroke_text(text, pos_x, pos_y)?;
     if label_type == LabelType::Pacenote {
         context.set_fill_style(&JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
     } else {
         context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color()));
     }
-    context.fill_text(text, pos_x, pos_y)?;
+    for line in text {
+        context.stroke_text(line, pos_x, pos_y + line_y)?;
+        context.fill_text(line, pos_x, pos_y + line_y)?;
+        line_y += line_height;
+    }
     context.restore();
 
     Ok(())
@@ -680,9 +691,9 @@ impl ExportView {
                 let pos = tile.pos.to_pixel(&self.export_layout);
                 let danger_level = tile.danger_level().unwrap_or_default();
                 let text = match self.label_type {
-                    LabelType::None => String::new(),
-                    LabelType::Number => tile_number_text(tile),
-                    LabelType::Pacenote => tile_pacenote_text(tile),
+                    LabelType::None => Vec::new(),
+                    LabelType::Number => vec![tile_number_text(tile)],
+                    LabelType::Pacenote => tile_pacenote_text(tile, super::PACENOTE_WRAP_WIDTH),
                 };
                 check!(draw_tile_label(&context, self.active_color_scheme, self.label_type, &text, pos, export_scale.tile_label_height(), danger_level).ok());
             }
