@@ -606,15 +606,13 @@ mod tests {
         let summary = tokens.token_summary();
         assert_eq!(summary, vec![]);
 
-        let tokens = vec![
-            TokenId::JokerEntrance,
-        ];
+        let tokens = [TokenId::JokerEntrance];
         let summary = tokens.token_summary();
         assert_eq!(summary, vec![
             TokenSummary::new(TokenId::JokerEntrance, 1),
         ]);
 
-        let tokens = vec![
+        let tokens = [
             TokenId::JokerEntrance,
             TokenId::Chicane(Terrain::Gravel),
             TokenId::Chicane(Terrain::Asphalt),

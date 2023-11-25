@@ -2203,13 +2203,13 @@ mod tests {
         let summary = tiles.tile_summary();
         assert_eq!(summary, vec![]);
 
-        let tiles = vec![tile!(101)];
+        let tiles = [tile!(101)];
         let summary = tiles.tile_summary();
         assert_eq!(summary, vec![
             TileSummary::new(tile!(101), 1),
         ]);
 
-        let tiles = vec![tile!(101), tile!(103, a, 1), tile!(103, a, 2)];
+        let tiles = [tile!(101), tile!(103, a, 1), tile!(103, a, 2)];
         let summary = tiles.tile_summary();
         assert_eq!(summary, vec![
             TileSummary::new(tile!(101), 1),
@@ -2225,27 +2225,27 @@ mod tests {
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[][..]);
 
-        let tiles = vec![tile!(101)];
+        let tiles = [tile!(101)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::GtCoreBox][..]);
-        let tiles = vec![tile!(101), tile!(103, a), tile!(103, b)];
+        let tiles = [tile!(101), tile!(103, a), tile!(103, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::GtCoreBox][..]);
-        let tiles = vec![tile!(101), tile!(121, a), tile!(121, b)];
+        let tiles = [tile!(101), tile!(121, a), tile!(121, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::GtChampionship, Edition::GtCoreBox][..]);
-        let tiles = vec![tile!(101), tile!(124, a), tile!(124, b)];
+        let tiles = [tile!(101), tile!(124, a), tile!(124, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::GtCoreBox, Edition::GtChampionship, Edition::GtWorldTour][..]);
 
-        let tiles = vec![tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
+        let tiles = [tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::Dirt110Percent, Edition::DirtCopilotPack][..]);
-        let tiles = vec![tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
+        let tiles = [tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::DirtRx, Edition::DirtCoreBox][..]);
 
-        let tiles = vec![tile!(999, a)];
+        let tiles = [tile!(999, a)];
         let mut iter = tiles.group_by_edition();
         assert_eq!(iter.tiles(), &[][..]);
         assert_eq!(iter.next(), None);
@@ -2260,7 +2260,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, None);
 
-        let tiles = vec![tile!(101)];
+        let tiles = [tile!(101)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
@@ -2268,7 +2268,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Gt));
 
-        let tiles = vec![tile!(101), tile!(103, a), tile!(103, b)];
+        let tiles = [tile!(101), tile!(103, a), tile!(103, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 3),
@@ -2276,7 +2276,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Gt));
 
-        let tiles = vec![tile!(101), tile!(121, a), tile!(121, b)];
+        let tiles = [tile!(101), tile!(121, a), tile!(121, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
@@ -2285,7 +2285,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Gt));
 
-        let tiles = vec![tile!(101), tile!(124, a), tile!(124, b)];
+        let tiles = [tile!(101), tile!(124, a), tile!(124, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::GtCoreBox), 1, 1),
@@ -2295,7 +2295,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Gt));
 
-        let tiles = vec![tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
+        let tiles = [tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::DirtCoreBox), 1, 2),
@@ -2305,7 +2305,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Dirt));
 
-        let tiles = vec![tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
+        let tiles = [tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::DirtCoreBox), 2, 3),
@@ -2314,7 +2314,7 @@ mod tests {
         let series = tiles.detect_series();
         assert_eq!(series, Some(Series::Dirt));
 
-        let tiles = vec![tile!(999, a)];
+        let tiles = [tile!(999, a)];
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(None, 1, 1),
@@ -2344,7 +2344,7 @@ mod tests {
 
     #[test]
     fn tile_list_group_by_terrain() {
-        let tiles = vec![
+        let tiles = [
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
@@ -2366,7 +2366,7 @@ mod tests {
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[][..]);
 
-        let tiles = vec![tile!(101), tile!(999, a)];
+        let tiles = [tile!(101), tile!(999, a)];
         let mut iter = tiles.group_by_terrain();
         assert_eq!(iter.next(), Some(Terrain::None));
         assert_eq!(iter.tiles(), &[tile!(101)]);
@@ -2376,21 +2376,21 @@ mod tests {
 
     #[test]
     fn tile_list_terrain_summary() {
-        let tiles = vec![
+        let tiles = [
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
         ];
         let summary = tiles.terrain_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             TerrainSummary::new(Some(Terrain::Asphalt), 2),
             TerrainSummary::new(Some(Terrain::Gravel), 7),
             TerrainSummary::new(Some(Terrain::Snow), 3),
         ]);
 
-        let tiles = vec![tile!(101), tile!(999, a)];
+        let tiles = [tile!(101), tile!(999, a)];
         let summary = tiles.terrain_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             TerrainSummary::new(Some(Terrain::None), 1),
             TerrainSummary::new(None, 1),
         ]);
@@ -2399,7 +2399,7 @@ mod tests {
             .map(|info| info.full_id())
             .collect();
         let summary = tiles.terrain_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             TerrainSummary::new(Some(Terrain::None), 13),
             TerrainSummary::new(Some(Terrain::Asphalt), 152),
             TerrainSummary::new(Some(Terrain::Gravel), 80),
@@ -2409,7 +2409,7 @@ mod tests {
 
     #[test]
     fn tile_list_group_by_danger_level() {
-        let tiles = vec![
+        let tiles = [
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
@@ -2432,7 +2432,7 @@ mod tests {
         assert_eq!(iter.next(), None);
         assert_eq!(iter.tiles(), &[][..]);
 
-        let tiles = vec![tile!(101), tile!(999, a)];
+        let tiles = [tile!(101), tile!(999, a)];
         let mut iter = tiles.group_by_danger_level();
         assert_eq!(iter.next(), Some(DangerLevel::None));
         assert_eq!(iter.tiles(), &[tile!(101)]);
@@ -2442,21 +2442,21 @@ mod tests {
 
     #[test]
     fn tile_list_danger_level_summary() {
-        let tiles = vec![
+        let tiles = [
             tile!(220, a), tile!(231, b), tile!(211, b), tile!(301, a),
             tile!(219, a), tile!(418, a), tile!(311, b), tile!(419, b),
             tile!(208, a), tile!(232, a), tile!(326, b), tile!(302, b),
         ];
         let summary = tiles.danger_level_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             DangerLevelSummary::new(Some(DangerLevel::Low), 2),
             DangerLevelSummary::new(Some(DangerLevel::Medium), 5),
             DangerLevelSummary::new(Some(DangerLevel::High), 5),
         ]);
 
-        let tiles = vec![tile!(101), tile!(999, a)];
+        let tiles = [tile!(101), tile!(999, a)];
         let summary = tiles.danger_level_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             DangerLevelSummary::new(Some(DangerLevel::None), 1),
             DangerLevelSummary::new(None, 1),
         ]);
@@ -2465,7 +2465,7 @@ mod tests {
             .map(|info| info.full_id())
             .collect();
         let summary = tiles.danger_level_summary();
-        assert_eq!(summary, vec![
+        assert_eq!(summary, [
             DangerLevelSummary::new(Some(DangerLevel::None), 13),
             DangerLevelSummary::new(Some(DangerLevel::Low), 81),
             DangerLevelSummary::new(Some(DangerLevel::Medium), 115),
