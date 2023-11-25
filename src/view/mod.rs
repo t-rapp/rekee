@@ -91,8 +91,8 @@ fn tile_pacenote_text(tile: &PlacedTile) -> String {
     let pacenotes: Vec<String> = tile.pacenotes().into_iter()
         .map(|note| note.to_string())
         .collect();
-    let text = pacenotes.join(", ");
-    text
+    
+    pacenotes.join(", ")
 }
 
 // Helper macro that checks an option result and aborts the current function in case of an error.

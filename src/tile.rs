@@ -850,7 +850,7 @@ pub trait TileList {
             let edition = iter.next();
             let tile_count = iter.tiles().len() as u32;
             if tile_count > 0 {
-                let mut entry = summary.entry(edition).or_insert((0, 0));
+                let entry = summary.entry(edition).or_insert((0, 0));
                 entry.0 += 1;
                 entry.1 += tile_count;
             }
