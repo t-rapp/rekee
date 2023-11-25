@@ -631,8 +631,6 @@
 <a href="#631" id="631">631</a>
 <a href="#632" id="632">632</a>
 <a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Token which can be added to tiles. Can be used to add effects like a jump or
 //! water hazard area to a track tile. They are also used to indicate entrance
@@ -1241,15 +1239,13 @@
         <span class="kw">let </span>summary = tokens.token_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[]);
 
-        <span class="kw">let </span>tokens = <span class="macro">vec!</span>[
-            TokenId::JokerEntrance,
-        ];
+        <span class="kw">let </span>tokens = [TokenId::JokerEntrance];
         <span class="kw">let </span>summary = tokens.token_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             TokenSummary::new(TokenId::JokerEntrance, <span class="number">1</span>),
         ]);
 
-        <span class="kw">let </span>tokens = <span class="macro">vec!</span>[
+        <span class="kw">let </span>tokens = [
             TokenId::JokerEntrance,
             TokenId::Chicane(Terrain::Gravel),
             TokenId::Chicane(Terrain::Asphalt),

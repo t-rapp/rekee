@@ -5104,13 +5104,13 @@
         <span class="kw">let </span>summary = tiles.tile_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>)];
         <span class="kw">let </span>summary = tiles.tile_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             TileSummary::new(<span class="macro">tile!</span>(<span class="number">101</span>), <span class="number">1</span>),
         ]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">2</span>)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">1</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a, <span class="number">2</span>)];
         <span class="kw">let </span>summary = tiles.tile_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             TileSummary::new(<span class="macro">tile!</span>(<span class="number">101</span>), <span class="number">1</span>),
@@ -5126,27 +5126,27 @@
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[][..]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::GtCoreBox][..]);
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a), <span class="macro">tile!</span>(<span class="number">103</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a), <span class="macro">tile!</span>(<span class="number">103</span>, b)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::GtCoreBox][..]);
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">121</span>, a), <span class="macro">tile!</span>(<span class="number">121</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">121</span>, a), <span class="macro">tile!</span>(<span class="number">121</span>, b)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::GtChampionship, Edition::GtCoreBox][..]);
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">124</span>, a), <span class="macro">tile!</span>(<span class="number">124</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">124</span>, a), <span class="macro">tile!</span>(<span class="number">124</span>, b)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::GtCoreBox, Edition::GtChampionship, Edition::GtWorldTour][..]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">304</span>, b), <span class="macro">tile!</span>(<span class="number">905</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">304</span>, b), <span class="macro">tile!</span>(<span class="number">905</span>, b)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::DirtCoreBox, Edition::Dirt110Percent, Edition::DirtCopilotPack][..]);
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, b), <span class="macro">tile!</span>(<span class="number">405</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, b), <span class="macro">tile!</span>(<span class="number">405</span>, b)];
         <span class="kw">let </span>editions: Vec&lt;<span class="kw">_</span>&gt; = tiles.group_by_edition().collect();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>editions, <span class="kw-2">&amp;</span>[Edition::DirtCoreBox, Edition::DirtRx, Edition::DirtCoreBox][..]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span><span class="kw-2">mut </span>iter = tiles.group_by_edition();
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[][..]);
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">None</span>);
@@ -5161,7 +5161,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">None</span>);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::GtCoreBox), <span class="number">1</span>, <span class="number">1</span>),
@@ -5169,7 +5169,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Gt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a), <span class="macro">tile!</span>(<span class="number">103</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">103</span>, a), <span class="macro">tile!</span>(<span class="number">103</span>, b)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::GtCoreBox), <span class="number">1</span>, <span class="number">3</span>),
@@ -5177,7 +5177,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Gt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">121</span>, a), <span class="macro">tile!</span>(<span class="number">121</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">121</span>, a), <span class="macro">tile!</span>(<span class="number">121</span>, b)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::GtCoreBox), <span class="number">1</span>, <span class="number">1</span>),
@@ -5186,7 +5186,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Gt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">124</span>, a), <span class="macro">tile!</span>(<span class="number">124</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">124</span>, a), <span class="macro">tile!</span>(<span class="number">124</span>, b)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::GtCoreBox), <span class="number">1</span>, <span class="number">1</span>),
@@ -5196,7 +5196,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Gt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">304</span>, b), <span class="macro">tile!</span>(<span class="number">905</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">304</span>, b), <span class="macro">tile!</span>(<span class="number">905</span>, b)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtCoreBox), <span class="number">1</span>, <span class="number">2</span>),
@@ -5206,7 +5206,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Dirt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, b), <span class="macro">tile!</span>(<span class="number">405</span>, b)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">201</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, a), <span class="macro">tile!</span>(<span class="number">224</span>, b), <span class="macro">tile!</span>(<span class="number">405</span>, b)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtCoreBox), <span class="number">2</span>, <span class="number">3</span>),
@@ -5215,7 +5215,7 @@
         <span class="kw">let </span>series = tiles.detect_series();
         <span class="macro">assert_eq!</span>(series, <span class="prelude-val">Some</span>(Series::Dirt));
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span>summary = tiles.edition_summary();
         <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
             EditionSummary::new(<span class="prelude-val">None</span>, <span class="number">1</span>, <span class="number">1</span>),
@@ -5245,7 +5245,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_list_group_by_terrain() {
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[
+        <span class="kw">let </span>tiles = [
             <span class="macro">tile!</span>(<span class="number">220</span>, a), <span class="macro">tile!</span>(<span class="number">231</span>, b), <span class="macro">tile!</span>(<span class="number">211</span>, b), <span class="macro">tile!</span>(<span class="number">301</span>, a),
             <span class="macro">tile!</span>(<span class="number">219</span>, a), <span class="macro">tile!</span>(<span class="number">418</span>, a), <span class="macro">tile!</span>(<span class="number">311</span>, b), <span class="macro">tile!</span>(<span class="number">419</span>, b),
             <span class="macro">tile!</span>(<span class="number">208</span>, a), <span class="macro">tile!</span>(<span class="number">232</span>, a), <span class="macro">tile!</span>(<span class="number">326</span>, b), <span class="macro">tile!</span>(<span class="number">302</span>, b),
@@ -5267,7 +5267,7 @@
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[][..]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span><span class="kw-2">mut </span>iter = tiles.group_by_terrain();
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">Some</span>(Terrain::None));
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[<span class="macro">tile!</span>(<span class="number">101</span>)]);
@@ -5277,21 +5277,21 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_list_terrain_summary() {
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[
+        <span class="kw">let </span>tiles = [
             <span class="macro">tile!</span>(<span class="number">220</span>, a), <span class="macro">tile!</span>(<span class="number">231</span>, b), <span class="macro">tile!</span>(<span class="number">211</span>, b), <span class="macro">tile!</span>(<span class="number">301</span>, a),
             <span class="macro">tile!</span>(<span class="number">219</span>, a), <span class="macro">tile!</span>(<span class="number">418</span>, a), <span class="macro">tile!</span>(<span class="number">311</span>, b), <span class="macro">tile!</span>(<span class="number">419</span>, b),
             <span class="macro">tile!</span>(<span class="number">208</span>, a), <span class="macro">tile!</span>(<span class="number">232</span>, a), <span class="macro">tile!</span>(<span class="number">326</span>, b), <span class="macro">tile!</span>(<span class="number">302</span>, b),
         ];
         <span class="kw">let </span>summary = tiles.terrain_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::Asphalt), <span class="number">2</span>),
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::Gravel), <span class="number">7</span>),
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::Snow), <span class="number">3</span>),
         ]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span>summary = tiles.terrain_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::None), <span class="number">1</span>),
             TerrainSummary::new(<span class="prelude-val">None</span>, <span class="number">1</span>),
         ]);
@@ -5300,7 +5300,7 @@
             .map(|info| info.full_id())
             .collect();
         <span class="kw">let </span>summary = tiles.terrain_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::None), <span class="number">13</span>),
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::Asphalt), <span class="number">152</span>),
             TerrainSummary::new(<span class="prelude-val">Some</span>(Terrain::Gravel), <span class="number">80</span>),
@@ -5310,7 +5310,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_list_group_by_danger_level() {
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[
+        <span class="kw">let </span>tiles = [
             <span class="macro">tile!</span>(<span class="number">220</span>, a), <span class="macro">tile!</span>(<span class="number">231</span>, b), <span class="macro">tile!</span>(<span class="number">211</span>, b), <span class="macro">tile!</span>(<span class="number">301</span>, a),
             <span class="macro">tile!</span>(<span class="number">219</span>, a), <span class="macro">tile!</span>(<span class="number">418</span>, a), <span class="macro">tile!</span>(<span class="number">311</span>, b), <span class="macro">tile!</span>(<span class="number">419</span>, b),
             <span class="macro">tile!</span>(<span class="number">208</span>, a), <span class="macro">tile!</span>(<span class="number">232</span>, a), <span class="macro">tile!</span>(<span class="number">326</span>, b), <span class="macro">tile!</span>(<span class="number">302</span>, b),
@@ -5333,7 +5333,7 @@
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[][..]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span><span class="kw-2">mut </span>iter = tiles.group_by_danger_level();
         <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">Some</span>(DangerLevel::None));
         <span class="macro">assert_eq!</span>(iter.tiles(), <span class="kw-2">&amp;</span>[<span class="macro">tile!</span>(<span class="number">101</span>)]);
@@ -5343,21 +5343,21 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_list_danger_level_summary() {
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[
+        <span class="kw">let </span>tiles = [
             <span class="macro">tile!</span>(<span class="number">220</span>, a), <span class="macro">tile!</span>(<span class="number">231</span>, b), <span class="macro">tile!</span>(<span class="number">211</span>, b), <span class="macro">tile!</span>(<span class="number">301</span>, a),
             <span class="macro">tile!</span>(<span class="number">219</span>, a), <span class="macro">tile!</span>(<span class="number">418</span>, a), <span class="macro">tile!</span>(<span class="number">311</span>, b), <span class="macro">tile!</span>(<span class="number">419</span>, b),
             <span class="macro">tile!</span>(<span class="number">208</span>, a), <span class="macro">tile!</span>(<span class="number">232</span>, a), <span class="macro">tile!</span>(<span class="number">326</span>, b), <span class="macro">tile!</span>(<span class="number">302</span>, b),
         ];
         <span class="kw">let </span>summary = tiles.danger_level_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::Low), <span class="number">2</span>),
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::Medium), <span class="number">5</span>),
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::High), <span class="number">5</span>),
         ]);
 
-        <span class="kw">let </span>tiles = <span class="macro">vec!</span>[<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
+        <span class="kw">let </span>tiles = [<span class="macro">tile!</span>(<span class="number">101</span>), <span class="macro">tile!</span>(<span class="number">999</span>, a)];
         <span class="kw">let </span>summary = tiles.danger_level_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::None), <span class="number">1</span>),
             DangerLevelSummary::new(<span class="prelude-val">None</span>, <span class="number">1</span>),
         ]);
@@ -5366,7 +5366,7 @@
             .map(|info| info.full_id())
             .collect();
         <span class="kw">let </span>summary = tiles.danger_level_summary();
-        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
+        <span class="macro">assert_eq!</span>(summary, [
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::None), <span class="number">13</span>),
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::Low), <span class="number">81</span>),
             DangerLevelSummary::new(<span class="prelude-val">Some</span>(DangerLevel::Medium), <span class="number">115</span>),
