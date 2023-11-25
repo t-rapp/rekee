@@ -3751,7 +3751,7 @@
             <span class="kw">let </span>edition = iter.next();
             <span class="kw">let </span>tile_count = iter.tiles().len() <span class="kw">as </span>u32;
             <span class="kw">if </span>tile_count &gt; <span class="number">0 </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>entry = summary.entry(edition).or_insert((<span class="number">0</span>, <span class="number">0</span>));
+                <span class="kw">let </span>entry = summary.entry(edition).or_insert((<span class="number">0</span>, <span class="number">0</span>));
                 entry.<span class="number">0 </span>+= <span class="number">1</span>;
                 entry.<span class="number">1 </span>+= tile_count;
             }
