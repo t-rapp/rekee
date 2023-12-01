@@ -89,7 +89,7 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: Ex
     context.save();
     if label_type == LabelType::Pacenote {
         // compensate for the visually smaller font height
-        let height = height * 5 / 4;
+        let height = height * 7 / 6;
         context.set_font(&format!("bold {}px Caveat, sans-serif", height));
     } else {
         context.set_font(&format!("bold {}px OverpassTnum, Overpass, sans-serif", height));
@@ -100,7 +100,11 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: Ex
     context.set_miter_limit(2.0);
     context.set_stroke_style(&JsValue::from_str(color_scheme.background_color()));
     context.stroke_text(text, pos_x, pos_y)?;
-    context.set_fill_style(&JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
+    if label_type == LabelType::Pacenote {
+        context.set_fill_style(&JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
+    } else {
+        context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color()));
+    }
     context.fill_text(text, pos_x, pos_y)?;
     context.restore();
 
