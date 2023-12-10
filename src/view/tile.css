@@ -3,7 +3,7 @@
     font-size: 14px;
     font-variant-numeric: tabular-nums;
     font-weight: bold;
-    fill: #444;
+    fill: hsl(0, 0%, 30%);
     paint-order: stroke;
     stroke: white;
     stroke-width: 2.0;
@@ -17,7 +17,7 @@
     font-size: 16px;
     font-style: italic;
     font-weight: bold;
-    fill: #444;
+    fill: hsl(0, 0%, 30%);
     paint-order: stroke;
     stroke: white;
     stroke-width: 2.0;
@@ -27,11 +27,11 @@
     pointer-events: none;
 }
 .danger-level-low .pacenote {
-    fill: #cc0;
+    fill: hsl(60, 100%, 42%);
 }
 .danger-level-medium .pacenote {
-    fill: #c80;
+    fill: hsl(40, 100%, 45%);
 }
 .danger-level-high .pacenote {
-    fill: #c20;
+    fill: hsl(10, 100%, 45%);
 }
