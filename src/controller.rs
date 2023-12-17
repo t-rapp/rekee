@@ -90,6 +90,7 @@ pub struct UpdateTileLabelsEvent {
 
 pub struct ToggleTileLabelsEvent {
     pub label_type: LabelType,
+    pub active: bool,
 }
 
 pub struct UpdateSelectedTileEvent {
@@ -211,7 +212,7 @@ pub mod catalog {
         }
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
-            self.view.toggle_tile_labels(event.label_type);
+            self.view.toggle_tile_labels(event.label_type, event.active);
         }
 
         fn update_tile_usage(&mut self, event: &UpdateTileUsageEvent) {
@@ -364,7 +365,7 @@ pub mod map {
         }
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
-            self.view.toggle_tile_labels(event.label_type);
+            self.view.toggle_tile_labels(event.label_type, event.active);
         }
 
         fn update_selected_tile(&mut self, event: &UpdateSelectedTileEvent) {

@@ -532,20 +532,31 @@ impl MapView {
                 return;
             }
             if event.key().eq_ignore_ascii_case("l") {
-                let label_type = match event.type_().as_ref() {
-                    "keydown" => LabelType::Number,
-                    "keyup" => LabelType::None,
+                let label_type = LabelType::None;
+                let active = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
                     _ => return,
                 };
-                nuts::publish(ToggleTileLabelsEvent { label_type });
+                nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
             if event.key().eq_ignore_ascii_case("n") {
-                let label_type = match event.type_().as_ref() {
-                    "keydown" => LabelType::Pacenote,
-                    "keyup" => LabelType::None,
+                let label_type = LabelType::Number;
+                let active = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
                     _ => return,
                 };
-                nuts::publish(ToggleTileLabelsEvent { label_type });
+                nuts::publish(ToggleTileLabelsEvent { label_type, active });
+            }
+            if event.key().eq_ignore_ascii_case("p") {
+                let label_type = LabelType::Pacenote;
+                let active = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
+                    _ => return,
+                };
+                nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
         }) as Box<dyn Fn(_)>);
         document.add_event_listener_with_callback("keydown",
@@ -918,11 +929,16 @@ impl MapView {
         }
     }
 
-    pub fn toggle_tile_labels(&mut self, label_type: LabelType) {
-        let label_type = if label_type == LabelType::None {
+    pub fn toggle_tile_labels(&mut self, label_type: LabelType, active: bool) {
+        let label_type = if !active {
             self.label_type // revert
         } else if label_type == self.label_type {
-            LabelType::None // invert
+            // invert
+            if label_type == LabelType::None {
+                LabelType::Number
+            } else {
+                LabelType::None
+            }
         } else {
             label_type // override
         };

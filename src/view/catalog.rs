@@ -605,11 +605,16 @@ impl CatalogView {
         }
     }
 
-    pub fn toggle_tile_labels(&mut self, label_type: LabelType) {
-        let label_type = if label_type == LabelType::None {
+    pub fn toggle_tile_labels(&mut self, label_type: LabelType, active: bool) {
+        let label_type = if !active {
             self.label_type // revert
         } else if label_type == self.label_type {
-            LabelType::None // invert
+            // invert
+            if label_type == LabelType::None {
+                LabelType::Number
+            } else {
+                LabelType::None
+            }
         } else {
             label_type // override
         };
