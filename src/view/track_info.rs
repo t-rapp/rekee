@@ -23,6 +23,7 @@ pub struct TrackInfoView {
     inner: Element,
     close: Element,
     close_cb: Closure<dyn Fn(web_sys::Event)>,
+    keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
 }
 
 impl TrackInfoView {
@@ -41,14 +42,30 @@ impl TrackInfoView {
             .ok_or("Cannot find close button of catalog config element")?;
         close.add_event_listener_with_callback("click", close_cb.as_ref().unchecked_ref())?;
 
-        Ok(TrackInfoView { inner, close, close_cb })
+        let keydown_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.repeat() {
+                return;
+            }
+            if event.key().eq_ignore_ascii_case("enter") && (event.ctrl_key() || event.meta_key()) {
+                nuts::publish(HideTrackInfoEvent);
+            }
+            if event.key().eq_ignore_ascii_case("escape") {
+                nuts::publish(HideTrackInfoEvent);
+            }
+        }) as Box<dyn Fn(_)>);
+
+        Ok(TrackInfoView { inner, close, close_cb, keydown_cb })
     }
 
     pub fn set_active(&self, value: bool) {
+        let document = self.inner.owner_document().unwrap();
+
         if value {
             check!(self.inner.class_list().add_1("is-active").ok());
+            check!(document.add_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         } else {
             check!(self.inner.class_list().remove_1("is-active").ok());
+            check!(document.remove_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         }
     }
 
@@ -234,8 +251,12 @@ impl TrackInfoView {
 
 impl Drop for TrackInfoView {
     fn drop(&mut self) {
+        let document = self.inner.owner_document().unwrap();
+
         let _ = self.close.remove_event_listener_with_callback("click",
             self.close_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("keydown",
+            self.keydown_cb.as_ref().unchecked_ref());
     }
 }
 

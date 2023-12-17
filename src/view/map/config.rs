@@ -199,6 +199,7 @@ pub struct MapConfigView {
     apply_cb: Closure<dyn Fn(web_sys::Event)>,
     close: Element,
     close_cb: Closure<dyn Fn(web_sys::Event)>,
+    keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
 }
 
 impl MapConfigView {
@@ -262,19 +263,36 @@ impl MapConfigView {
             .ok_or("Cannot find close button of map config element")?;
         close.add_event_listener_with_callback("click", close_cb.as_ref().unchecked_ref())?;
 
+        let keydown_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.repeat() {
+                return;
+            }
+            if event.key().eq_ignore_ascii_case("enter") && (event.ctrl_key() || event.meta_key()) {
+                nuts::send_to::<MapConfigController, _>(ApplyMapConfigEvent);
+                nuts::publish(HideMapConfigEvent);
+            }
+            if event.key().eq_ignore_ascii_case("escape") {
+                nuts::publish(HideMapConfigEvent);
+            }
+        }) as Box<dyn Fn(_)>);
+
         Ok(MapConfigView {
             inner, background_grid, export_scale, export_scale_elements,
             export_header, export_listing, export_color_scheme,
             export_color_scheme_elements, label_type, label_type_elements,
-            apply, apply_cb, close, close_cb
+            apply, apply_cb, close, close_cb, keydown_cb,
         })
     }
 
     pub fn set_active(&self, value: bool) {
+        let document = self.inner.owner_document().unwrap();
+
         if value {
             check!(self.inner.class_list().add_1("is-active").ok());
+            check!(document.add_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         } else {
             check!(self.inner.class_list().remove_1("is-active").ok());
+            check!(document.remove_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         }
     }
 
@@ -332,10 +350,14 @@ impl MapConfigView {
 
 impl Drop for MapConfigView {
     fn drop(&mut self) {
+        let document = self.inner.owner_document().unwrap();
+
         let _ = self.apply.remove_event_listener_with_callback("click",
             self.apply_cb.as_ref().unchecked_ref());
         let _ = self.close.remove_event_listener_with_callback("click",
             self.close_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("keydown",
+            self.keydown_cb.as_ref().unchecked_ref());
     }
 }
 

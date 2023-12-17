@@ -834,11 +834,14 @@ impl MapDetailView {
             if event.repeat() {
                 return;
             }
+            if event.key().eq_ignore_ascii_case("enter") && (event.ctrl_key() || event.meta_key()) {
+                nuts::send_to::<MapDetailController, _>(ApplyMapDetailEvent);
+                nuts::publish(HideMapDetailEvent);
+            }
             if event.key().eq_ignore_ascii_case("escape") {
                 nuts::publish(HideMapDetailEvent);
             }
         }) as Box<dyn Fn(_)>);
-        document.add_event_listener_with_callback("keydown", keydown_cb.as_ref().unchecked_ref())?;
 
         let dragged_index = None;
 
@@ -873,10 +876,14 @@ impl MapDetailView {
     }
 
     pub fn set_active(&self, value: bool) {
+        let document = self.inner.owner_document().unwrap();
+
         if value {
             check!(self.inner.class_list().add_1("is-active").ok());
+            check!(document.add_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         } else {
             check!(self.inner.class_list().remove_1("is-active").ok());
+            check!(document.remove_event_listener_with_callback("keydown", self.keydown_cb.as_ref().unchecked_ref()).ok());
         }
     }
 
