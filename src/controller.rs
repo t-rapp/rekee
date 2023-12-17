@@ -93,6 +93,10 @@ pub struct ToggleTileLabelsEvent {
     pub active: bool,
 }
 
+pub struct ToggleTileTokensEvent {
+    pub active: bool,
+}
+
 pub struct UpdateSelectedTileEvent {
     pub pos: Point,
 }
@@ -292,6 +296,7 @@ pub mod map {
             activity.subscribe(MapController::update_background_grid);
             activity.subscribe(MapController::update_tile_labels);
             activity.subscribe(MapController::toggle_tile_labels);
+            activity.subscribe(MapController::toggle_tile_tokens);
             activity.subscribe(MapController::update_selected_tile);
             activity.subscribe(MapController::add_selected_tile_token);
             activity.subscribe(MapController::update_selected_tile_tokens);
@@ -366,6 +371,10 @@ pub mod map {
 
         fn toggle_tile_labels(&mut self, event: &ToggleTileLabelsEvent) {
             self.view.toggle_tile_labels(event.label_type, event.active);
+        }
+
+        fn toggle_tile_tokens(&mut self, event: &ToggleTileTokensEvent) {
+            self.view.toggle_tile_tokens(event.active);
         }
 
         fn update_selected_tile(&mut self, event: &UpdateSelectedTileEvent) {

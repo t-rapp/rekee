@@ -17,8 +17,8 @@ use crate::controller::{
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
-    UpdateAuthorEvent, UpdateSelectedTileEvent, UpdateTileUsageEvent,
-    UpdateTitleEvent
+    ToggleTileTokensEvent, UpdateAuthorEvent, UpdateSelectedTileEvent,
+    UpdateTileUsageEvent, UpdateTitleEvent
 };
 use crate::controller::map::*;
 use crate::controller::map_config::ShowMapConfigEvent;
@@ -558,6 +558,14 @@ impl MapView {
                 };
                 nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
+            if event.key().eq_ignore_ascii_case("t") {
+                let active = match event.type_().as_ref() {
+                    "keydown" => true,
+                    "keyup" => false,
+                    _ => return,
+                };
+                nuts::publish(ToggleTileTokensEvent { active });
+            }
         }) as Box<dyn Fn(_)>);
         document.add_event_listener_with_callback("keydown",
             keychange_cb.as_ref().unchecked_ref())?;
@@ -945,6 +953,11 @@ impl MapView {
         info!("toggle map tile labels: {:?}", label_type);
         self.labels.set_hidden(label_type != LabelType::Number);
         self.pacenotes.set_hidden(label_type != LabelType::Pacenote);
+    }
+
+    pub fn toggle_tile_tokens(&mut self, active: bool) {
+        info!("toggle map tile tokens: {:?}", active);
+        self.tokens.set_hidden(active);
     }
 
     pub fn clear_selected(&mut self) {
