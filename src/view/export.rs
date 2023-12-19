@@ -106,10 +106,11 @@ fn draw_tile_label(context: &web_sys::CanvasRenderingContext2d, color_scheme: Ex
     context.set_text_baseline("middle");
     context.set_line_width(2.0);
     context.set_miter_limit(2.0);
-    context.set_stroke_style(&JsValue::from_str(color_scheme.background_color()));
     if label_type == LabelType::Pacenote {
+        context.set_stroke_style(&JsValue::from_str(color_scheme.tile_pacenote_background_color()));
         context.set_fill_style(&JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
     } else {
+        context.set_stroke_style(&JsValue::from_str(color_scheme.tile_label_background_color()));
         context.set_fill_style(&JsValue::from_str(color_scheme.tile_label_color()));
     }
     for line in text {
@@ -623,10 +624,10 @@ impl ExportView {
             let mut listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
             for (count_text, number_text) in &listing_text {
                 context.set_text_align("right");
-                context.set_fill_style(&JsValue::from_str(active_color_scheme.tile_count_color()));
+                context.set_fill_style(&JsValue::from_str(active_color_scheme.listing_tile_count_color()));
                 check!(context.fill_text(count_text, listing_x, listing_y).ok());
                 context.set_text_align("left");
-                context.set_fill_style(&JsValue::from_str(active_color_scheme.tile_number_color()));
+                context.set_fill_style(&JsValue::from_str(active_color_scheme.listing_tile_number_color()));
                 check!(context.fill_text(number_text, listing_x, listing_y).ok());
                 listing_y += f64::from(listing_lineheight);
             }

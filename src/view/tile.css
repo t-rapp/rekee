@@ -17,9 +17,9 @@
     font-size: 16px;
     font-style: italic;
     font-weight: bold;
-    fill: hsl(0, 0%, 30%);
+    fill: hsl(0, 0%, 70%);
     paint-order: stroke;
-    stroke: white;
+    stroke: hsl(0, 0%, 10%);
     stroke-width: 2.0;
     dominant-baseline: middle;
     text-anchor: middle;

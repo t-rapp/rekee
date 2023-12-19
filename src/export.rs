@@ -195,21 +195,29 @@ impl ExportColorScheme {
         "hsl(0, 0%, 30%)"
     }
 
-    pub fn tile_count_color(&self) -> &'static str {
-        self.map_border_color()
-    }
-
-    pub fn tile_number_color(&self) -> &'static str {
-        self.map_title_color()
+    pub fn tile_label_background_color(&self) -> &'static str {
+        self.background_color()
     }
 
     pub fn tile_pacenote_color(&self, danger_level: DangerLevel) -> &'static str {
         match danger_level {
-            DangerLevel::None => self.map_title_color(),
+            DangerLevel::None => "hsl(0, 0%, 70%)",
             DangerLevel::Low => "hsl(60, 100%, 42%)",
             DangerLevel::Medium => "hsl(40, 100%, 45%)",
             DangerLevel::High => "hsl(10, 100%, 45%)",
         }
+    }
+
+    pub fn tile_pacenote_background_color(&self) -> &'static str {
+        "hsl(0, 0%, 10%)"
+    }
+
+    pub fn listing_tile_count_color(&self) -> &'static str {
+        self.map_border_color()
+    }
+
+    pub fn listing_tile_number_color(&self) -> &'static str {
+        self.map_title_color()
     }
 
     pub fn listing_background_color(&self) -> &'static str {
