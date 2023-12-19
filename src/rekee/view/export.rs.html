@@ -752,6 +752,7 @@
 <a href="#752" id="752">752</a>
 <a href="#753" id="753">753</a>
 <a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Supports export of maps as an image.
 //!
@@ -860,10 +861,11 @@
     context.set_text_baseline(<span class="string">&quot;middle&quot;</span>);
     context.set_line_width(<span class="number">2.0</span>);
     context.set_miter_limit(<span class="number">2.0</span>);
-    context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.background_color()));
     <span class="kw">if </span>label_type == LabelType::Pacenote {
+        context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.tile_pacenote_background_color()));
         context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.tile_pacenote_color(danger_level)));
     } <span class="kw">else </span>{
+        context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.tile_label_background_color()));
         context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.tile_label_color()));
     }
     <span class="kw">for </span>line <span class="kw">in </span>text {
@@ -1377,10 +1379,10 @@
             <span class="kw">let </span><span class="kw-2">mut </span>listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
             <span class="kw">for </span>(count_text, number_text) <span class="kw">in </span><span class="kw-2">&amp;</span>listing_text {
                 context.set_text_align(<span class="string">&quot;right&quot;</span>);
-                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.tile_count_color()));
+                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.listing_tile_count_color()));
                 <span class="macro">check!</span>(context.fill_text(count_text, listing_x, listing_y).ok());
                 context.set_text_align(<span class="string">&quot;left&quot;</span>);
-                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.tile_number_color()));
+                context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.listing_tile_number_color()));
                 <span class="macro">check!</span>(context.fill_text(number_text, listing_x, listing_y).ok());
                 listing_y += f64::from(listing_lineheight);
             }
