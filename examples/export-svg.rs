@@ -107,7 +107,7 @@ fn main() -> Result<(), String> {
         .unwrap_or_else(|| "track.svg".to_string());
     let scale = matches.opt_get_default("scale", ExportScale::default())
         .map_err(|err| format!("Invalid scale option value: {}", err))?;
-    let filename = match matches.free.get(0) {
+    let filename = match matches.free.first() {
         Some(val) => val,
         None => {
             eprintln!("Usage: {} [options] <input-file.rgt>", program);
