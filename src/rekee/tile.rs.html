@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tile.rs`."><title>tile.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tile.rs`."><title>tile.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2932,17 +2933,17 @@
 ///
 /// ```
 /// # use rekee::tile::*;
-/// let tile: TileId = &quot;102a&quot;.parse().unwrap();
+/// let tile: TileId = "102a".parse().unwrap();
 /// assert_eq!(tile.num(), 102);
 /// assert_eq!(tile.side(), 1);
 /// assert_eq!(tile.var(), 0);
 ///
 /// let tile = TileId::new(103, 1, 2);
-/// assert_eq!(tile.to_string(), &quot;103a-2&quot;);
+/// assert_eq!(tile.to_string(), "103a-2");
 /// ```
 </span><span class="attr">#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[derive(Deserialize)]
-#[serde(try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+#[serde(try_from = <span class="string">"&amp;str"</span>)]
 </span><span class="kw">pub struct </span>TileId {
     num: u16,
     side: u8,
@@ -2974,7 +2975,7 @@
         <span class="self">self</span>.var
     }
 
-    <span class="doccomment">/// Returns the &quot;base&quot; identifier of a game tile. This is the identifier
+    <span class="doccomment">/// Returns the "base" identifier of a game tile. This is the identifier
     /// that describes all the tile characteristics with graphical variant `var`
     /// stripped off, and also `side` if the tile has the same printing on front
     /// and back.
@@ -2993,15 +2994,15 @@
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>TileId {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.num)<span class="question-mark">?</span>;
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, <span class="self">self</span>.num)<span class="question-mark">?</span>;
         <span class="kw">match </span><span class="self">self</span>.side {
             <span class="number">0 </span>=&gt; (),
-            <span class="number">1 </span>=&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;a&quot;</span>)<span class="question-mark">?</span>,
-            <span class="number">2 </span>=&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;b&quot;</span>)<span class="question-mark">?</span>,
+            <span class="number">1 </span>=&gt; <span class="macro">write!</span>(fmt, <span class="string">"a"</span>)<span class="question-mark">?</span>,
+            <span class="number">2 </span>=&gt; <span class="macro">write!</span>(fmt, <span class="string">"b"</span>)<span class="question-mark">?</span>,
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
         }
         <span class="kw">if </span><span class="self">self</span>.var &gt; <span class="number">0 </span>{
-            <span class="macro">write!</span>(fmt, <span class="string">&quot;-{}&quot;</span>, <span class="self">self</span>.var)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(fmt, <span class="string">"-{}"</span>, <span class="self">self</span>.var)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -3011,8 +3012,8 @@
 </span><span class="kw">impl </span>fmt::LowerHex <span class="kw">for </span>TileId {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>text = serde_json::to_string(<span class="self">self</span>).unwrap();
-        text.retain(|ch| ch != <span class="string">&#39;&quot;&#39;</span>);
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, text)
+        text.retain(|ch| ch != <span class="string">'"'</span>);
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, text)
     }
 }
 
@@ -3021,31 +3022,31 @@
 
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
         <span class="comment">// check for tile alias
-        </span><span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler1a&quot;</span>) {
+        </span><span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">"filler1a"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">902</span>, <span class="number">1</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler1b&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"filler1b"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">902</span>, <span class="number">2</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler2a&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"filler2a"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">903</span>, <span class="number">1</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler2b&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"filler2b"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">903</span>, <span class="number">2</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler3a&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"filler3a"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">904</span>, <span class="number">1</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;filler3b&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"filler3b"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">904</span>, <span class="number">2</span>, <span class="number">0</span>));
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;podium&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"podium"</span>) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>));
         }
-        <span class="comment">// parse string pattern &quot;{num}{side}-{var}&quot;
+        <span class="comment">// parse string pattern "{num}{side}-{var}"
         </span><span class="kw">let </span><span class="kw-2">mut </span>idx = s.len().min(<span class="number">3</span>);
         <span class="kw">let </span>num = s[<span class="number">0</span>..idx].parse::&lt;u16&gt;()<span class="question-mark">?</span>;
         <span class="kw">let </span>side = <span class="kw">match </span>s.get(idx..idx+<span class="number">1</span>) {
             <span class="prelude-val">None </span>=&gt; <span class="number">0</span>,
-            <span class="prelude-val">Some</span>(<span class="string">&quot;a&quot;</span>) | <span class="prelude-val">Some</span>(<span class="string">&quot;A&quot;</span>) =&gt; { idx += <span class="number">1</span>; <span class="number">1</span>},
-            <span class="prelude-val">Some</span>(<span class="string">&quot;b&quot;</span>) | <span class="prelude-val">Some</span>(<span class="string">&quot;B&quot;</span>) =&gt; { idx += <span class="number">1</span>; <span class="number">2</span>},
+            <span class="prelude-val">Some</span>(<span class="string">"a"</span>) | <span class="prelude-val">Some</span>(<span class="string">"A"</span>) =&gt; { idx += <span class="number">1</span>; <span class="number">1</span>},
+            <span class="prelude-val">Some</span>(<span class="string">"b"</span>) | <span class="prelude-val">Some</span>(<span class="string">"B"</span>) =&gt; { idx += <span class="number">1</span>; <span class="number">2</span>},
             <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
         };
-        <span class="kw">if </span><span class="prelude-val">Some</span>(<span class="string">&quot;-&quot;</span>) == s.get(idx..idx+<span class="number">1</span>) {
+        <span class="kw">if </span><span class="prelude-val">Some</span>(<span class="string">"-"</span>) == s.get(idx..idx+<span class="number">1</span>) {
             idx += <span class="number">1</span>;
         }
         <span class="kw">let </span>var = <span class="kw">if </span>s.len() &gt; idx {
@@ -3709,7 +3710,7 @@
     /// # use rekee::tile::{TileId, TileList};
     /// let tiles = vec![tile!(101), tile!(103, a, 1), tile!(103, a, 2), tile!(124, a)];
     /// for row in tiles.tile_summary() {
-    ///     println!(&quot;{}x tile {}&quot;, row.count, row.tile);
+    ///     println!("{}x tile {}", row.count, row.tile);
     /// }
     /// ```
     </span><span class="kw">fn </span>tile_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;TileSummary&gt;;
@@ -3739,9 +3740,9 @@
     /// for row in tiles.edition_summary() {
     ///     let label = match row.edition {
     ///         Some(val) =&gt; val.to_string(),
-    ///         None =&gt; &quot;Unknown&quot;.to_string(),
+    ///         None =&gt; "Unknown".to_string(),
     ///     };
-    ///     println!(&quot;{}: {}x ({} tiles)&quot;, label, row.edition_count, row.tile_count);
+    ///     println!("{}: {}x ({} tiles)", label, row.edition_count, row.tile_count);
     /// }
     /// ```
     </span><span class="kw">fn </span>edition_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;EditionSummary&gt; {
@@ -3790,9 +3791,9 @@
     /// for row in tiles.terrain_summary() {
     ///     let label = match row.terrain {
     ///         Some(val) =&gt; val.to_string(),
-    ///         None =&gt; &quot;Unknown&quot;.to_string(),
+    ///         None =&gt; "Unknown".to_string(),
     ///     };
-    ///     println!(&quot;{}: {} tiles&quot;, label, row.tile_count);
+    ///     println!("{}: {} tiles", label, row.tile_count);
     /// }
     /// ```
     </span><span class="kw">fn </span>terrain_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;TerrainSummary&gt; {
@@ -3839,9 +3840,9 @@
     /// for row in tiles.danger_level_summary() {
     ///     let label = match row.danger_level {
     ///         Some(val) =&gt; val.to_string(),
-    ///         None =&gt; &quot;Unknown&quot;.to_string(),
+    ///         None =&gt; "Unknown".to_string(),
     ///     };
-    ///     println!(&quot;{}: {} tiles&quot;, label, row.tile_count);
+    ///     println!("{}: {} tiles", label, row.tile_count);
     /// }
     /// ```
     </span><span class="kw">fn </span>danger_level_summary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;DangerLevelSummary&gt; {
@@ -3952,7 +3953,7 @@
 </span><span class="doccomment">/// Tile connection hint. Used to describe the orientation of adjacent tiles
 /// along the track in [`Map::append()`](crate::map::Map::append).
 ///
-/// Represents the track characteristics of a single tile&#39;s edge-to-edge
+/// Represents the track characteristics of a single tile's edge-to-edge
 /// connection, simplified to one of three possible values: Straight, Left, or
 /// Right.
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -3966,11 +3967,11 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ConnectionHint::Straight =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;S&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"S"</span>)<span class="question-mark">?</span>,
             ConnectionHint::Left =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;L&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"L"</span>)<span class="question-mark">?</span>,
             ConnectionHint::Right =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;R&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"R"</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -3981,11 +3982,11 @@
 
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
         <span class="kw">match </span>s {
-            <span class="string">&quot;S&quot; </span>| <span class="string">&quot;s&quot; </span>| <span class="string">&quot;&quot; </span>=&gt;
+            <span class="string">"S" </span>| <span class="string">"s" </span>| <span class="string">"" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ConnectionHint::Straight),
-            <span class="string">&quot;L&quot; </span>| <span class="string">&quot;l&quot; </span>=&gt;
+            <span class="string">"L" </span>| <span class="string">"l" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ConnectionHint::Left),
-            <span class="string">&quot;R&quot; </span>| <span class="string">&quot;r&quot; </span>=&gt;
+            <span class="string">"R" </span>| <span class="string">"r" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ConnectionHint::Right),
             <span class="kw">_ </span>=&gt;
                 <span class="prelude-val">Err</span>(ParseHintError::Unknown(s.to_string())),
@@ -4002,7 +4003,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ParseHintError::Unknown(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown hint token \&quot;{}\&quot;&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Unknown hint token \"{}\""</span>, val),
         }
     }
 }
@@ -4158,7 +4159,7 @@
 /// Use [`TileInfo::danger_level()`] to get the danger level data of a specific tile.
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all = <span class="string">&quot;lowercase&quot;</span>, try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+#[serde(rename_all = <span class="string">"lowercase"</span>, try_from = <span class="string">"&amp;str"</span>)]
 </span><span class="kw">pub enum </span>DangerLevel {
     <span class="doccomment">/// Tile has no danger level assigned.
     </span><span class="prelude-val">None</span>,
@@ -4180,13 +4181,13 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             DangerLevel::None =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;None&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"None"</span>),
             DangerLevel::Low =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Low&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Low"</span>),
             DangerLevel::Medium =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Medium&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Medium"</span>),
             DangerLevel::High =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;High&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"High"</span>),
         }
     }
 }
@@ -4195,8 +4196,8 @@
 </span><span class="kw">impl </span>fmt::LowerHex <span class="kw">for </span>DangerLevel {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>text = serde_json::to_string(<span class="self">self</span>).unwrap();
-        text.retain(|ch| ch != <span class="string">&#39;&quot;&#39;</span>);
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, text)
+        text.retain(|ch| ch != <span class="string">'"'</span>);
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, text)
     }
 }
 
@@ -4204,13 +4205,13 @@
     <span class="kw">type </span><span class="prelude-val">Err </span>= ParseDangerLevelError;
 
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
-        <span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">&quot;none&quot;</span>) {
+        <span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">"none"</span>) {
             <span class="prelude-val">Ok</span>(DangerLevel::None)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;low&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"low"</span>) {
             <span class="prelude-val">Ok</span>(DangerLevel::Low)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;medium&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"medium"</span>) {
             <span class="prelude-val">Ok</span>(DangerLevel::Medium)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;high&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"high"</span>) {
             <span class="prelude-val">Ok</span>(DangerLevel::High)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(ParseDangerLevelError::UnknownDangerLevel(s.to_string()))
@@ -4227,7 +4228,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ParseDangerLevelError::UnknownDangerLevel(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown danger level \&quot;{}\&quot;&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Unknown danger level \"{}\""</span>, val),
         }
     }
 }
@@ -4247,7 +4248,7 @@
 /// Use [`TileInfo::terrain()`] to get the terrain surface data of a specific tile.
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Deserialize)]
-#[serde(try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+#[serde(try_from = <span class="string">"&amp;str"</span>)]
 </span><span class="kw">pub enum </span>Terrain {
     <span class="doccomment">/// Tile has no terrain surface assigned.
     </span><span class="prelude-val">None</span>,
@@ -4269,13 +4270,13 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             Terrain::None =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;None&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"None"</span>),
             Terrain::Asphalt =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Asphalt&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Asphalt"</span>),
             Terrain::Gravel =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Gravel&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Gravel"</span>),
             Terrain::Snow =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Snow&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Snow"</span>),
         }
     }
 }
@@ -4284,8 +4285,8 @@
 </span><span class="kw">impl </span>fmt::LowerHex <span class="kw">for </span>Terrain {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>text = serde_json::to_string(<span class="self">self</span>).unwrap();
-        text.retain(|ch| ch != <span class="string">&#39;&quot;&#39;</span>);
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, text)
+        text.retain(|ch| ch != <span class="string">'"'</span>);
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, text)
     }
 }
 
@@ -4293,13 +4294,13 @@
     <span class="kw">type </span><span class="prelude-val">Err </span>= ParseTerrainError;
 
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
-        <span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">&quot;none&quot;</span>) {
+        <span class="kw">if </span>s.eq_ignore_ascii_case(<span class="string">"none"</span>) {
             <span class="prelude-val">Ok</span>(Terrain::None)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;asphalt&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"asphalt"</span>) {
             <span class="prelude-val">Ok</span>(Terrain::Asphalt)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;gravel&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"gravel"</span>) {
             <span class="prelude-val">Ok</span>(Terrain::Gravel)
-        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">&quot;snow&quot;</span>) {
+        } <span class="kw">else if </span>s.eq_ignore_ascii_case(<span class="string">"snow"</span>) {
             <span class="prelude-val">Ok</span>(Terrain::Snow)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(ParseTerrainError::UnknownTerrain(s.to_string()))
@@ -4316,7 +4317,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ParseTerrainError::UnknownTerrain(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown terrain name \&quot;{}\&quot;&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Unknown terrain name \"{}\""</span>, val),
         }
     }
 }
@@ -4372,27 +4373,27 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             Pacenote::Limit(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, val),
             Pacenote::LimitHazard(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;{}!&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"{}!"</span>, val),
             Pacenote::Hazard =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Hazard&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Hazard"</span>),
             Pacenote::Shortcut(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Cut {}&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Cut {}"</span>, val),
             Pacenote::Jump(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Jump {}&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Jump {}"</span>, val),
             Pacenote::Water =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Water&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Water"</span>),
             Pacenote::Climb =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Climb&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Climb"</span>),
             Pacenote::Chicane =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Chicane&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Chicane"</span>),
             Pacenote::Cloud =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Cloud&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Cloud"</span>),
             Pacenote::Oxygen(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Oxygen -{}&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Oxygen -{}"</span>, val),
             Pacenote::MudSpray =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Mud&quot;</span>),
+                <span class="macro">write!</span>(fmt, <span class="string">"Mud"</span>),
         }
     }
 }
@@ -4428,11 +4429,11 @@
     danger_level: DangerLevel,
     connections: [Connection; <span class="number">6</span>],
     edges: [Edge; <span class="number">6</span>],
-    pacenotes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span>[Pacenote],
+    pacenotes: <span class="kw-2">&amp;</span><span class="lifetime">'static</span>[Pacenote],
 }
 
 <span class="kw">impl </span>TileInfo {
-    <span class="kw">const fn </span>new(id: TileId, count: usize, terrain: Terrain, danger_level: DangerLevel, connections: [Connection; <span class="number">6</span>], edges: [Edge; <span class="number">6</span>], pacenotes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span>[Pacenote]) -&gt; <span class="self">Self </span>{
+    <span class="kw">const fn </span>new(id: TileId, count: usize, terrain: Terrain, danger_level: DangerLevel, connections: [Connection; <span class="number">6</span>], edges: [Edge; <span class="number">6</span>], pacenotes: <span class="kw-2">&amp;</span><span class="lifetime">'static</span>[Pacenote]) -&gt; <span class="self">Self </span>{
         TileInfo { id, count, terrain, danger_level, connections, edges, pacenotes }
     }
 
@@ -4479,13 +4480,13 @@
     }
 
     <span class="doccomment">/// Returns an interator over all tiles in the internal list.
-    </span><span class="kw">pub fn </span>iter() -&gt; std::slice::Iter&lt;<span class="lifetime">&#39;static</span>, <span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>iter() -&gt; std::slice::Iter&lt;<span class="lifetime">'static</span>, <span class="self">Self</span>&gt; {
         TILE_INFOS.iter()
     }
 
     <span class="doccomment">/// Lookup tile information by tile identifier. The identifier can be in base
     /// or full format (with or without graphical variant).
-    </span><span class="kw">pub fn </span>get(id: TileId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>get(id: TileId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="self">Self</span>&gt; {
         <span class="comment">// Use of the fast binary search algorithm is allowed here as the proper
         // list order is checked with unit tests
         </span><span class="kw">let </span>idx = TILE_INFOS.binary_search_by_key(<span class="kw-2">&amp;</span>id.base(), |info| info.id);
@@ -4689,8 +4690,8 @@
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>TileInfo {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.id)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, <span class="self">self</span>.id)
     }
 }
 
@@ -5045,55 +5046,55 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>id_to_str() {
-        <span class="macro">assert_eq!</span>(TileId::default().to_string(), <span class="string">&quot;0&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>).to_string(), <span class="string">&quot;101&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>).to_string(), <span class="string">&quot;102a&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>).to_string(), <span class="string">&quot;102b&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">103</span>, <span class="number">1</span>, <span class="number">1</span>).to_string(), <span class="string">&quot;103a-1&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">103</span>, <span class="number">2</span>, <span class="number">3</span>).to_string(), <span class="string">&quot;103b-3&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>).to_string(), <span class="string">&quot;905a&quot;</span>);
+        <span class="macro">assert_eq!</span>(TileId::default().to_string(), <span class="string">"0"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>).to_string(), <span class="string">"101"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>).to_string(), <span class="string">"102a"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>).to_string(), <span class="string">"102b"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">103</span>, <span class="number">1</span>, <span class="number">1</span>).to_string(), <span class="string">"103a-1"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">103</span>, <span class="number">2</span>, <span class="number">3</span>).to_string(), <span class="string">"103b-3"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>).to_string(), <span class="string">"905a"</span>);
 
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>).base().to_string(), <span class="string">&quot;101&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">1</span>, <span class="number">0</span>).base().to_string(), <span class="string">&quot;101&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>).base().to_string(), <span class="string">&quot;102a&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>).base().to_string(), <span class="string">&quot;102b&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">104</span>, <span class="number">1</span>, <span class="number">2</span>).base().to_string(), <span class="string">&quot;104a&quot;</span>);
-        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">905</span>, <span class="number">2</span>, <span class="number">0</span>).base().to_string(), <span class="string">&quot;905b&quot;</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>).base().to_string(), <span class="string">"101"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">101</span>, <span class="number">1</span>, <span class="number">0</span>).base().to_string(), <span class="string">"101"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>).base().to_string(), <span class="string">"102a"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>).base().to_string(), <span class="string">"102b"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">104</span>, <span class="number">1</span>, <span class="number">2</span>).base().to_string(), <span class="string">"104a"</span>);
+        <span class="macro">assert_eq!</span>(TileId::new(<span class="number">905</span>, <span class="number">2</span>, <span class="number">0</span>).base().to_string(), <span class="string">"905b"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>id_from_str() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;0&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;101&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;102a&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;102b&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;103a-1&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">103</span>, <span class="number">1</span>, <span class="number">1</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;103b-3&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">103</span>, <span class="number">2</span>, <span class="number">3</span>)));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;905A&quot;</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"0"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"101"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">101</span>, <span class="number">0</span>, <span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"102a"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">102</span>, <span class="number">1</span>, <span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"102b"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">102</span>, <span class="number">2</span>, <span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"103a-1"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">103</span>, <span class="number">1</span>, <span class="number">1</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"103b-3"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">103</span>, <span class="number">2</span>, <span class="number">3</span>)));
+        <span class="macro">assert_eq!</span>(<span class="string">"905A"</span>.parse::&lt;TileId&gt;(), <span class="prelude-val">Ok</span>(TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>)));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;TileId&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;101x&quot;</span>.parse::&lt;TileId&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">""</span>.parse::&lt;TileId&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"101x"</span>.parse::&lt;TileId&gt;().is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>id_serde() {
         <span class="kw">let </span>tile = <span class="macro">tile!</span>(<span class="number">102</span>, a);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;102a&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""102a""#</span>);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;103b-1&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""103b-1""#</span>;
         <span class="kw">let </span>tile: TileId = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(tile, TileId::new(<span class="number">103</span>, <span class="number">2</span>, <span class="number">1</span>));
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;PODIUM&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""PODIUM""#</span>;
         <span class="kw">let </span>tile: TileId = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(tile, TileId::new(<span class="number">905</span>, <span class="number">1</span>, <span class="number">0</span>));
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;TileId, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;a-1&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""a-1""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;TileId, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
     }
@@ -5376,15 +5377,15 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>connection_hint_from_str() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;s&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;S&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;l&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Left));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;L&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Left));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;r&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Right));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;R&quot;</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Right));
+        <span class="macro">assert_eq!</span>(<span class="string">""</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
+        <span class="macro">assert_eq!</span>(<span class="string">"s"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
+        <span class="macro">assert_eq!</span>(<span class="string">"S"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Straight));
+        <span class="macro">assert_eq!</span>(<span class="string">"l"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Left));
+        <span class="macro">assert_eq!</span>(<span class="string">"L"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Left));
+        <span class="macro">assert_eq!</span>(<span class="string">"r"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Right));
+        <span class="macro">assert_eq!</span>(<span class="string">"R"</span>.parse::&lt;ConnectionHint&gt;(), <span class="prelude-val">Ok</span>(ConnectionHint::Right));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;x&quot;</span>.parse::&lt;ConnectionHint&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"x"</span>.parse::&lt;ConnectionHint&gt;().is_err());
     }
 
     <span class="attr">#[test]
@@ -5566,133 +5567,133 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>terrain_to_str() {
-        <span class="macro">assert_eq!</span>(Terrain::None.to_string(), <span class="string">&quot;None&quot;</span>);
-        <span class="macro">assert_eq!</span>(Terrain::Asphalt.to_string(), <span class="string">&quot;Asphalt&quot;</span>);
-        <span class="macro">assert_eq!</span>(Terrain::Gravel.to_string(), <span class="string">&quot;Gravel&quot;</span>);
-        <span class="macro">assert_eq!</span>(Terrain::Snow.to_string(), <span class="string">&quot;Snow&quot;</span>);
+        <span class="macro">assert_eq!</span>(Terrain::None.to_string(), <span class="string">"None"</span>);
+        <span class="macro">assert_eq!</span>(Terrain::Asphalt.to_string(), <span class="string">"Asphalt"</span>);
+        <span class="macro">assert_eq!</span>(Terrain::Gravel.to_string(), <span class="string">"Gravel"</span>);
+        <span class="macro">assert_eq!</span>(Terrain::Snow.to_string(), <span class="string">"Snow"</span>);
 
-        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, Terrain::Gravel);
-        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;gravel&quot;</span>);
-        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, Terrain::Snow);
-        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;snow&quot;</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">"{:x}"</span>, Terrain::Gravel);
+        <span class="macro">assert_eq!</span>(text, <span class="string">"gravel"</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">"{:x}"</span>, Terrain::Snow);
+        <span class="macro">assert_eq!</span>(text, <span class="string">"snow"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>terrain_from_str() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;None&quot;</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::None));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;asphalt&quot;</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Asphalt));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Gravel&quot;</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Gravel));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;SNOW&quot;</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Snow));
+        <span class="macro">assert_eq!</span>(<span class="string">"None"</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::None));
+        <span class="macro">assert_eq!</span>(<span class="string">"asphalt"</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Asphalt));
+        <span class="macro">assert_eq!</span>(<span class="string">"Gravel"</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Gravel));
+        <span class="macro">assert_eq!</span>(<span class="string">"SNOW"</span>.parse::&lt;Terrain&gt;(), <span class="prelude-val">Ok</span>(Terrain::Snow));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;Terrain&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;x&quot;</span>.parse::&lt;Terrain&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;None-1&quot;</span>.parse::&lt;Terrain&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;Asphalt x&quot;</span>.parse::&lt;Terrain&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">""</span>.parse::&lt;Terrain&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"x"</span>.parse::&lt;Terrain&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"None-1"</span>.parse::&lt;Terrain&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"Asphalt x"</span>.parse::&lt;Terrain&gt;().is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>terrain_serde() {
         <span class="kw">let </span>terrain = Terrain::None;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>terrain).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;none&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""none""#</span>);
 
         <span class="kw">let </span>terrain = Terrain::Asphalt;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>terrain).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;asphalt&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""asphalt""#</span>);
 
         <span class="kw">let </span>terrain = Terrain::Gravel;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>terrain).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;gravel&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""gravel""#</span>);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;snow&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""snow""#</span>;
         <span class="kw">let </span>terrain: Terrain = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(terrain, Terrain::Snow);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Terrain, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;none-1&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""none-1""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Terrain, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>danger_level_to_str() {
-        <span class="macro">assert_eq!</span>(DangerLevel::None.to_string(), <span class="string">&quot;None&quot;</span>);
-        <span class="macro">assert_eq!</span>(DangerLevel::Low.to_string(), <span class="string">&quot;Low&quot;</span>);
-        <span class="macro">assert_eq!</span>(DangerLevel::Medium.to_string(), <span class="string">&quot;Medium&quot;</span>);
-        <span class="macro">assert_eq!</span>(DangerLevel::High.to_string(), <span class="string">&quot;High&quot;</span>);
+        <span class="macro">assert_eq!</span>(DangerLevel::None.to_string(), <span class="string">"None"</span>);
+        <span class="macro">assert_eq!</span>(DangerLevel::Low.to_string(), <span class="string">"Low"</span>);
+        <span class="macro">assert_eq!</span>(DangerLevel::Medium.to_string(), <span class="string">"Medium"</span>);
+        <span class="macro">assert_eq!</span>(DangerLevel::High.to_string(), <span class="string">"High"</span>);
 
-        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, DangerLevel::Medium);
-        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;medium&quot;</span>);
-        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, DangerLevel::High);
-        <span class="macro">assert_eq!</span>(text, <span class="string">&quot;high&quot;</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">"{:x}"</span>, DangerLevel::Medium);
+        <span class="macro">assert_eq!</span>(text, <span class="string">"medium"</span>);
+        <span class="kw">let </span>text = <span class="macro">format!</span>(<span class="string">"{:x}"</span>, DangerLevel::High);
+        <span class="macro">assert_eq!</span>(text, <span class="string">"high"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>danger_level_from_str() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;None&quot;</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::None));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;low&quot;</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::Low));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Medium&quot;</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::Medium));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;HIGH&quot;</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::High));
+        <span class="macro">assert_eq!</span>(<span class="string">"None"</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::None));
+        <span class="macro">assert_eq!</span>(<span class="string">"low"</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::Low));
+        <span class="macro">assert_eq!</span>(<span class="string">"Medium"</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::Medium));
+        <span class="macro">assert_eq!</span>(<span class="string">"HIGH"</span>.parse::&lt;DangerLevel&gt;(), <span class="prelude-val">Ok</span>(DangerLevel::High));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;DangerLevel&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;x&quot;</span>.parse::&lt;DangerLevel&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;None-1&quot;</span>.parse::&lt;DangerLevel&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;Low x&quot;</span>.parse::&lt;DangerLevel&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">""</span>.parse::&lt;DangerLevel&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"x"</span>.parse::&lt;DangerLevel&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"None-1"</span>.parse::&lt;DangerLevel&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"Low x"</span>.parse::&lt;DangerLevel&gt;().is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>danger_level_serde() {
         <span class="kw">let </span>danger_level = DangerLevel::None;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>danger_level).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;none&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""none""#</span>);
 
         <span class="kw">let </span>danger_level = DangerLevel::Low;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>danger_level).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;low&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""low""#</span>);
 
         <span class="kw">let </span>danger_level = DangerLevel::Medium;
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>danger_level).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;medium&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""medium""#</span>);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;high&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""high""#</span>;
         <span class="kw">let </span>danger_level: DangerLevel = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(danger_level, DangerLevel::High);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;DangerLevel, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;none-1&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""none-1""#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;DangerLevel, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>pacenote_to_str() {
-        <span class="macro">assert_eq!</span>(Pacenote::Limit(<span class="number">3</span>).to_string(), <span class="string">&quot;3&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::LimitHazard(<span class="number">4</span>).to_string(), <span class="string">&quot;4!&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Hazard.to_string(), <span class="string">&quot;Hazard&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Shortcut(<span class="number">2</span>).to_string(), <span class="string">&quot;Cut 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Jump(<span class="number">5</span>).to_string(), <span class="string">&quot;Jump 5&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Water.to_string(), <span class="string">&quot;Water&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Climb.to_string(), <span class="string">&quot;Climb&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Chicane.to_string(), <span class="string">&quot;Chicane&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Cloud.to_string(), <span class="string">&quot;Cloud&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::Oxygen(<span class="number">1</span>).to_string(), <span class="string">&quot;Oxygen -1&quot;</span>);
-        <span class="macro">assert_eq!</span>(Pacenote::MudSpray.to_string(), <span class="string">&quot;Mud&quot;</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Limit(<span class="number">3</span>).to_string(), <span class="string">"3"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::LimitHazard(<span class="number">4</span>).to_string(), <span class="string">"4!"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Hazard.to_string(), <span class="string">"Hazard"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Shortcut(<span class="number">2</span>).to_string(), <span class="string">"Cut 2"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Jump(<span class="number">5</span>).to_string(), <span class="string">"Jump 5"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Water.to_string(), <span class="string">"Water"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Climb.to_string(), <span class="string">"Climb"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Chicane.to_string(), <span class="string">"Chicane"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Cloud.to_string(), <span class="string">"Cloud"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::Oxygen(<span class="number">1</span>).to_string(), <span class="string">"Oxygen -1"</span>);
+        <span class="macro">assert_eq!</span>(Pacenote::MudSpray.to_string(), <span class="string">"Mud"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_info_get() {
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;0&quot;</span>.parse().unwrap()).is_none());
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;101&quot;</span>.parse().unwrap()).is_some());
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;102a&quot;</span>.parse().unwrap()).is_some());
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;102b&quot;</span>.parse().unwrap()).is_some());
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;103a-1&quot;</span>.parse().unwrap()).is_some());
-        <span class="macro">assert!</span>(TileInfo::get(<span class="string">&quot;103b-3&quot;</span>.parse().unwrap()).is_some());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"0"</span>.parse().unwrap()).is_none());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"101"</span>.parse().unwrap()).is_some());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"102a"</span>.parse().unwrap()).is_some());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"102b"</span>.parse().unwrap()).is_some());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"103a-1"</span>.parse().unwrap()).is_some());
+        <span class="macro">assert!</span>(TileInfo::get(<span class="string">"103b-3"</span>.parse().unwrap()).is_some());
     }
 
     <span class="attr">#[test]
@@ -5700,7 +5701,7 @@
         <span class="comment">// check total count of tiles
         </span><span class="macro">assert_eq!</span>(TILE_INFOS.iter().map(|info| info.count <span class="kw">as </span>u32).sum::&lt;u32&gt;(), <span class="number">307</span>);
 
-        <span class="comment">// check same count of variants for &quot;a&quot; and &quot;b&quot; side
+        <span class="comment">// check same count of variants for "a" and "b" side
         </span><span class="kw">for </span>info <span class="kw">in </span>TILE_INFOS.iter() {
             <span class="kw">let </span><span class="kw-2">mut </span>pair_id = info.base_id();
             pair_id.side = <span class="kw">match </span>pair_id.side() {
@@ -5710,17 +5711,17 @@
                 <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
             };
             <span class="kw">let </span>pair = TileInfo::get(pair_id).unwrap();
-            <span class="macro">assert_eq!</span>(info.count, pair.count, <span class="string">&quot;tile info {} variant count does not match the other side&quot;</span>, info.id);
+            <span class="macro">assert_eq!</span>(info.count, pair.count, <span class="string">"tile info {} variant count does not match the other side"</span>, info.id);
         }
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tile_info_sorted() {
         <span class="kw">for </span>info <span class="kw">in </span>TILE_INFOS.iter() {
-            <span class="macro">assert!</span>(info.id == info.id.base(), <span class="string">&quot;tile info is defined with non-base identifier {}&quot;</span>, info.id);
+            <span class="macro">assert!</span>(info.id == info.id.base(), <span class="string">"tile info is defined with non-base identifier {}"</span>, info.id);
         }
         <span class="kw">for </span>infos <span class="kw">in </span>TILE_INFOS.windows(<span class="number">2</span>) {
-            <span class="macro">assert!</span>(infos[<span class="number">0</span>].id &lt;= infos[<span class="number">1</span>].id, <span class="string">&quot;tile info is not sorted strictly ({} &gt; {})&quot;</span>, infos[<span class="number">0</span>].id, infos[<span class="number">1</span>].id);
+            <span class="macro">assert!</span>(infos[<span class="number">0</span>].id &lt;= infos[<span class="number">1</span>].id, <span class="string">"tile info is not sorted strictly ({} &gt; {})"</span>, infos[<span class="number">0</span>].id, infos[<span class="number">1</span>].id);
         }
     }
 
@@ -5729,7 +5730,7 @@
         <span class="kw">for </span>info <span class="kw">in </span>TILE_INFOS.iter() {
             <span class="kw">let </span>danger_level = info.danger_level();
             <span class="kw">if </span>info.terrain() == Terrain::None {
-                <span class="macro">assert_eq!</span>(danger_level, DangerLevel::None, <span class="string">&quot;tile info {} has undefined terrain with non-zero danger level&quot;</span>, info.id);
+                <span class="macro">assert_eq!</span>(danger_level, DangerLevel::None, <span class="string">"tile info {} has undefined terrain with non-zero danger level"</span>, info.id);
             }
         }
     }
@@ -5741,18 +5742,18 @@
             <span class="kw">for </span>note <span class="kw">in </span>pacenotes {
                 <span class="kw">match </span>note {
                     Pacenote::Limit(val) | Pacenote::LimitHazard(val) =&gt; {
-                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">&quot;tile info {} has pacenote with invalid speed limit&quot;</span>, info.id);
+                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">"tile info {} has pacenote with invalid speed limit"</span>, info.id);
                     },
                     Pacenote::Hazard =&gt; (),
                     Pacenote::Shortcut(val) =&gt; {
-                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">&quot;tile info {} has pacenote with invalid shortcut speed limit&quot;</span>, info.id);
+                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">"tile info {} has pacenote with invalid shortcut speed limit"</span>, info.id);
                     },
                     Pacenote::Jump(val) =&gt; {
-                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">&quot;tile info {} has pacenote with invalid jump value&quot;</span>, info.id);
+                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">6</span>, <span class="string">"tile info {} has pacenote with invalid jump value"</span>, info.id);
                     },
                     Pacenote::Water | Pacenote::Climb | Pacenote::Chicane | Pacenote::Cloud =&gt; (),
                     Pacenote::Oxygen(val) =&gt; {
-                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">3</span>, <span class="string">&quot;tile info {} has pacenote with invalid oxygen value&quot;</span>, info.id);
+                        <span class="macro">assert!</span>(val &gt; <span class="number">0 </span>&amp;&amp; val &lt;= <span class="number">3</span>, <span class="string">"tile info {} has pacenote with invalid oxygen value"</span>, info.id);
                     },
                     Pacenote::MudSpray =&gt; (),
                 }
@@ -5767,15 +5768,15 @@
                 <span class="kw">let </span>has_connection = !<span class="macro">matches!</span>(tile.connection(<span class="kw-2">*</span>dir), Connection::None);
                 <span class="kw">let </span>has_edge = !<span class="macro">matches!</span>(tile.edge(<span class="kw-2">*</span>dir), Edge::None);
                 <span class="macro">assert_eq!</span>(has_connection, has_edge,
-                    <span class="string">&quot;tile {}, direction {}: connection does not match according edge&quot;</span>, tile, dir);
+                    <span class="string">"tile {}, direction {}: connection does not match according edge"</span>, tile, dir);
 
                 <span class="kw">let </span>lanes = tile.edge(<span class="kw-2">*</span>dir).lanes();
                 <span class="kw">if </span>has_connection {
                     <span class="macro">assert!</span>(lanes &gt; <span class="number">0</span>,
-                        <span class="string">&quot;tile {}, direction {}: side with connection must have a non-zero number of lanes&quot;</span>, tile, dir);
+                        <span class="string">"tile {}, direction {}: side with connection must have a non-zero number of lanes"</span>, tile, dir);
                 } <span class="kw">else </span>{
                     <span class="macro">assert_eq!</span>(lanes, <span class="number">0</span>,
-                        <span class="string">&quot;tile {}, direction {}: side without connection cannot have lanes&quot;</span>, tile, dir);
+                        <span class="string">"tile {}, direction {}: side without connection cannot have lanes"</span>, tile, dir);
                 }
             }
         }
@@ -5793,8 +5794,8 @@
     </span><span class="kw">fn </span>tile_info_editions() {
         <span class="kw">for </span>info <span class="kw">in </span>TILE_INFOS.iter() {
             <span class="kw">let </span>editions = info.editions();
-            <span class="macro">assert!</span>(!editions.is_empty(), <span class="string">&quot;tile info {} has no editions&quot;</span>, info.id);
-            <span class="macro">assert!</span>(editions.len() &lt;= <span class="number">2</span>, <span class="string">&quot;tile info {} has more than two editions&quot;</span>, info.id);
+            <span class="macro">assert!</span>(!editions.is_empty(), <span class="string">"tile info {} has no editions"</span>, info.id);
+            <span class="macro">assert!</span>(editions.len() &lt;= <span class="number">2</span>, <span class="string">"tile info {} has more than two editions"</span>, info.id);
         }
     }
 }

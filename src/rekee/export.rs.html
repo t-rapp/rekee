@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/export.rs`."><title>export.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/export.rs`."><title>export.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -517,7 +518,7 @@
 
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all = <span class="string">&quot;kebab-case&quot;</span>, try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+#[serde(rename_all = <span class="string">"kebab-case"</span>, try_from = <span class="string">"&amp;str"</span>)]
 </span><span class="kw">pub enum </span>ExportScale {
     Small,
     Medium,
@@ -573,13 +574,13 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ExportScale::Small =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Small&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Small"</span>)<span class="question-mark">?</span>,
             ExportScale::Medium =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Medium&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Medium"</span>)<span class="question-mark">?</span>,
             ExportScale::Large =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Large&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Large"</span>)<span class="question-mark">?</span>,
             ExportScale::ExtraLarge =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Extra Large&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Extra Large"</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -590,17 +591,17 @@
 
     <span class="kw">fn </span>from_str(val: <span class="kw-2">&amp;</span>str) -&gt; std::result::Result&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
         <span class="comment">// match strings from both trait implementations, std::fmt::Display and serde::Serialize
-        </span><span class="kw">let </span><span class="kw-2">mut </span>s = val.replace(char::is_whitespace, <span class="string">&quot;-&quot;</span>);
+        </span><span class="kw">let </span><span class="kw-2">mut </span>s = val.replace(char::is_whitespace, <span class="string">"-"</span>);
         s.make_ascii_lowercase();
 
         <span class="kw">match </span>s.as_ref() {
-            <span class="string">&quot;small&quot; </span>=&gt;
+            <span class="string">"small" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ExportScale::Small),
-            <span class="string">&quot;medium&quot; </span>=&gt;
+            <span class="string">"medium" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ExportScale::Medium),
-            <span class="string">&quot;large&quot; </span>=&gt;
+            <span class="string">"large" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ExportScale::Large),
-            <span class="string">&quot;extra-large&quot; </span>=&gt;
+            <span class="string">"extra-large" </span>=&gt;
                 <span class="prelude-val">Ok</span>(ExportScale::ExtraLarge),
             <span class="kw">_ </span>=&gt;
                 <span class="prelude-val">Err</span>(ParseExportScaleError::Unknown(val.to_string())),
@@ -632,7 +633,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ParseExportScaleError::Unknown(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown export scale value \&quot;{}\&quot;&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Unknown export scale value \"{}\""</span>, val),
         }
     }
 }
@@ -659,70 +660,70 @@
         ExportColorScheme { series }
     }
 
-    <span class="kw">pub fn </span>background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(0, 0%, 100%)&quot;
+    <span class="kw">pub fn </span>background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(0, 0%, 100%)"
     </span>}
 
-    <span class="kw">pub fn </span>map_title_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(12, 71%, 43%)&quot;
+    <span class="kw">pub fn </span>map_title_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(12, 71%, 43%)"
     </span>}
 
-    <span class="kw">pub fn </span>map_author_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(12, 56%, 67%)&quot;
+    <span class="kw">pub fn </span>map_author_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(12, 56%, 67%)"
     </span>}
 
-    <span class="kw">pub fn </span>map_preposition_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>map_preposition_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="kw">match </span><span class="self">self</span>.series {
-            Series::Gt =&gt; <span class="string">&quot;hsl(206, 59%, 65%)&quot;</span>,
-            Series::Dirt =&gt; <span class="string">&quot;hsl(93, 27%, 63%)&quot;</span>,
+            Series::Gt =&gt; <span class="string">"hsl(206, 59%, 65%)"</span>,
+            Series::Dirt =&gt; <span class="string">"hsl(93, 27%, 63%)"</span>,
         }
     }
 
-    <span class="kw">pub fn </span>map_border_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>map_border_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="kw">match </span><span class="self">self</span>.series {
-            Series::Gt =&gt; <span class="string">&quot;hsl(206, 59%, 55%)&quot;</span>,
-            Series::Dirt =&gt; <span class="string">&quot;hsl(93, 49%, 38%)&quot;</span>,
+            Series::Gt =&gt; <span class="string">"hsl(206, 59%, 55%)"</span>,
+            Series::Dirt =&gt; <span class="string">"hsl(93, 49%, 38%)"</span>,
         }
     }
 
-    <span class="kw">pub fn </span>missing_image_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(0, 0%, 90%)&quot;
+    <span class="kw">pub fn </span>missing_image_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(0, 0%, 90%)"
     </span>}
 
-    <span class="kw">pub fn </span>tile_label_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(0, 0%, 30%)&quot;
+    <span class="kw">pub fn </span>tile_label_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(0, 0%, 30%)"
     </span>}
 
-    <span class="kw">pub fn </span>tile_label_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>tile_label_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="self">self</span>.background_color()
     }
 
-    <span class="kw">pub fn </span>tile_pacenote_color(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>tile_pacenote_color(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="kw">match </span>danger_level {
-            DangerLevel::None =&gt; <span class="string">&quot;hsl(0, 0%, 70%)&quot;</span>,
-            DangerLevel::Low =&gt; <span class="string">&quot;hsl(60, 100%, 42%)&quot;</span>,
-            DangerLevel::Medium =&gt; <span class="string">&quot;hsl(40, 100%, 45%)&quot;</span>,
-            DangerLevel::High =&gt; <span class="string">&quot;hsl(10, 100%, 45%)&quot;</span>,
+            DangerLevel::None =&gt; <span class="string">"hsl(0, 0%, 70%)"</span>,
+            DangerLevel::Low =&gt; <span class="string">"hsl(60, 100%, 42%)"</span>,
+            DangerLevel::Medium =&gt; <span class="string">"hsl(40, 100%, 45%)"</span>,
+            DangerLevel::High =&gt; <span class="string">"hsl(10, 100%, 45%)"</span>,
         }
     }
 
-    <span class="kw">pub fn </span>tile_pacenote_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(0, 0%, 10%)&quot;
+    <span class="kw">pub fn </span>tile_pacenote_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(0, 0%, 10%)"
     </span>}
 
-    <span class="kw">pub fn </span>listing_tile_count_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>listing_tile_count_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="self">self</span>.map_border_color()
     }
 
-    <span class="kw">pub fn </span>listing_tile_number_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>listing_tile_number_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="self">self</span>.map_title_color()
     }
 
-    <span class="kw">pub fn </span>listing_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-        <span class="string">&quot;hsl(23, 53%, 94%)&quot;
+    <span class="kw">pub fn </span>listing_background_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+        <span class="string">"hsl(23, 53%, 94%)"
     </span>}
 
-    <span class="kw">pub fn </span>listing_border_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">pub fn </span>listing_border_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
         <span class="self">self</span>.map_border_color()
     }
 }
@@ -735,7 +736,7 @@
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>ExportColorScheme {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.series)
+        <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, <span class="self">self</span>.series)
     }
 }
 
@@ -750,7 +751,7 @@
 
 <span class="comment">//----------------------------------------------------------------------------
 
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;svg&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"svg"</span>)]
 </span><span class="kw">pub mod </span>svg {
     <span class="kw">use </span>::svg::node::element::{Group, Image, Text};
 
@@ -758,9 +759,9 @@
     <span class="kw">use </span><span class="kw">crate</span>::map::{PlacedTile, PlacedToken};
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">pub const </span>BASE_URL_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;{base-url}&quot;</span>;
-    <span class="kw">pub const </span>TILE_ID_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;{tile-id}&quot;</span>;
-    <span class="kw">pub const </span>TOKEN_ID_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;{token-id}&quot;</span>;
+    <span class="kw">pub const </span>BASE_URL_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">"{base-url}"</span>;
+    <span class="kw">pub const </span>TILE_ID_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">"{tile-id}"</span>;
+    <span class="kw">pub const </span>TOKEN_ID_PATTERN: <span class="kw-2">&amp;</span>str = <span class="string">"{token-id}"</span>;
 
     <span class="kw">pub struct </span>TileImageGroup {
         inner: Group,
@@ -770,21 +771,21 @@
         <span class="kw">pub fn </span>new(layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, image_url: <span class="kw-2">&amp;</span>str) -&gt; TileImageGroup {
             <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
             <span class="kw">let </span><span class="kw-2">mut </span>inner = Group::new()
-                .set(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)
-                .set(<span class="string">&quot;transform&quot;</span>, <span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y()));
+                .set(<span class="string">"class"</span>, <span class="string">"tile"</span>)
+                .set(<span class="string">"transform"</span>, <span class="macro">format!</span>(<span class="string">"translate({:.3} {:.3})"</span>, pos.x(), pos.y()));
 
             <span class="kw">let </span>image_url = image_url
-                .replace(TILE_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, tile.id()));
+                .replace(TILE_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:x}"</span>, tile.id()));
             <span class="kw">let </span>size = util::tile_image_size(layout);
             <span class="kw">let </span>center = util::tile_image_center(layout);
             <span class="kw">let </span>angle = layout.direction_to_angle(tile.dir);
 
             <span class="kw">let </span>image = Image::new()
-                .set(<span class="string">&quot;href&quot;</span>, image_url)
-                .set(<span class="string">&quot;width&quot;</span>, size.x())
-                .set(<span class="string">&quot;height&quot;</span>, size.y())
-                .set(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)
-                .set(<span class="string">&quot;transform&quot;</span>, <span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.3} {:.3})&quot;</span>, angle, -center.x(), -center.y()));
+                .set(<span class="string">"href"</span>, image_url)
+                .set(<span class="string">"width"</span>, size.x())
+                .set(<span class="string">"height"</span>, size.y())
+                .set(<span class="string">"image-rendering"</span>, <span class="string">"optimizeQuality"</span>)
+                .set(<span class="string">"transform"</span>, <span class="macro">format!</span>(<span class="string">"rotate({:.0}) translate({:.3} {:.3})"</span>, angle, -center.x(), -center.y()));
             inner = inner.add(image);
 
             TileImageGroup { inner }
@@ -805,17 +806,17 @@
         <span class="kw">pub fn </span>new(layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; TileLabelGroup {
             <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
             <span class="kw">let </span><span class="kw-2">mut </span>inner = Group::new()
-                .set(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)
-                .set(<span class="string">&quot;transform&quot;</span>, <span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y()));
+                .set(<span class="string">"class"</span>, <span class="string">"tile"</span>)
+                .set(<span class="string">"transform"</span>, <span class="macro">format!</span>(<span class="string">"translate({:.3} {:.3})"</span>, pos.x(), pos.y()));
 
             <span class="kw">let </span><span class="kw-2">mut </span>text = tile.id().base().to_string();
             <span class="kw">if </span>tile.has_flat_tokens() {
-                text.push(<span class="string">&#39;*&#39;</span>);
+                text.push(<span class="string">'*'</span>);
             }
             <span class="kw">let </span>label = Text::new()
-                .set(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)
-                .set(<span class="string">&quot;x&quot;</span>, <span class="number">0</span>)
-                .set(<span class="string">&quot;y&quot;</span>, <span class="number">0</span>)
+                .set(<span class="string">"class"</span>, <span class="string">"label"</span>)
+                .set(<span class="string">"x"</span>, <span class="number">0</span>)
+                .set(<span class="string">"y"</span>, <span class="number">0</span>)
                 .add(::svg::node::Text::new(text));
             inner = inner.add(label);
 
@@ -837,22 +838,22 @@
         <span class="kw">pub fn </span>new(layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken, image_url: <span class="kw-2">&amp;</span>str) -&gt; TokenImageGroup {
             <span class="kw">let </span>pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
             <span class="kw">let </span><span class="kw-2">mut </span>inner = Group::new()
-                .set(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;token&quot;</span>)
-                .set(<span class="string">&quot;transform&quot;</span>, <span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y()));
+                .set(<span class="string">"class"</span>, <span class="string">"token"</span>)
+                .set(<span class="string">"transform"</span>, <span class="macro">format!</span>(<span class="string">"translate({:.3} {:.3})"</span>, pos.x(), pos.y()));
 
             <span class="kw">let </span>image_url = image_url
-                .replace(TILE_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, tile.id()))
-                .replace(TOKEN_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:x}&quot;</span>, token.id));
+                .replace(TILE_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:x}"</span>, tile.id()))
+                .replace(TOKEN_ID_PATTERN, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:x}"</span>, token.id));
             <span class="kw">let </span>size = util::token_image_size(layout, token.id);
             <span class="kw">let </span>center = util::token_image_center(layout, token.id);
             <span class="kw">let </span>angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
 
             <span class="kw">let </span>image = Image::new()
-                .set(<span class="string">&quot;href&quot;</span>, image_url)
-                .set(<span class="string">&quot;width&quot;</span>, size.x())
-                .set(<span class="string">&quot;height&quot;</span>, size.y())
-                .set(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)
-                .set(<span class="string">&quot;transform&quot;</span>, <span class="macro">format!</span>(<span class="string">&quot;rotate({:.1}) translate({:.3} {:.3})&quot;</span>, angle, -center.x(), -center.y()));
+                .set(<span class="string">"href"</span>, image_url)
+                .set(<span class="string">"width"</span>, size.x())
+                .set(<span class="string">"height"</span>, size.y())
+                .set(<span class="string">"image-rendering"</span>, <span class="string">"optimizeQuality"</span>)
+                .set(<span class="string">"transform"</span>, <span class="macro">format!</span>(<span class="string">"rotate({:.1}) translate({:.3} {:.3})"</span>, angle, -center.x(), -center.y()));
             inner = inner.add(image);
 
             TokenImageGroup { inner }

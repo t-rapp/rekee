@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../rekee/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1474,10 +1475,10 @@
     <span class="attr">#[serde(flatten)]
     </span><span class="kw">pub </span>pos: Coordinate,
     <span class="kw">pub </span>dir: Direction,
-    <span class="attr">#[serde(default, skip_serializing_if = <span class="string">&quot;Vec::is_empty&quot;</span>)]
+    <span class="attr">#[serde(default, skip_serializing_if = <span class="string">"Vec::is_empty"</span>)]
     </span><span class="kw">pub </span>tokens: Vec&lt;PlacedToken&gt;,
     <span class="attr">#[serde(skip_serializing)]
-    </span>info: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>TileInfo&gt;,
+    </span>info: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>TileInfo&gt;,
 }
 
 <span class="kw">impl </span>PlacedTile {
@@ -1613,10 +1614,10 @@
 
     <span class="doccomment">/// Check whether the tile has tokens placed on it.
     ///
-    /// Considers only &quot;real&quot; tokens that lay flat on the tile and change the
+    /// Considers only "real" tokens that lay flat on the tile and change the
     /// track spaces, ignores standee tokens from DIRT RX expansion.
     ///
-    /// Used for rendering a &quot;modified&quot; indicator suffix on map tile labels.
+    /// Used for rendering a "modified" indicator suffix on map tile labels.
     </span><span class="kw">pub fn </span>has_flat_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.tokens.iter()
             .any(|token| token.id.edition() != Edition::DirtRx)
@@ -1650,11 +1651,11 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>PlacedTile {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        fmt.debug_struct(<span class="string">&quot;PlacedTile&quot;</span>)
-            .field(<span class="string">&quot;id&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.id)
-            .field(<span class="string">&quot;pos&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.pos)
-            .field(<span class="string">&quot;dir&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.dir)
-            .field(<span class="string">&quot;tokens&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.tokens)
+        fmt.debug_struct(<span class="string">"PlacedTile"</span>)
+            .field(<span class="string">"id"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.id)
+            .field(<span class="string">"pos"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.pos)
+            .field(<span class="string">"dir"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.dir)
+            .field(<span class="string">"tokens"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.tokens)
             <span class="comment">// skip printing cached tile info
             </span>.finish()
     }
@@ -1695,27 +1696,27 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>PlacedTile {
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Deserialize&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>PlacedTile {
     <span class="kw">fn </span>deserialize&lt;D&gt;(deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;PlacedTile, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="attr">#[derive(Deserialize)]
-        #[serde(field_identifier, rename_all = <span class="string">&quot;lowercase&quot;</span>)]
+        #[serde(field_identifier, rename_all = <span class="string">"lowercase"</span>)]
         </span><span class="kw">enum </span>Field { Id, Q, R, Dir, Tokens }
 
         <span class="kw">struct </span>PlacedTileVisitor;
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>PlacedTileVisitor {
+        <span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>PlacedTileVisitor {
             <span class="kw">type </span>Value = PlacedTile;
 
             <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-                formatter.write_str(<span class="string">&quot;a placed tile structure&quot;</span>)
+                formatter.write_str(<span class="string">"a placed tile structure"</span>)
             }
 
             <span class="kw">fn </span>visit_seq&lt;V&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>seq: V) -&gt; <span class="prelude-ty">Result</span>&lt;PlacedTile, V::Error&gt;
             <span class="kw">where
-                </span>V: de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+                </span>V: de::SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
             {
                 <span class="kw">let </span>id = seq.next_element()<span class="question-mark">?
                     </span>.ok_or_else(|| de::Error::invalid_length(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="self">self</span>))<span class="question-mark">?</span>;
@@ -1732,7 +1733,7 @@
 
             <span class="kw">fn </span>visit_map&lt;V&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: V) -&gt; <span class="prelude-ty">Result</span>&lt;PlacedTile, V::Error&gt;
             <span class="kw">where
-                </span>V: de::MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+                </span>V: de::MapAccess&lt;<span class="lifetime">'de</span>&gt;,
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>id = <span class="prelude-val">None</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>q = <span class="prelude-val">None</span>;
@@ -1743,47 +1744,47 @@
                     <span class="kw">match </span>key {
                         Field::Id =&gt; {
                             <span class="kw">if </span>id.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">&quot;id&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">"id"</span>));
                             }
                             id = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                         Field::Q =&gt; {
                             <span class="kw">if </span>q.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">&quot;q&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">"q"</span>));
                             }
                             q = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                         Field::R =&gt; {
                             <span class="kw">if </span>r.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">&quot;r&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">"r"</span>));
                             }
                             r = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                         Field::Dir =&gt; {
                             <span class="kw">if </span>dir.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">&quot;dir&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">"dir"</span>));
                             }
                             dir = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                         Field::Tokens =&gt; {
                             <span class="kw">if </span>tokens.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">&quot;tokens&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(de::Error::duplicate_field(<span class="string">"tokens"</span>));
                             }
                             tokens = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                     }
                 }
-                <span class="kw">let </span>id = id.ok_or_else(|| de::Error::missing_field(<span class="string">&quot;id&quot;</span>))<span class="question-mark">?</span>;
-                <span class="kw">let </span>q = q.ok_or_else(|| de::Error::missing_field(<span class="string">&quot;q&quot;</span>))<span class="question-mark">?</span>;
-                <span class="kw">let </span>r = r.ok_or_else(|| de::Error::missing_field(<span class="string">&quot;r&quot;</span>))<span class="question-mark">?</span>;
-                <span class="kw">let </span>dir = dir.ok_or_else(|| de::Error::missing_field(<span class="string">&quot;dir&quot;</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>id = id.ok_or_else(|| de::Error::missing_field(<span class="string">"id"</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>q = q.ok_or_else(|| de::Error::missing_field(<span class="string">"q"</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>r = r.ok_or_else(|| de::Error::missing_field(<span class="string">"r"</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>dir = dir.ok_or_else(|| de::Error::missing_field(<span class="string">"dir"</span>))<span class="question-mark">?</span>;
                 <span class="kw">let </span>tokens = tokens.unwrap_or_default();
                 <span class="prelude-val">Ok</span>(PlacedTile::with_tokens(id, (q, r).into(), dir, tokens))
             }
         }
 
-        <span class="kw">const </span>FIELDS: [<span class="kw-2">&amp;</span>str; <span class="number">5</span>] = [<span class="string">&quot;id&quot;</span>, <span class="string">&quot;q&quot;</span>, <span class="string">&quot;r&quot;</span>, <span class="string">&quot;dir&quot;</span>, <span class="string">&quot;tokens&quot;</span>];
-        deserializer.deserialize_struct(<span class="string">&quot;tile&quot;</span>, <span class="kw-2">&amp;</span>FIELDS, PlacedTileVisitor)
+        <span class="kw">const </span>FIELDS: [<span class="kw-2">&amp;</span>str; <span class="number">5</span>] = [<span class="string">"id"</span>, <span class="string">"q"</span>, <span class="string">"r"</span>, <span class="string">"dir"</span>, <span class="string">"tokens"</span>];
+        deserializer.deserialize_struct(<span class="string">"tile"</span>, <span class="kw-2">&amp;</span>FIELDS, PlacedTileVisitor)
     }
 }
 
@@ -1832,12 +1833,12 @@
 </span><span class="kw">pub struct </span>Map {
     <span class="attr">#[serde(default)]
     </span>title: String,
-    <span class="attr">#[serde(default, skip_serializing_if = <span class="string">&quot;String::is_empty&quot;</span>)]
+    <span class="attr">#[serde(default, skip_serializing_if = <span class="string">"String::is_empty"</span>)]
     </span>author: String,
     tiles: Vec&lt;PlacedTile&gt;,
     <span class="attr">#[serde(default)]
     </span>active_pos: Coordinate,
-    <span class="attr">#[serde(default = <span class="string">&quot;Map::default_active_dir&quot;</span>)]
+    <span class="attr">#[serde(default = <span class="string">"Map::default_active_dir"</span>)]
     </span>active_dir: Direction,
 }
 
@@ -1931,7 +1932,7 @@
             }
         }
 
-        <span class="macro">debug!</span>(<span class="string">&quot;next active pos: {}, dir: {}&quot;</span>, next_active_pos, next_active_dir);
+        <span class="macro">debug!</span>(<span class="string">"next active pos: {}, dir: {}"</span>, next_active_pos, next_active_dir);
         <span class="self">self</span>.active_pos = next_active_pos;
         <span class="self">self</span>.active_dir = next_active_dir;
     }
@@ -1984,7 +1985,7 @@
             }
         }
 
-        <span class="macro">debug!</span>(<span class="string">&quot;insert of tile {} at pos: {}, dir: {}, token count: {}&quot;</span>, id, pos, dir, tokens.len());
+        <span class="macro">debug!</span>(<span class="string">"insert of tile {} at pos: {}, dir: {}, token count: {}"</span>, id, pos, dir, tokens.len());
         <span class="kw">let </span>tile = PlacedTile::with_tokens(id, pos, dir, tokens);
         <span class="self">self</span>.tiles.push(tile);
 
@@ -1997,12 +1998,12 @@
     /// direction.
     </span><span class="attr">#[allow(clippy::unnecessary_unwrap)] </span><span class="comment">// false positive, see issue rust-lang/rust-clippy#4530
     </span><span class="kw">pub fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: TileId, pos: <span class="prelude-ty">Option</span>&lt;Coordinate&gt;, hint: <span class="prelude-ty">Option</span>&lt;ConnectionHint&gt;) -&gt; bool {
-        <span class="macro">debug!</span>(<span class="string">&quot;append tile {}, pos: {:?}, hint: {:?}&quot;</span>, id, pos, hint);
+        <span class="macro">debug!</span>(<span class="string">"append tile {}, pos: {:?}, hint: {:?}"</span>, id, pos, hint);
 
         <span class="kw">let </span>tile_pos = <span class="kw">match </span>pos.or_else(|| <span class="self">self</span>.active_pos()) {
             <span class="prelude-val">Some</span>(val) =&gt; val,
             <span class="prelude-val">None </span>=&gt; {
-                <span class="macro">info!</span>(<span class="string">&quot;skipped append of tile &#39;{}&#39; as there is no active insert position&quot;</span>, id);
+                <span class="macro">info!</span>(<span class="string">"skipped append of tile '{}' as there is no active insert position"</span>, id);
                 <span class="kw">return </span><span class="bool-val">false</span>;
             }
         };
@@ -2022,7 +2023,7 @@
                 neighbor_edges[dir] = <span class="prelude-val">Some</span>(edge);
             }
         }
-        <span class="macro">debug!</span>(<span class="string">&quot;neighbor connections: {}, dir: {}, edges: {:?}&quot;</span>,
+        <span class="macro">debug!</span>(<span class="string">"neighbor connections: {}, dir: {}, edges: {:?}"</span>,
             neighbor_conns, neighbor_dir, neighbor_edges);
 
         <span class="kw">if </span>hint.is_some() &amp;&amp; tile_pos != <span class="self">self</span>.active_pos &amp;&amp; neighbor_conns == <span class="number">1 </span>{
@@ -2060,7 +2061,7 @@
                     tile_dir = dir;
                 }
             }
-            <span class="macro">debug!</span>(<span class="string">&quot;found tile_dir &#39;{}&#39; based on neighbor edges (score: {})&quot;</span>, tile_dir, max_score);
+            <span class="macro">debug!</span>(<span class="string">"found tile_dir '{}' based on neighbor edges (score: {})"</span>, tile_dir, max_score);
 
             <span class="kw">if </span>hint.is_some() &amp;&amp; tile_pos == <span class="self">self</span>.active_pos {
                 <span class="kw">let </span>hint = hint.unwrap();
@@ -2072,7 +2073,7 @@
                         <span class="kw">break</span>;
                     }
                 }
-                <span class="macro">debug!</span>(<span class="string">&quot;found tile dir &#39;{}&#39; based on hint &#39;{}&#39;, (active dir: {})&quot;</span>, tile_dir, hint, <span class="self">self</span>.active_dir);
+                <span class="macro">debug!</span>(<span class="string">"found tile dir '{}' based on hint '{}', (active dir: {})"</span>, tile_dir, hint, <span class="self">self</span>.active_dir);
             }
         }
         <span class="self">self</span>.insert(id, tile_pos, tile_dir);
@@ -2081,7 +2082,7 @@
 
     <span class="doccomment">/// Remove tile at the given position.
     </span><span class="kw">pub fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: Coordinate) {
-        <span class="macro">debug!</span>(<span class="string">&quot;remove tile at pos: {}&quot;</span>, pos);
+        <span class="macro">debug!</span>(<span class="string">"remove tile at pos: {}"</span>, pos);
 
         <span class="kw">let </span>count = <span class="self">self</span>.tiles.len();
         <span class="self">self</span>.tiles.retain(|tile| tile.pos != pos);
@@ -2100,7 +2101,7 @@
                     }
                 }
             }
-            <span class="macro">debug!</span>(<span class="string">&quot;next active pos: {}, dir: {}&quot;</span>, <span class="self">self</span>.active_pos, <span class="self">self</span>.active_dir);
+            <span class="macro">debug!</span>(<span class="string">"next active pos: {}, dir: {}"</span>, <span class="self">self</span>.active_pos, <span class="self">self</span>.active_dir);
         }
     }
 
@@ -2371,19 +2372,19 @@
     </span><span class="kw">fn </span>placed_tile_serde() {
         <span class="kw">let </span>tile = PlacedTile::new(<span class="macro">tile!</span>(<span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;0&quot;,&quot;q&quot;:0,&quot;r&quot;:0,&quot;dir&quot;:0}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#"{"id":"0","q":0,"r":0,"dir":0}"#</span>);
 
         <span class="kw">let </span>tile = PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, a), (<span class="number">0</span>, <span class="number">1</span>).into(), Direction::A);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;102a&quot;,&quot;q&quot;:0,&quot;r&quot;:1,&quot;dir&quot;:0}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#"{"id":"102a","q":0,"r":1,"dir":0}"#</span>);
 
         <span class="kw">let </span>tile = PlacedTile::new(<span class="macro">tile!</span>(<span class="number">103</span>, b, <span class="number">1</span>), (<span class="number">1</span>, -<span class="number">2</span>).into(), Direction::B);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;103b-1&quot;,&quot;q&quot;:1,&quot;r&quot;:-2,&quot;dir&quot;:1}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#"{"id":"103b-1","q":1,"r":-2,"dir":1}"#</span>);
 
         <span class="kw">let </span>tile = PlacedTile::new(<span class="macro">tile!</span>(<span class="number">124</span>, a), (<span class="number">2</span>, <span class="number">0</span>).into(), Direction::C);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;124a&quot;,&quot;q&quot;:2,&quot;r&quot;:0,&quot;dir&quot;:2}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#"{"id":"124a","q":2,"r":0,"dir":2}"#</span>);
 
         <span class="kw">let </span>tokens = <span class="macro">vec!</span>[
             PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into()),
@@ -2391,51 +2392,51 @@
         ];
         <span class="kw">let </span>tile = PlacedTile::with_tokens(<span class="macro">tile!</span>(<span class="number">205</span>, a), (<span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F, tokens);
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>tile).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;{&quot;id&quot;:&quot;205a&quot;,&quot;q&quot;:2,&quot;r&quot;:-1,&quot;dir&quot;:5,&quot;tokens&quot;:[{&quot;id&quot;:&quot;chicane-limit-gravel&quot;,&quot;q&quot;:0.0,&quot;r&quot;:0.0,&quot;dir&quot;:3.0},{&quot;id&quot;:&quot;chicane-gravel&quot;,&quot;q&quot;:1.0,&quot;r&quot;:0.5,&quot;dir&quot;:0.0}]}&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#"{"id":"205a","q":2,"r":-1,"dir":5,"tokens":[{"id":"chicane-limit-gravel","q":0.0,"r":0.0,"dir":3.0},{"id":"chicane-gravel","q":1.0,"r":0.5,"dir":0.0}]}"#</span>);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;{&quot;id&quot;:&quot;0&quot;,&quot;q&quot;:0,&quot;r&quot;:0,&quot;dir&quot;:0}&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#"{"id":"0","q":0,"r":0,"dir":0}"#</span>;
         <span class="kw">let </span>tile: PlacedTile = serde_json::from_str(text).unwrap();
         <span class="macro">assert_abs_diff_eq!</span>(tile, PlacedTile::new(<span class="macro">tile!</span>(<span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::A));
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;{&quot;id&quot;:&quot;102a&quot;,&quot;q&quot;:0,&quot;r&quot;:1,&quot;dir&quot;:0}&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#"{"id":"102a","q":0,"r":1,"dir":0}"#</span>;
         <span class="kw">let </span>tile: PlacedTile = serde_json::from_str(text).unwrap();
         <span class="macro">assert_abs_diff_eq!</span>(tile, PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, a), (<span class="number">0</span>, <span class="number">1</span>).into(), Direction::A));
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;{&quot;id&quot;: &quot;103b-1&quot;, &quot;q&quot;: 1, &quot;r&quot;: -2, &quot;dir&quot;: 1}&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#"{"id": "103b-1", "q": 1, "r": -2, "dir": 1}"#</span>;
         <span class="kw">let </span>tile: PlacedTile = serde_json::from_str(text).unwrap();
         <span class="macro">assert_abs_diff_eq!</span>(tile, PlacedTile::new(<span class="macro">tile!</span>(<span class="number">103</span>, b, <span class="number">1</span>), (<span class="number">1</span>, -<span class="number">2</span>).into(), Direction::B));
 
-        <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#&quot;{
-            &quot;id&quot;: &quot;205a&quot;,
-            &quot;q&quot;: 2,
-            &quot;r&quot;: -1,
-            &quot;dir&quot;: 5,
-            &quot;tokens&quot;: [
+        <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#"{
+            "id": "205a",
+            "q": 2,
+            "r": -1,
+            "dir": 5,
+            "tokens": [
                 {
-                    &quot;id&quot;: &quot;chicane-limit-gravel&quot;,
-                    &quot;q&quot;: 0.0,
-                    &quot;r&quot;: 0.0,
-                    &quot;dir&quot;: 3.0
+                    "id": "chicane-limit-gravel",
+                    "q": 0.0,
+                    "r": 0.0,
+                    "dir": 3.0
                 },
                 {
-                    &quot;id&quot;: &quot;chicane-gravel&quot;,
-                    &quot;q&quot;: 1.0,
-                    &quot;r&quot;: 0.5,
-                    &quot;dir&quot;: 0.0
+                    "id": "chicane-gravel",
+                    "q": 1.0,
+                    "r": 0.5,
+                    "dir": 0.0
                 }
             ]
-        }&quot;#</span>);
+        }"#</span>);
         <span class="kw">let </span>tile: PlacedTile = serde_json::from_str(text).unwrap();
         <span class="macro">assert_abs_diff_eq!</span>(tile, PlacedTile::with_tokens(<span class="macro">tile!</span>(<span class="number">205</span>, a), (<span class="number">2</span>, -<span class="number">1</span>).into(), Direction::F, <span class="macro">vec!</span>[
             PlacedToken::new(TokenId::ChicaneWithLimit(Terrain::Gravel), (<span class="number">0.0</span>, <span class="number">0.0</span>).into(), FloatDirection(<span class="number">3.0</span>)),
             PlacedToken::new(TokenId::Chicane(Terrain::Gravel), (<span class="number">1.0</span>, <span class="number">0.5</span>).into(), FloatDirection(<span class="number">0.0</span>)),
         ]));
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;{}&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#"{}"#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;PlacedTile, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;{&quot;id&quot;:&quot;102a&quot;,&quot;q&quot;:0,&quot;r&quot;:1}}&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#"{"id":"102a","q":0,"r":1}}"#</span>;
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;TileId, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
     }
@@ -2443,27 +2444,27 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>map_insert_and_append() {
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
-        map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
-        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
+        map.set_title(<span class="string">"Short Track 2"</span>);
+        map.set_author(<span class="string">"CarmLima"</span>);
 
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b), (<span class="number">0</span>, <span class="number">0</span>).into(), Direction::D);
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">Some</span>(Coordinate::new(<span class="number">1</span>, <span class="number">0</span>)));
         <span class="macro">assert_eq!</span>(map.active_dir(), Direction::D);
         map.append(<span class="macro">tile!</span>(<span class="number">104</span>, b), <span class="prelude-val">Some</span>(Coordinate::new(-<span class="number">1</span>, <span class="number">0</span>)), <span class="prelude-val">None</span>);
-        map.append(<span class="macro">tile!</span>(<span class="number">113</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;R&quot;</span>.parse().ok());
-        map.append(<span class="macro">tile!</span>(<span class="number">117</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;r&quot;</span>.parse().ok());
-        map.append(<span class="macro">tile!</span>(<span class="number">114</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;R&quot;</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">113</span>, b), <span class="prelude-val">None</span>, <span class="string">"R"</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">117</span>, b), <span class="prelude-val">None</span>, <span class="string">"r"</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">114</span>, b), <span class="prelude-val">None</span>, <span class="string">"R"</span>.parse().ok());
         map.append(<span class="macro">tile!</span>(<span class="number">115</span>, b), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
-        map.append(<span class="macro">tile!</span>(<span class="number">115</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;l&quot;</span>.parse().ok());
-        map.append(<span class="macro">tile!</span>(<span class="number">108</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;r&quot;</span>.parse().ok());
-        map.append(<span class="macro">tile!</span>(<span class="number">110</span>, b), <span class="prelude-val">None</span>, <span class="string">&quot;R&quot;</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">115</span>, b), <span class="prelude-val">None</span>, <span class="string">"l"</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">108</span>, b), <span class="prelude-val">None</span>, <span class="string">"r"</span>.parse().ok());
+        map.append(<span class="macro">tile!</span>(<span class="number">110</span>, b), <span class="prelude-val">None</span>, <span class="string">"R"</span>.parse().ok());
         map.append(<span class="macro">tile!</span>(<span class="number">107</span>, b), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">None</span>);
         map.insert(<span class="macro">tile!</span>(<span class="number">101</span>), (<span class="number">0</span>, -<span class="number">2</span>).into(), Direction::A);
         <span class="macro">assert_eq!</span>(map.active_pos(), <span class="prelude-val">None</span>);
 
-        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">"Short Track 2"</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">"CarmLima"</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">0</span>,  <span class="number">0</span>).into(), Direction::D),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), (-<span class="number">1</span>,  <span class="number">0</span>).into(), Direction::A),
@@ -2695,19 +2696,19 @@
     </span><span class="kw">fn </span>map_serde() {
         <span class="kw">let </span>map = Map::new();
         <span class="kw">let </span>text = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>map).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#&quot;{
-          &quot;title&quot;: &quot;&quot;,
-          &quot;tiles&quot;: [],
-          &quot;active_pos&quot;: {
-            &quot;q&quot;: 0,
-            &quot;r&quot;: 0
+        <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#"{
+          "title": "",
+          "tiles": [],
+          "active_pos": {
+            "q": 0,
+            "r": 0
           },
-          &quot;active_dir&quot;: 3
-        }&quot;#</span>));
+          "active_dir": 3
+        }"#</span>));
 
         <span class="kw">let </span><span class="kw-2">mut </span>map = Map::new();
-        map.set_title(<span class="string">&quot;Short Track 2&quot;</span>);
-        map.set_author(<span class="string">&quot;CarmLima&quot;</span>);
+        map.set_title(<span class="string">"Short Track 2"</span>);
+        map.set_author(<span class="string">"CarmLima"</span>);
         map.insert(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E);
         map.insert(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B);
         map.insert(<span class="macro">tile!</span>(<span class="number">113</span>, b, <span class="number">0</span>), ( <span class="number">1</span>,  <span class="number">1</span>).into(), Direction::E);
@@ -2720,104 +2721,104 @@
         map.insert(<span class="macro">tile!</span>(<span class="number">107</span>, b, <span class="number">1</span>), ( <span class="number">1</span>, -<span class="number">2</span>).into(), Direction::C);
         map.insert(<span class="macro">tile!</span>(<span class="number">101</span>, a, <span class="number">0</span>), (-<span class="number">1</span>,  <span class="number">1</span>).into(), Direction::E);
         <span class="kw">let </span>text = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>map).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#&quot;{
-          &quot;title&quot;: &quot;Short Track 2&quot;,
-          &quot;author&quot;: &quot;CarmLima&quot;,
-          &quot;tiles&quot;: [
+        <span class="macro">assert_eq!</span>(text, <span class="macro">indoc!</span>(<span class="string">r#"{
+          "title": "Short Track 2",
+          "author": "CarmLima",
+          "tiles": [
             {
-              &quot;id&quot;: &quot;102b&quot;,
-              &quot;q&quot;: 1,
-              &quot;r&quot;: -1,
-              &quot;dir&quot;: 4
+              "id": "102b",
+              "q": 1,
+              "r": -1,
+              "dir": 4
             },
             {
-              &quot;id&quot;: &quot;104b-1&quot;,
-              &quot;q&quot;: 1,
-              &quot;r&quot;: 0,
-              &quot;dir&quot;: 1
+              "id": "104b-1",
+              "q": 1,
+              "r": 0,
+              "dir": 1
             },
             {
-              &quot;id&quot;: &quot;113b&quot;,
-              &quot;q&quot;: 1,
-              &quot;r&quot;: 1,
-              &quot;dir&quot;: 4
+              "id": "113b",
+              "q": 1,
+              "r": 1,
+              "dir": 4
             },
             {
-              &quot;id&quot;: &quot;117b-1&quot;,
-              &quot;q&quot;: 0,
-              &quot;r&quot;: 2,
-              &quot;dir&quot;: 5
+              "id": "117b-1",
+              "q": 0,
+              "r": 2,
+              "dir": 5
             },
             {
-              &quot;id&quot;: &quot;114b&quot;,
-              &quot;q&quot;: -1,
-              &quot;r&quot;: 2,
-              &quot;dir&quot;: 0
+              "id": "114b",
+              "q": -1,
+              "r": 2,
+              "dir": 0
             },
             {
-              &quot;id&quot;: &quot;115b-1&quot;,
-              &quot;q&quot;: 0,
-              &quot;r&quot;: 1,
-              &quot;dir&quot;: 4
+              "id": "115b-1",
+              "q": 0,
+              "r": 1,
+              "dir": 4
             },
             {
-              &quot;id&quot;: &quot;115b-2&quot;,
-              &quot;q&quot;: 0,
-              &quot;r&quot;: 0,
-              &quot;dir&quot;: 3
+              "id": "115b-2",
+              "q": 0,
+              "r": 0,
+              "dir": 3
             },
             {
-              &quot;id&quot;: &quot;108b&quot;,
-              &quot;q&quot;: -1,
-              &quot;r&quot;: 0,
-              &quot;dir&quot;: 0
+              "id": "108b",
+              "q": -1,
+              "r": 0,
+              "dir": 0
             },
             {
-              &quot;id&quot;: &quot;110b&quot;,
-              &quot;q&quot;: 0,
-              &quot;r&quot;: -1,
-              &quot;dir&quot;: 2
+              "id": "110b",
+              "q": 0,
+              "r": -1,
+              "dir": 2
             },
             {
-              &quot;id&quot;: &quot;107b-1&quot;,
-              &quot;q&quot;: 1,
-              &quot;r&quot;: -2,
-              &quot;dir&quot;: 2
+              "id": "107b-1",
+              "q": 1,
+              "r": -2,
+              "dir": 2
             },
             {
-              &quot;id&quot;: &quot;101a&quot;,
-              &quot;q&quot;: -1,
-              &quot;r&quot;: 1,
-              &quot;dir&quot;: 4
+              "id": "101a",
+              "q": -1,
+              "r": 1,
+              "dir": 4
             }
           ],
-          &quot;active_pos&quot;: {
-            &quot;q&quot;: -1,
-            &quot;r&quot;: 1
+          "active_pos": {
+            "q": -1,
+            "r": 1
           },
-          &quot;active_dir&quot;: 3
-        }&quot;#</span>));
+          "active_dir": 3
+        }"#</span>));
 
-        <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#&quot;{
-            &quot;title&quot;: &quot;Short Track 2&quot;,
-            &quot;author&quot;: &quot;CarmLima&quot;,
-            &quot;tiles&quot;: [
-                {&quot;id&quot;: &quot;102b&quot;,   &quot;q&quot;:  1, &quot;r&quot;: -1, &quot;dir&quot;: 4},
-                {&quot;id&quot;: &quot;104b-1&quot;, &quot;q&quot;:  1, &quot;r&quot;:  0, &quot;dir&quot;: 1},
-                {&quot;id&quot;: &quot;113b&quot;,   &quot;q&quot;:  1, &quot;r&quot;:  1, &quot;dir&quot;: 4},
-                {&quot;id&quot;: &quot;117b-1&quot;, &quot;q&quot;:  0, &quot;r&quot;:  2, &quot;dir&quot;: 5},
-                {&quot;id&quot;: &quot;114b&quot;,   &quot;q&quot;: -1, &quot;r&quot;:  2, &quot;dir&quot;: 0},
-                {&quot;id&quot;: &quot;115b-1&quot;, &quot;q&quot;:  0, &quot;r&quot;:  1, &quot;dir&quot;: 4},
-                {&quot;id&quot;: &quot;115b-2&quot;, &quot;q&quot;:  0, &quot;r&quot;:  0, &quot;dir&quot;: 3},
-                {&quot;id&quot;: &quot;108b&quot;,   &quot;q&quot;: -1, &quot;r&quot;:  0, &quot;dir&quot;: 0},
-                {&quot;id&quot;: &quot;110b&quot;,   &quot;q&quot;:  0, &quot;r&quot;: -1, &quot;dir&quot;: 2},
-                {&quot;id&quot;: &quot;107b-1&quot;, &quot;q&quot;:  1, &quot;r&quot;: -2, &quot;dir&quot;: 2},
-                {&quot;id&quot;: &quot;101a&quot;,   &quot;q&quot;: -1, &quot;r&quot;:  1, &quot;dir&quot;: 4}
+        <span class="kw">let </span>text = <span class="macro">indoc!</span>(<span class="string">r#"{
+            "title": "Short Track 2",
+            "author": "CarmLima",
+            "tiles": [
+                {"id": "102b",   "q":  1, "r": -1, "dir": 4},
+                {"id": "104b-1", "q":  1, "r":  0, "dir": 1},
+                {"id": "113b",   "q":  1, "r":  1, "dir": 4},
+                {"id": "117b-1", "q":  0, "r":  2, "dir": 5},
+                {"id": "114b",   "q": -1, "r":  2, "dir": 0},
+                {"id": "115b-1", "q":  0, "r":  1, "dir": 4},
+                {"id": "115b-2", "q":  0, "r":  0, "dir": 3},
+                {"id": "108b",   "q": -1, "r":  0, "dir": 0},
+                {"id": "110b",   "q":  0, "r": -1, "dir": 2},
+                {"id": "107b-1", "q":  1, "r": -2, "dir": 2},
+                {"id": "101a",   "q": -1, "r":  1, "dir": 4}
             ]
-        }&quot;#</span>);
+        }"#</span>);
         <span class="kw">let </span>map: Map = serde_json::from_str(text).unwrap();
-        <span class="macro">assert_eq!</span>(map.title(), <span class="string">&quot;Short Track 2&quot;</span>);
-        <span class="macro">assert_eq!</span>(map.author(), <span class="string">&quot;CarmLima&quot;</span>);
+        <span class="macro">assert_eq!</span>(map.title(), <span class="string">"Short Track 2"</span>);
+        <span class="macro">assert_eq!</span>(map.author(), <span class="string">"CarmLima"</span>);
         <span class="macro">assert_abs_diff_eq!</span>(map.tiles(), <span class="kw-2">&amp;</span>[
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">102</span>, b, <span class="number">0</span>), ( <span class="number">1</span>, -<span class="number">1</span>).into(), Direction::E),
             PlacedTile::new(<span class="macro">tile!</span>(<span class="number">104</span>, b, <span class="number">1</span>), ( <span class="number">1</span>,  <span class="number">0</span>).into(), Direction::B),

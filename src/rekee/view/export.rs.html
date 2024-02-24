@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/export.rs`."><title>export.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/export.rs`."><title>export.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -827,11 +828,11 @@
     <span class="kw">let </span>height = (<span class="number">0.8 </span>* f32::max(size.x(), size.y())).round() <span class="kw">as </span>i32;
 
     context.save();
-    context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, height));
-    context.set_text_align(<span class="string">&quot;center&quot;</span>);
-    context.set_text_baseline(<span class="string">&quot;middle&quot;</span>);
+    context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Overpass, sans-serif"</span>, height));
+    context.set_text_align(<span class="string">"center"</span>);
+    context.set_text_baseline(<span class="string">"middle"</span>);
     context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(color_scheme.missing_image_color()));
-    context.fill_text(<span class="string">&quot;?&quot;</span>, pos_x, pos_y)<span class="question-mark">?</span>;
+    context.fill_text(<span class="string">"?"</span>, pos_x, pos_y)<span class="question-mark">?</span>;
     context.restore();
 
     <span class="prelude-val">Ok</span>(())
@@ -853,12 +854,12 @@
 
     context.save();
     <span class="kw">if </span>label_type == LabelType::Pacenote {
-        context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Caveat, sans-serif&quot;</span>, height));
+        context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Caveat, sans-serif"</span>, height));
     } <span class="kw">else </span>{
-        context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px OverpassTnum, Overpass, sans-serif&quot;</span>, height));
+        context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px OverpassTnum, Overpass, sans-serif"</span>, height));
     }
-    context.set_text_align(<span class="string">&quot;center&quot;</span>);
-    context.set_text_baseline(<span class="string">&quot;middle&quot;</span>);
+    context.set_text_align(<span class="string">"center"</span>);
+    context.set_text_baseline(<span class="string">"middle"</span>);
     context.set_line_width(<span class="number">2.0</span>);
     context.set_miter_limit(<span class="number">2.0</span>);
     <span class="kw">if </span>label_type == LabelType::Pacenote {
@@ -899,27 +900,27 @@
             <span class="kw">let </span>image = image.clone();
             <span class="kw">let </span>context = context.clone();
             <span class="kw">move </span>|_event: web_sys::Event| {
-                <span class="macro">debug!</span>(<span class="string">&quot;drawing tile image {} at {}&quot;</span>, <span class="kw-2">&amp;</span>tile.id(), <span class="kw-2">&amp;</span>tile.pos);
+                <span class="macro">debug!</span>(<span class="string">"drawing tile image {} at {}"</span>, <span class="kw-2">&amp;</span>tile.id(), <span class="kw-2">&amp;</span>tile.pos);
                 <span class="macro">check!</span>(draw_tile_image(<span class="kw-2">&amp;</span>context, <span class="kw-2">&amp;</span>image, pos, size, angle).ok());
                 nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        image.add_event_listener_with_callback(<span class="string">&quot;load&quot;</span>, load_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        image.add_event_listener_with_callback(<span class="string">"load"</span>, load_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>error_cb = Closure::wrap(Box::new({
             <span class="kw">let </span>tile = tile.clone();
             <span class="kw">let </span>context = context.clone();
             <span class="kw">move </span>|_event: web_sys::Event| {
-                <span class="macro">debug!</span>(<span class="string">&quot;loading of tile image {} failed&quot;</span>, <span class="kw-2">&amp;</span>tile.id());
+                <span class="macro">debug!</span>(<span class="string">"loading of tile image {} failed"</span>, <span class="kw-2">&amp;</span>tile.id());
                 <span class="macro">check!</span>(draw_missing_image(<span class="kw-2">&amp;</span>context, color_scheme, pos, size).ok());
                 nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(DrawExportTileDoneEvent { tile: tile.clone() });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        image.add_event_listener_with_callback(<span class="string">&quot;error&quot;</span>, error_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        image.add_event_listener_with_callback(<span class="string">"error"</span>, error_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="comment">// start loading the tile image
-        </span><span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">&quot;tiles/thumbs/tile-{:x}.webp&quot;</span>, tile.id());
-        image.set_attribute(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span>url)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"tiles/thumbs/tile-{:x}.webp"</span>, tile.id());
+        image.set_attribute(<span class="string">"src"</span>, <span class="kw-2">&amp;</span>url)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(TileImage { image, tile, load_cb, error_cb })
     }
@@ -927,9 +928,9 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>TileImage {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">&quot;load&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">"load"</span>,
             <span class="self">self</span>.load_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">&quot;error&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">"error"</span>,
             <span class="self">self</span>.error_cb.as_ref().unchecked_ref());
     }
 }
@@ -959,28 +960,28 @@
             <span class="kw">let </span>image = image.clone();
             <span class="kw">let </span>context = context.clone();
             <span class="kw">move </span>|_event: web_sys::Event| {
-                <span class="macro">debug!</span>(<span class="string">&quot;drawing token image {} at tile {}&quot;</span>, <span class="kw-2">&amp;</span>token.id, <span class="kw-2">&amp;</span>tile.pos);
+                <span class="macro">debug!</span>(<span class="string">"drawing token image {} at tile {}"</span>, <span class="kw-2">&amp;</span>token.id, <span class="kw-2">&amp;</span>tile.pos);
                 <span class="macro">check!</span>(draw_token_image(<span class="kw-2">&amp;</span>context, <span class="kw-2">&amp;</span>image, pos, size, center, angle).ok());
                 nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(DrawExportTokenDoneEvent { tile: tile.clone(), token: token.clone() });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        image.add_event_listener_with_callback(<span class="string">&quot;load&quot;</span>, load_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        image.add_event_listener_with_callback(<span class="string">"load"</span>, load_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>error_cb = Closure::wrap(Box::new({
             <span class="kw">let </span>tile = tile.clone();
             <span class="kw">let </span>token = token.clone();
             <span class="kw">let </span>context = context.clone();
             <span class="kw">move </span>|_event: web_sys::Event| {
-                <span class="macro">debug!</span>(<span class="string">&quot;loading of token image {} failed&quot;</span>, <span class="kw-2">&amp;</span>token.id);
+                <span class="macro">debug!</span>(<span class="string">"loading of token image {} failed"</span>, <span class="kw-2">&amp;</span>token.id);
                 <span class="macro">check!</span>(draw_missing_image(<span class="kw-2">&amp;</span>context, color_scheme, pos, size).ok());
                 nuts::send_to::&lt;ExportController, <span class="kw">_</span>&gt;(DrawExportTokenDoneEvent { tile: tile.clone(), token: token.clone() });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        image.add_event_listener_with_callback(<span class="string">&quot;error&quot;</span>, error_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        image.add_event_listener_with_callback(<span class="string">"error"</span>, error_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="comment">// start loading the tile image
-        </span><span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">&quot;tokens/thumbs/{:x}.webp&quot;</span>, token.id);
-        image.set_attribute(<span class="string">&quot;src&quot;</span>, <span class="kw-2">&amp;</span>url)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"tokens/thumbs/{:x}.webp"</span>, token.id);
+        image.set_attribute(<span class="string">"src"</span>, <span class="kw-2">&amp;</span>url)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(TokenImage { image, tile, token, load_cb, error_cb })
     }
@@ -988,9 +989,9 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>TokenImage {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">&quot;load&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">"load"</span>,
             <span class="self">self</span>.load_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">&quot;error&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.image.remove_event_listener_with_callback(<span class="string">"error"</span>,
             <span class="self">self</span>.error_cb.as_ref().unchecked_ref());
     }
 }
@@ -1041,19 +1042,19 @@
         <span class="kw">let </span>token_images = Vec::new();
         <span class="kw">let </span>document = parent.owner_document().unwrap();
 
-        <span class="kw">let </span>canvas = document.create_element(<span class="string">&quot;canvas&quot;</span>)<span class="question-mark">?
+        <span class="kw">let </span>canvas = document.create_element(<span class="string">"canvas"</span>)<span class="question-mark">?
             </span>.dyn_into::&lt;HtmlCanvasElement&gt;()<span class="question-mark">?</span>;
         parent.append_child(<span class="kw-2">&amp;</span>canvas)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>anchor = document.create_element(<span class="string">&quot;a&quot;</span>)<span class="question-mark">?
+        <span class="kw">let </span>anchor = document.create_element(<span class="string">"a"</span>)<span class="question-mark">?
             </span>.dyn_into::&lt;HtmlElement&gt;()<span class="question-mark">?</span>;
         anchor.set_hidden(<span class="bool-val">true</span>);
         parent.append_child(<span class="kw-2">&amp;</span>anchor)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>title_font = FontFace::new_with_str(<span class="string">&quot;Overpass&quot;</span>,
-            <span class="string">&quot;url(&#39;overpass-bold.woff2&#39;) format(&#39;woff2&#39;)&quot;</span>)<span class="question-mark">?</span>;
-        title_font.set_style(<span class="string">&quot;normal&quot;</span>);
-        title_font.set_weight(<span class="string">&quot;bold&quot;</span>);
+        <span class="kw">let </span>title_font = FontFace::new_with_str(<span class="string">"Overpass"</span>,
+            <span class="string">"url('overpass-bold.woff2') format('woff2')"</span>)<span class="question-mark">?</span>;
+        title_font.set_style(<span class="string">"normal"</span>);
+        title_font.set_weight(<span class="string">"bold"</span>);
         document.fonts().add(<span class="kw-2">&amp;</span>title_font)<span class="question-mark">?</span>;
         <span class="kw">let _ </span>= title_font.load();
 
@@ -1065,49 +1066,49 @@
             <span class="kw">let </span>canvas = canvas.clone();
             <span class="kw">move </span>|font: JsValue| {
 
-                <span class="kw">let </span>context = <span class="macro">check!</span>(canvas.get_context(<span class="string">&quot;2d&quot;</span>).ok().flatten()
+                <span class="kw">let </span>context = <span class="macro">check!</span>(canvas.get_context(<span class="string">"2d"</span>).ok().flatten()
                     .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
                 context.save();
-                context.set_font(<span class="string">&quot;bold 16px OverpassTnum, sans-serif&quot;</span>);
-                <span class="kw">let </span>width_str0 = <span class="macro">check!</span>(context.measure_text(<span class="string">&quot;0000&quot;</span>).ok()).width();
-                <span class="kw">let </span>width_str1 = <span class="macro">check!</span>(context.measure_text(<span class="string">&quot;1111&quot;</span>).ok()).width();
-                <span class="macro">debug!</span>(<span class="string">&quot;label font width 0/1: {:.3}/{:.3}, ratio: {:.3}&quot;</span>,
+                context.set_font(<span class="string">"bold 16px OverpassTnum, sans-serif"</span>);
+                <span class="kw">let </span>width_str0 = <span class="macro">check!</span>(context.measure_text(<span class="string">"0000"</span>).ok()).width();
+                <span class="kw">let </span>width_str1 = <span class="macro">check!</span>(context.measure_text(<span class="string">"1111"</span>).ok()).width();
+                <span class="macro">debug!</span>(<span class="string">"label font width 0/1: {:.3}/{:.3}, ratio: {:.3}"</span>,
                     width_str0, width_str1, width_str0 / width_str1);
                 context.restore();
 
                 <span class="comment">// compare widths of both numerical sample strings, trigger
                 // load of a replacement font if they differ by more than 20%
                 </span><span class="kw">if </span>(width_str0 - width_str1).abs() &gt; <span class="number">0.2 </span>* width_str0 {
-                    <span class="macro">warn!</span>(<span class="string">&quot;Detected missing support for font settings configuration in the Canvas API of this browser. Loading a replacement font instead.&quot;</span>);
+                    <span class="macro">warn!</span>(<span class="string">"Detected missing support for font settings configuration in the Canvas API of this browser. Loading a replacement font instead."</span>);
 
                     <span class="kw">let </span>document = canvas.owner_document().unwrap();
                     <span class="kw">let </span>font = <span class="macro">check!</span>(font.dyn_into::&lt;FontFace&gt;().ok());
                     document.fonts().delete(<span class="kw-2">&amp;</span>font);
 
-                    <span class="kw">let </span>label_font = <span class="macro">check!</span>(FontFace::new_with_str(<span class="string">&quot;OverpassTnum&quot;</span>,
-                        <span class="string">&quot;url(&#39;overpass+tnum-bold.woff2&#39;) format(&#39;woff2&#39;)&quot;</span>).ok());
-                    label_font.set_style(<span class="string">&quot;normal&quot;</span>);
-                    label_font.set_weight(<span class="string">&quot;bold&quot;</span>);
+                    <span class="kw">let </span>label_font = <span class="macro">check!</span>(FontFace::new_with_str(<span class="string">"OverpassTnum"</span>,
+                        <span class="string">"url('overpass+tnum-bold.woff2') format('woff2')"</span>).ok());
+                    label_font.set_style(<span class="string">"normal"</span>);
+                    label_font.set_weight(<span class="string">"bold"</span>);
                     <span class="macro">check!</span>(document.fonts().add(<span class="kw-2">&amp;</span>label_font).ok());
                     <span class="kw">let _ </span>= label_font.load();
                 }
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let </span>label_font = FontFace::new_with_str(<span class="string">&quot;OverpassTnum&quot;</span>,
-            <span class="string">&quot;url(&#39;overpass-bold.woff2&#39;) format(&#39;woff2&#39;)&quot;</span>)<span class="question-mark">?</span>;
-        label_font.set_style(<span class="string">&quot;normal&quot;</span>);
-        label_font.set_weight(<span class="string">&quot;bold&quot;</span>);
-        label_font.set_feature_settings(<span class="string">&quot;\&quot;tnum\&quot; on&quot;</span>);
+        <span class="kw">let </span>label_font = FontFace::new_with_str(<span class="string">"OverpassTnum"</span>,
+            <span class="string">"url('overpass-bold.woff2') format('woff2')"</span>)<span class="question-mark">?</span>;
+        label_font.set_style(<span class="string">"normal"</span>);
+        label_font.set_weight(<span class="string">"bold"</span>);
+        label_font.set_feature_settings(<span class="string">"\"tnum\" on"</span>);
         document.fonts().add(<span class="kw-2">&amp;</span>label_font)<span class="question-mark">?</span>;
         <span class="kw">let _ </span>= label_font.load()<span class="question-mark">?
             </span>.then(<span class="kw-2">&amp;</span>font_load_cb);
         font_load_cb.forget();
 
-        <span class="kw">let </span>pacenote_font = FontFace::new_with_str(<span class="string">&quot;Caveat&quot;</span>,
-            <span class="string">&quot;url(&#39;caveat-bold.woff&#39;) format(&#39;woff&#39;)&quot;</span>)<span class="question-mark">?</span>;
-        pacenote_font.set_style(<span class="string">&quot;normal&quot;</span>);
-        pacenote_font.set_weight(<span class="string">&quot;bold&quot;</span>);
+        <span class="kw">let </span>pacenote_font = FontFace::new_with_str(<span class="string">"Caveat"</span>,
+            <span class="string">"url('caveat-bold.woff') format('woff')"</span>)<span class="question-mark">?</span>;
+        pacenote_font.set_style(<span class="string">"normal"</span>);
+        pacenote_font.set_weight(<span class="string">"bold"</span>);
         document.fonts().add(<span class="kw-2">&amp;</span>pacenote_font)<span class="question-mark">?</span>;
         <span class="kw">let _ </span>= pacenote_font.load();
 
@@ -1154,15 +1155,15 @@
     }
 
     <span class="kw">pub fn </span>draw_export_image(<span class="kw-2">&amp;mut </span><span class="self">self</span>, map: <span class="kw-2">&amp;</span>Map, label_type: LabelType) {
-        <span class="macro">debug!</span>(<span class="string">&quot;start export of map image with {} tiles and {} scale&quot;</span>, map.tiles().len(),
-            <span class="self">self</span>.export_scale.map(|val| val.to_string()).unwrap_or_else(|| String::from(<span class="string">&quot;default&quot;</span>)));
+        <span class="macro">debug!</span>(<span class="string">"start export of map image with {} tiles and {} scale"</span>, map.tiles().len(),
+            <span class="self">self</span>.export_scale.map(|val| val.to_string()).unwrap_or_else(|| String::from(<span class="string">"default"</span>)));
         <span class="self">self</span>.map = map.clone();
         <span class="self">self</span>.label_type = label_type;
 
         <span class="comment">// update download filename attribute
         </span><span class="kw">let </span><span class="kw-2">mut </span>file_name = import::build_file_name(map.title());
-        file_name.push_str(<span class="string">&quot;.png&quot;</span>);
-        <span class="macro">check!</span>(<span class="self">self</span>.anchor.set_attribute(<span class="string">&quot;download&quot;</span>, <span class="kw-2">&amp;</span>file_name).ok());
+        file_name.push_str(<span class="string">".png"</span>);
+        <span class="macro">check!</span>(<span class="self">self</span>.anchor.set_attribute(<span class="string">"download"</span>, <span class="kw-2">&amp;</span>file_name).ok());
 
         <span class="kw">let </span>export_scale = <span class="self">self</span>.export_scale.unwrap_or_default();
         <span class="kw">let </span>export_layout = <span class="self">self</span>.base_layout
@@ -1178,9 +1179,9 @@
                 }
             }
         };
-        <span class="macro">debug!</span>(<span class="string">&quot;active color scheme: {}&quot;</span>, active_color_scheme);
+        <span class="macro">debug!</span>(<span class="string">"active color scheme: {}"</span>, active_color_scheme);
 
-        <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">&quot;2d&quot;</span>).ok().flatten()
+        <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">"2d"</span>).ok().flatten()
             .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
 
         <span class="comment">// calculate rectangular map area that is covered with tiles
@@ -1192,12 +1193,12 @@
         map_area.top = map_area.top.floor();
         map_area.width = map_area.width.ceil();
         map_area.height = map_area.height.ceil();
-        <span class="macro">debug!</span>(<span class="string">&quot;map area: {:?}, layout origin: {:?}&quot;</span>, map_area, export_layout.origin());
+        <span class="macro">debug!</span>(<span class="string">"map area: {:?}, layout origin: {:?}"</span>, map_area, export_layout.origin());
 
         <span class="kw">let </span><span class="kw-2">mut </span>header_area = Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>header_baseline = <span class="number">0.0_f64</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>author_width = <span class="number">0_i32</span>;
-        <span class="kw">let </span>preposition_text = <span class="string">&quot; by &quot;</span>;
+        <span class="kw">let </span>preposition_text = <span class="string">" by "</span>;
 
         <span class="kw">let </span>title_text = <span class="kw">if </span><span class="self">self</span>.header_visible &amp;&amp; !map.title().is_empty() {
             <span class="prelude-val">Some</span>(map.title().to_string())
@@ -1207,7 +1208,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>title_text) = title_text {
             <span class="comment">// measure width of the title text
             </span>context.save();
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.title_height()));
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Overpass, sans-serif"</span>, export_scale.title_height()));
             <span class="kw">let </span>metrics = <span class="macro">check!</span>(context.measure_text(title_text).ok());
             context.restore();
 
@@ -1224,7 +1225,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>author_text) = author_text {
             <span class="comment">// measure width of the author text
             </span>context.save();
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.author_height()));
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Overpass, sans-serif"</span>, export_scale.author_height()));
             <span class="kw">let </span>metrics = <span class="macro">check!</span>(context.measure_text(author_text).ok());
             <span class="kw">let </span>preposition_width = <span class="macro">check!</span>(context.measure_text(preposition_text).ok()).width() <span class="kw">as </span>f32;
             context.restore();
@@ -1247,15 +1248,15 @@
         <span class="kw">let </span><span class="kw-2">mut </span>listing_text = Vec::new();
         <span class="kw">if </span><span class="self">self</span>.listing_visible {
             <span class="kw">for </span>entry <span class="kw">in </span>map.tiles().tile_summary() {
-                <span class="kw">let </span>count_text = <span class="macro">format!</span>(<span class="string">&quot; {}×&quot;</span>, entry.count);
-                <span class="kw">let </span>number_text = <span class="macro">format!</span>(<span class="string">&quot; {} &quot;</span>, entry.tile);
+                <span class="kw">let </span>count_text = <span class="macro">format!</span>(<span class="string">" {}×"</span>, entry.count);
+                <span class="kw">let </span>number_text = <span class="macro">format!</span>(<span class="string">" {} "</span>, entry.tile);
                 listing_text.push((count_text, number_text));
             }
         }
         <span class="kw">if </span>!listing_text.is_empty() {
             <span class="comment">// measure width of the tile count and identifier text
             </span>context.save();
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px OverpassTnum, Overpass, sans-serif&quot;</span>, export_scale.tile_label_height()));
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px OverpassTnum, Overpass, sans-serif"</span>, export_scale.tile_label_height()));
             <span class="kw">for </span>(count_text, number_text) <span class="kw">in </span><span class="kw-2">&amp;</span>listing_text {
                 <span class="kw">let </span>count_metrics = <span class="macro">check!</span>(context.measure_text(count_text).ok());
                 count_width = count_width.max(count_metrics.width().floor() <span class="kw">as </span>i32);
@@ -1284,8 +1285,8 @@
         <span class="kw">if </span>header_area.height &gt; <span class="number">0.0 </span>{
             height += header_area.height <span class="kw">as </span>i32 + PADDING;
         }
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span>width.to_string()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span>height.to_string()).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span>width.to_string()).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span>height.to_string()).ok());
 
         <span class="kw">let </span><span class="kw-2">mut </span>origin = export_layout.origin() - Point(map_area.left, map_area.top) +
             Point(PADDING <span class="kw">as </span>f32, PADDING <span class="kw">as </span>f32);
@@ -1306,7 +1307,7 @@
         <span class="comment">// draw map header line
         </span><span class="kw">if </span>header_area.height &gt; <span class="number">0.0 </span>{
             context.begin_path();
-            context.set_line_cap(<span class="string">&quot;round&quot;</span>);
+            context.set_line_cap(<span class="string">"round"</span>);
             context.set_line_width(<span class="number">2.0</span>);
             <span class="kw">let </span>dash_segments = [<span class="number">0.0</span>, <span class="number">4.0</span>].iter()
                 .map(|<span class="kw-2">&amp;</span>val| JsValue::from_f64(val))
@@ -1320,8 +1321,8 @@
         }
         <span class="comment">// draw map title text
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>title_text) = title_text {
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.title_height()));
-            context.set_text_align(<span class="string">&quot;left&quot;</span>);
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Overpass, sans-serif"</span>, export_scale.title_height()));
+            context.set_text_align(<span class="string">"left"</span>);
             context.set_line_width(<span class="number">6.0</span>);
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.background_color()));
             <span class="macro">check!</span>(context.stroke_text(title_text, f64::from(PADDING), header_baseline + f64::from(PADDING)).ok());
@@ -1330,8 +1331,8 @@
         }
         <span class="comment">// draw map author text
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>author_text) = author_text {
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px Overpass, sans-serif&quot;</span>, export_scale.author_height()));
-            context.set_text_align(<span class="string">&quot;right&quot;</span>);
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px Overpass, sans-serif"</span>, export_scale.author_height()));
+            context.set_text_align(<span class="string">"right"</span>);
             context.set_line_width(<span class="number">6.0</span>);
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.background_color()));
             <span class="macro">check!</span>(context.stroke_text(author_text, f64::from(width - PADDING), header_baseline + f64::from(PADDING)).ok());
@@ -1374,14 +1375,14 @@
             context.fill();
             context.set_stroke_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.listing_border_color()));
             context.stroke();
-            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;bold {}px OverpassTnum, Overpass, sans-serif&quot;</span>, export_scale.tile_label_height()));
+            context.set_font(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"bold {}px OverpassTnum, Overpass, sans-serif"</span>, export_scale.tile_label_height()));
             <span class="kw">let </span>listing_x = f64::from(listing_area.left) + f64::from(count_width) + f64::from(LISTING_PADDING);
             <span class="kw">let </span><span class="kw-2">mut </span>listing_y = f64::from(listing_area.top) + listing_baseline + f64::from(LISTING_PADDING);
             <span class="kw">for </span>(count_text, number_text) <span class="kw">in </span><span class="kw-2">&amp;</span>listing_text {
-                context.set_text_align(<span class="string">&quot;right&quot;</span>);
+                context.set_text_align(<span class="string">"right"</span>);
                 context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.listing_tile_count_color()));
                 <span class="macro">check!</span>(context.fill_text(count_text, listing_x, listing_y).ok());
-                context.set_text_align(<span class="string">&quot;left&quot;</span>);
+                context.set_text_align(<span class="string">"left"</span>);
                 context.set_fill_style(<span class="kw-2">&amp;</span>JsValue::from_str(active_color_scheme.listing_tile_number_color()));
                 <span class="macro">check!</span>(context.fill_text(number_text, listing_x, listing_y).ok());
                 listing_y += f64::from(listing_lineheight);
@@ -1401,18 +1402,18 @@
     }
 
     <span class="kw">pub fn </span>draw_export_tile_done(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tile: <span class="kw-2">&amp;</span>PlacedTile) {
-        <span class="macro">debug!</span>(<span class="string">&quot;export of tile image at {} is finished&quot;</span>, tile.pos);
+        <span class="macro">debug!</span>(<span class="string">"export of tile image at {} is finished"</span>, tile.pos);
         <span class="comment">// remove tile from todo list
         </span><span class="self">self</span>.tile_images.retain(|img| img.tile != <span class="kw-2">*</span>tile);
 
         <span class="kw">if </span><span class="self">self</span>.tile_images.is_empty() {
-            <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">&quot;2d&quot;</span>).ok().flatten()
+            <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">"2d"</span>).ok().flatten()
                 .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
 
             <span class="comment">// draw each token image asynchronously
             </span><span class="self">self</span>.token_images.clear();
             <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.map.tiles() {
-                <span class="macro">debug!</span>(<span class="string">&quot;adding tokens for tile {:?}&quot;</span>, <span class="kw-2">&amp;</span>tile);
+                <span class="macro">debug!</span>(<span class="string">"adding tokens for tile {:?}"</span>, <span class="kw-2">&amp;</span>tile);
                 <span class="kw">for </span>token <span class="kw">in </span><span class="kw-2">&amp;</span>tile.tokens {
                     <span class="kw">let </span>image = <span class="macro">check!</span>(TokenImage::new(<span class="kw-2">&amp;</span>context, <span class="kw-2">&amp;</span><span class="self">self</span>.export_layout, <span class="self">self</span>.active_color_scheme, tile.clone(), token.clone()).ok());
                     <span class="self">self</span>.token_images.push(image);
@@ -1426,7 +1427,7 @@
     }
 
     <span class="kw">pub fn </span>draw_export_token_done(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken) {
-        <span class="macro">debug!</span>(<span class="string">&quot;export of token image {} at {} is finished&quot;</span>, token.id, tile.pos);
+        <span class="macro">debug!</span>(<span class="string">"export of token image {} at {} is finished"</span>, token.id, tile.pos);
         <span class="comment">// remove token image from todo list
         </span><span class="self">self</span>.token_images.retain(|img| img.tile != <span class="kw-2">*</span>tile || img.token != <span class="kw-2">*</span>token);
 
@@ -1440,8 +1441,8 @@
 
         <span class="comment">// finally draw tile labels on top of everything other
         </span><span class="kw">if </span><span class="self">self</span>.label_type != LabelType::None {
-            <span class="macro">debug!</span>(<span class="string">&quot;drawing tile labels&quot;</span>);
-            <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">&quot;2d&quot;</span>).ok().flatten()
+            <span class="macro">debug!</span>(<span class="string">"drawing tile labels"</span>);
+            <span class="kw">let </span>context = <span class="macro">check!</span>(<span class="self">self</span>.canvas.get_context(<span class="string">"2d"</span>).ok().flatten()
                 .and_then(|obj| obj.dyn_into::&lt;web_sys::CanvasRenderingContext2d&gt;().ok()));
             <span class="kw">for </span>tile <span class="kw">in </span><span class="self">self</span>.map.tiles() {
                 <span class="kw">let </span>pos = tile.pos.to_pixel(<span class="kw-2">&amp;</span><span class="self">self</span>.export_layout);
@@ -1456,9 +1457,9 @@
         }
 
         <span class="comment">// trigger download of canvas image data
-        </span><span class="macro">debug!</span>(<span class="string">&quot;export of all tile images is completed&quot;</span>);
-        <span class="kw">let </span>url = <span class="macro">check!</span>(<span class="self">self</span>.canvas.to_data_url_with_type(<span class="string">&quot;image/png&quot;</span>).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.anchor.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span>url).ok());
+        </span><span class="macro">debug!</span>(<span class="string">"export of all tile images is completed"</span>);
+        <span class="kw">let </span>url = <span class="macro">check!</span>(<span class="self">self</span>.canvas.to_data_url_with_type(<span class="string">"image/png"</span>).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.anchor.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span>url).ok());
         <span class="self">self</span>.anchor.click();
     }
 }
@@ -1471,37 +1472,37 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>export_scale_to_str() {
-        <span class="macro">assert_eq!</span>(ExportScale::Small.to_string(), <span class="string">&quot;Small&quot;</span>);
-        <span class="macro">assert_eq!</span>(ExportScale::Medium.to_string(), <span class="string">&quot;Medium&quot;</span>);
-        <span class="macro">assert_eq!</span>(ExportScale::Large.to_string(), <span class="string">&quot;Large&quot;</span>);
-        <span class="macro">assert_eq!</span>(ExportScale::ExtraLarge.to_string(), <span class="string">&quot;Extra Large&quot;</span>);
+        <span class="macro">assert_eq!</span>(ExportScale::Small.to_string(), <span class="string">"Small"</span>);
+        <span class="macro">assert_eq!</span>(ExportScale::Medium.to_string(), <span class="string">"Medium"</span>);
+        <span class="macro">assert_eq!</span>(ExportScale::Large.to_string(), <span class="string">"Large"</span>);
+        <span class="macro">assert_eq!</span>(ExportScale::ExtraLarge.to_string(), <span class="string">"Extra Large"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>export_scale_from_str() {
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;small&quot;</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Small));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;Medium&quot;</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Medium));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;LARGE&quot;</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Large));
-        <span class="macro">assert_eq!</span>(<span class="string">&quot;EXTRA LARGE&quot;</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::ExtraLarge));
+        <span class="macro">assert_eq!</span>(<span class="string">"small"</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Small));
+        <span class="macro">assert_eq!</span>(<span class="string">"Medium"</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Medium));
+        <span class="macro">assert_eq!</span>(<span class="string">"LARGE"</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::Large));
+        <span class="macro">assert_eq!</span>(<span class="string">"EXTRA LARGE"</span>.parse::&lt;ExportScale&gt;(), <span class="prelude-val">Ok</span>(ExportScale::ExtraLarge));
 
-        <span class="macro">assert!</span>(<span class="string">&quot;&quot;</span>.parse::&lt;ExportScale&gt;().is_err());
-        <span class="macro">assert!</span>(<span class="string">&quot;xl&quot;</span>.parse::&lt;ExportScale&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">""</span>.parse::&lt;ExportScale&gt;().is_err());
+        <span class="macro">assert!</span>(<span class="string">"xl"</span>.parse::&lt;ExportScale&gt;().is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>export_scale_serde() {
         <span class="kw">let </span>text = serde_json::to_string(<span class="kw-2">&amp;</span>ExportScale::Medium).unwrap();
-        <span class="macro">assert_eq!</span>(text, <span class="string">r#&quot;&quot;medium&quot;&quot;#</span>);
+        <span class="macro">assert_eq!</span>(text, <span class="string">r#""medium""#</span>);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;extra-large&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""extra-large""#</span>;
         <span class="kw">let </span>scale: ExportScale = serde_json::from_str(text).unwrap();
         <span class="macro">assert_eq!</span>(scale, ExportScale::ExtraLarge);
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""#</span>;
         <span class="kw">let </span>result: std::result::Result&lt;ExportScale, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
 
-        <span class="kw">let </span>text = <span class="string">r#&quot;&quot;xl&quot;&quot;#</span>;
+        <span class="kw">let </span>text = <span class="string">r#""xl""#</span>;
         <span class="kw">let </span>result: std::result::Result&lt;ExportScale, <span class="kw">_</span>&gt; = serde_json::from_str(text);
         <span class="macro">assert!</span>(result.is_err());
     }

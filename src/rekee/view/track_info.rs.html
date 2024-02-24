@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/track_info.rs`."><title>track_info.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/track_info.rs`."><title>track_info.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -297,22 +298,22 @@
             nuts::publish(HideTrackInfoEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">let </span>close = inner.query_selector(<span class="string">&quot;.button&quot;</span>)<span class="question-mark">?
-            </span>.ok_or(<span class="string">&quot;Cannot find close button of track info element&quot;</span>)<span class="question-mark">?</span>;
-        close.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        <span class="kw">let </span>close = inner.query_selector(<span class="string">".button"</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">"Cannot find close button of track info element"</span>)<span class="question-mark">?</span>;
+        close.add_event_listener_with_callback(<span class="string">"click"</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>close = inner.query_selector(<span class="string">&quot;.modal-close&quot;</span>)<span class="question-mark">?
-            </span>.ok_or(<span class="string">&quot;Cannot find close button of catalog config element&quot;</span>)<span class="question-mark">?</span>;
-        close.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        <span class="kw">let </span>close = inner.query_selector(<span class="string">".modal-close"</span>)<span class="question-mark">?
+            </span>.ok_or(<span class="string">"Cannot find close button of catalog config element"</span>)<span class="question-mark">?</span>;
+        close.add_event_listener_with_callback(<span class="string">"click"</span>, close_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>keydown_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::KeyboardEvent| {
             <span class="kw">if </span>event.repeat() {
                 <span class="kw">return</span>;
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;enter&quot;</span>) &amp;&amp; (event.ctrl_key() || event.meta_key()) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"enter"</span>) &amp;&amp; (event.ctrl_key() || event.meta_key()) {
                 nuts::publish(HideTrackInfoEvent);
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;escape&quot;</span>) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"escape"</span>) {
                 nuts::publish(HideTrackInfoEvent);
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
@@ -324,24 +325,24 @@
         <span class="kw">let </span>document = <span class="self">self</span>.inner.owner_document().unwrap();
 
         <span class="kw">if </span>value {
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-active&quot;</span>).ok());
-            <span class="macro">check!</span>(document.add_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>, <span class="self">self</span>.keydown_cb.as_ref().unchecked_ref()).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">"is-active"</span>).ok());
+            <span class="macro">check!</span>(document.add_event_listener_with_callback(<span class="string">"keydown"</span>, <span class="self">self</span>.keydown_cb.as_ref().unchecked_ref()).ok());
         } <span class="kw">else </span>{
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-active&quot;</span>).ok());
-            <span class="macro">check!</span>(document.remove_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>, <span class="self">self</span>.keydown_cb.as_ref().unchecked_ref()).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">"is-active"</span>).ok());
+            <span class="macro">check!</span>(document.remove_event_listener_with_callback(<span class="string">"keydown"</span>, <span class="self">self</span>.keydown_cb.as_ref().unchecked_ref()).ok());
         }
     }
 
     <span class="kw">pub fn </span>update_map_tiles(<span class="kw-2">&amp;</span><span class="self">self</span>, map_tiles: <span class="kw-2">&amp;</span>[PlacedTile]) {
         <span class="kw">let </span>document = <span class="self">self</span>.inner.owner_document().unwrap();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">&quot;#track-info-edition-data&quot;</span>).ok().flatten() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">"#track-info-edition-data"</span>).ok().flatten() {
             <span class="comment">// remove all previous data
             </span><span class="kw">let </span>range = <span class="macro">check!</span>(document.create_range().ok());
             <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span>parent).ok());
             <span class="macro">check!</span>(range.delete_contents().ok());
 
-            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;ul&quot;</span>).ok());
+            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">"ul"</span>).ok());
             <span class="macro">check!</span>(parent.append_child(<span class="kw-2">&amp;</span>list).ok());
 
             <span class="kw">let </span>summary = PlacedTileList::edition_summary(map_tiles);
@@ -349,46 +350,46 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>info = String::new();
                 <span class="kw">if </span>row.edition_count &gt; <span class="number">1 </span>{
                     info.push_str(<span class="kw-2">&amp;</span>row.edition_count.to_string());
-                    info.push(<span class="string">&#39;×&#39;</span>);
+                    info.push(<span class="string">'×'</span>);
                 }
                 <span class="kw">if </span>row.tile_count &gt; <span class="number">0 </span>{
                     <span class="kw">if </span>!info.is_empty() {
-                        info.push_str(<span class="string">&quot;, &quot;</span>);
+                        info.push_str(<span class="string">", "</span>);
                     }
                     info.push_str(<span class="kw-2">&amp;</span>row.tile_count.to_string());
                     <span class="kw">if </span>row.tile_count == <span class="number">1 </span>{
-                        info.push_str(<span class="string">&quot; tile&quot;</span>);
+                        info.push_str(<span class="string">" tile"</span>);
                     } <span class="kw">else </span>{
-                        info.push_str(<span class="string">&quot; tiles&quot;</span>);
+                        info.push_str(<span class="string">" tiles"</span>);
                     }
                 }
                 <span class="kw">if </span>row.token_count &gt; <span class="number">0 </span>{
                     <span class="kw">if </span>!info.is_empty() {
-                        info.push_str(<span class="string">&quot;, &quot;</span>);
+                        info.push_str(<span class="string">", "</span>);
                     }
                     info.push_str(<span class="kw-2">&amp;</span>row.token_count.to_string());
                     <span class="kw">if </span>row.edition == <span class="prelude-val">Some</span>(Edition::DirtRx) {
                         <span class="kw">if </span>row.token_count == <span class="number">1 </span>{
-                            info.push_str(<span class="string">&quot; standee&quot;</span>);
+                            info.push_str(<span class="string">" standee"</span>);
                         } <span class="kw">else </span>{
-                            info.push_str(<span class="string">&quot; standees&quot;</span>);
+                            info.push_str(<span class="string">" standees"</span>);
                         }
                     } <span class="kw">else if </span>row.token_count == <span class="number">1 </span>{
-                        info.push_str(<span class="string">&quot; token&quot;</span>);
+                        info.push_str(<span class="string">" token"</span>);
                     } <span class="kw">else </span>{
-                        info.push_str(<span class="string">&quot; tokens&quot;</span>);
+                        info.push_str(<span class="string">" tokens"</span>);
                     }
                 }
 
                 <span class="kw">let </span><span class="kw-2">mut </span>text = <span class="kw">match </span>row.edition {
                     <span class="prelude-val">Some</span>(val) =&gt; val.to_string(),
-                    <span class="prelude-val">None </span>=&gt; <span class="string">&quot;Unknown&quot;</span>.to_string(),
+                    <span class="prelude-val">None </span>=&gt; <span class="string">"Unknown"</span>.to_string(),
                 };
-                text.push_str(<span class="string">&quot; (&quot;</span>);
+                text.push_str(<span class="string">" ("</span>);
                 text.push_str(<span class="kw-2">&amp;</span>info);
-                text.push(<span class="string">&#39;)&#39;</span>);
+                text.push(<span class="string">')'</span>);
 
-                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;li&quot;</span>).ok());
+                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">"li"</span>).ok());
                 <span class="macro">check!</span>(item.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text)).ok());
                 <span class="macro">check!</span>(list.append_child(<span class="kw-2">&amp;</span>item).ok());
             }
@@ -404,49 +405,49 @@
             }
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">&quot;#track-info-length-data&quot;</span>).ok().flatten() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">"#track-info-length-data"</span>).ok().flatten() {
             <span class="comment">// remove all previous data
             </span><span class="kw">let </span>range = <span class="macro">check!</span>(document.create_range().ok());
             <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span>parent).ok());
             <span class="macro">check!</span>(range.delete_contents().ok());
 
-            <span class="kw">let </span>lines = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;p&quot;</span>).ok());
+            <span class="kw">let </span>lines = <span class="macro">check!</span>(document.create_element(<span class="string">"p"</span>).ok());
             <span class="macro">check!</span>(parent.append_child(<span class="kw-2">&amp;</span>lines).ok());
 
             <span class="kw">let </span><span class="kw-2">mut </span>text = String::new();
             <span class="kw">if </span>!track_tiles.is_empty() {
                 text.push_str(<span class="kw-2">&amp;</span>track_tiles.len().to_string());
-                text.push_str(<span class="string">&quot; track &quot;</span>);
+                text.push_str(<span class="string">" track "</span>);
                 <span class="kw">if </span>track_tiles.len() == <span class="number">1 </span>{
-                    text.push_str(<span class="string">&quot;tile&quot;</span>);
+                    text.push_str(<span class="string">"tile"</span>);
                 } <span class="kw">else </span>{
-                    text.push_str(<span class="string">&quot;tiles&quot;</span>);
+                    text.push_str(<span class="string">"tiles"</span>);
                 }
             }
             <span class="kw">if </span>!filler_tiles.is_empty() {
                 <span class="kw">if </span>!text.is_empty() {
-                    text.push_str(<span class="string">&quot;, &quot;</span>);
+                    text.push_str(<span class="string">", "</span>);
                 }
                 text.push_str(<span class="kw-2">&amp;</span>filler_tiles.len().to_string());
-                text.push_str(<span class="string">&quot; filler &quot;</span>);
+                text.push_str(<span class="string">" filler "</span>);
                 <span class="kw">if </span>filler_tiles.len() == <span class="number">1 </span>{
-                    text.push_str(<span class="string">&quot;tile&quot;</span>);
+                    text.push_str(<span class="string">"tile"</span>);
                 } <span class="kw">else </span>{
-                    text.push_str(<span class="string">&quot;tiles&quot;</span>);
+                    text.push_str(<span class="string">"tiles"</span>);
                 }
             }
             <span class="macro">check!</span>(lines.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text)).ok());
-            <span class="kw">let </span>linebreak = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;br&quot;</span>).ok());
+            <span class="kw">let </span>linebreak = <span class="macro">check!</span>(document.create_element(<span class="string">"br"</span>).ok());
             <span class="macro">check!</span>(lines.append_child(<span class="kw-2">&amp;</span>linebreak).ok());
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">&quot;#track-info-terrain-data&quot;</span>).ok().flatten() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">"#track-info-terrain-data"</span>).ok().flatten() {
             <span class="comment">// remove all previous data
             </span><span class="kw">let </span>range = <span class="macro">check!</span>(document.create_range().ok());
             <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span>parent).ok());
             <span class="macro">check!</span>(range.delete_contents().ok());
 
-            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;ul&quot;</span>).ok());
+            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">"ul"</span>).ok());
             <span class="macro">check!</span>(parent.append_child(<span class="kw-2">&amp;</span>list).ok());
 
             <span class="kw">let </span>total_count = track_tiles.len() <span class="kw">as </span>u32;
@@ -454,34 +455,34 @@
             <span class="kw">for </span>row <span class="kw">in </span>summary {
                 <span class="kw">let </span><span class="kw-2">mut </span>text = <span class="kw">match </span>row.terrain {
                     <span class="prelude-val">Some</span>(val) =&gt; val.to_string(),
-                    <span class="prelude-val">None </span>=&gt; <span class="string">&quot;Unknown&quot;</span>.to_string(),
+                    <span class="prelude-val">None </span>=&gt; <span class="string">"Unknown"</span>.to_string(),
                 };
-                text.push_str(<span class="string">&quot; (&quot;</span>);
+                text.push_str(<span class="string">" ("</span>);
                 text.push_str(<span class="kw-2">&amp;</span>row.tile_count.to_string());
                 <span class="kw">if </span>row.tile_count == <span class="number">1 </span>{
-                    text.push_str(<span class="string">&quot; tile&quot;</span>);
+                    text.push_str(<span class="string">" tile"</span>);
                 } <span class="kw">else </span>{
-                    text.push_str(<span class="string">&quot; tiles&quot;</span>);
+                    text.push_str(<span class="string">" tiles"</span>);
                 }
                 <span class="macro">assert!</span>(total_count &gt; <span class="number">0</span>);
                 <span class="kw">let </span>percent = row.tile_count * <span class="number">100 </span>/ total_count;
-                text.push_str(<span class="string">&quot;, &quot;</span>);
+                text.push_str(<span class="string">", "</span>);
                 text.push_str(<span class="kw-2">&amp;</span>percent.to_string());
-                text.push_str(<span class="string">&quot;%)&quot;</span>);
+                text.push_str(<span class="string">"%)"</span>);
 
-                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;li&quot;</span>).ok());
+                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">"li"</span>).ok());
                 <span class="macro">check!</span>(item.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text)).ok());
                 <span class="macro">check!</span>(list.append_child(<span class="kw-2">&amp;</span>item).ok());
             }
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">&quot;#track-info-danger-level-data&quot;</span>).ok().flatten() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(parent) = <span class="self">self</span>.inner.query_selector(<span class="string">"#track-info-danger-level-data"</span>).ok().flatten() {
             <span class="comment">// remove all previous data
             </span><span class="kw">let </span>range = <span class="macro">check!</span>(document.create_range().ok());
             <span class="macro">check!</span>(range.select_node_contents(<span class="kw-2">&amp;</span>parent).ok());
             <span class="macro">check!</span>(range.delete_contents().ok());
 
-            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;ul&quot;</span>).ok());
+            <span class="kw">let </span>list = <span class="macro">check!</span>(document.create_element(<span class="string">"ul"</span>).ok());
             <span class="macro">check!</span>(parent.append_child(<span class="kw-2">&amp;</span>list).ok());
 
             <span class="kw">let </span>total_count = track_tiles.len() <span class="kw">as </span>u32;
@@ -489,22 +490,22 @@
             <span class="kw">for </span>row <span class="kw">in </span>summary {
                 <span class="kw">let </span><span class="kw-2">mut </span>text = <span class="kw">match </span>row.danger_level {
                     <span class="prelude-val">Some</span>(val) =&gt; val.to_string(),
-                    <span class="prelude-val">None </span>=&gt; <span class="string">&quot;Unknown&quot;</span>.to_string(),
+                    <span class="prelude-val">None </span>=&gt; <span class="string">"Unknown"</span>.to_string(),
                 };
-                text.push_str(<span class="string">&quot; (&quot;</span>);
+                text.push_str(<span class="string">" ("</span>);
                 text.push_str(<span class="kw-2">&amp;</span>row.tile_count.to_string());
                 <span class="kw">if </span>row.tile_count == <span class="number">1 </span>{
-                    text.push_str(<span class="string">&quot; tile&quot;</span>);
+                    text.push_str(<span class="string">" tile"</span>);
                 } <span class="kw">else </span>{
-                    text.push_str(<span class="string">&quot; tiles&quot;</span>);
+                    text.push_str(<span class="string">" tiles"</span>);
                 }
                 <span class="macro">assert!</span>(total_count &gt; <span class="number">0</span>);
                 <span class="kw">let </span>percent = row.tile_count * <span class="number">100 </span>/ total_count;
-                text.push_str(<span class="string">&quot;, &quot;</span>);
+                text.push_str(<span class="string">", "</span>);
                 text.push_str(<span class="kw-2">&amp;</span>percent.to_string());
-                text.push_str(<span class="string">&quot;%)&quot;</span>);
+                text.push_str(<span class="string">"%)"</span>);
 
-                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;li&quot;</span>).ok());
+                <span class="kw">let </span>item = <span class="macro">check!</span>(document.create_element(<span class="string">"li"</span>).ok());
                 <span class="macro">check!</span>(item.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text)).ok());
                 <span class="macro">check!</span>(list.append_child(<span class="kw-2">&amp;</span>item).ok());
             }
@@ -516,9 +517,9 @@
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>document = <span class="self">self</span>.inner.owner_document().unwrap();
 
-        <span class="kw">let _ </span>= <span class="self">self</span>.close.remove_event_listener_with_callback(<span class="string">&quot;click&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.close.remove_event_listener_with_callback(<span class="string">"click"</span>,
             <span class="self">self</span>.close_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
+        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">"keydown"</span>,
             <span class="self">self</span>.keydown_cb.as_ref().unchecked_ref());
     }
 }

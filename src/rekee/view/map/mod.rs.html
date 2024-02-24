@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../rekee/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1141,13 +1142,6 @@
 <a href="#1141" id="1141">1141</a>
 <a href="#1142" id="1142">1142</a>
 <a href="#1143" id="1143">1143</a>
-<a href="#1144" id="1144">1144</a>
-<a href="#1145" id="1145">1145</a>
-<a href="#1146" id="1146">1146</a>
-<a href="#1147" id="1147">1147</a>
-<a href="#1148" id="1148">1148</a>
-<a href="#1149" id="1149">1149</a>
-<a href="#1150" id="1150">1150</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of the map and according event handlers.
 </span><span class="comment">//
@@ -1186,26 +1180,26 @@
 
 <span class="comment">//----------------------------------------------------------------------------
 
-</span><span class="kw">const </span>MAP_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">&quot;style.css&quot;</span>);
+</span><span class="kw">const </span>MAP_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">"style.css"</span>);
 <span class="kw">const </span>MAP_PADDING: f32 = <span class="number">15.0</span>;
 
 <span class="kw">fn </span>draw_grid_hex(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
     <span class="kw">let </span>corners = layout.hexagon_corners(pos);
     <span class="kw">let </span>points: Vec&lt;String&gt; = corners.iter()
-        .map(|p| <span class="macro">format!</span>(<span class="string">&quot;{:.1},{:.1}&quot;</span>, p.x(), p.y()))
+        .map(|p| <span class="macro">format!</span>(<span class="string">"{:.1},{:.1}"</span>, p.x(), p.y()))
         .collect();
-    <span class="kw">let </span>hex = document.create_element_ns(SVG_NS, <span class="string">&quot;polygon&quot;</span>)<span class="question-mark">?</span>;
-    hex.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;hex&quot;</span>)<span class="question-mark">?</span>;
-    hex.set_attribute(<span class="string">&quot;points&quot;</span>, <span class="kw-2">&amp;</span>points.join(<span class="string">&quot; &quot;</span>))<span class="question-mark">?</span>;
+    <span class="kw">let </span>hex = document.create_element_ns(SVG_NS, <span class="string">"polygon"</span>)<span class="question-mark">?</span>;
+    hex.set_attribute(<span class="string">"class"</span>, <span class="string">"hex"</span>)<span class="question-mark">?</span>;
+    hex.set_attribute(<span class="string">"points"</span>, <span class="kw-2">&amp;</span>points.join(<span class="string">" "</span>))<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(hex)
 }
 
 <span class="kw">fn </span>draw_label(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate, text: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
     <span class="kw">let </span>pos = pos.to_pixel(layout);
-    <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
-    label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)<span class="question-mark">?</span>;
-    label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="kw-2">&amp;</span>pos.x().to_string())<span class="question-mark">?</span>;
-    label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="kw-2">&amp;</span>pos.y().to_string())<span class="question-mark">?</span>;
+    <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">"text"</span>)<span class="question-mark">?</span>;
+    label.set_attribute(<span class="string">"class"</span>, <span class="string">"label"</span>)<span class="question-mark">?</span>;
+    label.set_attribute(<span class="string">"x"</span>, <span class="kw-2">&amp;</span>pos.x().to_string())<span class="question-mark">?</span>;
+    label.set_attribute(<span class="string">"y"</span>, <span class="kw-2">&amp;</span>pos.y().to_string())<span class="question-mark">?</span>;
     label.append_child(<span class="kw-2">&amp;</span>document.create_text_node(text))<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(label)
 }
@@ -1219,18 +1213,18 @@
 
 <span class="kw">impl </span>TitleInput {
     <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>inner = document.query_selector(<span class="string">&quot;#map-title .input&quot;</span>)<span class="question-mark">?
+        <span class="kw">let </span>inner = document.query_selector(<span class="string">"#map-title .input"</span>)<span class="question-mark">?
             </span>.and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
-            .ok_or(<span class="string">&quot;Cannot find map title input element&quot;</span>)<span class="question-mark">?</span>;
+            .ok_or(<span class="string">"Cannot find map title input element"</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>change_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::Event| {
             <span class="kw">let </span>input = <span class="macro">check!</span>(event.target()
                 .and_then(|target| target.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok()));
             <span class="kw">let </span>title = input.value();
-            <span class="macro">debug!</span>(<span class="string">&quot;map title changed: {}&quot;</span>, <span class="kw-2">&amp;</span>title);
+            <span class="macro">debug!</span>(<span class="string">"map title changed: {}"</span>, <span class="kw-2">&amp;</span>title);
             nuts::publish(UpdateTitleEvent { title });
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        inner.add_event_listener_with_callback(<span class="string">&quot;change&quot;</span>, change_cb.as_ref().unchecked_ref()).unwrap();
+        inner.add_event_listener_with_callback(<span class="string">"change"</span>, change_cb.as_ref().unchecked_ref()).unwrap();
 
         <span class="prelude-val">Ok</span>(TitleInput { inner, change_cb })
     }
@@ -1248,7 +1242,7 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>TitleInput {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;change&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">"change"</span>,
             <span class="self">self</span>.change_cb.as_ref().unchecked_ref());
     }
 }
@@ -1262,18 +1256,18 @@
 
 <span class="kw">impl </span>AuthorInput {
     <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>inner = document.query_selector(<span class="string">&quot;#map-author .input&quot;</span>)<span class="question-mark">?
+        <span class="kw">let </span>inner = document.query_selector(<span class="string">"#map-author .input"</span>)<span class="question-mark">?
             </span>.and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok())
-            .ok_or(<span class="string">&quot;Cannot find map author input element&quot;</span>)<span class="question-mark">?</span>;
+            .ok_or(<span class="string">"Cannot find map author input element"</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>change_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::Event| {
             <span class="kw">let </span>input = <span class="macro">check!</span>(event.target()
                 .and_then(|target| target.dyn_into::&lt;web_sys::HtmlInputElement&gt;().ok()));
             <span class="kw">let </span>author = input.value();
-            <span class="macro">debug!</span>(<span class="string">&quot;map author changed: {}&quot;</span>, <span class="kw-2">&amp;</span>author);
+            <span class="macro">debug!</span>(<span class="string">"map author changed: {}"</span>, <span class="kw-2">&amp;</span>author);
             nuts::publish(UpdateAuthorEvent { author });
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        inner.add_event_listener_with_callback(<span class="string">&quot;change&quot;</span>, change_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        inner.add_event_listener_with_callback(<span class="string">"change"</span>, change_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(AuthorInput { inner, change_cb })
     }
@@ -1291,7 +1285,7 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>AuthorInput {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;change&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">"change"</span>,
             <span class="self">self</span>.change_cb.as_ref().unchecked_ref());
     }
 }
@@ -1309,13 +1303,13 @@
         <span class="kw">let </span>corners = layout.hexagon_corners((<span class="number">0</span>, <span class="number">0</span>).into());
         <span class="kw">let </span>points: Vec&lt;String&gt; = corners.iter()
             .map(|p| <span class="kw-2">*</span>p - layout.origin())
-            .map(|p| <span class="macro">format!</span>(<span class="string">&quot;{:.1},{:.1}&quot;</span>, p.x(), p.y()))
+            .map(|p| <span class="macro">format!</span>(<span class="string">"{:.1},{:.1}"</span>, p.x(), p.y()))
             .collect();
-        <span class="kw">let </span>poly = document.create_element_ns(SVG_NS, <span class="string">&quot;polygon&quot;</span>)<span class="question-mark">?</span>;
-        poly.set_attribute(<span class="string">&quot;points&quot;</span>, <span class="kw-2">&amp;</span>points.join(<span class="string">&quot; &quot;</span>))<span class="question-mark">?</span>;
+        <span class="kw">let </span>poly = document.create_element_ns(SVG_NS, <span class="string">"polygon"</span>)<span class="question-mark">?</span>;
+        poly.set_attribute(<span class="string">"points"</span>, <span class="kw-2">&amp;</span>points.join(<span class="string">" "</span>))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>hex = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        hex.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;selected-hex is-print-hidden&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>hex = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        hex.set_attribute(<span class="string">"class"</span>, <span class="string">"selected-hex is-print-hidden"</span>)<span class="question-mark">?</span>;
         hex.set_hidden(<span class="bool-val">true</span>);
         hex.append_child(<span class="kw-2">&amp;</span>poly)<span class="question-mark">?</span>;
 
@@ -1325,7 +1319,7 @@
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
             nuts::publish(ShowMapDetailEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        hex.add_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>, dblclick_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
+        hex.add_event_listener_with_callback(<span class="string">"dblclick"</span>, dblclick_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(SelectedHex { inner: hex, pos: <span class="prelude-val">None</span>, dblclick_cb })
     }
@@ -1338,8 +1332,8 @@
     </span><span class="kw">fn </span>set_pos(<span class="kw-2">&amp;mut </span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: <span class="prelude-ty">Option</span>&lt;Coordinate&gt;) {
         <span class="kw">if </span>pos.is_some() &amp;&amp; pos != <span class="self">self</span>.pos {
             <span class="kw">let </span>pos = pos.unwrap().to_pixel(layout);
-            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y());
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span>transform).ok());
+            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span>transform).ok());
         }
         <span class="self">self</span>.set_hidden(pos.is_none());
         <span class="self">self</span>.pos = pos;
@@ -1347,9 +1341,9 @@
 
     <span class="kw">fn </span>set_draggable(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
         <span class="kw">if </span>value {
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">&quot;is-draggable&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().add_1(<span class="string">"is-draggable"</span>).ok());
         } <span class="kw">else </span>{
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">&quot;is-draggable&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.class_list().remove_1(<span class="string">"is-draggable"</span>).ok());
         }
     }
 }
@@ -1362,7 +1356,7 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>SelectedHex {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">&quot;dblclick&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.inner.remove_event_listener_with_callback(<span class="string">"dblclick"</span>,
             <span class="self">self</span>.dblclick_cb.as_ref().unchecked_ref());
     }
 }
@@ -1376,58 +1370,58 @@
 <span class="kw">impl </span>SelectedMenu {
     <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>pos = pos.to_pixel(layout);
-        <span class="kw">let </span>menu = document.create_element_ns(SVG_NS, <span class="string">&quot;foreignObject&quot;</span>)<span class="question-mark">?</span>;
-        menu.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;is-print-hidden&quot;</span>)<span class="question-mark">?</span>;
-        menu.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="kw-2">&amp;</span>(pos.x() - <span class="number">60.0</span>).to_string())<span class="question-mark">?</span>;
-        menu.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="kw-2">&amp;</span>(pos.y() + layout.size().y() - <span class="number">8.0</span>).to_string())<span class="question-mark">?</span>;
-        menu.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="string">&quot;120&quot;</span>)<span class="question-mark">?</span>;
-        menu.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="string">&quot;40&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>menu = document.create_element_ns(SVG_NS, <span class="string">"foreignObject"</span>)<span class="question-mark">?</span>;
+        menu.set_attribute(<span class="string">"class"</span>, <span class="string">"is-print-hidden"</span>)<span class="question-mark">?</span>;
+        menu.set_attribute(<span class="string">"x"</span>, <span class="kw-2">&amp;</span>(pos.x() - <span class="number">60.0</span>).to_string())<span class="question-mark">?</span>;
+        menu.set_attribute(<span class="string">"y"</span>, <span class="kw-2">&amp;</span>(pos.y() + layout.size().y() - <span class="number">8.0</span>).to_string())<span class="question-mark">?</span>;
+        menu.set_attribute(<span class="string">"width"</span>, <span class="string">"120"</span>)<span class="question-mark">?</span>;
+        menu.set_attribute(<span class="string">"height"</span>, <span class="string">"40"</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;rotate-selected-left-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"rotate-selected-left-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RotateSelectedTileLeftEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;mousedown&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"mousedown"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;rotate-selected-right-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"rotate-selected-right-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RotateSelectedTileRightEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;mousedown&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"mousedown"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;show-map-detail-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"show-map-detail-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
                 nuts::publish(ShowMapDetailEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;mousedown&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"mousedown"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;remove-selected-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"remove-selected-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RemoveSelectedTileEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;mousedown&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"mousedown"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
         <span class="comment">// extract menu element from document after all buttons have been assigned,
         // otherwise get_element_by_id() would not have been able to find the buttons
-        </span><span class="kw">let </span>inner = document.get_element_by_id(<span class="string">&quot;selected-menu&quot;</span>)
-            .ok_or(<span class="string">&quot;Cannot find &#39;#selected-menu&#39; element within page&quot;</span>)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>inner = document.get_element_by_id(<span class="string">"selected-menu"</span>)
+            .ok_or(<span class="string">"Cannot find '#selected-menu' element within page"</span>)<span class="question-mark">?</span>;
         menu.append_child(<span class="kw-2">&amp;</span>inner)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(SelectedMenu { inner: menu })
@@ -1435,8 +1429,8 @@
 
     <span class="kw">fn </span>set_pos(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate) {
         <span class="kw">let </span>pos = pos.to_pixel(layout);
-        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="kw-2">&amp;</span>(pos.x() - <span class="number">60.0</span>).to_string()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="kw-2">&amp;</span>(pos.y() + layout.size().y() - <span class="number">8.0</span>).to_string()).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"x"</span>, <span class="kw-2">&amp;</span>(pos.x() - <span class="number">60.0</span>).to_string()).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"y"</span>, <span class="kw-2">&amp;</span>(pos.y() + layout.size().y() - <span class="number">8.0</span>).to_string()).ok());
     }
 }
 
@@ -1460,19 +1454,19 @@
         <span class="kw">let </span>pos = Coordinate::new(<span class="number">0</span>, <span class="number">0</span>);
         <span class="kw">let </span>dir = Direction::D;
 
-        <span class="kw">let </span>img = document.create_element_ns(SVG_NS, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
-        img.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="string">&quot;arrow-down-circle.svg&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>img = document.create_element_ns(SVG_NS, <span class="string">"image"</span>)<span class="question-mark">?</span>;
+        img.set_attribute(<span class="string">"href"</span>, <span class="string">"arrow-down-circle.svg"</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>size = Point(<span class="number">16.0</span>, <span class="number">16.0</span>);
-        img.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="number">2.0 </span>* size.x()))<span class="question-mark">?</span>;
-        img.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="number">2.0 </span>* size.y()))<span class="question-mark">?</span>;
-        img.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, -size.x(), -size.y()))<span class="question-mark">?</span>;
+        img.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}"</span>, <span class="number">2.0 </span>* size.x()))<span class="question-mark">?</span>;
+        img.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}"</span>, <span class="number">2.0 </span>* size.y()))<span class="question-mark">?</span>;
+        img.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, -size.x(), -size.y()))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;active-hex is-print-hidden&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"class"</span>, <span class="string">"active-hex is-print-hidden"</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>inner_pos = pos.to_pixel(layout);
         <span class="kw">let </span>angle = layout.direction_to_angle(dir);
-        <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1}) rotate({:.0})&quot;</span>, inner_pos.x(), inner_pos.y(), angle);
-        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span>transform)<span class="question-mark">?</span>;
+        <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1}) rotate({:.0})"</span>, inner_pos.x(), inner_pos.y(), angle);
+        inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span>transform)<span class="question-mark">?</span>;
         inner.append_child(<span class="kw-2">&amp;</span>img)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(ActiveHex { inner, img, pos, dir })
@@ -1482,8 +1476,8 @@
         <span class="kw">if </span>pos != <span class="self">self</span>.pos || dir != <span class="self">self</span>.dir {
             <span class="kw">let </span>pos = pos.to_pixel(layout);
             <span class="kw">let </span>angle = layout.direction_to_angle(dir);
-            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1}) rotate({:.0})&quot;</span>, pos.x(), pos.y(), angle);
-            <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span>transform).ok());
+            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1}) rotate({:.0})"</span>, pos.x(), pos.y(), angle);
+            <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span>transform).ok());
         }
         <span class="self">self</span>.pos = pos;
         <span class="self">self</span>.dir = dir;
@@ -1492,13 +1486,13 @@
     <span class="kw">fn </span>set_hint(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hint: <span class="prelude-ty">Option</span>&lt;ConnectionHint&gt;) {
         <span class="kw">let </span>href = <span class="kw">match </span>hint {
             <span class="prelude-val">Some</span>(ConnectionHint::Left) =&gt;
-                <span class="string">&quot;arrow-return-left-circle.svg&quot;</span>,
+                <span class="string">"arrow-return-left-circle.svg"</span>,
             <span class="prelude-val">Some</span>(ConnectionHint::Right) =&gt;
-                <span class="string">&quot;arrow-return-right-circle.svg&quot;</span>,
+                <span class="string">"arrow-return-right-circle.svg"</span>,
             <span class="kw">_ </span>=&gt;
-                <span class="string">&quot;arrow-down-circle.svg&quot;</span>,
+                <span class="string">"arrow-down-circle.svg"</span>,
         };
-        <span class="macro">check!</span>(<span class="self">self</span>.img.set_attribute(<span class="string">&quot;href&quot;</span>, href).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.img.set_attribute(<span class="string">"href"</span>, href).ok());
     }
 }
 
@@ -1518,7 +1512,7 @@
 <span class="kw">impl </span>DraggedTile {
     <span class="kw">fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>inner = TileImageElement::new(document, layout, <span class="kw-2">&amp;</span>tile)<span class="question-mark">?</span>;
-        inner.set_id(<span class="string">&quot;dragged&quot;</span>);
+        inner.set_id(<span class="string">"dragged"</span>);
 
         <span class="prelude-val">Ok</span>(DraggedTile{ inner, tile })
     }
@@ -1528,8 +1522,8 @@
     }
 
     <span class="kw">fn </span>set_pos(<span class="kw-2">&amp;</span><span class="self">self</span>, pos: Point) {
-        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>,
-            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>,
+            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y())).ok());
     }
 }
 
@@ -1589,23 +1583,23 @@
         <span class="kw">let </span>height = (<span class="number">2.0 </span>* layout.origin().y()).round();
         <span class="kw">let </span>canvas_viewbox = Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, width, height);
 
-        <span class="kw">let </span>canvas = document.create_element_ns(SVG_NS, <span class="string">&quot;svg&quot;</span>)<span class="question-mark">?</span>;
-        canvas.set_id(<span class="string">&quot;map&quot;</span>);
-        canvas.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, canvas_viewbox.width <span class="kw">as </span>i32))<span class="question-mark">?</span>;
-        canvas.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, canvas_viewbox.height <span class="kw">as </span>i32))<span class="question-mark">?</span>;
-        canvas.set_attribute(<span class="string">&quot;viewBox&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} {} {} {}&quot;</span>,
+        <span class="kw">let </span>canvas = document.create_element_ns(SVG_NS, <span class="string">"svg"</span>)<span class="question-mark">?</span>;
+        canvas.set_id(<span class="string">"map"</span>);
+        canvas.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}px"</span>, canvas_viewbox.width <span class="kw">as </span>i32))<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}px"</span>, canvas_viewbox.height <span class="kw">as </span>i32))<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">"viewBox"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{} {} {} {}"</span>,
             canvas_viewbox.left <span class="kw">as </span>i32, canvas_viewbox.top <span class="kw">as </span>i32,
             canvas_viewbox.width <span class="kw">as </span>i32, canvas_viewbox.height <span class="kw">as </span>i32))<span class="question-mark">?</span>;
-        canvas.set_attribute(<span class="string">&quot;xmlns&quot;</span>, SVG_NS_STR)<span class="question-mark">?</span>;
+        canvas.set_attribute(<span class="string">"xmlns"</span>, SVG_NS_STR)<span class="question-mark">?</span>;
         parent.append_child(<span class="kw-2">&amp;</span>canvas)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>style = document.create_element_ns(SVG_NS, <span class="string">&quot;style&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>style = document.create_element_ns(SVG_NS, <span class="string">"style"</span>)<span class="question-mark">?</span>;
         style.append_child(<span class="kw-2">&amp;</span>document.create_text_node(MAP_STYLE))<span class="question-mark">?</span>;
         style.append_child(<span class="kw-2">&amp;</span>document.create_text_node(TILE_STYLE))<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>style)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>grid = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        grid.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;grid is-print-hidden&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>grid = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        grid.set_attribute(<span class="string">"class"</span>, <span class="string">"grid is-print-hidden"</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>map_radius = <span class="number">8</span>;
         <span class="kw">for </span>q <span class="kw">in </span>-map_radius..=map_radius {
             <span class="kw">let </span>r1 = i32::max(-map_radius, -q - map_radius);
@@ -1617,31 +1611,31 @@
         <span class="comment">// add some hexagon grid axis labels when compiling in development mode
         </span><span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions) {
             <span class="kw">let </span>label_radius = <span class="number">4</span>;
-            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(label_radius, <span class="number">0</span>), <span class="string">&quot;+q&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(label_radius, <span class="number">0</span>), <span class="string">"+q"</span>)<span class="question-mark">?</span>;
             grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
-            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(-label_radius, <span class="number">0</span>), <span class="string">&quot;-q&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(-label_radius, <span class="number">0</span>), <span class="string">"-q"</span>)<span class="question-mark">?</span>;
             grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
-            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, label_radius), <span class="string">&quot;+r&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, label_radius), <span class="string">"+r"</span>)<span class="question-mark">?</span>;
             grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
-            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, -label_radius), <span class="string">&quot;-r&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>label = draw_label(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span>layout, Coordinate::new(<span class="number">0</span>, -label_radius), <span class="string">"-r"</span>)<span class="question-mark">?</span>;
             grid.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
         }
         canvas.append_child(<span class="kw-2">&amp;</span>grid)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>tiles = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        tiles.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tiles&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tiles = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        tiles.set_attribute(<span class="string">"class"</span>, <span class="string">"tiles"</span>)<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>tiles)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>tokens = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        tokens.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tokens&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tokens = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        tokens.set_attribute(<span class="string">"class"</span>, <span class="string">"tokens"</span>)<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>tokens)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>labels = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        labels.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;labels&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>labels = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        labels.set_attribute(<span class="string">"class"</span>, <span class="string">"labels"</span>)<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>labels)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>pacenotes = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        pacenotes.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;pacenotes&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>pacenotes = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        pacenotes.set_attribute(<span class="string">"class"</span>, <span class="string">"pacenotes"</span>)<span class="question-mark">?</span>;
         canvas.append_child(<span class="kw-2">&amp;</span>pacenotes)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>title = TitleInput::new(<span class="kw-2">&amp;</span>document)<span class="question-mark">?</span>;
@@ -1671,55 +1665,48 @@
             <span class="comment">// ignore keyboard events that have input controls as target
             </span><span class="kw">let </span>target = <span class="macro">check!</span>(event.target()
                 .and_then(|target| target.dyn_into::&lt;web_sys::HtmlElement&gt;().ok()));
-            <span class="kw">let </span>is_text_input_target =
-                target.dyn_ref::&lt;web_sys::HtmlInputElement&gt;()
-                    .map_or(<span class="bool-val">false</span>, |elm| !elm.read_only()) ||
-                target.dyn_ref::&lt;web_sys::HtmlTextAreaElement&gt;()
-                    .map_or(<span class="bool-val">false</span>, |elm| !elm.read_only()) ||
-                target.has_type::&lt;web_sys::HtmlSelectElement&gt;() ||
-                target.is_content_editable();
-            <span class="kw">if </span>is_text_input_target {
+            <span class="kw">if </span>target.is_text_input_target() {
                 <span class="kw">return</span>;
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;l&quot;</span>) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"l"</span>) {
                 <span class="kw">let </span>label_type = LabelType::None;
                 <span class="kw">let </span>active = <span class="kw">match </span>event.type_().as_ref() {
-                    <span class="string">&quot;keydown&quot; </span>=&gt; <span class="bool-val">true</span>,
-                    <span class="string">&quot;keyup&quot; </span>=&gt; <span class="bool-val">false</span>,
+                    <span class="string">"keydown" </span>=&gt; <span class="bool-val">true</span>,
+                    <span class="string">"keyup" </span>=&gt; <span class="bool-val">false</span>,
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 };
                 nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;n&quot;</span>) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"n"</span>) {
                 <span class="kw">let </span>label_type = LabelType::Number;
                 <span class="kw">let </span>active = <span class="kw">match </span>event.type_().as_ref() {
-                    <span class="string">&quot;keydown&quot; </span>=&gt; <span class="bool-val">true</span>,
-                    <span class="string">&quot;keyup&quot; </span>=&gt; <span class="bool-val">false</span>,
+                    <span class="string">"keydown" </span>=&gt; <span class="bool-val">true</span>,
+                    <span class="string">"keyup" </span>=&gt; <span class="bool-val">false</span>,
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 };
                 nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;p&quot;</span>) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"p"</span>) {
                 <span class="kw">let </span>label_type = LabelType::Pacenote;
                 <span class="kw">let </span>active = <span class="kw">match </span>event.type_().as_ref() {
-                    <span class="string">&quot;keydown&quot; </span>=&gt; <span class="bool-val">true</span>,
-                    <span class="string">&quot;keyup&quot; </span>=&gt; <span class="bool-val">false</span>,
+                    <span class="string">"keydown" </span>=&gt; <span class="bool-val">true</span>,
+                    <span class="string">"keyup" </span>=&gt; <span class="bool-val">false</span>,
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 };
                 nuts::publish(ToggleTileLabelsEvent { label_type, active });
             }
-            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">&quot;t&quot;</span>) {
+            <span class="kw">if </span>event.key().eq_ignore_ascii_case(<span class="string">"t"</span>) {
                 <span class="kw">let </span>active = <span class="kw">match </span>event.type_().as_ref() {
-                    <span class="string">&quot;keydown&quot; </span>=&gt; <span class="bool-val">true</span>,
-                    <span class="string">&quot;keyup&quot; </span>=&gt; <span class="bool-val">false</span>,
+                    <span class="string">"keydown" </span>=&gt; <span class="bool-val">true</span>,
+                    <span class="string">"keyup" </span>=&gt; <span class="bool-val">false</span>,
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 };
                 nuts::publish(ToggleTileTokensEvent { active });
             }
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        document.add_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
+        document.add_event_listener_with_callback(<span class="string">"keydown"</span>,
             keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
-        document.add_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
+        document.add_event_listener_with_callback(<span class="string">"keyup"</span>,
             keychange_cb.as_ref().unchecked_ref())<span class="question-mark">?</span>;
 
         <span class="comment">// add drag-n-drop event handlers to canvas element
@@ -1728,7 +1715,7 @@
             nuts::publish(UpdateSelectedTileEvent { pos });
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(DragMapTileBeginEvent { pos });
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        canvas.add_event_listener_with_callback(<span class="string">&quot;mousedown&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        canvas.add_event_listener_with_callback(<span class="string">"mousedown"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
         <span class="kw">let </span>dragged_mousemove_cb = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
@@ -1747,58 +1734,58 @@
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(DragMapTileCancelEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;align-center-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"align-center-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(AlignCenterEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;rotate-map-left-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"rotate-map-left-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RotateMapLeftEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;rotate-map-right-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"rotate-map-right-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
                 nuts::publish(RotateMapRightEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">&quot;track-info-button&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(btn) = document.get_element_by_id(<span class="string">"track-info-button"</span>) {
             <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
                 nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
                 nuts::publish(ShowTrackInfoEvent);
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-            btn.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
         <span class="comment">// remember original HTML document title (application name)
         </span><span class="kw">let </span>document_title = document.title();
 
-        <span class="kw">let </span>control = document.get_element_by_id(<span class="string">&quot;clear-map-button&quot;</span>).unwrap()
+        <span class="kw">let </span>control = document.get_element_by_id(<span class="string">"clear-map-button"</span>).unwrap()
             .dyn_into::&lt;web_sys::HtmlElement&gt;().unwrap();
         <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
             nuts::publish(ClearMapEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        control.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        control.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
-        control.remove_attribute(<span class="string">&quot;disabled&quot;</span>).unwrap();
+        control.remove_attribute(<span class="string">"disabled"</span>).unwrap();
 
         <span class="comment">// add event handler(s) to file input element
-        </span><span class="kw">let </span>input = document.get_element_by_id(<span class="string">&quot;upload&quot;</span>).unwrap()
+        </span><span class="kw">let </span>input = document.get_element_by_id(<span class="string">"upload"</span>).unwrap()
             .dyn_into::&lt;web_sys::HtmlElement&gt;().unwrap();
         <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|event: web_sys::Event| {
             <span class="kw">let </span>input = <span class="macro">check!</span>(event.target()
@@ -1810,51 +1797,51 @@
                 <span class="kw">move </span>|_event: web_sys::Event| {
                     <span class="kw">let </span>result = <span class="macro">check!</span>(reader.result().ok());
                     <span class="kw">let </span>data = <span class="macro">check!</span>(result.as_string());
-                    <span class="macro">debug!</span>(<span class="string">&quot;input file data: {}&quot;</span>, <span class="kw-2">&amp;</span>data);
+                    <span class="macro">debug!</span>(<span class="string">"input file data: {}"</span>, <span class="kw-2">&amp;</span>data);
                     <span class="kw">let </span>map = <span class="kw">match </span>import::import_auto(<span class="kw-2">&amp;</span>data) {
                         <span class="prelude-val">Ok</span>(val) =&gt; val,
                         <span class="prelude-val">Err</span>(err) =&gt; {
-                            <span class="macro">warn!</span>(<span class="string">&quot;Cannot import file data: {}&quot;</span>, err);
+                            <span class="macro">warn!</span>(<span class="string">"Cannot import file data: {}"</span>, err);
                             <span class="kw">return</span>;
                         },
                     };
                     nuts::publish(ImportFileEvent { map });
                 }
             }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw">_</span>)&gt;);
-            reader.add_event_listener_with_callback(<span class="string">&quot;load&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
-            reader.read_as_text(<span class="kw-2">&amp;</span>file).expect(<span class="string">&quot;file not readable&quot;</span>);
+            reader.add_event_listener_with_callback(<span class="string">"load"</span>, callback.as_ref().unchecked_ref()).unwrap();
+            reader.read_as_text(<span class="kw-2">&amp;</span>file).expect(<span class="string">"file not readable"</span>);
             callback.forget();
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        input.add_event_listener_with_callback(<span class="string">&quot;change&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        input.add_event_listener_with_callback(<span class="string">"change"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
-        input.remove_attribute(<span class="string">&quot;disabled&quot;</span>).unwrap();
+        input.remove_attribute(<span class="string">"disabled"</span>).unwrap();
 
-        <span class="kw">let </span>download_button = document.get_element_by_id(<span class="string">&quot;download-map-button&quot;</span>).unwrap()
+        <span class="kw">let </span>download_button = document.get_element_by_id(<span class="string">"download-map-button"</span>).unwrap()
             .dyn_into::&lt;web_sys::HtmlElement&gt;().unwrap();
         <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
             nuts::publish(ExportFileEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        download_button.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        download_button.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        <span class="kw">let </span>export_button = document.get_element_by_id(<span class="string">&quot;export-image-button&quot;</span>).unwrap()
+        <span class="kw">let </span>export_button = document.get_element_by_id(<span class="string">"export-image-button"</span>).unwrap()
             .dyn_into::&lt;web_sys::HtmlElement&gt;().unwrap();
         <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
             nuts::publish(ExportImageEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        export_button.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        export_button.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
 
-        <span class="kw">let </span>settings_button = document.get_element_by_id(<span class="string">&quot;map-config-button&quot;</span>).unwrap()
+        <span class="kw">let </span>settings_button = document.get_element_by_id(<span class="string">"map-config-button"</span>).unwrap()
             .dyn_into::&lt;web_sys::HtmlElement&gt;().unwrap();
         <span class="kw">let </span>callback = Closure::wrap(Box::new(<span class="kw">move </span>|_event: web_sys::Event| {
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
             nuts::publish(ShowMapConfigEvent);
         }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn(<span class="kw">_</span>)&gt;);
-        settings_button.add_event_listener_with_callback(<span class="string">&quot;click&quot;</span>, callback.as_ref().unchecked_ref()).unwrap();
+        settings_button.add_event_listener_with_callback(<span class="string">"click"</span>, callback.as_ref().unchecked_ref()).unwrap();
         callback.forget();
-        settings_button.remove_attribute(<span class="string">&quot;disabled&quot;</span>).unwrap();
+        settings_button.remove_attribute(<span class="string">"disabled"</span>).unwrap();
 
         <span class="kw">let </span><span class="kw-2">mut </span>view = MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
@@ -1897,21 +1884,21 @@
         <span class="kw">let </span>data = <span class="kw">match </span>import::export_rgt(<span class="kw-2">&amp;</span><span class="self">self</span>.map) {
             <span class="prelude-val">Ok</span>(val) =&gt; val,
             <span class="prelude-val">Err</span>(err) =&gt; {
-                <span class="macro">warn!</span>(<span class="string">&quot;Cannot export file data: {}&quot;</span>, err);
+                <span class="macro">warn!</span>(<span class="string">"Cannot export file data: {}"</span>, err);
                 <span class="kw">return</span>;
             },
         };
-        <span class="kw">let </span><span class="kw-2">mut </span>url = String::from(<span class="string">&quot;data:text/json;charset=utf-8,&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>url = String::from(<span class="string">"data:text/json;charset=utf-8,"</span>);
         url.push_str(<span class="kw-2">&amp;</span>String::from(js_sys::encode_uri_component(<span class="kw-2">&amp;</span>data)));
 
         <span class="kw">let </span>document = <span class="self">self</span>.canvas.owner_document().unwrap();
-        <span class="kw">let </span>anchor = <span class="macro">check!</span>(document.create_element(<span class="string">&quot;a&quot;</span>).ok()
+        <span class="kw">let </span>anchor = <span class="macro">check!</span>(document.create_element(<span class="string">"a"</span>).ok()
             .and_then(|elm| elm.dyn_into::&lt;web_sys::HtmlElement&gt;().ok()));
         anchor.set_hidden(<span class="bool-val">true</span>);
-        <span class="macro">check!</span>(anchor.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span>url).ok());
+        <span class="macro">check!</span>(anchor.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span>url).ok());
         <span class="kw">let </span><span class="kw-2">mut </span>file_name = import::build_file_name(<span class="self">self</span>.map.title());
-        file_name.push_str(<span class="string">&quot;.rgt&quot;</span>);
-        <span class="macro">check!</span>(anchor.set_attribute(<span class="string">&quot;download&quot;</span>, <span class="kw-2">&amp;</span>file_name).ok());
+        file_name.push_str(<span class="string">".rgt"</span>);
+        <span class="macro">check!</span>(anchor.set_attribute(<span class="string">"download"</span>, <span class="kw-2">&amp;</span>file_name).ok());
         <span class="macro">check!</span>(document.body().unwrap().append_child(<span class="kw-2">&amp;</span>anchor).ok());
         anchor.click();
         <span class="macro">check!</span>(document.body().unwrap().remove_child(<span class="kw-2">&amp;</span>anchor).ok());
@@ -1968,16 +1955,16 @@
         map_area.top = map_area.top.floor();
         map_area.width = map_area.width.ceil();
         map_area.height = map_area.height.ceil();
-        <span class="macro">debug!</span>(<span class="string">&quot;map area: {:?}, layout origin: {:?}&quot;</span>, map_area, <span class="self">self</span>.layout.origin());
+        <span class="macro">debug!</span>(<span class="string">"map area: {:?}, layout origin: {:?}"</span>, map_area, <span class="self">self</span>.layout.origin());
 
         <span class="comment">// then update the SVG viewport properties
         </span><span class="kw">let </span>width = (<span class="number">2.0 </span>* <span class="self">self</span>.layout.origin().x()).round();
         <span class="kw">let </span>height = (<span class="number">2.0 </span>* <span class="self">self</span>.layout.origin().y()).round();
         <span class="kw">let </span>canvas_viewbox = Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, width, height)
             .union(<span class="kw-2">&amp;</span>map_area);
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, canvas_viewbox.width <span class="kw">as </span>i32)).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}px&quot;</span>, canvas_viewbox.height <span class="kw">as </span>i32)).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">&quot;viewBox&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} {} {} {}&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}px"</span>, canvas_viewbox.width <span class="kw">as </span>i32)).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}px"</span>, canvas_viewbox.height <span class="kw">as </span>i32)).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.set_attribute(<span class="string">"viewBox"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{} {} {} {}"</span>,
             canvas_viewbox.left <span class="kw">as </span>i32, canvas_viewbox.top <span class="kw">as </span>i32,
             canvas_viewbox.width <span class="kw">as </span>i32, canvas_viewbox.height <span class="kw">as </span>i32)).ok());
         <span class="self">self</span>.canvas_viewbox = canvas_viewbox;
@@ -2033,18 +2020,18 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>document_title = String::with_capacity(<span class="number">100</span>);
         document_title.push_str(<span class="self">self</span>.map.title());
         <span class="kw">if </span>!document_title.is_empty() {
-            document_title.push_str(<span class="string">&quot; - &quot;</span>);
+            document_title.push_str(<span class="string">" - "</span>);
         }
         document_title.push_str(<span class="kw-2">&amp;</span><span class="self">self</span>.document_title);
         document.set_title(<span class="kw-2">&amp;</span>document_title);
 
         <span class="comment">// update button states
         </span><span class="kw">if </span><span class="self">self</span>.map.tiles().is_empty() {
-            <span class="macro">check!</span>(<span class="self">self</span>.download_button.set_attribute(<span class="string">&quot;disabled&quot;</span>, <span class="string">&quot;&quot;</span>).ok());
-            <span class="macro">check!</span>(<span class="self">self</span>.export_button.set_attribute(<span class="string">&quot;disabled&quot;</span>, <span class="string">&quot;&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.download_button.set_attribute(<span class="string">"disabled"</span>, <span class="string">""</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.export_button.set_attribute(<span class="string">"disabled"</span>, <span class="string">""</span>).ok());
         } <span class="kw">else </span>{
-            <span class="macro">check!</span>(<span class="self">self</span>.download_button.remove_attribute(<span class="string">&quot;disabled&quot;</span>).ok());
-            <span class="macro">check!</span>(<span class="self">self</span>.export_button.remove_attribute(<span class="string">&quot;disabled&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.download_button.remove_attribute(<span class="string">"disabled"</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.export_button.remove_attribute(<span class="string">"disabled"</span>).ok());
         }
 
         <span class="comment">// update catalog tile usage counters
@@ -2073,7 +2060,7 @@
 
     <span class="kw">pub fn </span>update_background_grid(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
         <span class="kw">if </span>visible != !<span class="self">self</span>.grid.hidden() {
-            <span class="macro">debug!</span>(<span class="string">&quot;update background grid: {:?}&quot;</span>, visible);
+            <span class="macro">debug!</span>(<span class="string">"update background grid: {:?}"</span>, visible);
             <span class="self">self</span>.grid.set_hidden(!visible);
             nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
         }
@@ -2081,7 +2068,7 @@
 
     <span class="kw">pub fn </span>update_tile_labels(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label_type: LabelType) {
         <span class="kw">if </span>label_type != <span class="self">self</span>.label_type {
-            <span class="macro">debug!</span>(<span class="string">&quot;update map tile labels: {:?}&quot;</span>, label_type);
+            <span class="macro">debug!</span>(<span class="string">"update map tile labels: {:?}"</span>, label_type);
             <span class="self">self</span>.label_type = label_type;
             <span class="self">self</span>.update_map();
         }
@@ -2100,13 +2087,13 @@
         } <span class="kw">else </span>{
             label_type <span class="comment">// override
         </span>};
-        <span class="macro">info!</span>(<span class="string">&quot;toggle map tile labels: {:?}&quot;</span>, label_type);
+        <span class="macro">info!</span>(<span class="string">"toggle map tile labels: {:?}"</span>, label_type);
         <span class="self">self</span>.labels.set_hidden(label_type != LabelType::Number);
         <span class="self">self</span>.pacenotes.set_hidden(label_type != LabelType::Pacenote);
     }
 
     <span class="kw">pub fn </span>toggle_tile_tokens(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) {
-        <span class="macro">info!</span>(<span class="string">&quot;toggle map tile tokens: {:?}&quot;</span>, active);
+        <span class="macro">info!</span>(<span class="string">"toggle map tile tokens: {:?}"</span>, active);
         <span class="self">self</span>.tokens.set_hidden(active);
     }
 
@@ -2124,7 +2111,7 @@
     }
 
     <span class="kw">fn </span>inner_update_selected_tile(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: Coordinate) {
-        <span class="macro">debug!</span>(<span class="string">&quot;update selected tile: {:?}&quot;</span>, pos);
+        <span class="macro">debug!</span>(<span class="string">"update selected tile: {:?}"</span>, pos);
 
         <span class="kw">let </span>is_tile = <span class="self">self</span>.map.get(pos).is_some();
         <span class="kw">if </span><span class="self">self</span>.selected.pos() != <span class="prelude-val">Some</span>(pos) || is_tile {
@@ -2194,7 +2181,7 @@
             <span class="kw">return</span>;
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(tile) = <span class="self">self</span>.map.get(pos) {
-            <span class="macro">info!</span>(<span class="string">&quot;drag tile begin: {:?}&quot;</span>, tile);
+            <span class="macro">info!</span>(<span class="string">"drag tile begin: {:?}"</span>, tile);
             <span class="kw">let </span>document = <span class="macro">check!</span>(<span class="self">self</span>.canvas.owner_document());
             <span class="kw">let </span>dragged = <span class="macro">check!</span>(DraggedTile::new(<span class="kw-2">&amp;</span>document, <span class="kw-2">&amp;</span><span class="self">self</span>.layout, tile.clone()).ok());
             <span class="comment">// dragged element will be made visible later on mouse move to avoid flicker
@@ -2202,13 +2189,13 @@
             <span class="macro">check!</span>(<span class="self">self</span>.canvas.append_child(dragged.as_ref()).ok());
             <span class="self">self</span>.dragged = <span class="prelude-val">Some</span>(dragged);
 
-            <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().add_1(<span class="string">&quot;is-dragged&quot;</span>).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().add_1(<span class="string">"is-dragged"</span>).ok());
             <span class="self">self</span>.selected.set_draggable(<span class="bool-val">false</span>);
-            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">&quot;mousemove&quot;</span>,
+            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">"mousemove"</span>,
                 <span class="self">self</span>.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
-            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">&quot;mouseup&quot;</span>,
+            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">"mouseup"</span>,
                 <span class="self">self</span>.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
-            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">&quot;mouseleave&quot;</span>,
+            <span class="macro">check!</span>(<span class="self">self</span>.canvas.add_event_listener_with_callback(<span class="string">"mouseleave"</span>,
                 <span class="self">self</span>.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
         }
     }
@@ -2216,7 +2203,7 @@
     <span class="kw">pub fn </span>drag_tile_move(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: Point) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>dragged) = <span class="self">self</span>.dragged {
             <span class="kw">let </span>pos = <span class="self">self</span>.canvas_viewbox.top_left() + pos;
-            <span class="macro">debug!</span>(<span class="string">&quot;drag tile move: {:?}&quot;</span>, pos);
+            <span class="macro">debug!</span>(<span class="string">"drag tile move: {:?}"</span>, pos);
             dragged.set_pos(pos);
             <span class="comment">// make dragged element visible on first mouse move
             </span>dragged.set_hidden(<span class="bool-val">false</span>);
@@ -2230,7 +2217,7 @@
             <span class="kw">let </span>pos = Coordinate::from_pixel_rounded(<span class="kw-2">&amp;</span><span class="self">self</span>.layout,
                 <span class="self">self</span>.canvas_viewbox.top_left() + pos);
             <span class="kw">let </span>tile = dragged.tile();
-            <span class="macro">info!</span>(<span class="string">&quot;drag tile end: {:?} -&gt; {:?}&quot;</span>, tile, pos);
+            <span class="macro">info!</span>(<span class="string">"drag tile end: {:?} -&gt; {:?}"</span>, tile, pos);
             <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_child(dragged.as_ref()).ok());
             <span class="kw">if </span>pos != tile.pos {
                 <span class="self">self</span>.map.remove(tile.pos);
@@ -2243,36 +2230,36 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(tile) = added_tile {
             <span class="kw">let </span>pos = Coordinate::from_pixel_rounded(<span class="kw-2">&amp;</span><span class="self">self</span>.layout,
                 <span class="self">self</span>.canvas_viewbox.top_left() + pos);
-            <span class="macro">info!</span>(<span class="string">&quot;drag tile end: {:?} -&gt; {:?}&quot;</span>, tile, pos);
+            <span class="macro">info!</span>(<span class="string">"drag tile end: {:?} -&gt; {:?}"</span>, tile, pos);
             <span class="self">self</span>.map.append(tile, <span class="prelude-val">Some</span>(pos), <span class="prelude-val">None</span>);
             <span class="self">self</span>.update_map();
         }
 
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().remove_1(<span class="string">&quot;is-dragged&quot;</span>).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().remove_1(<span class="string">"is-dragged"</span>).ok());
         <span class="self">self</span>.selected.set_draggable(<span class="bool-val">true</span>);
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mousemove&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mousemove"</span>,
             <span class="self">self</span>.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseup&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseup"</span>,
             <span class="self">self</span>.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseleave&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseleave"</span>,
             <span class="self">self</span>.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
     }
 
     <span class="kw">pub fn </span>drag_tile_cancel(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>dragged) = <span class="self">self</span>.dragged {
             <span class="kw">let </span>tile = dragged.tile();
-            <span class="macro">info!</span>(<span class="string">&quot;drag tile cancel: {:?}&quot;</span>, tile);
+            <span class="macro">info!</span>(<span class="string">"drag tile cancel: {:?}"</span>, tile);
             <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_child(dragged.as_ref()).ok());
         }
         <span class="self">self</span>.dragged = <span class="prelude-val">None</span>;
 
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().remove_1(<span class="string">&quot;is-dragged&quot;</span>).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.class_list().remove_1(<span class="string">"is-dragged"</span>).ok());
         <span class="self">self</span>.selected.set_draggable(<span class="bool-val">true</span>);
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mousemove&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mousemove"</span>,
             <span class="self">self</span>.dragged_mousemove_cb.as_ref().unchecked_ref()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseup&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseup"</span>,
             <span class="self">self</span>.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseleave&quot;</span>,
+        <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseleave"</span>,
             <span class="self">self</span>.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
     }
 
@@ -2284,15 +2271,15 @@
 <span class="kw">impl </span>Drop <span class="kw">for </span>MapView {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>document = <span class="macro">check!</span>(<span class="self">self</span>.canvas.owner_document());
-        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keydown&quot;</span>,
+        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">"keydown"</span>,
             <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">&quot;keyup&quot;</span>,
+        <span class="kw">let _ </span>= document.remove_event_listener_with_callback(<span class="string">"keyup"</span>,
             <span class="self">self</span>.keychange_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mousemove&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mousemove"</span>,
             <span class="self">self</span>.dragged_mousemove_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseup&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseup"</span>,
             <span class="self">self</span>.dragged_mouseup_cb.as_ref().unchecked_ref());
-        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">&quot;mouseleave&quot;</span>,
+        <span class="kw">let _ </span>= <span class="self">self</span>.canvas.remove_event_listener_with_callback(<span class="string">"mouseleave"</span>,
             <span class="self">self</span>.dragged_mouseleave_cb.as_ref().unchecked_ref());
     }
 }

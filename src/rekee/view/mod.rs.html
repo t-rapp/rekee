@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rekee/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -436,6 +437,32 @@
 <a href="#436" id="436">436</a>
 <a href="#437" id="437">437</a>
 <a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
 </pre></div><pre class="rust"><code><span class="comment">//----------------------------------------------------------------------------
 </span><span class="doccomment">//! Rendering of objects and common functions.
 </span><span class="comment">//
@@ -498,9 +525,9 @@
 <span class="comment">//----------------------------------------------------------------------------
 
 </span><span class="kw">const </span>SVG_NS: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; = <span class="prelude-val">Some</span>(SVG_NS_STR);
-<span class="kw">const </span>SVG_NS_STR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;http://www.w3.org/2000/svg&quot;</span>;
+<span class="kw">const </span>SVG_NS_STR: <span class="kw-2">&amp;</span>str = <span class="string">"http://www.w3.org/2000/svg"</span>;
 
-<span class="kw">const </span>TILE_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">&quot;tile.css&quot;</span>);
+<span class="kw">const </span>TILE_STYLE: <span class="kw-2">&amp;</span>str = <span class="macro">include_str!</span>(<span class="string">"tile.css"</span>);
 
 <span class="kw">const </span>PACENOTE_LINE_HEIGHT: i32 = <span class="number">18</span>;
 <span class="kw">const </span>PACENOTE_WRAP_WIDTH: usize = <span class="number">12</span>;
@@ -523,7 +550,7 @@
 <span class="kw">fn </span>tile_number_text(tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; String {
     <span class="kw">let </span><span class="kw-2">mut </span>text = tile.id().base().to_string();
     <span class="kw">if </span>tile.has_flat_tokens() {
-        text.push(<span class="string">&#39;*&#39;</span>);
+        text.push(<span class="string">'*'</span>);
     }
     text
 }
@@ -534,13 +561,13 @@
     <span class="kw">for </span>pacenote <span class="kw">in </span>tile.pacenotes() {
         <span class="kw">let </span>pacenote = pacenote.to_string();
         <span class="kw">if </span>!line.is_empty() &amp;&amp; line.len() + pacenote.len() + <span class="number">1 </span>&gt;= wrap_width {
-            line.push(<span class="string">&#39;,&#39;</span>);
+            line.push(<span class="string">','</span>);
             text.push(line);
             line = String::new();
         }
         <span class="kw">if </span>!line.is_empty() {
-            line.push(<span class="string">&#39;,&#39;</span>);
-            line.push(<span class="string">&#39; &#39;</span>);
+            line.push(<span class="string">','</span>);
+            line.push(<span class="string">' '</span>);
         }
         line.push_str(<span class="kw-2">&amp;</span>pacenote);
     }
@@ -566,7 +593,7 @@
 
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all = <span class="string">&quot;lowercase&quot;</span>, try_from = <span class="string">&quot;&amp;str&quot;</span>)]
+#[serde(rename_all = <span class="string">"lowercase"</span>, try_from = <span class="string">"&amp;str"</span>)]
 </span><span class="kw">pub enum </span>LabelType {
     <span class="prelude-val">None</span>,
     Number,
@@ -583,11 +610,11 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             LabelType::None =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;None&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"None"</span>)<span class="question-mark">?</span>,
             LabelType::Number =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Number&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Number"</span>)<span class="question-mark">?</span>,
             LabelType::Pacenote =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Pacenote&quot;</span>)<span class="question-mark">?</span>,
+                <span class="macro">write!</span>(fmt, <span class="string">"Pacenote"</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -601,11 +628,11 @@
         </span><span class="kw">let </span>s = val.to_ascii_lowercase();
 
         <span class="kw">match </span>s.as_ref() {
-            <span class="string">&quot;none&quot; </span>=&gt;
+            <span class="string">"none" </span>=&gt;
                 <span class="prelude-val">Ok</span>(LabelType::None),
-            <span class="string">&quot;number&quot; </span>=&gt;
+            <span class="string">"number" </span>=&gt;
                 <span class="prelude-val">Ok</span>(LabelType::Number),
-            <span class="string">&quot;pacenote&quot; </span>=&gt;
+            <span class="string">"pacenote" </span>=&gt;
                 <span class="prelude-val">Ok</span>(LabelType::Pacenote),
             <span class="kw">_ </span>=&gt;
                 <span class="prelude-val">Err</span>(ParseLabelTypeError::Unknown(val.to_string())),
@@ -622,7 +649,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             ParseLabelTypeError::Unknown(val) =&gt;
-                <span class="macro">write!</span>(fmt, <span class="string">&quot;Unknown label type value \&quot;{}\&quot;&quot;</span>, val),
+                <span class="macro">write!</span>(fmt, <span class="string">"Unknown label type value \"{}\""</span>, val),
         }
     }
 }
@@ -644,26 +671,26 @@
 <span class="kw">impl </span>TileImageElement {
     <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
-        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"class"</span>, <span class="string">"tile"</span>)<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
             inner.set_danger_level_class(danger_level);
         }
-        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>size = util::tile_image_size(layout);
         <span class="kw">let </span>center = util::tile_image_center(layout);
         <span class="kw">let </span>angle = layout.direction_to_angle(tile.dir);
-        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">"image"</span>)<span class="question-mark">?</span>;
         <span class="kw">if </span>layout.size().x() &gt;= <span class="number">150.0 </span>|| layout.size().y() &gt;= <span class="number">150.0 </span>{
-            image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/tile-{:x}.webp&quot;</span>, tile.id()))<span class="question-mark">?</span>;
+            image.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"tiles/tile-{:x}.webp"</span>, tile.id()))<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
-            image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tiles/thumbs/tile-{:x}.webp&quot;</span>, tile.id()))<span class="question-mark">?</span>;
+            image.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"tiles/thumbs/tile-{:x}.webp"</span>, tile.id()))<span class="question-mark">?</span>;
         }
-        image.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, size.x()))<span class="question-mark">?</span>;
-        image.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:.0}&quot;</span>, size.y()))<span class="question-mark">?</span>;
-        image.set_attribute(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
-        image.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.0}) translate({:.1} {:.1})&quot;</span>, angle, -center.x(), -center.y()))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:.0}"</span>, size.x()))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:.0}"</span>, size.y()))<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">"image-rendering"</span>, <span class="string">"optimizeQuality"</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"rotate({:.0}) translate({:.1} {:.1})"</span>, angle, -center.x(), -center.y()))<span class="question-mark">?</span>;
         inner.append_child(<span class="kw-2">&amp;</span>image)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(TileImageElement { inner })
@@ -699,12 +726,12 @@
 <span class="kw">impl </span>TileLabelElement {
     <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
-        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"class"</span>, <span class="string">"tile"</span>)<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
             inner.set_danger_level_class(danger_level);
         }
-        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>label = <span class="self">Self</span>::create_label_element(document, tile)<span class="question-mark">?</span>;
         inner.append_child(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
@@ -713,10 +740,10 @@
     }
 
     <span class="kw">fn </span>create_label_element(document: <span class="kw-2">&amp;</span>Document, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
-        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;label&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">"text"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"class"</span>, <span class="string">"label"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"x"</span>, <span class="string">"0"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"y"</span>, <span class="string">"0"</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>text = tile_number_text(tile);
         label.append_child(<span class="kw-2">&amp;</span>document.create_text_node(<span class="kw-2">&amp;</span>text))<span class="question-mark">?</span>;
 
@@ -741,12 +768,12 @@
 <span class="kw">impl </span>TilePacenoteElement {
     <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>pos = tile.pos.to_pixel(layout);
-        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;tile&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"class"</span>, <span class="string">"tile"</span>)<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(danger_level) = tile.danger_level() {
             inner.set_danger_level_class(danger_level);
         }
-        inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.1} {:.1})&quot;</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>pacenote = <span class="self">Self</span>::create_pacenote_element(document, tile)<span class="question-mark">?</span>;
         inner.append_child(<span class="kw-2">&amp;</span>pacenote)<span class="question-mark">?</span>;
@@ -755,19 +782,19 @@
     }
 
     <span class="kw">fn </span>create_pacenote_element(document: <span class="kw-2">&amp;</span>Document, tile: <span class="kw-2">&amp;</span>PlacedTile) -&gt; <span class="prelude-ty">Result</span>&lt;Element&gt; {
-        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">&quot;text&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;pacenote&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
-        label.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>label = document.create_element_ns(SVG_NS, <span class="string">"text"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"class"</span>, <span class="string">"pacenote"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"x"</span>, <span class="string">"0"</span>)<span class="question-mark">?</span>;
+        label.set_attribute(<span class="string">"y"</span>, <span class="string">"0"</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>text = tile_pacenote_text(tile, PACENOTE_WRAP_WIDTH);
         <span class="kw">let </span>text_height = PACENOTE_LINE_HEIGHT * text.len().saturating_sub(<span class="number">1</span>) <span class="kw">as </span>i32;
         <span class="kw">let </span><span class="kw-2">mut </span>line_y = -text_height / <span class="number">2</span>;
         <span class="kw">for </span>line <span class="kw">in </span><span class="kw-2">&amp;</span>text {
-            <span class="kw">let </span>tspan = document.create_element_ns(SVG_NS, <span class="string">&quot;tspan&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>tspan = document.create_element_ns(SVG_NS, <span class="string">"tspan"</span>)<span class="question-mark">?</span>;
             tspan.append_child(<span class="kw-2">&amp;</span>document.create_text_node(line))<span class="question-mark">?</span>;
-            tspan.set_attribute(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;0&quot;</span>)<span class="question-mark">?</span>;
-            tspan.set_attribute(<span class="string">&quot;y&quot;</span>, <span class="kw-2">&amp;</span>line_y.to_string())<span class="question-mark">?</span>;
+            tspan.set_attribute(<span class="string">"x"</span>, <span class="string">"0"</span>)<span class="question-mark">?</span>;
+            tspan.set_attribute(<span class="string">"y"</span>, <span class="kw-2">&amp;</span>line_y.to_string())<span class="question-mark">?</span>;
             label.append_child(<span class="kw-2">&amp;</span>tspan)<span class="question-mark">?</span>;
             line_y += PACENOTE_LINE_HEIGHT;
         }
@@ -793,11 +820,11 @@
 
 <span class="kw">impl </span>TokenImageElement {
     <span class="kw">pub fn </span>new(document: <span class="kw-2">&amp;</span>Document, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">&quot;g&quot;</span>)<span class="question-mark">?</span>;
-        inner.set_attribute(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;token&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = document.create_element_ns(SVG_NS, <span class="string">"g"</span>)<span class="question-mark">?</span>;
+        inner.set_attribute(<span class="string">"class"</span>, <span class="string">"token"</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">&quot;image&quot;</span>)<span class="question-mark">?</span>;
-        image.set_attribute(<span class="string">&quot;image-rendering&quot;</span>, <span class="string">&quot;optimizeQuality&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>image = document.create_element_ns(SVG_NS, <span class="string">"image"</span>)<span class="question-mark">?</span>;
+        image.set_attribute(<span class="string">"image-rendering"</span>, <span class="string">"optimizeQuality"</span>)<span class="question-mark">?</span>;
         inner.append_child(<span class="kw-2">&amp;</span>image)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>element = TokenImageElement { inner, image };
@@ -807,24 +834,24 @@
 
     <span class="kw">pub fn </span>set_token(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token: <span class="kw-2">&amp;</span>PlacedToken) {
         <span class="kw">let </span>pos = (FloatCoordinate::from(tile.pos) + token.pos.rotate(tile.dir)).to_pixel(layout);
-        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.3} {:.3})"</span>, pos.x(), pos.y())).ok());
 
         <span class="kw">let </span>size = util::token_image_size(layout, token.id);
         <span class="kw">let </span>center = util::token_image_center(layout, token.id);
         <span class="kw">let </span>angle = layout.direction_to_angle(FloatDirection::from(tile.dir) + token.dir);
         <span class="kw">if </span>layout.size().x() &gt;= <span class="number">150.0 </span>|| layout.size().y() &gt;= <span class="number">150.0 </span>{
-            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/{:x}.webp&quot;</span>, token.id)).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"tokens/{:x}.webp"</span>, token.id)).ok());
         } <span class="kw">else </span>{
-            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;href&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;tokens/thumbs/{:x}.webp&quot;</span>, token.id)).ok());
+            <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">"href"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"tokens/thumbs/{:x}.webp"</span>, token.id)).ok());
         }
-        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;width&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, size.x())).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;height&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, size.y())).ok());
-        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;rotate({:.1}) translate({:.3} {:.3})&quot;</span>, angle, -center.x(), -center.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">"width"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}"</span>, size.x())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">"height"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}"</span>, size.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.image.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"rotate({:.1}) translate({:.3} {:.3})"</span>, angle, -center.x(), -center.y())).ok());
     }
 
     <span class="kw">pub fn </span>set_token_pos(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, tile: <span class="kw-2">&amp;</span>PlacedTile, token_pos: FloatCoordinate) {
         <span class="kw">let </span>pos = (FloatCoordinate::from(tile.pos) + token_pos.rotate(tile.dir)).to_pixel(layout);
-        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">&quot;transform&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;translate({:.3} {:.3})&quot;</span>, pos.x(), pos.y())).ok());
+        <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"translate({:.3} {:.3})"</span>, pos.x(), pos.y())).ok());
     }
 }
 
@@ -846,16 +873,42 @@
 <span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementHidden <span class="kw">for </span>T {
     <span class="kw">fn </span>hidden(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">let </span>elm = <span class="self">self</span>.as_ref();
-        elm.class_list().contains(<span class="string">&quot;is-hidden&quot;</span>)
+        elm.class_list().contains(<span class="string">"is-hidden"</span>)
     }
 
     <span class="kw">fn </span>set_hidden(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
         <span class="kw">let </span>elm = <span class="self">self</span>.as_ref();
         <span class="kw">if </span>value {
-            <span class="macro">check!</span>(elm.class_list().add_1(<span class="string">&quot;is-hidden&quot;</span>).ok());
+            <span class="macro">check!</span>(elm.class_list().add_1(<span class="string">"is-hidden"</span>).ok());
         } <span class="kw">else </span>{
-            <span class="macro">check!</span>(elm.class_list().remove_1(<span class="string">&quot;is-hidden&quot;</span>).ok());
+            <span class="macro">check!</span>(elm.class_list().remove_1(<span class="string">"is-hidden"</span>).ok());
         }
+    }
+}
+
+<span class="comment">//----------------------------------------------------------------------------
+
+</span><span class="kw">trait </span>ElementTextInputTarget {
+    <span class="kw">fn </span>is_text_input_target(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+}
+
+<span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementTextInputTarget <span class="kw">for </span>T {
+    <span class="kw">fn </span>is_text_input_target(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">let </span>element = <span class="self">self</span>.as_ref();
+        <span class="comment">// element is an editable input control
+        </span>element.dyn_ref::&lt;web_sys::HtmlInputElement&gt;()
+            .map_or(<span class="bool-val">false</span>, |element| {
+                <span class="kw">let </span>non_editable_types = [<span class="string">"button"</span>, <span class="string">"file"</span>, <span class="string">"hidden"</span>, <span class="string">"reset"</span>, <span class="string">"submit"</span>];
+                !element.read_only() &amp;&amp; !non_editable_types.contains(<span class="kw-2">&amp;</span>element.type_().as_ref())
+            }) ||
+        <span class="comment">// element is an text-area (memo) input control
+        </span>element.dyn_ref::&lt;web_sys::HtmlTextAreaElement&gt;()
+            .map_or(<span class="bool-val">false</span>, |element| !element.read_only()) ||
+        <span class="comment">// element is a drop-down selection list
+        </span>element.has_type::&lt;web_sys::HtmlSelectElement&gt;() ||
+        <span class="comment">// custom element which was made editable
+        </span>element.dyn_ref::&lt;web_sys::HtmlElement&gt;()
+            .map_or(<span class="bool-val">false</span>, |element| element.is_content_editable())
     }
 }
 
@@ -868,7 +921,7 @@
 <span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementDangerLevel <span class="kw">for </span>T {
     <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) {
         <span class="kw">let </span>element = <span class="self">self</span>.as_ref();
-        <span class="kw">let </span>class_name = <span class="macro">format!</span>(<span class="string">&quot;danger-level-{:x}&quot;</span>, danger_level);
+        <span class="kw">let </span>class_name = <span class="macro">format!</span>(<span class="string">"danger-level-{:x}"</span>, danger_level);
         <span class="macro">check!</span>(element.class_list().add_1(<span class="kw-2">&amp;</span>class_name).ok());
     }
 }
