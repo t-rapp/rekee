@@ -423,6 +423,32 @@ impl<T: AsRef<Element>> ElementHidden for T {
 
 //----------------------------------------------------------------------------
 
+trait ElementTextInputTarget {
+    fn is_text_input_target(&self) -> bool;
+}
+
+impl<T: AsRef<Element>> ElementTextInputTarget for T {
+    fn is_text_input_target(&self) -> bool {
+        let element = self.as_ref();
+        // element is an editable input control
+        element.dyn_ref::<web_sys::HtmlInputElement>()
+            .map_or(false, |element| {
+                let non_editable_types = ["button", "file", "hidden", "reset", "submit"];
+                !element.read_only() && !non_editable_types.contains(&element.type_().as_ref())
+            }) ||
+        // element is an text-area (memo) input control
+        element.dyn_ref::<web_sys::HtmlTextAreaElement>()
+            .map_or(false, |element| !element.read_only()) ||
+        // element is a drop-down selection list
+        element.has_type::<web_sys::HtmlSelectElement>() ||
+        // custom element which was made editable
+        element.dyn_ref::<web_sys::HtmlElement>()
+            .map_or(false, |element| element.is_content_editable())
+    }
+}
+
+//----------------------------------------------------------------------------
+
 trait ElementDangerLevel {
     fn set_danger_level_class(&self, danger_level: DangerLevel);
 }

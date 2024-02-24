@@ -521,14 +521,7 @@ impl MapView {
             // ignore keyboard events that have input controls as target
             let target = check!(event.target()
                 .and_then(|target| target.dyn_into::<web_sys::HtmlElement>().ok()));
-            let is_text_input_target =
-                target.dyn_ref::<web_sys::HtmlInputElement>()
-                    .map_or(false, |elm| !elm.read_only()) ||
-                target.dyn_ref::<web_sys::HtmlTextAreaElement>()
-                    .map_or(false, |elm| !elm.read_only()) ||
-                target.has_type::<web_sys::HtmlSelectElement>() ||
-                target.is_content_editable();
-            if is_text_input_target {
+            if target.is_text_input_target() {
                 return;
             }
             if event.key().eq_ignore_ascii_case("l") {
