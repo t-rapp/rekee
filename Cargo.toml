@@ -8,7 +8,7 @@ homepage = "https://rekee.net"
 repository = "https://github.com/t-rapp/rekee"
 license = "MPL-2.0"
 build = "build.rs"
-rust-version = "1.56.1"
+rust-version = "1.61.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
