@@ -915,9 +915,10 @@ impl MapView {
     }
 
     pub fn update_background_grid(&mut self, visible: bool) {
-        if visible != !self.grid.hidden() {
+        let hidden = !visible;
+        if hidden != self.grid.hidden() {
             debug!("update background grid: {:?}", visible);
-            self.grid.set_hidden(!visible);
+            self.grid.set_hidden(hidden);
             nuts::send_to::<MapController, _>(SaveSettingsEvent);
         }
     }

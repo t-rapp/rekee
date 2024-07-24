@@ -888,8 +888,9 @@ impl MapDetailView {
     }
 
     pub fn update_background_grid(&mut self, visible: bool) {
-        if visible != !self.grid.hidden() {
-            self.grid.set_hidden(!visible);
+        let hidden = !visible;
+        if hidden != self.grid.hidden() {
+            self.grid.set_hidden(hidden);
         }
     }
 
