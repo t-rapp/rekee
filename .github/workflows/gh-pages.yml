@@ -13,18 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout sources
+        uses: actions/checkout@v4
 
-    - name: Build source code documentation
-      run: cargo doc --lib --no-deps
+      - name: Build source code documentation
+        run: cargo doc --lib --no-deps
 
-    - name: Create redirection page
-      run: |
-        echo '<!DOCTYPE html>' > ./target/doc/index.html
-        echo '<html><head><meta http-equiv="refresh" content="0; url=rekee/index.html"></head></html>' >> ./target/doc/index.html
+      - name: Create redirection page
+        run: |
+          echo '<!DOCTYPE html>' > ./target/doc/index.html
+          echo '<html><head><meta http-equiv="refresh" content="0; url=rekee/index.html"></head></html>' >> ./target/doc/index.html
 
-    - name: Deploy source code documentation
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./target/doc
+      - name: Deploy source code documentation
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
