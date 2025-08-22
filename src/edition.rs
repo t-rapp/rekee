@@ -430,7 +430,7 @@ macro_rules! tile {
     };
 }
 
-const GT_CORE_BOX: [TileId; 32] = [
+static GT_CORE_BOX: [TileId; 32] = [
     tile!(101),
     tile!(102),
     tile!(103, 1), tile!(103, 2), tile!(103, 3),
@@ -453,7 +453,7 @@ const GT_CORE_BOX: [TileId; 32] = [
     tile!(120),
 ];
 
-const GT_CHAMPIONSHIP: [TileId; 12] = [
+static GT_CHAMPIONSHIP: [TileId; 12] = [
     tile!(121, 1), tile!(121, 2),
     tile!(122, 1),
     tile!(123),
@@ -466,7 +466,7 @@ const GT_CHAMPIONSHIP: [TileId; 12] = [
     tile!(130),
 ];
 
-const GT_WORLD_TOUR: [TileId; 12] = [
+static GT_WORLD_TOUR: [TileId; 12] = [
     tile!(122, 2),
     tile!(124, 2),
     tile!(125, 2),
@@ -480,7 +480,7 @@ const GT_WORLD_TOUR: [TileId; 12] = [
     tile!(138, 1), tile!(138, 2),
 ];
 
-const GT_TEAM_CHALLENGE: [TileId; 12] = [
+static GT_TEAM_CHALLENGE: [TileId; 12] = [
     tile!(139),
     tile!(140),
     tile!(141),
@@ -495,7 +495,7 @@ const GT_TEAM_CHALLENGE: [TileId; 12] = [
     tile!(150),
 ];
 
-const GT_ADRENALINE_PACK: [TileId; 5] = [
+static GT_ADRENALINE_PACK: [TileId; 5] = [
     tile!(151),
     tile!(152),
     tile!(153),
@@ -503,7 +503,7 @@ const GT_ADRENALINE_PACK: [TileId; 5] = [
     tile!(901),
 ];
 
-const DIRT_CORE_BOX: [TileId; 32] = [
+static DIRT_CORE_BOX: [TileId; 32] = [
     tile!(201),
     tile!(202),
     tile!(203),
@@ -538,7 +538,7 @@ const DIRT_CORE_BOX: [TileId; 32] = [
     tile!(232),
 ];
 
-const DIRT_110_PERCENT: [TileId; 24] = [
+static DIRT_110_PERCENT: [TileId; 24] = [
     tile!(301),
     tile!(302),
     tile!(303),
@@ -565,7 +565,7 @@ const DIRT_110_PERCENT: [TileId; 24] = [
     tile!(324),
 ];
 
-const DIRT_RX: [TileId; 15] = [
+static DIRT_RX: [TileId; 15] = [
     tile!(401),
     tile!(402),
     tile!(403),
@@ -583,14 +583,14 @@ const DIRT_RX: [TileId; 15] = [
     tile!(415),
 ];
 
-const DIRT_CLIMB: [TileId; 4] = [
+static DIRT_CLIMB: [TileId; 4] = [
     tile!(325),
     tile!(326),
     tile!(418),
     tile!(419),
 ];
 
-const DIRT_COPILOT_PACK: [TileId; 6] = [
+static DIRT_COPILOT_PACK: [TileId; 6] = [
     tile!(416),
     tile!(417),
     tile!(902),
@@ -599,7 +599,7 @@ const DIRT_COPILOT_PACK: [TileId; 6] = [
     tile!(905),
 ];
 
-const GT_EDITIONS: [Edition; 5] = [
+static GT_EDITIONS: [Edition; 5] = [
     Edition::GtCoreBox,
     Edition::GtChampionship,
     Edition::GtWorldTour,
@@ -607,7 +607,7 @@ const GT_EDITIONS: [Edition; 5] = [
     Edition::GtAdrenalinePack,
 ];
 
-const DIRT_EDITIONS: [Edition; 5] = [
+static DIRT_EDITIONS: [Edition; 5] = [
     Edition::DirtCoreBox,
     Edition::Dirt110Percent,
     Edition::DirtRx,

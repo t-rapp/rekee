@@ -1856,7 +1856,7 @@ const NJ5: Pacenote = Pacenote::Jump(5);
 const NW: Pacenote = Pacenote::Water;
 const NC: Pacenote = Pacenote::Climb;
 
-const TILE_INFOS: [TileInfo; 271] = [
+static TILE_INFOS: [TileInfo; 271] = [
     // Rallyman GT core box
     TileInfo::new(tile!(101), 1, TN, DN, [CN; 6], [EN; 6], &[]),
     TileInfo::new(tile!(102, a), 1, TA, DL, [CS0, CN, CN, CS0, CN, CN], [ES3, EN, EN, ES3, EN, EN], &[]),
