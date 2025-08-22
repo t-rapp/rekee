@@ -248,7 +248,7 @@ impl TileCount {
         TileCount { inner: list }
     }
 
-    fn iter(&self) -> Iter<u16, u32> {
+    fn iter(&self) -> Iter<'_, u16, u32> {
         self.inner.iter()
     }
 
