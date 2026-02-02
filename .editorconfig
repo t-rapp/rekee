@@ -1,0 +1,32 @@
+# EditorConfig: Consistent coding styles for multiple developers working on the
+# same project across various editors and IDEs.
+#
+# Some editors have native support, for others a plugin is available.
+# See <https://editorconfig.org/#download> for details.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{css,js}]
+indent_style = space
+indent_size = 4
+
+[*.html]
+indent_style = space
+indent_size = 2
+
+[*.rs]
+indent_style = space
+indent_size = 4
+
+[*.{toml,yaml}]
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab

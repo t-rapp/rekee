@@ -4,7 +4,7 @@ Preparing Images
 Tile images which can be exported from Rallyman Track Editor for Windows have
 PNG format and come with a size of 1654x1432 or 1654x1654 pixels. They are
 stored in 8-bit RGBA colors which makes them suitable for print-out. For web
-usage both, image size in pixels and the color format is reduced to save on
+usage both, image size in pixels and the color format, is reduced to save on
 network transfer time.
 
 ## Medium Size Images

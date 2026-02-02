@@ -657,7 +657,7 @@ impl DangerLevelSummary {
 
 //----------------------------------------------------------------------------
 
-/// Utilitiy methods on any list of [`TileId`]s.
+/// Utility methods on any list of [`TileId`]s.
 pub trait TileList {
 
     /// Returns an iterator over the editions that are necessary to build the
@@ -820,7 +820,7 @@ pub trait TileList {
     /// (boxes) required, and the number of tiles that belong to the edition.
     ///
     /// This method is a convenience wrapper around the [`group_by_edition`]
-    /// method. It merges the tile count of editions that occur mutiple times.
+    /// method. It merges the tile count of editions that occur multiple times.
     /// Different from [`group_by_edition`] the returned array is always sorted
     /// by edition. If the tile list contains unknown tiles an entry with
     /// [`edition`] set to `None` is put at the end of the summary.
@@ -1577,7 +1577,7 @@ impl TileInfo {
         }
     }
 
-    /// Returns an interator over all tiles in the internal list.
+    /// Returns an iterator over all tiles in the internal list.
     pub fn iter() -> std::slice::Iter<'static, Self> {
         TILE_INFOS.iter()
     }
@@ -1712,7 +1712,7 @@ impl TileInfo {
         self.connections[source].target(source)
     }
 
-    /// Edge informantion for one of the six directions of a tile.
+    /// Edge information for one of the six directions of a tile.
     ///
     /// # Examples
     ///

@@ -942,7 +942,7 @@ const LAYOUT_FLAT: Orientation = Orientation {
 };
 
 impl Orientation {
-    /// Pointy topped orientation, hexagons are aligned in horizonal rows.
+    /// Pointy topped orientation, hexagons are aligned in horizontal rows.
     pub fn pointy() -> &'static Self {
         &LAYOUT_POINTY
     }

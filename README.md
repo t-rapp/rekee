@@ -26,7 +26,7 @@ Command for building the WebAssembly module and CSS file:
 make build
 ```
 
-(Use `make build-release` to create an optimzed WASM module with stripped debug
+(Use `make build-release` to create an optimized WASM module with stripped debug
 symbols).
 
 Command for running a local instance of the web application:

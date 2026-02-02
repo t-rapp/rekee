@@ -1,0 +1,16 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions: []
+dictionaries: []
+words:
+  - Bulma
+  - domained
+  - fullwidth
+  - pacenote
+  - pacenotes
+  - pitstop
+  - Rallyman
+  - Rekee
+  - viewbox
+ignoreWords: []
+import: []
