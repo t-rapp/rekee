@@ -176,7 +176,7 @@ impl PlacedTile {
     /// Used for rendering a "modified" indicator suffix on map tile labels.
     pub fn has_flat_tokens(&self) -> bool {
         self.tokens.iter()
-            .any(|token| token.id.edition() != Edition::DirtRx)
+            .any(|token| !Edition::DirtRx.contains_token(token.id))
     }
 
     fn connection(&self, dir: Direction) -> Connection {
@@ -1432,7 +1432,7 @@ mod tests {
         let summary = PlacedTileList::edition_summary(map.tiles());
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::DirtCoreBox), 1, 2, 0),
-            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 1, 0),
+            EditionSummary::new(Some(Edition::DirtMonteCarlo), 1, 1, 0),
             EditionSummary::new(Some(Edition::DirtRx), 1, 0, 1),
             EditionSummary::new(Some(Edition::DirtClimb), 1, 0, 1),
             EditionSummary::new(Some(Edition::DirtCopilotPack), 1, 1, 0),

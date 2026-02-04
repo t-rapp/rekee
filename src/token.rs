@@ -167,10 +167,15 @@ impl TokenId {
         TOKENS.iter()
     }
 
-    /// Edition that this token belongs to.
+    #[deprecated(note = "Please use Token::editions() instead")]
+    pub fn edition(&self) -> Edition {
+        *self.editions().first().unwrap()
+    }
+
+    /// List of editions which contain this token.
     ///
-    /// Each token appears only within a single edition, this is different from
-    /// [TileInfo::editions()](crate::tile::TileInfo::editions).
+    /// The returned list will contain a single edition entry for most tokens,
+    /// but an additional entry for some rare cases.
     ///
     /// # Examples
     ///
@@ -179,37 +184,37 @@ impl TokenId {
     /// # use rekee::tile::Terrain;
     /// # use rekee::token::TokenId;
     /// let token = TokenId::Jump(Terrain::Asphalt);
-    /// assert_eq!(token.edition(), Edition::DirtCopilotPack);
+    /// assert_eq!(token.editions(), vec![Edition::DirtMonteCarlo, Edition::DirtCopilotPack]);
     ///
     /// let token = TokenId::JokerEntrance;
-    /// assert_eq!(token.edition(), Edition::DirtRx);
+    /// assert_eq!(token.editions(), vec![Edition::DirtRx]);
     /// ```
-    pub fn edition(&self) -> Edition {
+    pub fn editions(&self) -> Vec<Edition> {
         match self {
             TokenId::Chicane(_) =>
-                Edition::DirtCopilotPack,
+                [Edition::DirtMonteCarlo, Edition::DirtCopilotPack].to_vec(),
             TokenId::ChicaneWithLimit(_) =>
-                Edition::DirtCopilotPack,
+                [Edition::DirtMonteCarlo, Edition::DirtCopilotPack].to_vec(),
             TokenId::Jump(_) =>
-                Edition::DirtCopilotPack,
+                [Edition::DirtMonteCarlo, Edition::DirtCopilotPack].to_vec(),
             TokenId::Water(_) =>
-                Edition::DirtCopilotPack,
+                [Edition::DirtMonteCarlo, Edition::DirtCopilotPack].to_vec(),
             TokenId::ClimbAscent =>
-                Edition::DirtClimb,
+                [Edition::DirtClimb].to_vec(),
             TokenId::ClimbDescent =>
-                Edition::DirtClimb,
+                [Edition::DirtClimb].to_vec(),
             TokenId::Cloud =>
-                Edition::DirtClimb,
+                [Edition::DirtClimb].to_vec(),
             TokenId::Oxygen(_) =>
-                Edition::DirtClimb,
+                [Edition::DirtClimb].to_vec(),
             TokenId::JokerEntrance =>
-                Edition::DirtRx,
+                [Edition::DirtRx].to_vec(),
             TokenId::JokerExit =>
-                Edition::DirtRx,
+                [Edition::DirtRx].to_vec(),
             TokenId::Finish =>
-                Edition::DirtRx,
+                [Edition::DirtRx].to_vec(),
             TokenId::MudSpray =>
-                Edition::DirtCoreBox,
+                [Edition::DirtCoreBox].to_vec(),
         }
     }
 }
@@ -485,7 +490,11 @@ impl<T: AsRef<TokenId> + Clone> TokenList for [T] {
     fn edition_summary(&self) -> Vec<EditionSummary> {
         let mut summary = BTreeMap::new();
         for token in self.iter() {
-            let edition = token.as_ref().edition();
+            // We restrict edition lookup to the first/main entry here
+            let edition = match token.as_ref().editions().first() {
+                Some(val) => *val,
+                None => continue,
+            };
             let entry = summary.entry(edition)
                 .or_insert(0);
             *entry += 1;
