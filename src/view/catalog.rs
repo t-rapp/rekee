@@ -295,6 +295,8 @@ impl Default for CatalogSettings {
             Series::Gt.editions()
         };
         let editions = editions
+            // Only select editions that are actively manufactured by default
+            .filter(|e| !e.is_discontinued())
             .copied()
             .collect();
         let filter_lanes = None;

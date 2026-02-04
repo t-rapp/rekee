@@ -11,6 +11,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //----------------------------------------------------------------------------
 
+use std::collections::HashSet;
 use std::fmt;
 use std::str::FromStr;
 
@@ -38,6 +39,8 @@ pub enum Edition {
     GtAdrenalinePack,
     /// Rallyman: DIRT core box
     DirtCoreBox,
+    /// Monte Carlo expansion for Rallyman: DIRT
+    DirtMonteCarlo,
     /// 110% expansion for Rallyman: DIRT
     #[serde(rename = "dirt-110-percent")]
     Dirt110Percent,
@@ -63,10 +66,15 @@ impl Edition {
     /// assert_eq!(tiles.len(), 307);
     /// ```
     pub fn all_tiles() -> Vec<TileId> {
-        let mut tiles = Vec::with_capacity(307);
+        let mut index = HashSet::with_capacity(307);
         for edition in Self::iter() {
-            tiles.extend_from_slice(&edition.tiles());
+            for tile in edition.tiles() {
+                index.insert(tile);
+            }
         }
+        let mut tiles: Vec<TileId> = index.iter()
+            .copied()
+            .collect();
         tiles.sort_unstable();
         tiles
     }
@@ -107,10 +115,15 @@ impl Edition {
     /// ```
     #[deprecated(note = "Please use Series::editions() together with Edition::tiles() instead")]
     pub fn dirt_tiles() -> Vec<TileId> {
-        let mut tiles = Vec::with_capacity(162);
+        let mut index = HashSet::with_capacity(162);
         for edition in Series::Dirt.editions() {
-            tiles.extend_from_slice(&edition.tiles());
+            for tile in edition.tiles() {
+                index.insert(tile);
+            }
         }
+        let mut tiles: Vec<TileId> = index.iter()
+            .copied()
+            .collect();
         tiles.sort_unstable();
         tiles
     }
@@ -129,6 +142,8 @@ impl Edition {
                 &GT_ADRENALINE_PACK,
             Edition::DirtCoreBox =>
                 &DIRT_CORE_BOX,
+            Edition::DirtMonteCarlo =>
+                &DIRT_MONTE_CARLO,
             Edition::Dirt110Percent =>
                 &DIRT_110_PERCENT,
             Edition::DirtRx =>
@@ -269,7 +284,7 @@ impl Edition {
     /// assert_eq!(edition.contains_token(TokenId::Oxygen(1)), true);
     /// ```
     pub fn contains_token(&self, token: TokenId) -> bool {
-        *self == token.edition()
+        token.editions().contains(self)
     }
 
     /// Check whether the edition is a stand-alone game, or an expansion module.
@@ -283,6 +298,24 @@ impl Edition {
     /// ```
     pub fn is_expansion(&self) -> bool {
         !matches!(self, Edition::GtCoreBox | Edition::DirtCoreBox)
+    }
+
+    /// Check whether manufacturing of the edition has been stopped.
+    ///
+    /// The 110% and Copilot Pack extensions for Rallyman: DIRT are considered
+    /// discontinued, as the publisher has replaced them with the Monte Carlo
+    /// expansion. The RX and Climb extensions are not considered discontinued,
+    /// hopefully they will get a future reprint.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rekee::edition::*;
+    /// assert_eq!(Edition::DirtMonteCarlo.is_discontinued(), false);
+    /// assert_eq!(Edition::DirtCopilotPack.is_discontinued(), true);
+    /// ```
+    pub fn is_discontinued(&self) -> bool {
+        matches!(self, Edition::Dirt110Percent | Edition::DirtCopilotPack)
     }
 
     /// Game series that the edition belongs to.
@@ -309,13 +342,14 @@ impl Edition {
 
     /// Iterator over all game editions.
     pub fn iter() -> std::slice::Iter<'static, Self> {
-        const EDITIONS: [Edition; 10] = [
+        const EDITIONS: [Edition; 11] = [
             Edition::GtCoreBox,
             Edition::GtChampionship,
             Edition::GtWorldTour,
             Edition::GtTeamChallenge,
             Edition::GtAdrenalinePack,
             Edition::DirtCoreBox,
+            Edition::DirtMonteCarlo,
             Edition::Dirt110Percent,
             Edition::DirtRx,
             Edition::DirtClimb,
@@ -340,6 +374,8 @@ impl fmt::Display for Edition {
                 write!(fmt, "GT Adrenaline Pack")?,
             Edition::DirtCoreBox =>
                 write!(fmt, "DIRT Core Box")?,
+            Edition::DirtMonteCarlo =>
+                write!(fmt, "DIRT Monte Carlo")?,
             Edition::Dirt110Percent =>
                 write!(fmt, "DIRT 110%")?,
             Edition::DirtRx =>
@@ -382,6 +418,8 @@ impl FromStr for Edition {
                 Ok(Edition::GtAdrenalinePack),
             "dirt-core-box" =>
                 Ok(Edition::DirtCoreBox),
+            "dirt-monte-carlo" =>
+                Ok(Edition::DirtMonteCarlo),
             "dirt-110-percent" | "dirt-110%" =>
                 Ok(Edition::Dirt110Percent),
             "dirt-rx" =>
@@ -538,6 +576,35 @@ static DIRT_CORE_BOX: [TileId; 32] = [
     tile!(232),
 ];
 
+static DIRT_MONTE_CARLO: [TileId; 26] = [
+    tile!(301),
+    tile!(302),
+    tile!(303),
+    tile!(304),
+    tile!(305),
+    tile!(306),
+    tile!(307),
+    tile!(308),
+    tile!(309),
+    tile!(310),
+    tile!(311),
+    tile!(312),
+    tile!(313),
+    tile!(314),
+    tile!(315),
+    tile!(316),
+    tile!(317),
+    tile!(318),
+    tile!(319),
+    tile!(320),
+    tile!(321),
+    tile!(322),
+    tile!(323),
+    tile!(324),
+    tile!(416),
+    tile!(417),
+];
+
 static DIRT_110_PERCENT: [TileId; 24] = [
     tile!(301),
     tile!(302),
@@ -607,8 +674,9 @@ static GT_EDITIONS: [Edition; 5] = [
     Edition::GtAdrenalinePack,
 ];
 
-static DIRT_EDITIONS: [Edition; 5] = [
+static DIRT_EDITIONS: [Edition; 6] = [
     Edition::DirtCoreBox,
+    Edition::DirtMonteCarlo,
     Edition::Dirt110Percent,
     Edition::DirtRx,
     Edition::DirtClimb,
@@ -629,13 +697,13 @@ pub enum Series {
 }
 
 impl Series {
-    /// Iterator over the editions of the game series.
+    /// Iterator over all editions within the game series.
     pub fn editions(&self) -> std::slice::Iter<'static, Edition> {
         let editions = match self {
             Series::Gt =>
-                &GT_EDITIONS,
+                &GT_EDITIONS[..],
             Series::Dirt =>
-                &DIRT_EDITIONS,
+                &DIRT_EDITIONS[..],
         };
         editions.iter()
     }
@@ -724,6 +792,7 @@ mod tests {
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
+        tiles.extend_from_slice(&DIRT_MONTE_CARLO);
         tiles.extend_from_slice(&DIRT_110_PERCENT);
         tiles.extend_from_slice(&DIRT_RX);
         tiles.extend_from_slice(&DIRT_CLIMB);
@@ -742,6 +811,7 @@ mod tests {
         tiles.extend_from_slice(&GT_TEAM_CHALLENGE);
         tiles.extend_from_slice(&GT_ADRENALINE_PACK);
         tiles.extend_from_slice(&DIRT_CORE_BOX);
+        tiles.extend_from_slice(&DIRT_MONTE_CARLO);
         tiles.extend_from_slice(&DIRT_110_PERCENT);
         tiles.extend_from_slice(&DIRT_RX);
         tiles.extend_from_slice(&DIRT_CLIMB);
@@ -750,7 +820,12 @@ mod tests {
             let count = tiles.iter()
                 .filter(|id| *id == tile)
                 .count();
-            assert_eq!(count, 1, "tile {} is defined more than once", tile);
+            if Edition::DirtMonteCarlo.contains_tile(*tile) {
+                // This extension bundles the previous 110% and Copilot Pack extensions
+                assert_eq!(count, 2, "tile {} is defined different than twice", tile);
+            } else {
+                assert_eq!(count, 1, "tile {} is defined more than once", tile);
+            }
         }
     }
 

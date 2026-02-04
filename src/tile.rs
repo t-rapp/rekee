@@ -2240,7 +2240,7 @@ mod tests {
 
         let tiles = [tile!(201, a), tile!(224, a), tile!(304, b), tile!(905, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
-        assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::Dirt110Percent, Edition::DirtCopilotPack][..]);
+        assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::DirtMonteCarlo, Edition::DirtCopilotPack][..]);
         let tiles = [tile!(201, a), tile!(224, a), tile!(224, b), tile!(405, b)];
         let editions: Vec<_> = tiles.group_by_edition().collect();
         assert_eq!(&editions, &[Edition::DirtCoreBox, Edition::DirtRx, Edition::DirtCoreBox][..]);
@@ -2299,7 +2299,7 @@ mod tests {
         let summary = tiles.edition_summary();
         assert_eq!(summary, vec![
             EditionSummary::new(Some(Edition::DirtCoreBox), 1, 2),
-            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 1),
+            EditionSummary::new(Some(Edition::DirtMonteCarlo), 1, 1),
             EditionSummary::new(Some(Edition::DirtCopilotPack), 1, 1),
         ]);
         let series = tiles.detect_series();
@@ -2333,10 +2333,11 @@ mod tests {
             EditionSummary::new(Some(Edition::GtTeamChallenge), 2, 24),
             EditionSummary::new(Some(Edition::GtAdrenalinePack), 2, 10),
             EditionSummary::new(Some(Edition::DirtCoreBox), 2, 64),
-            EditionSummary::new(Some(Edition::Dirt110Percent), 2, 48),
+            EditionSummary::new(Some(Edition::DirtMonteCarlo), 1, 26),
+            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 24),
             EditionSummary::new(Some(Edition::DirtRx), 2, 30),
             EditionSummary::new(Some(Edition::DirtClimb), 2, 8),
-            EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 12),
+            EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 10),
         ]);
         let series = tiles.detect_series();
         assert_eq!(series, None);

@@ -64,8 +64,11 @@ impl WelcomeView {
             } else {
                 Edition::iter()
             };
-            let editions: Vec<Edition> = edition_iter.copied()
-                    .collect();
+            let editions: Vec<Edition> = edition_iter
+                // Only select editions that are actively manufactured by default
+                .filter(|e| !e.is_discontinued())
+                .copied()
+                .collect();
             nuts::publish(UpdateCatalogEditionsEvent { editions });
         }) as Box<dyn Fn(_)>);
 
