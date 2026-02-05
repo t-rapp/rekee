@@ -126,7 +126,7 @@
             height: 2em;
             padding: 0.2em 0.6em;
         }
-        #map-detail-container .modal-content {
+        #map-detail-container .modal-card {
             min-width: 960px;
         }
         #map, #map-detail {
@@ -417,28 +417,31 @@
 
     <div id="catalog-config-container" class="modal">
       <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box">
-          <h2 class="title">Catalog Tiles</h2>
-
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <h2 class="modal-card-title">Catalog Tiles</h2>
+        </header>
+        <section class="modal-card-body">
           <div class="columns">
             <!-- configuration elements added here by WASM -->
           </div>
-
+        </section>
+        <footer class="modal-card-foot">
           <div class="buttons is-centered">
             <button id="apply-catalog-config" class="button is-link">Save &amp; Close</button>
           </div>
-        </div>
+        </footer>
       </div>
       <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
     <div id="track-info-container" class="modal">
       <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box">
-          <h2 class="title">Track Info</h2>
-
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <h2 class="modal-card-title">Track Info</h2>
+        </header>
+        <section class="modal-card-body">
           <div class="columns is-multiline">
             <div class="column is-half">
               <span class="icon-text">
@@ -496,21 +499,23 @@
               </div>
             </div>
           </div>
-
+        </section>
+        <footer class="modal-card-foot">
           <div class="buttons is-centered">
             <button id="close-track-info" class="button is-link">Close</button>
           </div>
-        </div>
+        </footer>
       </div>
       <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
     <div id="map-config-container" class="modal">
       <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box">
-          <h2 class="title">Track Settings</h2>
-
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <h2 class="modal-card-title">Track Settings</h2>
+        </header>
+        <section class="modal-card-body">
           <div class="field">
             <label class="label">Background Grid</label>
             <div class="control">
@@ -590,28 +595,32 @@
             </p>
           </div>
 
+        </section>
+        <footer class="modal-card-foot">
           <div class="buttons is-centered">
             <button id="apply-map-config" class="button is-link">Save &amp; Close</button>
           </div>
-        </div>
+        </footer>
       </div>
       <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
     <div id="map-detail-container" class="modal">
       <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box">
-          <h2 class="title">Tile Details</h2>
-
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <h2 class="modal-card-title">Tile Details</h2>
+        </header>
+        <section class="modal-card-body">
           <div class="columns">
             <!-- map detail elements added here by WASM -->
           </div>
-
+        </section>
+        <footer class="modal-card-foot">
           <div class="buttons is-centered">
             <button id="apply-map-detail" class="button is-link">Save &amp; Close</button>
           </div>
-        </div>
+        </footer>
       </div>
       <button class="modal-close is-large" aria-label="close"></button>
     </div>

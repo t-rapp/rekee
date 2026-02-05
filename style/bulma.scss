@@ -3,6 +3,8 @@
 // Update some of Bulma's component variables
 $card-content-padding: 0.75rem;
 $column-gap: 0.5rem;
+$modal-card-head-padding: 0.75rem;
+$modal-card-body-padding: 0.75rem;
 $navbar-breakpoint: 0;
 $tabs-link-padding: 0.5em;
 
@@ -36,6 +38,14 @@ $tabs-link-padding: 0.5em;
   }
 }
 @import "card-footer-colors.sass";
+
+// Override some modal component settings
+.modal-card-title {
+  font-weight: 500;
+}
+.modal-card-foot {
+  justify-content: center;
+}
 
 // Some cursor helper classes
 .is-draggable {
