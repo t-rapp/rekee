@@ -295,7 +295,7 @@ impl Default for CatalogSettings {
             Series::Gt.editions()
         };
         let editions = editions
-            .cloned()
+            .copied()
             .collect();
         let filter_lanes = None;
         let filter_terrain = None;
@@ -342,7 +342,7 @@ impl CatalogView {
         catalog.class_list().add_1("tile-pacenotes-hidden")?;
 
         let editions: Vec<_> = Series::Gt.editions()
-            .cloned()
+            .copied()
             .collect();
 
         let mut tile_ids: Vec<TileId> = Edition::iter()

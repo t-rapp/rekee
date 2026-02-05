@@ -84,3 +84,9 @@ indoc = "1.0.3"
 lto = "thin"
 opt-level = "z"
 codegen-units = 1
+
+[lints]
+clippy.assigning-clones = "warn"
+clippy.cloned-instead-of-copied = "warn"
+clippy.option-as-ref-cloned = "warn"
+clippy.redundant_clone = "warn"
