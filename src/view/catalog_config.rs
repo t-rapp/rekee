@@ -171,8 +171,15 @@ impl CatalogConfigView {
         column.set_attribute("class", "column")?;
         columns.append_child(&column)?;
 
-        for &edition in Series::Gt.editions() {
-            let card = EditionCard::new(&document, edition)?;
+        let mut edition_list: Vec<_> = Edition::iter().collect();
+        // Move discontinued editions to the end of the list
+        edition_list.sort_by_key(|edition| edition.is_discontinued());
+
+        for &edition in &edition_list {
+            if edition.series() != Series::Gt {
+                continue;
+            }
+            let card = EditionCard::new(&document, *edition)?;
             column.append_child(card.as_ref())?;
             editions.push(card);
         }
@@ -181,8 +188,11 @@ impl CatalogConfigView {
         column.set_attribute("class", "column")?;
         columns.append_child(&column)?;
 
-        for &edition in Series::Dirt.editions() {
-            let card = EditionCard::new(&document, edition)?;
+        for &edition in &edition_list {
+            if edition.series() != Series::Dirt {
+                continue;
+            }
+            let card = EditionCard::new(&document, *edition)?;
             column.append_child(card.as_ref())?;
             editions.push(card);
         }
