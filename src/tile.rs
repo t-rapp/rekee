@@ -1785,6 +1785,27 @@ impl TileInfo {
             .copied()
             .collect()
     }
+
+    /// Indicate whether the tile is not manufactured anymore, because it comes
+    /// with discontinued editions only.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate rekee;
+    /// # use rekee::edition::Edition;
+    /// # use rekee::tile::TileInfo;
+    /// # fn main() {
+    /// let info = TileInfo::get(tile!(201, a)).unwrap();
+    /// assert_eq!(info.is_discontinued(), false);
+    ///
+    /// let info = TileInfo::get(tile!(902, b)).unwrap();
+    /// assert_eq!(info.is_discontinued(), true);
+    /// # }
+    /// ```
+    pub fn is_discontinued(&self) -> bool {
+        matches!(self.id.num, 902..=905)
+    }
 }
 
 impl fmt::Display for TileInfo {
@@ -2895,6 +2916,16 @@ mod tests {
             let editions = info.editions();
             assert!(!editions.is_empty(), "tile info {} has no editions", info.id);
             assert!(editions.len() <= 2, "tile info {} has more than two editions", info.id);
+        }
+    }
+
+    #[test]
+    fn tile_info_discontinued() {
+        for info in TILE_INFOS.iter() {
+            let is_discontinued = Edition::iter().all(
+                |edition| edition.is_discontinued() || !edition.contains_base_tile(info.base_id())
+            );
+            assert_eq!(info.is_discontinued(), is_discontinued, "tile info {}: is_discontinued does not match with editions", info.id);
         }
     }
 }
