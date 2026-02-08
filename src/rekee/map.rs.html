@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rekee/</div>map.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">//----------------------------------------------------------------------------
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-ca0dd0c4.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.93.0 (254b59607 2026-01-19)" data-channel="1.93.0" data-search-js="search-9e2438ea.js" data-stringdex-js="stringdex-a3946164.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-a410ff4d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rekee/</div>map.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">//----------------------------------------------------------------------------
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="doccomment">//! Map of tiles within a hexagon grid.
 <a href=#3 id=3 data-nosnippet>3</a></span><span class="comment">//
 <a href=#4 id=4 data-nosnippet>4</a>// This Source Code Form is subject to the terms of the Mozilla Public
@@ -176,7 +176,7 @@
 <a href=#176 id=176 data-nosnippet>176</a>    /// Used for rendering a "modified" indicator suffix on map tile labels.
 <a href=#177 id=177 data-nosnippet>177</a>    </span><span class="kw">pub fn </span>has_flat_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
 <a href=#178 id=178 data-nosnippet>178</a>        <span class="self">self</span>.tokens.iter()
-<a href=#179 id=179 data-nosnippet>179</a>            .any(|token| token.id.edition() != Edition::DirtRx)
+<a href=#179 id=179 data-nosnippet>179</a>            .any(|token| !Edition::DirtRx.contains_token(token.id))
 <a href=#180 id=180 data-nosnippet>180</a>    }
 <a href=#181 id=181 data-nosnippet>181</a>
 <a href=#182 id=182 data-nosnippet>182</a>    <span class="kw">fn </span>connection(<span class="kw-2">&amp;</span><span class="self">self</span>, dir: Direction) -&gt; Connection {
@@ -525,7 +525,7 @@
 <a href=#525 id=525 data-nosnippet>525</a>    /// track tokens that are part of the tile.
 <a href=#526 id=526 data-nosnippet>526</a>    </span><span class="kw">pub fn </span>insert_with_tokens(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: TileId, pos: Coordinate, dir: Direction, tokens: Vec&lt;PlacedToken&gt;) {
 <a href=#527 id=527 data-nosnippet>527</a>        <span class="comment">// remove any existing tile at insert position
-<a href=#528 id=528 data-nosnippet>528</a>        </span><span class="self">self</span>.tiles.retain(|tile| tile.pos != pos);
+<a href=#528 id=528 data-nosnippet>528</a>        </span><span class="self">self</span>.tiles.retain(|tile| tile.<span class="macro">pos !</span>= pos);
 <a href=#529 id=529 data-nosnippet>529</a>
 <a href=#530 id=530 data-nosnippet>530</a>        <span class="comment">// auto-select tile id variant, if not given
 <a href=#531 id=531 data-nosnippet>531</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>id = id;
@@ -582,7 +582,7 @@
 <a href=#582 id=582 data-nosnippet>582</a>        <span class="macro">debug!</span>(<span class="string">"neighbor connections: {}, dir: {}, edges: {:?}"</span>,
 <a href=#583 id=583 data-nosnippet>583</a>            neighbor_conns, neighbor_dir, neighbor_edges);
 <a href=#584 id=584 data-nosnippet>584</a>
-<a href=#585 id=585 data-nosnippet>585</a>        <span class="kw">if </span>hint.is_some() &amp;&amp; tile_pos != <span class="self">self</span>.active_pos &amp;&amp; neighbor_conns == <span class="number">1 </span>{
+<a href=#585 id=585 data-nosnippet>585</a>        <span class="kw">if </span>hint.is_some() &amp;&amp; <span class="macro">tile_pos !</span>= <span class="self">self</span>.active_pos &amp;&amp; neighbor_conns == <span class="number">1 </span>{
 <a href=#586 id=586 data-nosnippet>586</a>            <span class="comment">// apply hint relative to the single neighbor connection
 <a href=#587 id=587 data-nosnippet>587</a>            </span><span class="self">self</span>.active_pos = tile_pos;
 <a href=#588 id=588 data-nosnippet>588</a>            <span class="self">self</span>.active_dir = neighbor_dir;
@@ -641,7 +641,7 @@
 <a href=#641 id=641 data-nosnippet>641</a>        <span class="macro">debug!</span>(<span class="string">"remove tile at pos: {}"</span>, pos);
 <a href=#642 id=642 data-nosnippet>642</a>
 <a href=#643 id=643 data-nosnippet>643</a>        <span class="kw">let </span>count = <span class="self">self</span>.tiles.len();
-<a href=#644 id=644 data-nosnippet>644</a>        <span class="self">self</span>.tiles.retain(|tile| tile.pos != pos);
+<a href=#644 id=644 data-nosnippet>644</a>        <span class="self">self</span>.tiles.retain(|tile| tile.<span class="macro">pos !</span>= pos);
 <a href=#645 id=645 data-nosnippet>645</a>
 <a href=#646 id=646 data-nosnippet>646</a>        <span class="kw">if </span><span class="self">self</span>.tiles.len() != count {
 <a href=#647 id=647 data-nosnippet>647</a>            <span class="comment">// update position for next tile append
@@ -651,7 +651,7 @@
 <a href=#651 id=651 data-nosnippet>651</a>                <span class="kw">let </span>neighbor_pos = pos.neighbor(dir);
 <a href=#652 id=652 data-nosnippet>652</a>                <span class="kw">if let </span><span class="prelude-val">Some</span>(tile) = <span class="self">self</span>.get(neighbor_pos) {
 <a href=#653 id=653 data-nosnippet>653</a>                    <span class="kw">let </span>conn = tile.connection(dir.opposite());
-<a href=#654 id=654 data-nosnippet>654</a>                    <span class="kw">if </span>conn != Connection::None {
+<a href=#654 id=654 data-nosnippet>654</a>                    <span class="kw">if </span><span class="macro">conn !</span>= Connection::None {
 <a href=#655 id=655 data-nosnippet>655</a>                        <span class="self">self</span>.active_dir = dir;
 <a href=#656 id=656 data-nosnippet>656</a>                        <span class="kw">break</span>;
 <a href=#657 id=657 data-nosnippet>657</a>                    }
@@ -1432,7 +1432,7 @@
 <a href=#1432 id=1432 data-nosnippet>1432</a>        <span class="kw">let </span>summary = PlacedTileList::edition_summary(map.tiles());
 <a href=#1433 id=1433 data-nosnippet>1433</a>        <span class="macro">assert_eq!</span>(summary, <span class="macro">vec!</span>[
 <a href=#1434 id=1434 data-nosnippet>1434</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtCoreBox), <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>),
-<a href=#1435 id=1435 data-nosnippet>1435</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::Dirt110Percent), <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>),
+<a href=#1435 id=1435 data-nosnippet>1435</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtMonteCarlo), <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>),
 <a href=#1436 id=1436 data-nosnippet>1436</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtRx), <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>),
 <a href=#1437 id=1437 data-nosnippet>1437</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtClimb), <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>),
 <a href=#1438 id=1438 data-nosnippet>1438</a>            EditionSummary::new(<span class="prelude-val">Some</span>(Edition::DirtCopilotPack), <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>),
@@ -1440,4 +1440,5 @@
 <a href=#1440 id=1440 data-nosnippet>1440</a>    }
 <a href=#1441 id=1441 data-nosnippet>1441</a>}
 <a href=#1442 id=1442 data-nosnippet>1442</a>
-<a href=#1443 id=1443 data-nosnippet>1443</a><span class="comment">//----------------------------------------------------------------------------</span></code></pre></div></section></main></body></html>
+<a href=#1443 id=1443 data-nosnippet>1443</a><span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div></section></main></body></html>

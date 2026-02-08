@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../../../static.files/storage-4e99c027.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rekee/view/map/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">//----------------------------------------------------------------------------
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/view/map/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ca0dd0c4.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="rekee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.93.0 (254b59607 2026-01-19)" data-channel="1.93.0" data-search-js="search-9e2438ea.js" data-stringdex-js="stringdex-a3946164.js" data-settings-js="settings-c38705f0.js" ><script src="../../../../static.files/storage-e2aeef58.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-a410ff4d.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rekee/view/map/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">//----------------------------------------------------------------------------
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="doccomment">//! Rendering of the map and according event handlers.
 <a href=#3 id=3 data-nosnippet>3</a></span><span class="comment">//
 <a href=#4 id=4 data-nosnippet>4</a>// This Source Code Form is subject to the terms of the Mozilla Public
@@ -186,7 +186,7 @@
 <a href=#186 id=186 data-nosnippet>186</a>
 <a href=#187 id=187 data-nosnippet>187</a>    <span class="attr">#[allow(clippy::unnecessary_unwrap)] </span><span class="comment">// false positive, see issue rust-lang/rust-clippy#4530
 <a href=#188 id=188 data-nosnippet>188</a>    </span><span class="kw">fn </span>set_pos(<span class="kw-2">&amp;mut </span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: <span class="prelude-ty">Option</span>&lt;Coordinate&gt;) {
-<a href=#189 id=189 data-nosnippet>189</a>        <span class="kw">if </span>pos.is_some() &amp;&amp; pos != <span class="self">self</span>.pos {
+<a href=#189 id=189 data-nosnippet>189</a>        <span class="kw">if </span>pos.is_some() &amp;&amp; <span class="macro">pos !</span>= <span class="self">self</span>.pos {
 <a href=#190 id=190 data-nosnippet>190</a>            <span class="kw">let </span>pos = pos.unwrap().to_pixel(layout);
 <a href=#191 id=191 data-nosnippet>191</a>            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1})"</span>, pos.x(), pos.y());
 <a href=#192 id=192 data-nosnippet>192</a>            <span class="macro">check!</span>(<span class="self">self</span>.inner.set_attribute(<span class="string">"transform"</span>, <span class="kw-2">&amp;</span>transform).ok());
@@ -329,7 +329,7 @@
 <a href=#329 id=329 data-nosnippet>329</a>    }
 <a href=#330 id=330 data-nosnippet>330</a>
 <a href=#331 id=331 data-nosnippet>331</a>    <span class="kw">fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate, dir: Direction) {
-<a href=#332 id=332 data-nosnippet>332</a>        <span class="kw">if </span>pos != <span class="self">self</span>.pos || dir != <span class="self">self</span>.dir {
+<a href=#332 id=332 data-nosnippet>332</a>        <span class="kw">if </span><span class="macro">pos !</span>= <span class="self">self</span>.pos || <span class="macro">dir !</span>= <span class="self">self</span>.dir {
 <a href=#333 id=333 data-nosnippet>333</a>            <span class="kw">let </span>pos = pos.to_pixel(layout);
 <a href=#334 id=334 data-nosnippet>334</a>            <span class="kw">let </span>angle = layout.direction_to_angle(dir);
 <a href=#335 id=335 data-nosnippet>335</a>            <span class="kw">let </span>transform = <span class="macro">format!</span>(<span class="string">"translate({:.1} {:.1}) rotate({:.0})"</span>, pos.x(), pos.y(), angle);
@@ -863,10 +863,10 @@
 <a href=#863 id=863 data-nosnippet>863</a>        }
 <a href=#864 id=864 data-nosnippet>864</a>
 <a href=#865 id=865 data-nosnippet>865</a>        <span class="comment">// update tile label visibility
-<a href=#866 id=866 data-nosnippet>866</a>        </span><span class="self">self</span>.labels.set_hidden(<span class="self">self</span>.label_type != LabelType::Number);
+<a href=#866 id=866 data-nosnippet>866</a>        </span><span class="self">self</span>.labels.set_hidden(<span class="self">self</span>.<span class="macro">label_type !</span>= LabelType::Number);
 <a href=#867 id=867 data-nosnippet>867</a>
 <a href=#868 id=868 data-nosnippet>868</a>        <span class="comment">// update tile pacenote visibility
-<a href=#869 id=869 data-nosnippet>869</a>        </span><span class="self">self</span>.pacenotes.set_hidden(<span class="self">self</span>.label_type != LabelType::Pacenote);
+<a href=#869 id=869 data-nosnippet>869</a>        </span><span class="self">self</span>.pacenotes.set_hidden(<span class="self">self</span>.<span class="macro">label_type !</span>= LabelType::Pacenote);
 <a href=#870 id=870 data-nosnippet>870</a>
 <a href=#871 id=871 data-nosnippet>871</a>        <span class="comment">// update title and author input controls
 <a href=#872 id=872 data-nosnippet>872</a>        </span><span class="self">self</span>.title.set_value(<span class="self">self</span>.map.title());
@@ -901,14 +901,14 @@
 <a href=#901 id=901 data-nosnippet>901</a>     }
 <a href=#902 id=902 data-nosnippet>902</a>
 <a href=#903 id=903 data-nosnippet>903</a>    <span class="kw">pub fn </span>update_title(<span class="kw-2">&amp;mut </span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) {
-<a href=#904 id=904 data-nosnippet>904</a>        <span class="kw">if </span>title != <span class="self">self</span>.map.title() {
+<a href=#904 id=904 data-nosnippet>904</a>        <span class="kw">if </span><span class="macro">title !</span>= <span class="self">self</span>.map.title() {
 <a href=#905 id=905 data-nosnippet>905</a>            <span class="self">self</span>.map.set_title(title);
 <a href=#906 id=906 data-nosnippet>906</a>            <span class="self">self</span>.update_map();
 <a href=#907 id=907 data-nosnippet>907</a>        }
 <a href=#908 id=908 data-nosnippet>908</a>    }
 <a href=#909 id=909 data-nosnippet>909</a>
 <a href=#910 id=910 data-nosnippet>910</a>    <span class="kw">pub fn </span>update_author(<span class="kw-2">&amp;mut </span><span class="self">self</span>, author: <span class="kw-2">&amp;</span>str) {
-<a href=#911 id=911 data-nosnippet>911</a>        <span class="kw">if </span>author != <span class="self">self</span>.map.author() {
+<a href=#911 id=911 data-nosnippet>911</a>        <span class="kw">if </span><span class="macro">author !</span>= <span class="self">self</span>.map.author() {
 <a href=#912 id=912 data-nosnippet>912</a>            <span class="self">self</span>.map.set_author(author);
 <a href=#913 id=913 data-nosnippet>913</a>            nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
 <a href=#914 id=914 data-nosnippet>914</a>        }
@@ -916,7 +916,7 @@
 <a href=#916 id=916 data-nosnippet>916</a>
 <a href=#917 id=917 data-nosnippet>917</a>    <span class="kw">pub fn </span>update_background_grid(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
 <a href=#918 id=918 data-nosnippet>918</a>        <span class="kw">let </span>hidden = !visible;
-<a href=#919 id=919 data-nosnippet>919</a>        <span class="kw">if </span>hidden != <span class="self">self</span>.grid.hidden() {
+<a href=#919 id=919 data-nosnippet>919</a>        <span class="kw">if </span><span class="macro">hidden !</span>= <span class="self">self</span>.grid.hidden() {
 <a href=#920 id=920 data-nosnippet>920</a>            <span class="macro">debug!</span>(<span class="string">"update background grid: {:?}"</span>, visible);
 <a href=#921 id=921 data-nosnippet>921</a>            <span class="self">self</span>.grid.set_hidden(hidden);
 <a href=#922 id=922 data-nosnippet>922</a>            nuts::send_to::&lt;MapController, <span class="kw">_</span>&gt;(SaveSettingsEvent);
@@ -924,7 +924,7 @@
 <a href=#924 id=924 data-nosnippet>924</a>    }
 <a href=#925 id=925 data-nosnippet>925</a>
 <a href=#926 id=926 data-nosnippet>926</a>    <span class="kw">pub fn </span>update_tile_labels(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label_type: LabelType) {
-<a href=#927 id=927 data-nosnippet>927</a>        <span class="kw">if </span>label_type != <span class="self">self</span>.label_type {
+<a href=#927 id=927 data-nosnippet>927</a>        <span class="kw">if </span><span class="macro">label_type !</span>= <span class="self">self</span>.label_type {
 <a href=#928 id=928 data-nosnippet>928</a>            <span class="macro">debug!</span>(<span class="string">"update map tile labels: {:?}"</span>, label_type);
 <a href=#929 id=929 data-nosnippet>929</a>            <span class="self">self</span>.label_type = label_type;
 <a href=#930 id=930 data-nosnippet>930</a>            <span class="self">self</span>.update_map();
@@ -945,8 +945,8 @@
 <a href=#945 id=945 data-nosnippet>945</a>            label_type <span class="comment">// override
 <a href=#946 id=946 data-nosnippet>946</a>        </span>};
 <a href=#947 id=947 data-nosnippet>947</a>        <span class="macro">info!</span>(<span class="string">"toggle map tile labels: {:?}"</span>, label_type);
-<a href=#948 id=948 data-nosnippet>948</a>        <span class="self">self</span>.labels.set_hidden(label_type != LabelType::Number);
-<a href=#949 id=949 data-nosnippet>949</a>        <span class="self">self</span>.pacenotes.set_hidden(label_type != LabelType::Pacenote);
+<a href=#948 id=948 data-nosnippet>948</a>        <span class="self">self</span>.labels.set_hidden(<span class="macro">label_type !</span>= LabelType::Number);
+<a href=#949 id=949 data-nosnippet>949</a>        <span class="self">self</span>.pacenotes.set_hidden(<span class="macro">label_type !</span>= LabelType::Pacenote);
 <a href=#950 id=950 data-nosnippet>950</a>    }
 <a href=#951 id=951 data-nosnippet>951</a>
 <a href=#952 id=952 data-nosnippet>952</a>    <span class="kw">pub fn </span>toggle_tile_tokens(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) {
@@ -1076,7 +1076,7 @@
 <a href=#1076 id=1076 data-nosnippet>1076</a>            <span class="kw">let </span>tile = dragged.tile();
 <a href=#1077 id=1077 data-nosnippet>1077</a>            <span class="macro">info!</span>(<span class="string">"drag tile end: {:?} -&gt; {:?}"</span>, tile, pos);
 <a href=#1078 id=1078 data-nosnippet>1078</a>            <span class="macro">check!</span>(<span class="self">self</span>.canvas.remove_child(dragged.as_ref()).ok());
-<a href=#1079 id=1079 data-nosnippet>1079</a>            <span class="kw">if </span>pos != tile.pos {
+<a href=#1079 id=1079 data-nosnippet>1079</a>            <span class="kw">if </span><span class="macro">pos !</span>= tile.pos {
 <a href=#1080 id=1080 data-nosnippet>1080</a>                <span class="self">self</span>.map.remove(tile.pos);
 <a href=#1081 id=1081 data-nosnippet>1081</a>                <span class="self">self</span>.map.insert_with_tokens(tile.id(), pos, tile.dir, tile.tokens.clone());
 <a href=#1082 id=1082 data-nosnippet>1082</a>                <span class="self">self</span>.update_map();
@@ -1141,4 +1141,5 @@
 <a href=#1141 id=1141 data-nosnippet>1141</a>    }
 <a href=#1142 id=1142 data-nosnippet>1142</a>}
 <a href=#1143 id=1143 data-nosnippet>1143</a>
-<a href=#1144 id=1144 data-nosnippet>1144</a><span class="comment">//----------------------------------------------------------------------------</span></code></pre></div></section></main></body></html>
+<a href=#1144 id=1144 data-nosnippet>1144</a><span class="comment">//----------------------------------------------------------------------------
+</span></code></pre></div></section></main></body></html>
