@@ -220,6 +220,7 @@ macro_rules! tile {
 //----------------------------------------------------------------------------
 
 /// Helper that counts tiles per catalog number.
+#[derive(Debug)]
 struct TileCount {
     inner: BTreeMap::<u16, u32>,
 }
@@ -252,6 +253,13 @@ impl TileCount {
         self.inner.iter()
     }
 
+    fn retain<F>(&mut self, f: F)
+    where
+        F: FnMut(&u16, &mut u32) -> bool
+    {
+        self.inner.retain(f);
+    }
+
     fn intersection(&self, other: &Self) -> Self {
         let mut list = BTreeMap::new();
         for (tile_num, count) in self.inner.iter() {
@@ -278,6 +286,7 @@ impl TileCount {
 
 /// Helper that counts common tiles per catalog number between a single edition
 /// and another list of tiles.
+#[derive(Debug)]
 struct EditionTileCount {
     edition: Edition,
     common: TileCount,
@@ -300,6 +309,7 @@ impl EditionTileCount {
 /// See its documentation for more.
 ///
 /// [`group_by_edition`]: TileList::group_by_edition
+#[derive(Debug)]
 pub struct GroupByEdition {
     editions: Vec<EditionTileCount>,
     edition_offset: usize,
@@ -314,6 +324,22 @@ impl GroupByEdition {
             .map(|&edition| EditionTileCount::new(edition, &list_tiles))
             .filter(|item| !item.common.inner.is_empty())
             .collect();
+        // Update TileCount for discontinued editions, so that a discontinued
+        // edition is only considered for the discontinued tiles, but not those
+        // still found in active editions.
+        for item in editions.iter_mut() {
+            if !item.edition.is_discontinued() {
+                continue;
+            }
+            item.common.retain(|num, _count| {
+                let base_id = TileId::new(*num, 1, 0);
+                match TileInfo::get(base_id) {
+                    Some(info) => info.is_discontinued(),
+                    None => true,
+                }
+            });
+        }
+        editions.retain(|item| item.common.total_count() > 0);
         editions.sort_by_cached_key(|item| Reverse(item.common.total_count()));
         let tiles_remaining: Vec<_> = list.iter()
             .map(|val| *val.as_ref())
@@ -389,6 +415,7 @@ impl Iterator for GroupByEdition {
 /// See its documentation for more.
 ///
 /// [`group_by_terrain`]: TileList::group_by_terrain
+#[derive(Debug)]
 pub struct GroupByTerrain {
     terrains: Vec<Option<Terrain>>,
     tiles: Vec<TileId>,
@@ -487,6 +514,7 @@ impl Iterator for GroupByTerrain {
 /// [`TileList`].  See its documentation for more.
 ///
 /// [`group_by_danger_level`]: TileList::group_by_danger_level
+#[derive(Debug)]
 pub struct GroupByDangerLevel {
     danger_levels: Vec<Option<DangerLevel>>,
     tiles: Vec<TileId>,
@@ -2354,11 +2382,10 @@ mod tests {
             EditionSummary::new(Some(Edition::GtTeamChallenge), 2, 24),
             EditionSummary::new(Some(Edition::GtAdrenalinePack), 2, 10),
             EditionSummary::new(Some(Edition::DirtCoreBox), 2, 64),
-            EditionSummary::new(Some(Edition::DirtMonteCarlo), 1, 26),
-            EditionSummary::new(Some(Edition::Dirt110Percent), 1, 24),
+            EditionSummary::new(Some(Edition::DirtMonteCarlo), 2, 52),
             EditionSummary::new(Some(Edition::DirtRx), 2, 30),
             EditionSummary::new(Some(Edition::DirtClimb), 2, 8),
-            EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 10),
+            EditionSummary::new(Some(Edition::DirtCopilotPack), 2, 8),
         ]);
         let series = tiles.detect_series();
         assert_eq!(series, None);
