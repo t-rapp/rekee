@@ -473,7 +473,7 @@ impl TokenImageProperties {
             let canvas = parent.canvas.clone();
             move |event: web_sys::MouseEvent| {
                 if event.button() != 0 {
-                    return;
+                    return; // only activate on the main (left) mouse button
                 }
                 event.prevent_default();
                 let pos = check!(mouse_position_element(&event, &canvas));
@@ -855,6 +855,9 @@ impl MapDetailView {
 
         let dragged_mouseup_cb = Closure::wrap(Box::new({
             move |event: web_sys::MouseEvent| {
+                if event.button() != 0 {
+                    return; // only activate on the main (left) mouse button
+                }
                 let pos = check!(mouse_position(&event));
                 nuts::send_to::<MapDetailController, _>(DragMapDetailTokenEndEvent { pos });
             }
