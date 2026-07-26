@@ -239,7 +239,7 @@ impl SelectedMenu {
                 event.stop_propagation();
                 nuts::publish(RotateSelectedTileLeftEvent);
             }) as Box<dyn Fn(_)>);
-            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
@@ -249,7 +249,7 @@ impl SelectedMenu {
                 event.stop_propagation();
                 nuts::publish(RotateSelectedTileRightEvent);
             }) as Box<dyn Fn(_)>);
-            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
@@ -260,7 +260,7 @@ impl SelectedMenu {
                 nuts::send_to::<MapController, _>(SaveSettingsEvent);
                 nuts::publish(ShowMapDetailEvent);
             }) as Box<dyn Fn(_)>);
-            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
@@ -270,7 +270,7 @@ impl SelectedMenu {
                 event.stop_propagation();
                 nuts::publish(RemoveSelectedTileEvent);
             }) as Box<dyn Fn(_)>);
-            btn.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
+            btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
         }
 
@@ -567,6 +567,9 @@ impl MapView {
 
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            if event.button() != 0 {
+                return; // only activate on the main (left) mouse button
+            }
             let pos = check!(mouse_position(&event));
             nuts::publish(UpdateSelectedTileEvent { pos });
             nuts::send_to::<MapController, _>(DragMapTileBeginEvent { pos });
@@ -581,6 +584,9 @@ impl MapView {
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseup_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            if event.button() != 0 {
+                return; // only activate on the main (left) mouse button
+            }
             let pos = check!(mouse_position(&event));
             nuts::send_to::<MapController, _>(DragMapTileEndEvent { pos });
             nuts::publish(UpdateSelectedTileEvent { pos });
