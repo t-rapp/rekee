@@ -746,6 +746,7 @@ pub struct MapDetailView {
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
 }
 
 impl MapDetailView {
@@ -869,12 +870,23 @@ impl MapDetailView {
             }
         }) as Box<dyn Fn(_)>);
 
+        let dragged_keydown_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.repeat() {
+                return;
+            }
+            if event.key().eq_ignore_ascii_case("escape") {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::send_to::<MapDetailController, _>(DragMapDetailTokenCancelEvent);
+            }
+        }) as Box<dyn Fn(_)>);
+
         Ok(MapDetailView {
             inner, layout, tile_layout, canvas, canvas_viewbox, center_tile,
             grid, tiles, tokens, token_properties, token_properties_adder,
             token_properties_column, apply, apply_cb, close, close_cb,
             keydown_cb, dragged_index, dragged_mousemove_cb, dragged_mouseup_cb,
-            dragged_mouseleave_cb
+            dragged_mouseleave_cb, dragged_keydown_cb
         })
     }
 
@@ -1039,6 +1051,10 @@ impl MapDetailView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.add_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+        // register keyboard event for the (early) capture phase to allow override of modal shortcuts
+        let document = check!(self.inner.owner_document());
+        check!(document.add_event_listener_with_callback_and_bool("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref(), true).ok());
 
         self.toggle_token_properties(index);
     }
@@ -1074,7 +1090,9 @@ impl MapDetailView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
-
+        let document = check!(self.inner.owner_document());
+        check!(document.remove_event_listener_with_callback("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref()).ok());
     }
 
     pub fn drag_token_cancel(&mut self) {
@@ -1094,6 +1112,9 @@ impl MapDetailView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+        let document = check!(self.inner.owner_document());
+        check!(document.remove_event_listener_with_callback("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref()).ok());
     }
 
     pub fn apply_map_detail(&mut self) {
@@ -1120,6 +1141,8 @@ impl Drop for MapDetailView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref());
     }
 }
 
