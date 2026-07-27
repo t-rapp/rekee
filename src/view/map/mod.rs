@@ -424,6 +424,7 @@ pub struct MapView {
     dragged_mousemove_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseup_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+    dragged_keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
     document_title: String,
     download_button: web_sys::HtmlElement,
     export_button: web_sys::HtmlElement,
@@ -596,6 +597,17 @@ impl MapView {
             nuts::send_to::<MapController, _>(DragMapTileCancelEvent);
         }) as Box<dyn Fn(_)>);
 
+        let dragged_keydown_cb = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.repeat() {
+                return;
+            }
+            if event.key().eq_ignore_ascii_case("escape") {
+                event.prevent_default();
+                event.stop_propagation();
+                nuts::send_to::<MapController, _>(DragMapTileCancelEvent);
+            }
+        }) as Box<dyn Fn(_)>);
+
         if let Some(btn) = document.get_element_by_id("align-center-button") {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
@@ -709,8 +721,8 @@ impl MapView {
             layout, map, canvas, canvas_viewbox, grid, tiles, tokens, labels,
             pacenotes, title, author, selected, selected_menu, active,
             label_type, keychange_cb, dragged, dragged_mousemove_cb,
-            dragged_mouseup_cb, dragged_mouseleave_cb, document_title,
-            download_button, export_button
+            dragged_mouseup_cb, dragged_mouseleave_cb, dragged_keydown_cb,
+            document_title, download_button, export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -1060,6 +1072,9 @@ impl MapView {
                 self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
             check!(self.canvas.add_event_listener_with_callback("mouseleave",
                 self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+            // register keyboard event for the (early) capture phase to allow override of modal shortcuts
+            check!(document.add_event_listener_with_callback_and_bool("keydown",
+                self.dragged_keydown_cb.as_ref().unchecked_ref(), true).ok());
         }
     }
 
@@ -1106,6 +1121,9 @@ impl MapView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+        let document = check!(self.canvas.owner_document());
+        check!(document.remove_event_listener_with_callback_and_bool("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref(), true).ok());
     }
 
     pub fn drag_tile_cancel(&mut self) {
@@ -1124,6 +1142,9 @@ impl MapView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref()).ok());
         check!(self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref()).ok());
+        let document = check!(self.canvas.owner_document());
+        check!(document.remove_event_listener_with_callback_and_bool("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref(), true).ok());
     }
 
     pub fn update_connection_hint(&mut self, hint: Option<ConnectionHint>) {
@@ -1144,6 +1165,8 @@ impl Drop for MapView {
             self.dragged_mouseup_cb.as_ref().unchecked_ref());
         let _ = self.canvas.remove_event_listener_with_callback("mouseleave",
             self.dragged_mouseleave_cb.as_ref().unchecked_ref());
+        let _ = document.remove_event_listener_with_callback_and_bool("keydown",
+            self.dragged_keydown_cb.as_ref().unchecked_ref(), true);
     }
 }
 
