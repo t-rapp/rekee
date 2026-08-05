@@ -566,13 +566,26 @@ impl MapView {
         document.add_event_listener_with_callback("keyup",
             keychange_cb.as_ref().unchecked_ref())?;
 
+        // add tile-select event handler to canvas element
+        let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            let pos = check!(mouse_position(&event));
+            nuts::publish(UpdateSelectedTileEvent { pos });
+        }) as Box<dyn Fn(_)>);
+        canvas.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
+        callback.forget();
+
         // add drag-n-drop event handlers to canvas element
         let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             if event.button() != 0 {
                 return; // only activate on the main (left) mouse button
             }
+            let maybe_button_target = check!(event.target()
+                .and_then(|target| target.dyn_into::<web_sys::Element>().ok())
+                .and_then(|target| target.closest("button,input[type=button]").ok()));
+            if maybe_button_target.is_some() {
+                return; // skip drag-n-drop when a selected-menu button is the event target
+            }
             let pos = check!(mouse_position(&event));
-            nuts::publish(UpdateSelectedTileEvent { pos });
             nuts::send_to::<MapController, _>(DragMapTileBeginEvent { pos });
         }) as Box<dyn Fn(_)>);
         canvas.add_event_listener_with_callback("mousedown", callback.as_ref().unchecked_ref()).unwrap();
@@ -590,7 +603,6 @@ impl MapView {
             }
             let pos = check!(mouse_position(&event));
             nuts::send_to::<MapController, _>(DragMapTileEndEvent { pos });
-            nuts::publish(UpdateSelectedTileEvent { pos });
         }) as Box<dyn Fn(_)>);
 
         let dragged_mouseleave_cb = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
@@ -1052,9 +1064,6 @@ impl MapView {
     pub fn drag_tile_begin(&mut self, pos: Point) {
         let pos = Coordinate::from_pixel_rounded(&self.layout,
             self.canvas_viewbox.top_left() + pos);
-        if self.selected.pos() != Some(pos) {
-            return;
-        }
         if let Some(tile) = self.map.get(pos) {
             info!("drag tile begin: {:?}", tile);
             let document = check!(self.canvas.owner_document());
@@ -1100,6 +1109,7 @@ impl MapView {
             if pos != tile.pos {
                 self.map.remove(tile.pos);
                 self.map.insert_with_tokens(tile.id(), pos, tile.dir, tile.tokens.clone());
+                self.inner_update_selected_tile(pos);
                 self.update_map();
             }
         }
@@ -1110,6 +1120,7 @@ impl MapView {
                 self.canvas_viewbox.top_left() + pos);
             info!("drag tile end: {:?} -> {:?}", tile, pos);
             self.map.append(tile, Some(pos), None);
+            self.inner_update_selected_tile(pos);
             self.update_map();
         }
 
