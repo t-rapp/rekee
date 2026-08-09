@@ -1,6 +1,7 @@
 {
    "title": "Chicane Example 02",
    "author": "Holy Grail Games",
+   "orientation": "flat",
    "tiles": [
       {
          "q": 1,

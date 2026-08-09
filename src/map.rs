@@ -13,7 +13,7 @@ use serde::{Serialize, Deserialize, Deserializer};
 use serde::de::{self, Visitor};
 
 use crate::edition::Edition;
-use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Point};
+use crate::hexagon::{Coordinate, Direction, FloatCoordinate, FloatDirection, Layout, Orientation, Point};
 use crate::tile::{Connection, ConnectionHint, DangerLevel, Edge, Pacenote, Terrain, TileId, TileInfo, TileList};
 use crate::token::{TokenId, TokenList};
 
@@ -391,6 +391,8 @@ pub struct Map {
     title: String,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     author: String,
+    #[serde(default)]
+    orientation: Orientation,
     tiles: Vec<PlacedTile>,
     #[serde(default)]
     active_pos: Coordinate,
@@ -403,10 +405,11 @@ impl Map {
     pub fn new() -> Self {
         let title = String::new();
         let author = String::new();
+        let orientation = Orientation::default();
         let tiles = Vec::new();
         let active_pos = Coordinate::default();
         let active_dir = Self::default_active_dir();
-        Map { title, author, tiles, active_pos, active_dir }
+        Map { title, author, orientation, tiles, active_pos, active_dir }
     }
 
     /// Map title.
@@ -419,7 +422,7 @@ impl Map {
         self.title = title.to_string();
     }
 
-    /// Map author
+    /// Map author.
     pub fn author(&self) -> &str {
         &self.author
     }
@@ -427,6 +430,16 @@ impl Map {
     /// Updates the map author.
     pub fn set_author(&mut self, author: &str) {
         self.author = author.to_string();
+    }
+
+    /// Map orientation.
+    pub fn orientation(&self) -> Orientation {
+        self.orientation
+    }
+
+    /// Updates the map orientation.
+    pub fn set_orientation(&mut self, orientation: Orientation) {
+        self.orientation = orientation;
     }
 
     /// List of all tiles placed on the map.
@@ -1254,6 +1267,7 @@ mod tests {
         let text = serde_json::to_string_pretty(&map).unwrap();
         assert_eq!(text, indoc!(r#"{
           "title": "",
+          "orientation": "pointy",
           "tiles": [],
           "active_pos": {
             "q": 0,
@@ -1280,6 +1294,7 @@ mod tests {
         assert_eq!(text, indoc!(r#"{
           "title": "Short Track 2",
           "author": "CarmLima",
+          "orientation": "pointy",
           "tiles": [
             {
               "id": "102b",
@@ -1375,6 +1390,7 @@ mod tests {
         let map: Map = serde_json::from_str(text).unwrap();
         assert_eq!(map.title(), "Short Track 2");
         assert_eq!(map.author(), "CarmLima");
+        assert_eq!(map.orientation(), Orientation::Pointy);
         assert_abs_diff_eq!(map.tiles(), &[
             PlacedTile::new(tile!(102, b, 0), ( 1, -1).into(), Direction::E),
             PlacedTile::new(tile!(104, b, 1), ( 1,  0).into(), Direction::B),
