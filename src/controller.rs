@@ -48,7 +48,7 @@ pub struct AppendTileEvent {
     pub hint: Option<ConnectionHint>,
 }
 
-pub struct AlignCenterEvent;
+pub struct AlignMapCenterEvent;
 
 pub struct ClearMapEvent;
 
@@ -296,7 +296,7 @@ pub mod map {
             activity.subscribe(MapController::export_file);
             activity.subscribe(MapController::insert_tile);
             activity.subscribe(MapController::append_tile);
-            activity.subscribe(MapController::align_center);
+            activity.subscribe(MapController::align_map_center);
             activity.subscribe(MapController::clear_map);
             activity.subscribe(MapController::rotate_map_left);
             activity.subscribe(MapController::rotate_map_right);
@@ -347,8 +347,8 @@ pub mod map {
             self.view.append_tile(event.id, event.pos, event.hint);
         }
 
-        fn align_center(&mut self, _event: &AlignCenterEvent) {
-            self.view.align_center();
+        fn align_map_center(&mut self, _event: &AlignMapCenterEvent) {
+            self.view.align_map_center();
         }
 
         fn clear_map(&mut self, _event: &ClearMapEvent) {

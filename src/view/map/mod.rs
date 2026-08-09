@@ -13,7 +13,7 @@ use web_sys::{self, Document, Element};
 
 use crate::check;
 use crate::controller::{
-    AlignCenterEvent, ClearMapEvent, ExportFileEvent, ExportImageEvent,
+    AlignMapCenterEvent, ClearMapEvent, ExportFileEvent, ExportImageEvent,
     ImportFileEvent, RemoveSelectedTileEvent, RotateMapLeftEvent,
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
@@ -663,11 +663,11 @@ impl MapView {
             }
         }) as Box<dyn Fn(_)>);
 
-        if let Some(btn) = document.get_element_by_id("align-center-button") {
+        if let Some(btn) = document.get_element_by_id("align-map-center-button") {
             let callback = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
                 event.prevent_default();
                 event.stop_propagation();
-                nuts::publish(AlignCenterEvent);
+                nuts::publish(AlignMapCenterEvent);
             }) as Box<dyn Fn(_)>);
             btn.add_event_listener_with_callback("click", callback.as_ref().unchecked_ref()).unwrap();
             callback.forget();
@@ -847,7 +847,7 @@ impl MapView {
         self.update_map();
     }
 
-    pub fn align_center(&mut self) {
+    pub fn align_map_center(&mut self) {
         self.clear_selected();
         self.map.align_center();
         self.update_map();

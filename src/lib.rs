@@ -131,7 +131,7 @@ pub fn main() -> Result<(), JsValue> {
         nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(1, -1).to_pixel(&layout) });
         let token = PlacedToken::new(TokenId::Finish, (0.5, 0.0).into(), 3.0.into());
         nuts::publish(AddSelectedTileTokenEvent { token });
-        nuts::publish(AlignCenterEvent);
+        nuts::publish(AlignMapCenterEvent);
         nuts::publish(UpdateTitleEvent { title: String::from("Short Track") });
         nuts::publish(UpdateAuthorEvent { author: String::from("CarmLima") });
     }
