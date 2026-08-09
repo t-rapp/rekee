@@ -376,7 +376,7 @@ pub mod util {
 
     pub fn tile_image_size(layout: &Layout) -> Point {
         // use flat layout orientation as we confine us to the image size without rotation applied yet
-        let rect = layout.with_orientation(Orientation::flat())
+        let rect = layout.with_orientation(Orientation::Flat)
             .hexagon_rect(Coordinate::new(0, 0));
         Point(rect.width.round(), rect.height.round())
     }
@@ -422,13 +422,13 @@ mod tests {
 
     #[test]
     fn tile_image_size_and_center() {
-        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(60.0, 60.0), Point(0.0, 0.0));
         let size = util::tile_image_size(&layout);
         assert_abs_diff_eq!(size, Point(120.0, 104.0));
         let center = util::tile_image_center(&layout);
         assert_abs_diff_eq!(center, Point(60.0, 52.0));
 
-        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(60.0, 60.0), Point(0.0, 0.0));
         let size = util::tile_image_size(&layout);
         assert_abs_diff_eq!(size, Point(120.0, 104.0));
         let center = util::tile_image_center(&layout);
@@ -439,7 +439,7 @@ mod tests {
     fn token_image_size_and_center() {
         use crate::tile::Terrain;
 
-        let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(60.0, 60.0), Point(0.0, 0.0));
 
         let token_id = TokenId::Chicane(Terrain::Asphalt);
         let size = util::token_image_size(&layout, token_id);
@@ -459,7 +459,7 @@ mod tests {
         let center = util::token_image_center(&layout, token_id);
         assert_abs_diff_eq!(center, Point(36.0, 35.1));
 
-        let layout = Layout::new(Orientation::flat(), Point(60.0, 60.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(60.0, 60.0), Point(0.0, 0.0));
 
         let token_id = TokenId::Chicane(Terrain::Asphalt);
         let size = util::token_image_size(&layout, token_id);

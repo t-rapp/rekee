@@ -439,7 +439,7 @@ mod rgt {
 
     fn token_layout() -> Layout {
         // invert the x-axis, keep the y-axis
-        Layout::new(Orientation::pointy(), Point(-1.0, 1.0), Point(0.0, 0.0))
+        Layout::new(Orientation::Pointy, Point(-1.0, 1.0), Point(0.0, 0.0))
     }
 }
 

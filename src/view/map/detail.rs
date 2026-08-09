@@ -757,7 +757,7 @@ impl MapDetailView {
         let detail_size = layout.size() * 3.0;
         let detail_origin = detail_size * 1.5;
         let layout = Layout::new(layout.orientation(), detail_size, detail_origin);
-        let tile_layout = layout.clone();
+        let tile_layout = layout;
         let center_tile = None;
 
         let token_properties = Vec::new();
@@ -930,7 +930,7 @@ impl MapDetailView {
             }
             let mut index = 1;
             for token in &tile.tokens {
-                if let Ok(item) = TokenImageProperties::new(&document, self.tile_layout.clone(), tile.clone(), token.clone(), index, self) {
+                if let Ok(item) = TokenImageProperties::new(&document, self.tile_layout, tile.clone(), token.clone(), index, self) {
                     self.token_properties_column.append_child(item.as_ref()).unwrap();
                     self.token_properties.push(item);
                     index += 1;
@@ -1019,7 +1019,7 @@ impl MapDetailView {
             .max()
             .unwrap_or(0) + 1;
 
-        let item = check!(TokenImageProperties::new(&document, self.tile_layout.clone(), tile, token, index, self).ok());
+        let item = check!(TokenImageProperties::new(&document, self.tile_layout, tile, token, index, self).ok());
         let token_properties_adder: &Element = self.token_properties_adder.as_ref();
         check!(token_properties_adder.before_with_node_1(item.as_ref()).ok());
         self.token_properties.push(item);

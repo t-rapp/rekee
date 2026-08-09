@@ -117,7 +117,7 @@ fn main() -> Result<(), String> {
 
     let map = import_file(filename)?;
     let tile_size = scale.tile_size();
-    let layout = Layout::new(Orientation::pointy(), tile_size, tile_size * 1.5);
+    let layout = Layout::new(Orientation::Pointy, tile_size, tile_size * 1.5);
 
     // calculate rectangular map area that is covered with tiles
     let mut map_area = Rect::new(f32::NAN, f32::NAN, 0.0, 0.0);

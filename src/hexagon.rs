@@ -12,6 +12,7 @@
 
 use std::fmt;
 use std::ops::{Add, Sub, Mul, Neg, Index, IndexMut};
+use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
 
@@ -217,20 +218,20 @@ impl FloatCoordinate {
 
     /// Convert this floating-point grid coordinate into x/y pixel positions.
     pub fn to_pixel(self, layout: &Layout) -> Point {
-        let o = &layout.orientation;
-        let x = (o.f0 * self.q + o.f1 * self.r) * layout.size.0;
-        let y = (o.f2 * self.q + o.f3 * self.r) * layout.size.1;
+        let lc = layout.coefficients();
+        let x = (lc.f0 * self.q + lc.f1 * self.r) * layout.size.0;
+        let y = (lc.f2 * self.q + lc.f3 * self.r) * layout.size.1;
         layout.origin + Point(x, y)
     }
 
     /// Convert x/y pixel positions into a floating-point grid coordinate.
     #[allow(clippy::many_single_char_names)]
     pub fn from_pixel(layout: &Layout, p: Point) -> Self {
-        let o = &layout.orientation;
+        let lc = layout.coefficients();
         let x = (p.0 - layout.origin.0) / layout.size.0;
         let y = (p.1 - layout.origin.1) / layout.size.1;
-        let q = o.b0 * x + o.b1 * y;
-        let r = o.b2 * x + o.b3 * y;
+        let q = lc.b0 * x + lc.b1 * y;
+        let r = lc.b2 * x + lc.b3 * y;
         FloatCoordinate { q, r }
     }
 
@@ -909,55 +910,89 @@ impl approx::AbsDiffEq for Rect {
 
 //----------------------------------------------------------------------------
 
-/// Hexagon orientation coefficients.
-#[derive(Debug, Clone)]
-pub struct Orientation {
-    // coefficients for forward conversion of hex coordinates into pixels
-    f0: f32,
-    f1: f32,
-    f2: f32,
-    f3: f32,
-    // coefficients for backward conversion of pixels into hex coordinates
-    b0: f32,
-    b1: f32,
-    b2: f32,
-    b3: f32,
-    // base direction of the hex grid (in multiples of 60°)
-    start_angle: FloatDirection,
+/// Hexagon orientation (pointy-top or flat-top).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase", try_from = "&str")]
+pub enum Orientation {
+    /// Pointy-Top
+    Pointy,
+    /// Flat-Top
+    Flat,
 }
 
-#[allow(clippy::excessive_precision)]
-const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
-
-const LAYOUT_POINTY: Orientation = Orientation {
-    f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
-    b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
-    start_angle: FloatDirection(1.5),
-};
-
-const LAYOUT_FLAT: Orientation = Orientation {
-    f0: 0.0, f1: 3.0 / 2.0, f2: -SQRT_3, f3: -SQRT_3 / 2.0,
-    b0: -1.0 / 3.0, b1: -SQRT_3 / 3.0, b2: 2.0 / 3.0, b3: 0.0,
-    start_angle: FloatDirection(0.0),
-};
-
-impl Orientation {
-    /// Pointy topped orientation, hexagons are aligned in horizontal rows.
-    pub fn pointy() -> &'static Self {
-        &LAYOUT_POINTY
+impl Default for Orientation {
+    fn default() -> Self {
+        Orientation::Pointy
     }
+}
 
-    /// Flat topped orientation, hexagons are aligned in vertical columns.
-    pub fn flat() -> &'static Self {
-        &LAYOUT_FLAT
+impl fmt::Display for Orientation {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Orientation::Pointy =>
+                write!(fmt, "Pointy")?,
+            Orientation::Flat =>
+                write!(fmt, "Flat")?,
+        }
+        Ok(())
+    }
+}
+
+// small hack to provide the Serde string serialization as a formatter
+impl fmt::LowerHex for Orientation {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut text = serde_json::to_string(self).unwrap();
+        text.retain(|ch| ch != '"');
+        write!(fmt, "{}", text)
+    }
+}
+
+impl FromStr for Orientation {
+    type Err = ParseOrientationError;
+
+    fn from_str(val: &str) -> std::result::Result<Self, Self::Err> {
+        // match strings from both trait implementations, std::fmt::Display and serde::Serialize
+        let s = val.to_ascii_lowercase();
+
+        match s.as_ref() {
+            "pointy" =>
+                Ok(Orientation::Pointy),
+            "flat" =>
+                Ok(Orientation::Flat),
+            _ =>
+                Err(ParseOrientationError::Unknown(val.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ParseOrientationError {
+    Unknown(String),
+}
+
+impl fmt::Display for ParseOrientationError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseOrientationError::Unknown(val) =>
+                write!(fmt, "Unknown orientation value \"{}\"", val),
+        }
+    }
+}
+
+impl std::convert::TryFrom<&str> for Orientation {
+    type Error = ParseOrientationError;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        Orientation::from_str(value)
     }
 }
 
 //----------------------------------------------------------------------------
 
-/// Coefficients for converting between hexagonal grid coordinates and x/y
+/// Parameters for converting between hexagonal grid coordinates and x/y
 /// pixels. Used as parameter for different conversion functions.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Layout {
     orientation: Orientation,
     size: Point,
@@ -965,15 +1000,15 @@ pub struct Layout {
 }
 
 impl Layout {
-    /// Creates a new grid layout, consisting of hexagon orientation parameters,
+    /// Creates a new grid layout, consisting of hexagon orientation,
     /// hexagon size in pixels, and the grid origin point.
-    pub fn new(orientation: &Orientation, size: Point, origin: Point) -> Self {
-        Layout { orientation: orientation.clone(), size, origin }
+    pub fn new(orientation: Orientation, size: Point, origin: Point) -> Self {
+        Layout { orientation, size, origin }
     }
 
-    /// Returns a reference to the grid orientation parameters.
-    pub fn orientation(&self) -> &Orientation {
-        &self.orientation
+    /// Returns the grid hexagon orientation.
+    pub fn orientation(&self) -> Orientation {
+        self.orientation
     }
 
     /// Returns the hexagon size of this grid layout.
@@ -988,27 +1023,31 @@ impl Layout {
 
     /// Returns whether the hexagon orientation is "pointy top" or not.
     pub fn is_pointy(&self) -> bool {
-        (f32::from(self.orientation.start_angle) - 1.5).abs() <= 0.1
+        self.orientation == Orientation::Pointy
     }
 
     /// Returns whether the hexagon orientation is "flat top" or not.
     pub fn is_flat(&self) -> bool {
-        f32::from(self.orientation.start_angle).abs() <= 0.1
+        self.orientation == Orientation::Flat
+    }
+
+    fn coefficients(&self) -> &'static LayoutCoefficients {
+        self.orientation.into()
     }
 
     /// Creates a copy of this layout with new grid orientation parameters.
-    pub fn with_orientation(&self, orientation: &Orientation) -> Self {
-        Layout { orientation: orientation.clone(), size: self.size, origin: self.origin }
+    pub fn with_orientation(&self, orientation: Orientation) -> Self {
+        Layout { orientation, size: self.size, origin: self.origin }
     }
 
     /// Creates a copy of this layout with new hexagon size parameters.
     pub fn with_size(&self, size: Point) -> Self {
-        Layout { orientation: self.orientation.clone(), size, origin: self.origin }
+        Layout { orientation: self.orientation, size, origin: self.origin }
     }
 
     /// Creates a copy of this layout with new grid origin point.
     pub fn with_origin(&self, origin: Point) -> Self {
-        Layout { orientation: self.orientation.clone(), size: self.size, origin }
+        Layout { orientation: self.orientation, size: self.size, origin }
     }
 
     /// Calculates the corners of a hexagon with the given coordinate.
@@ -1017,7 +1056,7 @@ impl Layout {
         let mut corners = [Point::default(); 6];
         for (i, corner) in corners.iter_mut().enumerate() {
             use std::f32::consts::PI;
-            let angle = 2.0 * PI * (f32::from(self.orientation.start_angle) + f32::from(i as u8)) / 6.0;
+            let angle = 2.0 * PI * (f32::from(self.coefficients().start_angle) + f32::from(i as u8)) / 6.0;
             let offset_x = self.size.0 * angle.cos();
             let offset_y = self.size.1 * angle.sin();
             *corner = center + Point(offset_x, offset_y);
@@ -1049,7 +1088,7 @@ impl Layout {
     ///
     /// ```
     /// # use rekee::hexagon::*;
-    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+    /// let layout = Layout::new(Orientation::Pointy, Point(1.0, 1.0), Point(0.0, 0.0));
     ///
     /// let dir = Direction::A;
     /// assert_eq!(layout.direction_to_angle(dir), 90.0);
@@ -1063,7 +1102,7 @@ impl Layout {
     pub fn direction_to_angle<D>(&self, dir: D) -> f32
         where D: Into<FloatDirection>
     {
-        let angle = dir.into().to_angle() + self.orientation.start_angle.to_angle();
+        let angle = dir.into().to_angle() + self.coefficients().start_angle.to_angle();
         angle.rem_euclid(360.0)
     }
 
@@ -1075,7 +1114,7 @@ impl Layout {
     ///
     /// ```
     /// # use rekee::hexagon::*;
-    /// let layout = Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0));
+    /// let layout = Layout::new(Orientation::Pointy, Point(1.0, 1.0), Point(0.0, 0.0));
     ///
     /// let angle = 90.0;
     /// assert_eq!(layout.direction_from_angle(angle), Direction::A.into());
@@ -1087,14 +1126,57 @@ impl Layout {
     /// assert_eq!(layout.direction_from_angle(angle), FloatDirection(1.5));
     /// ```
     pub fn direction_from_angle(&self, value: f32) -> FloatDirection {
-        let dir = FloatDirection::from_angle(value) - self.orientation.start_angle;
+        let dir = FloatDirection::from_angle(value) - self.coefficients().start_angle;
         FloatDirection(dir.0.rem_euclid(6.0))
     }
 }
 
 impl Default for Layout {
     fn default() -> Self {
-        Layout::new(Orientation::pointy(), Point(1.0, 1.0), Point(0.0, 0.0))
+        Layout::new(Orientation::Pointy, Point(1.0, 1.0), Point(0.0, 0.0))
+    }
+}
+
+//----------------------------------------------------------------------------
+
+/// Hexagon layout coefficients, depending on orientation.
+#[derive(Debug, Clone)]
+struct LayoutCoefficients {
+    // coefficients for forward conversion of hex coordinates into pixels
+    f0: f32,
+    f1: f32,
+    f2: f32,
+    f3: f32,
+    // coefficients for backward conversion of pixels into hex coordinates
+    b0: f32,
+    b1: f32,
+    b2: f32,
+    b3: f32,
+    // base direction of the hex grid (in multiples of 60°)
+    start_angle: FloatDirection,
+}
+
+#[allow(clippy::excessive_precision)]
+const SQRT_3: f32 = 1.73205080756887729352744634150587237f32;
+
+const LAYOUT_POINTY: LayoutCoefficients = LayoutCoefficients {
+    f0: SQRT_3, f1: SQRT_3 / 2.0, f2: 0.0, f3: 3.0 / 2.0,
+    b0: SQRT_3 / 3.0, b1: -1.0 / 3.0, b2: 0.0, b3: 2.0 / 3.0,
+    start_angle: FloatDirection(1.5),
+};
+
+const LAYOUT_FLAT: LayoutCoefficients = LayoutCoefficients {
+    f0: 0.0, f1: 3.0 / 2.0, f2: -SQRT_3, f3: -SQRT_3 / 2.0,
+    b0: -1.0 / 3.0, b1: -SQRT_3 / 3.0, b2: 2.0 / 3.0, b3: 0.0,
+    start_angle: FloatDirection(0.0),
+};
+
+impl From<Orientation> for &'static LayoutCoefficients {
+    fn from(value: Orientation) -> &'static LayoutCoefficients {
+        match value {
+            Orientation::Pointy => &LAYOUT_POINTY,
+            Orientation::Flat => &LAYOUT_FLAT,
+        }
     }
 }
 
@@ -1131,7 +1213,7 @@ mod tests {
 
     #[test]
     fn coordinate_to_pixel() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(0.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
@@ -1141,7 +1223,7 @@ mod tests {
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(25.98076, -15.0));
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(0.0, 10.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
@@ -1151,7 +1233,7 @@ mod tests {
         let pos = Coordinate::new(2, -1).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(51.96152, 40.0));
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = Coordinate::new(0, 0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(10.0, 0.0));
         let pos = Coordinate::new(0, 1).to_pixel(&layout);
@@ -1164,7 +1246,7 @@ mod tests {
 
     #[test]
     fn coordinate_from_pixel_rounded() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(0.0, 0.0));
         assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(5.0, -5.0));
@@ -1176,7 +1258,7 @@ mod tests {
         let pos = Coordinate::from_pixel_rounded(&layout, Point(26.0, -16.0));
         assert_eq!(pos, Coordinate::new(2, -1));
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(0.0, 9.0));
         assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(18.0, -21.0));
@@ -1186,7 +1268,7 @@ mod tests {
         let pos = Coordinate::from_pixel_rounded(&layout, Point(52.0, 41.0));
         assert_eq!(pos, Coordinate::new(2, -1));
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(9.1, 0.5));
         assert_eq!(pos, Coordinate::new(0, 0));
         let pos = Coordinate::from_pixel_rounded(&layout, Point(53.4, -18.2));
@@ -1231,7 +1313,7 @@ mod tests {
 
     #[test]
     fn float_coordinate_to_pixel() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(0.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
@@ -1241,7 +1323,7 @@ mod tests {
         let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(25.98076, -15.0));
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(0.0, 10.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
@@ -1251,7 +1333,7 @@ mod tests {
         let pos = FloatCoordinate::new(2.0, -1.0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(51.96152, 40.0));
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 0.0).to_pixel(&layout);
         assert_abs_diff_eq!(pos, Point(10.0, 0.0));
         let pos = FloatCoordinate::new(0.0, 1.5).to_pixel(&layout);
@@ -1264,7 +1346,7 @@ mod tests {
 
     #[test]
     fn float_coordinate_from_pixel() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 0.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(5.0, -5.0));
@@ -1276,7 +1358,7 @@ mod tests {
         let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -15.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(0.0, 10.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(25.98076, -35.0));
@@ -1286,7 +1368,7 @@ mod tests {
         let pos = FloatCoordinate::from_pixel(&layout, Point(51.96152, 40.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(2.0, -1.0));
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(10.0, 0.0));
         assert_abs_diff_eq!(pos, FloatCoordinate::new(0.0, 0.0));
         let pos = FloatCoordinate::from_pixel(&layout, Point(77.5, -25.98076));
@@ -1348,7 +1430,7 @@ mod tests {
         assert_abs_diff_eq!(Direction::E.to_angle(), 240.0);
         assert_abs_diff_eq!(Direction::F.to_angle(), 300.0);
 
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::A), 90.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::B), 150.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::C), 210.0);
@@ -1356,7 +1438,7 @@ mod tests {
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::E), 330.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::F), 30.0);
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(-1)), 30.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(0)), 90.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(1)), 150.0);
@@ -1366,7 +1448,7 @@ mod tests {
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(5)), 30.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::from(6)), 90.0);
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::A), 0.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::B), 60.0);
         assert_abs_diff_eq!(layout.direction_to_angle(Direction::C), 120.0);
@@ -1384,7 +1466,7 @@ mod tests {
         assert_abs_diff_eq!(FloatDirection::from_angle(240.0), Direction::E.into());
         assert_abs_diff_eq!(FloatDirection::from_angle(300.0), Direction::F.into());
 
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         assert_abs_diff_eq!(layout.direction_from_angle(90.0), Direction::A.into());
         assert_abs_diff_eq!(layout.direction_from_angle(150.0), Direction::B.into());
         assert_abs_diff_eq!(layout.direction_from_angle(210.0), Direction::C.into());
@@ -1392,7 +1474,7 @@ mod tests {
         assert_abs_diff_eq!(layout.direction_from_angle(330.0), Direction::E.into());
         assert_abs_diff_eq!(layout.direction_from_angle(30.0), Direction::F.into());
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         assert_abs_diff_eq!(layout.direction_from_angle(30.0), Direction::F.into());
         assert_abs_diff_eq!(layout.direction_from_angle(90.0), Direction::A.into());
         assert_abs_diff_eq!(layout.direction_from_angle(150.0), Direction::B.into());
@@ -1402,7 +1484,7 @@ mod tests {
         assert_abs_diff_eq!(layout.direction_from_angle(390.0), Direction::F.into());
         assert_abs_diff_eq!(layout.direction_from_angle(450.0), Direction::A.into());
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         assert_abs_diff_eq!(layout.direction_from_angle(0.0), Direction::A.into());
         assert_abs_diff_eq!(layout.direction_from_angle(60.0), Direction::B.into());
         assert_abs_diff_eq!(layout.direction_from_angle(120.0), Direction::C.into());
@@ -1436,9 +1518,8 @@ mod tests {
 
     #[test]
     fn layout_hexagon_corners() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
-        assert_eq!(layout.is_pointy(), true);
-        assert_eq!(layout.is_flat(), false);
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
+        assert_eq!(layout.orientation(), Orientation::Pointy);
         let corners = layout.hexagon_corners((0, 0).into());
         assert_abs_diff_eq!(corners[..],
             &[Point(0.0, 10.0), Point(-8.660255, 5.0), Point(-8.660255, -5.0),
@@ -1456,9 +1537,8 @@ mod tests {
             &[Point(25.98076, -5.0), Point(17.32051, -10.0), Point(17.32051, -20.0),
             Point(25.98076, -25.0), Point(34.64102, -20.0), Point(34.64102, -10.0)][..]);
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
-        assert_eq!(layout.is_pointy(), true);
-        assert_eq!(layout.is_flat(), false);
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
+        assert_eq!(layout.orientation(), Orientation::Pointy);
         let corners = layout.hexagon_corners((0, 0).into());
         assert_abs_diff_eq!(corners[..],
             &[Point(0.0, -10.0), Point(-17.32051, 0.0), Point(-17.32051, 20.0),
@@ -1476,9 +1556,8 @@ mod tests {
             &[Point(51.96152, 20.0), Point(34.64101, 30.0), Point(34.64101, 50.0),
             Point(51.96152, 60.0), Point(69.28203, 50.0), Point(69.28203, 30.0)][..]);
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
-        assert_eq!(layout.is_pointy(), false);
-        assert_eq!(layout.is_flat(), true);
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
+        assert_eq!(layout.orientation(), Orientation::Flat);
         let corners = layout.hexagon_corners((0, 0).into());
         assert_abs_diff_eq!(corners[..],
             &[Point(40.0, 0.0), Point(25.0, 17.32051), Point(-5.0, 17.32051),
@@ -1499,7 +1578,7 @@ mod tests {
 
     #[test]
     fn layout_hexagon_rect() {
-        let layout = Layout::new(Orientation::pointy(), Point(10.0, 10.0), Point(0.0, 0.0));
+        let layout = Layout::new(Orientation::Pointy, Point(10.0, 10.0), Point(0.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
         assert_abs_diff_eq!(rect, Rect::new(-8.660255, -10.0, 17.32051, 20.0));
         let mut total = rect;
@@ -1514,7 +1593,7 @@ mod tests {
         total = total.union(&rect);
         assert_abs_diff_eq!(total, Rect::new(-8.660255, -25.0, 43.30127, 50.0));
 
-        let layout = Layout::new(Orientation::pointy(), Point(20.0, -20.0), Point(0.0, 10.0));
+        let layout = Layout::new(Orientation::Pointy, Point(20.0, -20.0), Point(0.0, 10.0));
         let rect = layout.hexagon_rect((0, 0).into());
         assert_abs_diff_eq!(rect, Rect::new(-17.32051, -10.0, 34.64102, 40.0));
         let mut total = rect;
@@ -1529,7 +1608,7 @@ mod tests {
         total = total.union(&rect);
         assert_abs_diff_eq!(total, Rect::new(-17.32051, -40.0, 86.60254, 100.0));
 
-        let layout = Layout::new(Orientation::flat(), Point(30.0, 20.0), Point(10.0, 0.0));
+        let layout = Layout::new(Orientation::Flat, Point(30.0, 20.0), Point(10.0, 0.0));
         let rect = layout.hexagon_rect((0, 0).into());
         assert_abs_diff_eq!(rect, Rect::new(-20.0, -17.32051, 60.0, 34.64102));
         let mut total = rect;

@@ -74,7 +74,7 @@ use view::*;
 pub fn main() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
-    let layout = Layout::new(Orientation::pointy(), Point(60.0, 60.0), Point(540.0, 400.0));
+    let layout = Layout::new(Orientation::Pointy, Point(60.0, 60.0), Point(540.0, 400.0));
 
     let parent = document.get_element_by_id("catalog-container")
         .ok_or("Cannot find '#catalog-container' parent element for catalog component")?;

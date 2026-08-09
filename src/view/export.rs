@@ -273,8 +273,8 @@ pub struct ExportView {
 
 impl ExportView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        let base_layout = layout.clone();
-        let export_layout = layout.clone();
+        let base_layout = *layout;
+        let export_layout = *layout;
         let export_scale = None;
         let export_color_scheme = None;
         let active_color_scheme = ExportColorScheme::new(Series::Dirt);

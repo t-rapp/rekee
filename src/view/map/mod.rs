@@ -433,7 +433,7 @@ pub struct MapView {
 impl MapView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
         let document = parent.owner_document().unwrap();
-        let layout = layout.clone();
+        let layout = *layout;
         let map = Map::new();
 
         let width = (2.0 * layout.origin().x()).round();
