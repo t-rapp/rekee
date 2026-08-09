@@ -411,6 +411,7 @@ impl ExportView {
 
         let export_scale = self.export_scale.unwrap_or_default();
         let export_layout = self.base_layout
+            .with_orientation(map.orientation())
             .with_size(export_scale.tile_size());
 
         let active_color_scheme = match self.export_color_scheme {
