@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Direction"],"struct":["Coordinate","FloatCoordinate","FloatDirection","Layout","Orientation","Point","Rect"]};
+window.SIDEBAR_ITEMS = {"enum":["Direction","Orientation","ParseOrientationError"],"struct":["Coordinate","FloatCoordinate","FloatDirection","Layout","Point","Rect"]};

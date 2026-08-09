@@ -449,17 +449,34 @@
 <a href=#449 id=449 data-nosnippet>449</a>
 <a href=#450 id=450 data-nosnippet>450</a><span class="comment">//----------------------------------------------------------------------------
 <a href=#451 id=451 data-nosnippet>451</a>
-<a href=#452 id=452 data-nosnippet>452</a></span><span class="kw">trait </span>ElementDangerLevel {
-<a href=#453 id=453 data-nosnippet>453</a>    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel);
+<a href=#452 id=452 data-nosnippet>452</a></span><span class="kw">trait </span>ElementPolygon {
+<a href=#453 id=453 data-nosnippet>453</a>    <span class="kw">fn </span>set_hexagon_points(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate );
 <a href=#454 id=454 data-nosnippet>454</a>}
 <a href=#455 id=455 data-nosnippet>455</a>
-<a href=#456 id=456 data-nosnippet>456</a><span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementDangerLevel <span class="kw">for </span>T {
-<a href=#457 id=457 data-nosnippet>457</a>    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) {
+<a href=#456 id=456 data-nosnippet>456</a><span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementPolygon <span class="kw">for </span>T {
+<a href=#457 id=457 data-nosnippet>457</a>    <span class="kw">fn </span>set_hexagon_points(<span class="kw-2">&amp;</span><span class="self">self</span>, layout: <span class="kw-2">&amp;</span>Layout, pos: Coordinate ) {
 <a href=#458 id=458 data-nosnippet>458</a>        <span class="kw">let </span>element = <span class="self">self</span>.as_ref();
-<a href=#459 id=459 data-nosnippet>459</a>        <span class="kw">let </span>class_name = <span class="macro">format!</span>(<span class="string">"danger-level-{:x}"</span>, danger_level);
-<a href=#460 id=460 data-nosnippet>460</a>        <span class="macro">check!</span>(element.class_list().add_1(<span class="kw-2">&amp;</span>class_name).ok());
-<a href=#461 id=461 data-nosnippet>461</a>    }
-<a href=#462 id=462 data-nosnippet>462</a>}
-<a href=#463 id=463 data-nosnippet>463</a>
-<a href=#464 id=464 data-nosnippet>464</a><span class="comment">//----------------------------------------------------------------------------
+<a href=#459 id=459 data-nosnippet>459</a>        <span class="kw">let </span>corners = layout.hexagon_corners(pos);
+<a href=#460 id=460 data-nosnippet>460</a>        <span class="kw">let </span>points: Vec&lt;String&gt; = corners.iter()
+<a href=#461 id=461 data-nosnippet>461</a>            .map(|p| <span class="macro">format!</span>(<span class="string">"{:.1},{:.1}"</span>, p.x(), p.y()))
+<a href=#462 id=462 data-nosnippet>462</a>            .collect();
+<a href=#463 id=463 data-nosnippet>463</a>        <span class="macro">check!</span>(element.set_attribute(<span class="string">"points"</span>, <span class="kw-2">&amp;</span>points.join(<span class="string">" "</span>)).ok());
+<a href=#464 id=464 data-nosnippet>464</a>    }
+<a href=#465 id=465 data-nosnippet>465</a>}
+<a href=#466 id=466 data-nosnippet>466</a>
+<a href=#467 id=467 data-nosnippet>467</a><span class="comment">//----------------------------------------------------------------------------
+<a href=#468 id=468 data-nosnippet>468</a>
+<a href=#469 id=469 data-nosnippet>469</a></span><span class="kw">trait </span>ElementDangerLevel {
+<a href=#470 id=470 data-nosnippet>470</a>    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel);
+<a href=#471 id=471 data-nosnippet>471</a>}
+<a href=#472 id=472 data-nosnippet>472</a>
+<a href=#473 id=473 data-nosnippet>473</a><span class="kw">impl</span>&lt;T: AsRef&lt;Element&gt;&gt; ElementDangerLevel <span class="kw">for </span>T {
+<a href=#474 id=474 data-nosnippet>474</a>    <span class="kw">fn </span>set_danger_level_class(<span class="kw-2">&amp;</span><span class="self">self</span>, danger_level: DangerLevel) {
+<a href=#475 id=475 data-nosnippet>475</a>        <span class="kw">let </span>element = <span class="self">self</span>.as_ref();
+<a href=#476 id=476 data-nosnippet>476</a>        <span class="kw">let </span>class_name = <span class="macro">format!</span>(<span class="string">"danger-level-{:x}"</span>, danger_level);
+<a href=#477 id=477 data-nosnippet>477</a>        <span class="macro">check!</span>(element.class_list().add_1(<span class="kw-2">&amp;</span>class_name).ok());
+<a href=#478 id=478 data-nosnippet>478</a>    }
+<a href=#479 id=479 data-nosnippet>479</a>}
+<a href=#480 id=480 data-nosnippet>480</a>
+<a href=#481 id=481 data-nosnippet>481</a><span class="comment">//----------------------------------------------------------------------------
 </span></code></pre></div></section></main></body></html>

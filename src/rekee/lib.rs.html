@@ -74,7 +74,7 @@
 <a href=#74 id=74 data-nosnippet>74</a></span><span class="kw">pub fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), JsValue&gt; {
 <a href=#75 id=75 data-nosnippet>75</a>    <span class="kw">let </span>window = web_sys::window().unwrap();
 <a href=#76 id=76 data-nosnippet>76</a>    <span class="kw">let </span>document = window.document().unwrap();
-<a href=#77 id=77 data-nosnippet>77</a>    <span class="kw">let </span>layout = Layout::new(Orientation::pointy(), Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">540.0</span>, <span class="number">400.0</span>));
+<a href=#77 id=77 data-nosnippet>77</a>    <span class="kw">let </span>layout = Layout::new(Orientation::Pointy, Point(<span class="number">60.0</span>, <span class="number">60.0</span>), Point(<span class="number">540.0</span>, <span class="number">400.0</span>));
 <a href=#78 id=78 data-nosnippet>78</a>
 <a href=#79 id=79 data-nosnippet>79</a>    <span class="kw">let </span>parent = document.get_element_by_id(<span class="string">"catalog-container"</span>)
 <a href=#80 id=80 data-nosnippet>80</a>        .ok_or(<span class="string">"Cannot find '#catalog-container' parent element for catalog component"</span>)<span class="question-mark">?</span>;
@@ -131,7 +131,7 @@
 <a href=#131 id=131 data-nosnippet>131</a>        nuts::publish(UpdateSelectedTileEvent { pos: Coordinate::new(<span class="number">1</span>, -<span class="number">1</span>).to_pixel(<span class="kw-2">&amp;</span>layout) });
 <a href=#132 id=132 data-nosnippet>132</a>        <span class="kw">let </span>token = PlacedToken::new(TokenId::Finish, (<span class="number">0.5</span>, <span class="number">0.0</span>).into(), <span class="number">3.0</span>.into());
 <a href=#133 id=133 data-nosnippet>133</a>        nuts::publish(AddSelectedTileTokenEvent { token });
-<a href=#134 id=134 data-nosnippet>134</a>        nuts::publish(AlignCenterEvent);
+<a href=#134 id=134 data-nosnippet>134</a>        nuts::publish(AlignMapCenterEvent);
 <a href=#135 id=135 data-nosnippet>135</a>        nuts::publish(UpdateTitleEvent { title: String::from(<span class="string">"Short Track"</span>) });
 <a href=#136 id=136 data-nosnippet>136</a>        nuts::publish(UpdateAuthorEvent { author: String::from(<span class="string">"CarmLima"</span>) });
 <a href=#137 id=137 data-nosnippet>137</a>    }
