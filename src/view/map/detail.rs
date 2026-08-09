@@ -913,6 +913,14 @@ impl MapDetailView {
     pub fn update_map_tiles(&mut self, map: &Map, center: Coordinate) {
         let document = self.tiles.owner_document().unwrap();
 
+        // adapt layout and grid when map orientation has changed
+        if map.orientation() != self.layout.orientation() {
+            self.layout = self.layout.with_orientation(map.orientation());
+            let grid = check!(draw_grid(&document, &self.layout).ok());
+            check!(self.grid.replace_with_with_node_1(&grid).ok());
+            self.grid = grid;
+        }
+
         // remove all existing tiles and tokens
         let range = check!(document.create_range().ok());
         check!(range.select_node_contents(&self.tiles).ok());
