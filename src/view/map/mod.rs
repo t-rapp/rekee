@@ -40,14 +40,36 @@ const MAP_STYLE: &str = include_str!("style.css");
 const MAP_PADDING: f32 = 15.0;
 
 fn draw_grid_hex(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Element> {
-    let corners = layout.hexagon_corners(pos);
-    let points: Vec<String> = corners.iter()
-        .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
-        .collect();
     let hex = document.create_element_ns(SVG_NS, "polygon")?;
     hex.set_attribute("class", "hex")?;
-    hex.set_attribute("points", &points.join(" "))?;
+    hex.set_hexagon_points(layout, pos);
     Ok(hex)
+}
+
+fn draw_grid(document: &Document, layout: &Layout, map_radius: u8) -> Result<Element> {
+    let grid = document.create_element_ns(SVG_NS, "g")?;
+    grid.set_attribute("class", "grid is-print-hidden")?;
+    let map_radius = i32::from(map_radius);
+    for q in -map_radius..=map_radius {
+        let r1 = i32::max(-map_radius, -q - map_radius);
+        let r2 = i32::min(map_radius, -q + map_radius);
+        for r in r1..=r2 {
+            grid.append_child(&draw_grid_hex(document, layout, Coordinate::new(q, r))?.into())?;
+        }
+    }
+    // add some hexagon grid axis labels when compiling in development mode
+    if cfg!(debug_assertions) {
+        let label_radius = 3;
+        let label = draw_label(document, layout, Coordinate::new(label_radius, 0), "+q")?;
+        grid.append_child(&label)?;
+        let label = draw_label(document, layout, Coordinate::new(-label_radius, 0), "-q")?;
+        grid.append_child(&label)?;
+        let label = draw_label(document, layout, Coordinate::new(0, label_radius), "+r")?;
+        grid.append_child(&label)?;
+        let label = draw_label(document, layout, Coordinate::new(0, -label_radius), "-r")?;
+        grid.append_child(&label)?;
+    }
+    Ok(grid)
 }
 
 fn draw_label(document: &Document, layout: &Layout, pos: Coordinate, text: &str) -> Result<Element> {
@@ -150,24 +172,20 @@ impl Drop for AuthorInput {
 
 struct SelectedHex {
     inner: Element,
+    polygon: Element,
     pos: Option<Coordinate>,
     dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
 }
 
 impl SelectedHex {
-    fn new(document: &Document, layout: &Layout) -> Result<Self> {
-        let corners = layout.hexagon_corners((0, 0).into());
-        let points: Vec<String> = corners.iter()
-            .map(|p| *p - layout.origin())
-            .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
-            .collect();
-        let poly = document.create_element_ns(SVG_NS, "polygon")?;
-        poly.set_attribute("points", &points.join(" "))?;
+    fn new(document: &Document, layout: &Layout, pos: Option<Coordinate>) -> Result<Self> {
+        let polygon = document.create_element_ns(SVG_NS, "polygon")?;
+        polygon.set_hexagon_points(layout, (0, 0).into());
 
         let hex = document.create_element_ns(SVG_NS, "g")?;
         hex.set_attribute("class", "selected-hex is-print-hidden")?;
         hex.set_hidden(true);
-        hex.append_child(&poly)?;
+        hex.append_child(&polygon)?;
 
         let dblclick_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
             event.prevent_default();
@@ -177,19 +195,16 @@ impl SelectedHex {
         }) as Box<dyn Fn(_)>);
         hex.add_event_listener_with_callback("dblclick", dblclick_cb.as_ref().unchecked_ref())?;
 
-        Ok(SelectedHex { inner: hex, pos: None, dblclick_cb })
+        Ok(SelectedHex { inner: hex, polygon, pos, dblclick_cb })
     }
 
     fn pos(&self) -> Option<Coordinate> {
         self.pos
     }
 
-    #[allow(clippy::unnecessary_unwrap)] // false positive, see issue rust-lang/rust-clippy#4530
     fn set_pos(&mut self, layout: &Layout, pos: Option<Coordinate>) {
-        if pos.is_some() && pos != self.pos {
-            let pos = pos.unwrap().to_pixel(layout);
-            let transform = format!("translate({:.1} {:.1})", pos.x(), pos.y());
-            check!(self.inner.set_attribute("transform", &transform).ok());
+        if let Some(pos) = pos {
+            self.polygon.set_hexagon_points(layout, pos);
         }
         self.set_hidden(pos.is_none());
         self.pos = pos;
@@ -455,28 +470,7 @@ impl MapView {
         style.append_child(&document.create_text_node(TILE_STYLE))?;
         canvas.append_child(&style)?;
 
-        let grid = document.create_element_ns(SVG_NS, "g")?;
-        grid.set_attribute("class", "grid is-print-hidden")?;
-        let map_radius = 8;
-        for q in -map_radius..=map_radius {
-            let r1 = i32::max(-map_radius, -q - map_radius);
-            let r2 = i32::min(map_radius, -q + map_radius);
-            for r in r1..=r2 {
-                grid.append_child(&draw_grid_hex(&document, &layout, Coordinate::new(q, r))?.into())?;
-            }
-        }
-        // add some hexagon grid axis labels when compiling in development mode
-        if cfg!(debug_assertions) {
-            let label_radius = 4;
-            let label = draw_label(&document, &layout, Coordinate::new(label_radius, 0), "+q")?;
-            grid.append_child(&label)?;
-            let label = draw_label(&document, &layout, Coordinate::new(-label_radius, 0), "-q")?;
-            grid.append_child(&label)?;
-            let label = draw_label(&document, &layout, Coordinate::new(0, label_radius), "+r")?;
-            grid.append_child(&label)?;
-            let label = draw_label(&document, &layout, Coordinate::new(0, -label_radius), "-r")?;
-            grid.append_child(&label)?;
-        }
+        let grid = draw_grid(&document, &layout, 8)?;
         canvas.append_child(&grid)?;
 
         let tiles = document.create_element_ns(SVG_NS, "g")?;
@@ -501,7 +495,7 @@ impl MapView {
         let author = AuthorInput::new(&document)?;
         author.set_value(map.author());
 
-        let selected = SelectedHex::new(&document, &layout)?;
+        let selected = SelectedHex::new(&document, &layout, None)?;
         canvas.append_child(selected.as_ref())?;
 
         let selected_menu = SelectedMenu::new(&document, &layout, (2, 2).into())?;

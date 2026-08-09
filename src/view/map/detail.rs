@@ -19,14 +19,22 @@ use super::polar::PolarCoordinate;
 //----------------------------------------------------------------------------
 
 fn draw_grid_hex(document: &Document, layout: &Layout, pos: Coordinate) -> Result<Element> {
-    let corners = layout.hexagon_corners(pos);
-    let points: Vec<String> = corners.iter()
-        .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
-        .collect();
     let hex = document.create_element_ns(SVG_NS, "polygon")?;
     hex.set_attribute("class", "hex")?;
-    hex.set_attribute("points", &points.join(" "))?;
+    hex.set_hexagon_points(layout, pos);
     Ok(hex)
+}
+
+fn draw_grid(document: &Document, layout: &Layout) -> Result<Element> {
+    let grid = document.create_element_ns(SVG_NS, "g")?;
+    grid.set_attribute("class", "grid")?;
+    let center = Coordinate::new(0, 0);
+    grid.append_child(&draw_grid_hex(document, layout, center)?.into())?;
+    for &dir in Direction::iter() {
+        let pos = center.neighbor(dir);
+        grid.append_child(&draw_grid_hex(document, layout, pos)?.into())?;
+    }
+    Ok(grid)
 }
 
 fn sanitize_input_value(value: f64, min: f64, max: f64, step: f64) -> f64 {
@@ -800,14 +808,7 @@ impl MapDetailView {
 
         // Drawing of the grid is after tiles here, different to the normal map:
         // Allows to use the grid lines as a visual hint for token placement.
-        let grid = document.create_element_ns(SVG_NS, "g")?;
-        grid.set_attribute("class", "grid")?;
-        let center = Coordinate::new(0, 0);
-        grid.append_child(&draw_grid_hex(&document, &layout, center)?.into())?;
-        for &dir in Direction::iter() {
-            let pos = center.neighbor(dir);
-            grid.append_child(&draw_grid_hex(&document, &layout, pos)?.into())?;
-        }
+        let grid = draw_grid(&document, &layout)?;
         canvas.append_child(&grid)?;
 
         let tokens = document.create_element_ns(SVG_NS, "g")?;

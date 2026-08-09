@@ -449,6 +449,23 @@ impl<T: AsRef<Element>> ElementTextInputTarget for T {
 
 //----------------------------------------------------------------------------
 
+trait ElementPolygon {
+    fn set_hexagon_points(&self, layout: &Layout, pos: Coordinate );
+}
+
+impl<T: AsRef<Element>> ElementPolygon for T {
+    fn set_hexagon_points(&self, layout: &Layout, pos: Coordinate ) {
+        let element = self.as_ref();
+        let corners = layout.hexagon_corners(pos);
+        let points: Vec<String> = corners.iter()
+            .map(|p| format!("{:.1},{:.1}", p.x(), p.y()))
+            .collect();
+        check!(element.set_attribute("points", &points.join(" ")).ok());
+    }
+}
+
+//----------------------------------------------------------------------------
+
 trait ElementDangerLevel {
     fn set_danger_level_class(&self, danger_level: DangerLevel);
 }
