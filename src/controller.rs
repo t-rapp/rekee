@@ -15,7 +15,7 @@
 
 use crate::edition::Edition;
 use crate::export::{ExportScale, ExportColorScheme};
-use crate::hexagon::{Coordinate, Direction, Point};
+use crate::hexagon::{Coordinate, Direction, Orientation, Point};
 use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::storage::Storage;
 use crate::tile::{ConnectionHint, Terrain, TileId};
@@ -82,6 +82,10 @@ pub struct UpdateExportListingEvent {
 
 pub struct UpdateExportColorSchemeEvent {
     pub color_scheme: Option<ExportColorScheme>,
+}
+
+pub struct UpdateTileOrientationEvent {
+    pub orientation: Orientation,
 }
 
 pub struct UpdateTileLabelsEvent {
@@ -184,6 +188,7 @@ pub mod catalog {
             activity.subscribe(CatalogController::save_settings);
             activity.subscribe(CatalogController::import_file);
             activity.subscribe(CatalogController::update_catalog_editions);
+            activity.subscribe(CatalogController::update_tile_orientation);
             activity.subscribe(CatalogController::update_tile_labels);
             activity.subscribe(CatalogController::toggle_tile_labels);
             activity.subscribe(CatalogController::update_tile_usage);
@@ -209,6 +214,10 @@ pub mod catalog {
 
         fn update_catalog_editions(&mut self, event: &UpdateCatalogEditionsEvent) {
             self.view.update_editions(&event.editions);
+        }
+
+        fn update_tile_orientation(&mut self, event: &UpdateTileOrientationEvent) {
+            self.view.update_tile_orientation(event.orientation);
         }
 
         fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {

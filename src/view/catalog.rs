@@ -22,7 +22,7 @@ use crate::controller::{
 use crate::controller::catalog::*;
 use crate::controller::catalog_config::ShowCatalogConfigEvent;
 use crate::edition::{Edition, Series};
-use crate::hexagon::Direction;
+use crate::hexagon::{Direction, Orientation};
 use crate::map::Map;
 use crate::tile::{ConnectionHint, TileId, TileInfo, TileList};
 use super::*;
@@ -34,6 +34,7 @@ struct CatalogTile {
     id: TileId,
     count: usize,
     usage: usize,
+    tile_image: TileImageElement,
     counter: Element,
     dblclick_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragstart_cb: Closure<dyn Fn(web_sys::DragEvent)>,
@@ -78,8 +79,21 @@ impl CatalogTile {
 
         let dragstart_cb = Closure::wrap(Box::new({
             let drag_img = canvas;
-            let offset_x = layout.origin().x().round() as i32;
-            let offset_y = layout.origin().y().round() as i32;
+
+            // Calculate image center offset from current image size attributes
+            let offset_x = drag_img.get_attribute("width")
+                .and_then(|val| {
+                    val.strip_suffix("px")
+                        .and_then(|val| val.parse::<i32>().ok())
+                        .map(|val| val / 2)
+                }).unwrap_or(0);
+            let offset_y = drag_img.get_attribute("height")
+                .and_then(|val| {
+                    val.strip_suffix("px")
+                        .and_then(|val| val.parse::<i32>().ok())
+                        .map(|val| val / 2)
+                }).unwrap_or(0);
+
             move |event: web_sys::DragEvent| {
                 if let Some(trans) = event.data_transfer() {
                     let data = id.base().to_string();
@@ -93,7 +107,7 @@ impl CatalogTile {
         }) as Box<dyn Fn(_)>);
         tile.add_event_listener_with_callback("dragstart", dragstart_cb.as_ref().unchecked_ref())?;
 
-        Ok(CatalogTile { inner: tile, id, count: 0, usage: 0, counter, dblclick_cb, dragstart_cb })
+        Ok(CatalogTile { inner: tile, id, count: 0, usage: 0, counter, tile_image, dblclick_cb, dragstart_cb })
     }
 
     fn inner_update_counter(&mut self, count: usize, usage: usize) {
@@ -121,6 +135,21 @@ impl CatalogTile {
 
     pub fn set_usage(&mut self, value: usize) {
         self.inner_update_counter(self.count, value);
+    }
+
+    pub fn update_layout(&mut self, layout: &Layout) {
+        let canvas = check!(self.inner.query_selector("svg").ok().flatten());
+        let width = (2.0 * layout.origin().x()).round() as i32;
+        let height = (2.0 * layout.origin().y()).round() as i32;
+        check!(canvas.set_attribute("width", &format!("{}px", width)).ok());
+        check!(canvas.set_attribute("height", &format!("{}px", height)).ok());
+        check!(canvas.set_attribute("viewBox", &format!("0 0 {} {}", width, height)).ok());
+
+        let document = self.tile_image.owner_document().unwrap();
+        let tile = PlacedTile::new(self.id, (0, 0).into(), Direction::A);
+        let tile_image = check!(TileImageElement::new_with_label(&document, layout, &tile).ok());
+        check!(self.tile_image.replace_with_with_node_1(&tile_image).ok());
+        self.tile_image = tile_image;
     }
 }
 
@@ -309,6 +338,7 @@ impl Default for CatalogSettings {
 
 pub struct CatalogView {
     catalog: Element,
+    layout: Layout,
     tiles: Vec<CatalogTile>,
     editions: Vec<Edition>,
     filter_lanes: Option<u8>,
@@ -326,7 +356,7 @@ pub struct CatalogView {
 
 impl CatalogView {
     pub fn new(parent: Element, layout: &Layout) -> Result<Self> {
-        // optimize tile element area using the layout orientation
+        // move origin to the center of a single tile
         let rect = layout.hexagon_rect(Coordinate::new(0, 0));
         let origin = Point(0.5 * rect.width.round(), 0.5 * rect.height.round());
         let layout = layout.with_origin(origin);
@@ -336,6 +366,7 @@ impl CatalogView {
         let catalog = document.create_element("ul")?;
         catalog.set_id("catalog");
         catalog.set_attribute("class", "mt-2")?;
+        // optimize tile element area using the layout orientation
         if layout.is_pointy() {
             catalog.class_list().add_1("is-pointy")?;
         } else if layout.is_flat() {
@@ -436,7 +467,7 @@ impl CatalogView {
         config_button.remove_attribute("disabled").unwrap();
 
         let mut view = CatalogView {
-            catalog, tiles, editions, filter_lanes, filter_lanes_elements,
+            catalog, layout, tiles, editions, filter_lanes, filter_lanes_elements,
             filter_terrain, filter_terrain_elements, label_type, map: None,
             dragover_cb, dragdrop_cb, keychange_cb, config_button, config_show_cb
         };
@@ -468,6 +499,9 @@ impl CatalogView {
             }
         }
         self.update_editions(&used_editions);
+
+        // update tile orientation based on the imported map
+        self.update_tile_orientation(map.orientation());
     }
 
     pub fn update_editions(&mut self, editions: &[Edition]) {
@@ -588,6 +622,30 @@ impl CatalogView {
 
         self.filter_lanes = lanes;
         self.filter_terrain = terrain;
+    }
+
+    pub fn update_tile_orientation(&mut self, orientation: Orientation) {
+        if orientation != self.layout.orientation() {
+            info!("update catalog tile orientation: {:?}", orientation);
+
+            let layout = self.layout.with_orientation(orientation);
+            // move origin to the center of a single tile
+            let rect = layout.hexagon_rect(Coordinate::new(0, 0));
+            let origin = Point(0.5 * rect.width.round(), 0.5 * rect.height.round());
+            self.layout = layout.with_origin(origin);
+
+            if self.layout.is_pointy() {
+                check!(self.catalog.class_list().add_1("is-pointy").ok());
+                check!(self.catalog.class_list().remove_1("is-flat").ok());
+            } else if self.layout.is_flat() {
+                check!(self.catalog.class_list().remove_1("is-pointy").ok());
+                check!(self.catalog.class_list().add_1("is-flat").ok());
+            }
+
+            for tile in self.tiles.iter_mut() {
+                tile.update_layout(&self.layout);
+            }
+        }
     }
 
     pub fn update_tile_labels(&mut self, label_type: LabelType) {
