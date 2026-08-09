@@ -138,6 +138,9 @@
         #dragged {
             opacity: 0.6;
         }
+        #toggle-map-orientation-button[data-value="flat"] .icon {
+            transform: rotate(-90deg);
+        }
         .content p {
             margin-top: .5rem;
         }
@@ -396,13 +399,22 @@
             </div>
           </div>
           <div class="control is-print-hidden">
-            <button id="align-center-button" class="button" title="Center-align map">
-              <span class="icon">
-                <svg class="bi" width="16" height="16" fill="currentColor">
-                  <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
-                </svg>
-              </span>
-            </button>
+            <div class="buttons has-addons">
+              <button id="align-center-button" class="button" title="Center-align map">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#chevron-bar-contract" transform="rotate(90,8,8)"/>
+                  </svg>
+                </span>
+              </button>
+              <button id="toggle-map-orientation-button" class="button" data-value="pointy" title="Toggle map orientation">
+                <span class="icon">
+                  <svg class="bi" width="16" height="16" fill="currentColor">
+                    <use xlink:href="bootstrap-icons.svg#hexagon-fill"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
           </div>
           <div class="control is-print-hidden">
             <button id="track-info-button" class="button" title="Show track info">

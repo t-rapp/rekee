@@ -303,6 +303,7 @@ pub mod map {
             activity.subscribe(MapController::update_title);
             activity.subscribe(MapController::update_author);
             activity.subscribe(MapController::update_background_grid);
+            activity.subscribe(MapController::update_tile_orientation);
             activity.subscribe(MapController::update_tile_labels);
             activity.subscribe(MapController::toggle_tile_labels);
             activity.subscribe(MapController::toggle_tile_tokens);
@@ -372,6 +373,10 @@ pub mod map {
 
         fn update_background_grid(&mut self, event: &UpdateBackgroundGridEvent) {
             self.view.update_background_grid(event.visible);
+        }
+
+        fn update_tile_orientation(&mut self, event: &UpdateTileOrientationEvent) {
+            self.view.update_tile_orientation(event.orientation);
         }
 
         fn update_tile_labels(&mut self, event: &UpdateTileLabelsEvent) {

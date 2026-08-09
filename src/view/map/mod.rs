@@ -18,13 +18,13 @@ use crate::controller::{
     RotateMapRightEvent, RotateSelectedTileLeftEvent,
     RotateSelectedTileRightEvent, SaveSettingsEvent, ToggleTileLabelsEvent,
     ToggleTileTokensEvent, UpdateAuthorEvent, UpdateSelectedTileEvent,
-    UpdateTileUsageEvent, UpdateTitleEvent
+    UpdateTileOrientationEvent, UpdateTileUsageEvent, UpdateTitleEvent
 };
 use crate::controller::map::*;
 use crate::controller::map_config::ShowMapConfigEvent;
 use crate::controller::map_detail::ShowMapDetailEvent;
 use crate::controller::track_info::ShowTrackInfoEvent;
-use crate::hexagon::{Direction, Rect};
+use crate::hexagon::{Direction, Orientation, Rect};
 use crate::import;
 use crate::map::{Map, PlacedTile, PlacedToken};
 use crate::tile::{ConnectionHint, TileId};
@@ -165,6 +165,55 @@ impl Drop for AuthorInput {
     fn drop(&mut self) {
         let _ = self.inner.remove_event_listener_with_callback("change",
             self.change_cb.as_ref().unchecked_ref());
+    }
+}
+
+//----------------------------------------------------------------------------
+
+struct ToggleOrientationButton {
+    inner: web_sys::HtmlElement,
+    click_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
+}
+
+impl ToggleOrientationButton {
+    fn new(document: &Document) -> Result<Self> {
+        let inner = document.get_element_by_id("toggle-map-orientation-button")
+            .and_then(|element| element.dyn_into::<web_sys::HtmlElement>().ok())
+            .ok_or("Cannot find toggle-map-orientation-button element")?;
+
+        let click_cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            let button = check!(event.current_target()
+                .and_then(|target| target.dyn_into::<web_sys::HtmlElement>().ok()));
+            let orientation: Orientation = check!(button.get_attribute("data-value")
+                .and_then(|val| val.parse().ok()));
+            let next_orientation = match orientation {
+                Orientation::Pointy => Orientation::Flat,
+                Orientation::Flat => Orientation::Pointy,
+            };
+            event.prevent_default();
+            event.stop_propagation();
+            nuts::publish(UpdateTileOrientationEvent { orientation: next_orientation });
+        }) as Box<dyn Fn(_)>);
+        inner.add_event_listener_with_callback("click", click_cb.as_ref().unchecked_ref()).unwrap();
+
+        Ok(ToggleOrientationButton { inner, click_cb })
+    }
+
+    fn set_value(&self, value: Orientation) {
+        check!(self.inner.set_attribute("data-value", &format!("{:x}", value)).ok());
+    }
+}
+
+impl AsRef<Element> for ToggleOrientationButton {
+    fn as_ref(&self) -> &Element {
+        &self.inner
+    }
+}
+
+impl Drop for ToggleOrientationButton {
+    fn drop(&mut self) {
+        let _ = self.inner.remove_event_listener_with_callback("click",
+            self.click_cb.as_ref().unchecked_ref());
     }
 }
 
@@ -344,12 +393,11 @@ impl ActiveHex {
     }
 
     fn update(&mut self, layout: &Layout, pos: Coordinate, dir: Direction) {
-        if pos != self.pos || dir != self.dir {
-            let pos = pos.to_pixel(layout);
-            let angle = layout.direction_to_angle(dir);
-            let transform = format!("translate({:.1} {:.1}) rotate({:.0})", pos.x(), pos.y(), angle);
-            check!(self.inner.set_attribute("transform", &transform).ok());
-        }
+        let inner_pos = pos.to_pixel(layout);
+        let angle = layout.direction_to_angle(dir);
+        let transform = format!("translate({:.1} {:.1}) rotate({:.0})", inner_pos.x(), inner_pos.y(), angle);
+        check!(self.inner.set_attribute("transform", &transform).ok());
+
         self.pos = pos;
         self.dir = dir;
     }
@@ -441,6 +489,7 @@ pub struct MapView {
     dragged_mouseleave_cb: Closure<dyn Fn(web_sys::MouseEvent)>,
     dragged_keydown_cb: Closure<dyn Fn(web_sys::KeyboardEvent)>,
     document_title: String,
+    toggle_orientation_button: ToggleOrientationButton,
     download_button: web_sys::HtmlElement,
     export_button: web_sys::HtmlElement,
 }
@@ -696,6 +745,9 @@ impl MapView {
         callback.forget();
         input.remove_attribute("disabled").unwrap();
 
+        let toggle_orientation_button = ToggleOrientationButton::new(&document)?;
+        toggle_orientation_button.set_value(layout.orientation());
+
         let download_button = document.get_element_by_id("download-map-button").unwrap()
             .dyn_into::<web_sys::HtmlElement>().unwrap();
         let callback = Closure::wrap(Box::new(move |_event: web_sys::Event| {
@@ -728,7 +780,8 @@ impl MapView {
             pacenotes, title, author, selected, selected_menu, active,
             label_type, keychange_cb, dragged, dragged_mousemove_cb,
             dragged_mouseup_cb, dragged_mouseleave_cb, dragged_keydown_cb,
-            document_title, download_button, export_button
+            document_title, toggle_orientation_button, download_button,
+            export_button
         };
         view.update_map();
         parent.set_hidden(false);
@@ -825,6 +878,14 @@ impl MapView {
     fn update_map(&mut self) {
         let document = self.tiles.owner_document().unwrap();
 
+        // adapt layout and grid when map orientation has changed
+        if self.map.orientation() != self.layout.orientation() {
+            self.layout = self.layout.with_orientation(self.map.orientation());
+            let grid = check!(draw_grid(&document, &self.layout, 8).ok());
+            self.grid.replace_children_with_node_1(&grid);
+            self.grid = grid;
+        }
+
         // calculate rectangular map area that is covered with tiles
         let mut map_area = Rect::new(f32::NAN, f32::NAN, 0.0, 0.0);
         for tile in self.map.tiles() {
@@ -906,6 +967,7 @@ impl MapView {
         document.set_title(&document_title);
 
         // update button states
+        self.toggle_orientation_button.set_value(self.layout.orientation());
         if self.map.tiles().is_empty() {
             check!(self.download_button.set_attribute("disabled", "").ok());
             check!(self.export_button.set_attribute("disabled", "").ok());
@@ -943,6 +1005,18 @@ impl MapView {
         if hidden != self.grid.hidden() {
             debug!("update background grid: {:?}", visible);
             self.grid.set_hidden(hidden);
+            nuts::send_to::<MapController, _>(SaveSettingsEvent);
+        }
+    }
+
+    pub fn update_tile_orientation(&mut self, orientation: Orientation) {
+        if orientation != self.map.orientation() {
+            debug!("update map orientation: {:?}", orientation);
+            self.map.set_orientation(orientation);
+            self.update_map();
+            if let Some(pos) = self.selected.pos() {
+                self.inner_update_selected_tile(pos);
+            }
             nuts::send_to::<MapController, _>(SaveSettingsEvent);
         }
     }
