@@ -882,7 +882,8 @@ impl MapView {
         if self.map.orientation() != self.layout.orientation() {
             self.layout = self.layout.with_orientation(self.map.orientation());
             let grid = check!(draw_grid(&document, &self.layout, 8).ok());
-            self.grid.replace_children_with_node_1(&grid);
+            grid.set_hidden(self.grid.hidden());
+            check!(self.grid.replace_with_with_node_1(&grid).ok());
             self.grid = grid;
         }
 
