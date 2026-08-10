@@ -968,7 +968,7 @@ impl MapView {
         document.set_title(&document_title);
 
         // update button states
-        self.toggle_orientation_button.set_value(self.layout.orientation());
+        self.toggle_orientation_button.set_value(self.map.orientation());
         if self.map.tiles().is_empty() {
             check!(self.download_button.set_attribute("disabled", "").ok());
             check!(self.export_button.set_attribute("disabled", "").ok());
@@ -976,6 +976,10 @@ impl MapView {
             check!(self.download_button.remove_attribute("disabled").ok());
             check!(self.export_button.remove_attribute("disabled").ok());
         }
+
+        // update catalog tile orientation
+        let orientation = self.map.orientation();
+        nuts::publish(UpdateTileOrientationEvent { orientation });
 
         // update catalog tile usage counters
         let tiles: Vec<TileId> = self.map.tiles().iter()
@@ -1018,7 +1022,6 @@ impl MapView {
             if let Some(pos) = self.selected.pos() {
                 self.inner_update_selected_tile(pos);
             }
-            nuts::send_to::<MapController, _>(SaveSettingsEvent);
         }
     }
 
